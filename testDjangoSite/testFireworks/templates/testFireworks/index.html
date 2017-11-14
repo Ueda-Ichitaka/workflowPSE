@@ -1,0 +1,20 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block head %}
+<title>Index</title>
+{% endblock %}
+
+{% block top %}
+<!-- <img src="{% static 'polls/images/banner.jpg' %}" /> -->
+{% endblock %}
+
+{% block leftnav %}
+<li><a href="{% url 'testFireworks:editor' %}">editor</a></li>
+{% endblock %}
+
+{% block content %}
+<h1>fireworks test</h1>
+<p>a test fireworks will be placed here</p>									
+{% endblock %}					
+

@@ -1,0 +1,25 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block head %}
+<title>Index</title>
+<script src="{% static 'testFireworks/test.js' %}" async></script>
+{% endblock %}
+
+{% block top %}
+<!-- <img src="{% static 'polls/images/banner.jpg' %}" /> -->
+{% endblock %}
+
+{% block leftnav %}
+
+{% endblock %}
+
+{% block content %}
+<h1>fireworks  editor test</h1>
+<p>buttons: <button type="button" id="testButton">Test</button></p>	
+<div>
+    <canvas style="background-color: rgba(0,0,0,1);">
+    </canvas>
+</div>								
+{% endblock %}					
+
