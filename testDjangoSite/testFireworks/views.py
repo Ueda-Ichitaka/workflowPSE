@@ -21,7 +21,7 @@ class TaskerRedirectView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         
         # set up the LaunchPad and reset it
-        launchpad = LaunchPad(host="127.0.0.1", port=27017, name="fw_tutorial", username="fwtestadmin", password="bla")
+        launchpad = LaunchPad()#(host="127.0.0.1", port=27017, name="fw_tutorial", username="fwtestadmin", password="bla")
         launchpad.reset('', require_password=False)
 
         # create the Firework consisting of a single task
@@ -33,9 +33,9 @@ class TaskerRedirectView(RedirectView):
         # store workflow and launch it locally
         launchpad.add_wf(firework)
         rapidfire(launchpad, FWorker())
-        #launchpad.
         
         return super(TaskerRedirectView, self).get_redirect_url(*args, **kwargs)
     
-    
+class TaskView(TemplateView):
+    template_name = "testFireworks/tasker.html"    
     

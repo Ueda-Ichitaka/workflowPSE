@@ -28,7 +28,9 @@
 	
 			<div id="leftnav">
 				
-				<ul>				
+				<ul>	
+					<li><a href="{% url 'testFireworks:editor' %}">editor</a></li>
+					<li><a href="{% url 'testFireworks:tasker' %}">tasker launch</a></li>		
 				{% block leftnav %}
 				
 				{% endblock %}
