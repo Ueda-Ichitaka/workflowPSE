@@ -1,0 +1,56 @@
+
+
+\chapter{Globale Testfälle}
+    \section{Testfälle}
+        %\textbf{Folgende Funktionen sind zu überprüfen:}
+        \subsection{Folgende Funktionen sind zu überprüfen:}
+        \begin{enumerate}[font={\bfseries}, label=TF{\arabic*}0, wide=0pt, labelindent=1em, leftmargin=*]
+            
+            \item \label{TWEdit} Workflow erstellen / bearbeiten / löschen [\ref{workflowAnlegen:1}]
+            \item \label{TTAddW} Tasks zum Workflow per \Gls{Drag and Drop} hinzufügen [\ref{taskHinzufuegen:1}]
+            \item \label{TTEdit} Tasks bearbeiten / löschen [\ref{taskBearbeiten:1}], [\ref{taskLoeschen:1}]
+            \item \label{TWSave} Workflow speichern / laden [\ref{workflowSpeichern:1}], [\ref{workflowWiederherstellen:1}]
+            \item Workflows und Tasks auf Syntax und Kompatibilität prüfen [\ref{interaktiveUnterstuetzung:1}]
+            \item Grafische Darstellung von Workflows [\ref{kVerbinden:1}]
+            \item \label{TSessioRestore} Session Restore bei Verbindungsabbruch o.Ä. [\ref{Sitzungswiederherstellung:1}]
+            \item \label{TExec} Workflow(s) ausführen / Ausführung abbrechen [\ref{workflowAusfuehren:1}], [\ref{workflowAbbrechen:1}]
+            \item \label{TStatus} Worklow-Ausführungsstatus überprüfen [\ref{workflowAuflisten:1}]
+            \item \label{Tlogin} Benutzerauthentifikation [\ref{anmeldung:1}]
+            \item Workflow importieren / exportieren [\ref{workflowImExport:1}]
+        \end{enumerate}
+        
+        \subsection{Folgende Datenkonsistenzen sind einzuhalten:}
+        
+        \begin{enumerate}[font={\bfseries}, label={TF\arabic*}0, wide=0pt, labelindent=1em, leftmargin=*, resume]
+            \item Eindeutige Benutzerkennung [\ref{nutzerID}]
+            \item Eindeutige Workflow ID [\ref{workflowID:1}]
+            \item Session Restore Point [\ref{sessionRestore}]
+            \item Status des Workflows [\ref{statusDesWorkflows}]
+            \item Liste mit allen aktiven Nutzern [\ref{allUsers}]
+            \item Liste von allen vom Nutzer erstellte Workflows [\ref{erstellteWorkflowsProNutzer}]
+            \item Status des Nutzers (Admin oder normaler Nutzer) [\ref{Nutzerstatus}]
+        \end{enumerate}
+        
+
+    \section{Testszenarien}
+            \begin{enumerate}[font={\bfseries}, label={TS\arabic*}0, wide=0pt, labelindent=1em, leftmargin=*]
+
+            \item Normaler Anwendungsverlauf:
+        \begin{itemize}
+            \item Nutzer loggt sich ein. [\ref{Tlogin}]
+            \item Nutzer erstellt / bearbeitet Workflows. [\ref{TTEdit}], [\ref{TWEdit}], [\ref{TTAddW}]
+            \item Nutzer führt Workflow aus. [\ref{TExec}]
+            \item Workflow wird im Hintergrund (Serverseitig) ausgeführt. [\ref{TExec}]
+            \item Nutzer meldet sich ab. [\ref{Tlogin}]
+            \item Nutzer meldet sich wieder an um Status des Workflows abzufragen, bzw. Ergebnisse zu betrachten. [\ref{Tlogin}], [\ref{TStatus}]
+        \end{itemize}
+        \item Anwendungsverlauf mit Verbindungsabbruch
+        \begin{itemize}
+            \item Nutzer loggt sich ein. [\ref{Tlogin}]
+            \item Nutzer erstellt / bearbeitet Workflows. [\ref{TTEdit}], [\ref{TWEdit}], [\ref{TTAddW}]
+            \item Die Verbindung zum Nutzer bricht ab.
+            \item Unvollständig bearbeiteter Workflow wird gespeichert. [\ref{TSessioRestore}]
+            \item Nutzer meldet sich wieder an, und wird gefragt ob er weiterarbeiten möchte. [\ref{TSessioRestore}]
+            \item Nutzer kann normal weiterarbeiten
+        \end{itemize}
+        \end{enumerate}

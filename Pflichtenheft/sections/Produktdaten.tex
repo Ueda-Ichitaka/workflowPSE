@@ -1,0 +1,60 @@
+%TODO:
+%MAKROS FÜR ID
+
+%Fragen:
+%Vielleicht etwas noch?
+
+\chapter{Produktdaten}
+
+    \section{Workflowdaten}
+    Zu jedem neu erstellten Workflow müssen folgende Informationen gespeichert werden:
+        \subsection{Allgemein:}
+            \begin{enumerate}[font={\bfseries}, label=PD1{\arabic*}0, wide=0pt, labelindent=1em, leftmargin=*]
+                \setcounter{enumi}{-1}
+                \item \label{workflowID:1} Workflow ID (eindeutig)
+                \item Workflowname
+                \item Beschreibung des Workflows
+                \item Erstellungsdatum
+                \item \label{letztesBearbeitungsdatum} letztes Bearbeitungsdatum
+                \item Name des Erstellers
+                \item \label{korrekteSpeicherungDesWorkflows} Zum Workflow gehörende Tasks und Kanten
+                \item \label{Sichtbarkeit} Sichtbarkeit des Workflows für andere
+                \item \label{statusDesWorkflows} Status des Workflows (in Bearbeitung, überprüft etc)
+                \item \label{Parameter}  Parameter des Workflows
+            \end{enumerate}
+    %         \begin{enumerate}[font={\bfseries}, label=PD{1\arabic*}0, wide=0pt, labelindent=1em, leftmargin=*]
+    %             \item \label{workflowID:1} Workflow ID (eindeutig)
+    %             \item Workflowname
+    %             \item Beschreibung des Workflows
+    %             \item Erstellungsdatum
+    %             \item \label{letztesBearbeitungsdatum} letztes Bearbeitungsdatum
+    %             \item Name des Erstellers
+    %             \item \label{korrekteSpeicherungDesWorkflows} Zum Workflow gehörende Tasks und Kanten
+    %             \item \label{Sichtbarkeit} Sichtbarkeit des Workflows für andere
+    %             \item \label{statusDesWorkflows} Status des Workflows (in Bearbeitung, überprüft etc)
+    %             \item \label{Parameter}  Parameter des Workflows
+    %         \end{enumerate}
+        \subsection{Bei laufenden Workflows:}
+            \begin{enumerate}[font={\bfseries}, label={PD2\arabic*}0, wide=0pt, labelindent=1em, leftmargin=*]
+                \item Zeiger auf aktuellen Task
+                \item falls konfiguriert, Zeit bis der nächste Task ausgeführt wird
+                \item Variablen des Workflows (aktueller Wert)
+                \item ausführender Nutzer (Admin)
+                \item Startzeitpunkt
+            \end{enumerate}
+
+    \section{Nutzerdaten}
+        \begin{enumerate}[font={\bfseries}, label={PD3\arabic*}0, wide=0pt, labelindent=1em, leftmargin=*]
+            \item \label{sessionRestore} Die letzte Sitzung, insbesondere:
+                \begin{enumerate}[font={\bfseries}, label={PD31\arabic*}, wide=0pt, labelindent=1em, leftmargin=*]
+                    \item Geöffnete Workflows
+                    \item Falls der Workflow noch nicht gespeichert wurde: Tasks und Kanten des Workflows
+                \end{enumerate}
+            \item \label{allUsers} Eine Liste aller Nutzer die die Anwendung mindestens ein mal benutzt haben
+            \item \label{erstellteWorkflowsProNutzer} Zeiger auf vom Nutzer erstellte Workflows
+            \item \label{nutzerID} Nutzer ID (eindeutig)
+            \item \label{Nutzername} Nutzername
+            \item \label{Nutzerstatus} Nutzerstatus (Admin oder normaler Nutzer)
+            \item \label{1stLogin} Datum der ersten Benutzung der Anwendung
+            \item \label{lastLogin} Datum der letzten Benutzung der Anwendung
+        \end{enumerate}

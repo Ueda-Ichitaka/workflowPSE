@@ -1,0 +1,36 @@
+%Makros für IDs
+
+
+\chapter{Nichtfunktionale Anforderungen}
+    \SetLabelAlign{fixedwidth}{\hss\llap{\makebox[2.5em][l]{#1}}}
+    \begin{enumerate}[font={\bfseries},label={NA\arabic*}0, wide=0pt, labelindent=1em, leftmargin=*]
+        
+        \item Schneller Start \newline
+        Der Workflow Editor soll bei einer durchschnittlichen Internetverbindung nach maximal 5 Sekunden im Internetbrowser geladen werden.
+        
+        \item Robustheit des Workflow-Editors \newline
+        Da alle graphische Elemente leichtgewichtig sind arbeitet der Workflow Editor ohne Verzögerungen.
+        
+        \item Anpassbarkeit \newline
+        Der Workflow Editor und alle dazugehörige Tools sollen bei einer Auflösung von 1280 x 1024 Pixel ohne Scrollbars sichtbar sein.
+        
+        \item Benutzerfreundlichkeit\newline
+        Das Produkt soll verständlich und intuitiv sein, damit auch Personen, die keine IT-Experten sind, ohne komplizierte Anleitung, Workflows erstellen und bearbeiten können.
+        
+        \item Sortieren der Workflow-Liste\newline
+        Die Liste aller in der Datenbank gespeicherten Workflows kann nach Workflow-Namen, Erstellungsdatum, Ausführungsstatus, Besitzer oder nach Kombinationen dieser Filter sortiert werden.
+        
+        \item Zuverlässigkeit\newline
+        Das Workflow-System darf maximal sieben Tage pro Jahr nicht verfügbar sein.
+        
+        \item Anzahl der Workflows\newline
+        Um Serverüberlastungen zu verhindern ist die Anzahl der gleichzeitig ausführbaren Workflows beschränkt. Die Zuverlässigkeit und Korrektheit der Ausführung wird bei maximal 100 Workflows garantiert.
+        
+        \item Änderbarkeit bzw. Erweiterbarkeit\newline
+        Die Benutzeroberfläche ist leicht austauschbar.
+        
+        \item Serverbelastung\newline
+        Die Serverantwort soll im Schnitt nicht länger als 3 Sekunden dauern.
+        Der Server kann bis zu 1000 verschiedene Benutzer gleichzeitig bedienen.
+        
+    \end{enumerate}

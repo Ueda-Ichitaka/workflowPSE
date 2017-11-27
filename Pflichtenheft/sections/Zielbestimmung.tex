@@ -1,0 +1,73 @@
+
+\begin{document} 
+	\chapter{Zielbestimmung}
+	
+	    \section{Einleitung}
+		    
+		    Die Motivation des Projektes WPSflow, welches in diesem Dokument beschrieben wird, beruht auf der \textbf{V}irtuellen \textbf{For}schungsumgebung für die \textbf{Wa}sser- und \textbf{Ter}restrische Umweltforschung (V-For-Wa-Ter, bzw. \url{http://vforwater.de/}) welche eine generische, virtuelle Forschungsumgebung für den gemeinsamen, systemischen Umgang mit Daten aus der Wasser- und Umweltforschung im Rahmen des \href{http://www.wassernetzwerk-bw.de/}{Netzwerks Wasserforschung Baden-Württemberg} ist.\\
+		    Mit WPSflow wird hierfür ein Webportal entwickelt, welches den Nutzern erlaubt \Gls{Workflow}s zu erstellen, zu bearbeiten oder zu löschen. Sie können diesen Workflows auch Parameter übergeben, sie ausführen und den Ausführungsstatus in einer eigenen Übersichtsanzeige überwachen. Danach können Ergebnisse als Diagramm dargestellt werden.\\
+		    Aufgrund der hohen angestrebten Nutzerfreundlichkeit wird das Portal ansprechend für eine breite Masse sein und gerne genutzt werden, weshalb wir, das \textbf{WPSflow-Team} in der Entwicklung auch viel Wert auf Stabilität und eine intuitive Bedienbarkeit legen.
+		    
+		    \vspace{.5cm}
+		    
+	    
+	    %\noindent Die Anwendung WPSflow soll es Benutzern ermöglichen, \Gls{Workflow}s in einem graphischen Editor zu erstellen, bearbeiten und in den Ausführungsstatus in einer eigenen Übersichtsanzeige zu überwachen. Die Anwendung kann über das Forschungsportal \url{http://vforwater.de/} aufgerufen werden.
+	    
+% 		Die Benutzer des Forschungsportals \url{http://vforwater.de/} sollen durch das Produkt in die Lage versetzt werden, \Gls{Workflow}s in einem graphischen Editor zu erstellen, bearbeiten und in einer eigenen Übersichtsanzeige den Ausführungsstatus zu überwachen.
+		
+		    
+		\section{Musskriterien}
+			\begin{itemize}
+				\item Verwalten von \gls{Web Processing Service} Workflows
+					\begin{itemize}
+						\item Erstellen, Bearbeiten, Speichern, Laden, Anzeigen von Workflows
+						\item Auflistung von Workflows mit Ausführungsstatus
+						\item Wiederherstellung der letzten Sitzung
+						\item Fehlermanagement
+						    \begin{itemize}
+                            	\item Editorprüfung auf Kompatibilität von Tasks innerhalb eines Workflows
+                            \end{itemize}
+						\item Workflows und \Gls{Task}s auf Syntax und Kompatibilität prüfen
+						\item Erstellen und Bearbeiten in graphischem \Gls{Drag and Drop} Editor
+						\item Dynamisches einbinden von neuen \gls{Web Processing Service} Tasks in den Editor
+					\end{itemize}
+				\item Login im Portal
+				\item Nutzerfreundlichkeit
+					\begin{itemize}
+						\item Einfache, intuitive Benutzung des Editors
+					\end{itemize}
+				\item Open-Source
+				\item Der Nutzer hat die Möglichkeit WPS konforme Dateien als Workflows hoch zu laden
+				% \item Dateiupload
+				%     \begin{itemize}
+				%         \item Upload von Dateien als Input für Workflow Tasks
+				%     \end{itemize}
+				\item Integrierte Ausführung der Workflows auf dem gleichen Server nur nach erfolgter Prüfung von bestimmten Kriterien, z.B. Serverlast
+				\item Öffentliche und Benutzergebundenen Workflows
+				    \begin{itemize}
+				        \item Workflows mit anderen Benutzern Teilen und öffentlich zugänglich machen
+				        \item Zugriff und Sichtbarkeit von Workflows auf eigenen oder einzelne Benutzer beschränken
+				    \end{itemize}
+				% \item Dokumentation % ich glaube die Elnaz meinte hier das war eher an unser Projekt gerichtet, nicht als Musskriterium für das Pflichtenheft
+				\item Technische Dokumentation (Benutzeranleitung)
+				\item Hilfesektion für Benutzerfragen
+			\end{itemize}
+		
+		\section{Wunschkriterien}
+			\begin{itemize}
+				\item Logging aller Aktivitäten
+				\item Import und Export von Workflows
+				\item Detailansicht einzelner Workflows
+				\item Erweiterte Konfigurationseinstellungen
+				\item Ein extra Interface für Administratoren%Administrationsinterface
+				\item Installations-/Einrichtungsassistent
+			\end{itemize}	
+		
+		\section{Abgrenzungskriterien}
+			\begin{itemize}
+				\item Einsatz des Portals nicht für große Nutzermenge geplant
+				\item Keine verteilte Datenbank, keine Echtzeitanforderungen
+			\end{itemize}	
+
+
+\end{document}

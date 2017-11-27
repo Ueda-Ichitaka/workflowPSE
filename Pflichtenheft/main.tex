@@ -1,0 +1,109 @@
+\documentclass[oneside]{scrbook}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx, subfiles, hyperref, csquotes, enumitem, grffile, longtable, wrapfig, rotating}
+
+\usepackage[T1]{fontenc}    % avoid garbled Unicode text in pdf
+\usepackage[german]{babel}  % german hyphenation, quotes, etc
+\usepackage[nonumberlist]{glossaries}     % provides glossary commands
+\usepackage[normalem]{ulem}
+\usepackage{amsmath, textcomp, amssymb, capt-of, glossaries, titling, eso-pic, lipsum, lastpage, titleps, calc}
+
+\usepackage[a4paper]{geometry}
+
+% makes refs to images jump to top of image instead of jumping to caption below
+\usepackage[all]{hypcap}
+
+\graphicspath{{images/}{../images/}}
+\hypersetup{pdflang={de}}
+
+% setup for header with logo
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\rhead{\includegraphics[height=1.4cm]{logo.png}}
+
+% change height of header to be able to make logo bigger :)
+\setlength{\headheight}{45pt}
+
+% reduce space between header and chapter title
+\renewcommand*{\chapterheadstartvskip}{\vspace*{0cm}}
+
+% make glossary entrys within text appear bold
+\renewcommand*{\glstextformat}[1]{\textbf{#1}}
+
+% setup for titlepicture
+
+% set up \maketitle to accept a new item
+\predate{ \begin{center} \placetitlepicture\large }
+\postdate{ \par\end{center} }
+
+% commands for including the picture
+\newcommand{\titlepicture}[2][]{%
+  \renewcommand\placetitlepicture{%
+    \includegraphics[#1]{#2}\par\medskip
+  }%
+}
+
+\newcommand{\placetitlepicture}{} % initialization
+
+\titlepicture[width=16cm]{images/workflow2_tp3.png}
+
+\title{
+    \vspace{-3.5cm}
+    \Huge {\textbf{Pflichtenheft}}\\
+    \vspace{2cm}
+    \Large{\textbf{Workflow System für eine virtuelle Forschungsumgebung für Geodaten}}\\
+    \vspace{1cm}
+}
+\author{
+    Denis Gensh, Marcel Herm, David Krah,\\
+    Eduard Kukuy, Daniel Milbaier, Richard Rudolph\\
+} % sorted autors alphabetically with last name
+
+\date{
+    \today\\
+    \vspace{1cm}
+    Karlsruher Institut für Technologie, SCC\\
+}
+
+%\newglossaryentry{example}
+%{
+%    name=random,
+%    description={just a normal description}
+%}
+
+% change font
+\renewcommand{\familydefault}{qhv}
+
+\subfile{sections/glossaryentries}
+
+\makeglossaries
+
+\begin{document}
+    
+%   \Gls{example}
+    
+    \subfile{sections/Titel}
+    
+    \subfile{sections/Zielbestimmung}
+    
+    \subfile{sections/Produkteinsatz}
+    
+    \subfile{sections/Produktumgebung}
+    
+    \subfile{sections/Funktionale_Anforderungen}
+    
+    \subfile{sections/Produktdaten}
+    
+    \subfile{sections/Nichtfunktionale_Anforderungen}
+    
+    \subfile{sections/Qualitaetszielbestimmungen}
+    
+    \subfile{sections/Globale_Testfaelle}
+    
+    \subfile{sections/Systemmodelle}
+    
+    \printglossaries
+    
+\end{document}
+
