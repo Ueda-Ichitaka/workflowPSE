@@ -12,14 +12,14 @@ cd /home/$user/Downloads
 wget https://www.python.org/downloads/release/python-363/
 tar -xvf Python-3.6.3.tar.xz
 cd Python-3.6.3/
-sudo apt-get install -f zlib1g-dev libffi-dev libssl-dev openssl-dev openssl libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdm-dev libc6-dev libbz2-dev
+sudo apt-get install -f zlib1g-dev libffi-dev libssl-dev openssl-dev openssl libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdm-dev libc6-dev libbz2-dev python-pip python-dev libpq-dev postgresql postgresql-contrib
 ./configure --enable-optimizations
 sudo make
 sudo make test
 sudo make install
 
 ## install django
-sudo pip3 install Django
+sudo pip3 install Django psycopg2
 
 ## install mongodb
 #sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
