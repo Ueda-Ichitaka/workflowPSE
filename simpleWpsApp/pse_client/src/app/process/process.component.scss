@@ -1,0 +1,59 @@
+.base {
+    display: inline-block;
+    min-width: 10vw;
+    background: #009688;
+    margin: 5px;
+    color: rgba(255,255,255,.87);
+    padding: 13px 8px;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.movable {
+    cursor: move;
+    position: absolute;
+}
+
+.inputs {
+    position: absolute;
+    top: -13px;
+    left: 8px;
+    right: 8px;
+
+    > .input {
+        display: inline-block;
+        width: 13px;
+        height: 13px;
+        background: #fafafa;
+        border: solid 2px #009688;
+        margin: 5px;
+        border-radius: 10px;
+
+        &:hover {
+            background-color: lighten(#607d8b, 10%);
+        }
+    } 
+}
+
+.outputs {
+    position: absolute;
+    bottom: -15px;
+    left: 8px;
+    right: 8px;
+
+    > .output {
+        float: right;
+        width: 10px;
+        height: 10px;
+        background: #009688;
+        border: solid 3px #fafafa;
+        margin: 5px;
+        border-radius: 10px;
+
+        &:hover {
+            border-color: lighten(#607d8b, 20%);
+        }
+    } 
+}
+

@@ -1,0 +1,6 @@
+<app-process #process *ngFor="let p of drawnProcesses" [data]="p" [movable]="true" (clickInput)="clickProcessInput($event, process)"
+    (clickOutput)="clickProcessOutput($event, process)"></app-process>
+<svg width="1000" height="1000">
+    <svg:line *ngFor="let line of drawnLines" [attr.x1]="line.x1" [attr.y1]="line.y1" [attr.x2]="line.x2" [attr.y2]="line.y2"
+        stroke="black" />
+</svg>

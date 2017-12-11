@@ -1,0 +1,23 @@
+
+.editor-content {
+    width: 100%;
+    height: calc(100vh - 120px);
+
+}
+.editor-tool {
+    width: 21%;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+}
+
+.editor-tool-card {
+    height: 93%;
+}
+
+.process-btn {
+    width: 100%;
+    margin-bottom: 3px;
+}
+
