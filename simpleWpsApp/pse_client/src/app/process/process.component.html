@@ -1,0 +1,12 @@
+<mat-card class="base">
+  <mat-card-header>
+    <mat-card-title>{{ data.identifier }}</mat-card-title>
+  </mat-card-header>
+
+  <div #inputs class="inputs">
+    <span *ngFor="let input of data.input" (click)="clickInput.emit(input)" class="input"></span>
+  </div>
+  <div #outputs class="outputs">
+    <span *ngFor="let output of data.output" (click)="clickOutput.emit(output)" class="output"></span>
+  </div>
+</mat-card>
