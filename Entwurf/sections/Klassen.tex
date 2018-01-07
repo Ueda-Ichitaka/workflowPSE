@@ -1,0 +1,1389 @@
+\chapter{Klassen und Pakete}
+
+	\section{Server Klassen}
+
+	\subsection{edu.kit.scc.pseworkflow.views}
+
+		\subsubsection{WorkflowView}
+		
+		Beschreibt die Workflow-Schnittstelle für die REST-API.\newline
+
+		Attribute:
+		\begin{center}
+			\renewcommand{\arraystretch}{1.5}
+			\setlength\tabcolsep{5pt}
+			\begin{tabularx}{\textwidth}{|l|l|X|}
+				\hline
+				\rowcolor[gray]{0.75}[4.85pt]					
+				Name & Datentyp & Beschreibung \\ \hline
+				model & Model & Model, die von Django automatisch für dieses View geladen wird \\ \hline		
+			\end{tabularx}
+		\end{center}
+		
+		Methoden:
+		\begin{center}
+			\setlength\tabcolsep{5pt}
+			\renewcommand{\arraystretch}{1.5}
+			
+			\begin{tabularx}{\textwidth}{|l|l|p{30mm}|X|}
+				\hline
+				\rowcolor[gray]{0.75}[4.85pt]
+				Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+				index & HTTPResponse & request: HTTPRequest & Gibt die HTML-Datei aus der Template-Datei zurück. Diese enthält eine Verlinkung auf Code, der auf den Client geladen und dort ausgeführt wird \\ \hline
+				get & HTTPResponse & request: HTTPRequest\newline id: int & Sucht in der Datenbank nach dem Workflow mit der übergebenen ID und gibt ihn im JSON-Format zurück \\ \hline
+				create & HTTPResponse & request: HTTPRequest & Erzeugt einen neuen Workflow und gibt seine ID zurück \\ \hline
+				update & HTTPResponse & request: HTTPRequest\newline id: int & Speichert die Daten in die Datenbank; Überschreibt die Standard Methode. In dieser Methode wird die Workflow enthaltende JSON Datei geparst und danach werden einzelne Elemente eines Workflows separat gespeichert. \\ \hline
+				delete & HTTPResponse & request: HTTPRequest\newline id: int & Löscht den Workflow mit der übergebenen ID \\ \hline
+				start & HTTPResponse & request: HTTPRequest\newline id: int & Führt den Workflow mit der übergebenen ID aus \\ \hline
+				stop & HTTPResponse & request: HTTPRequest\newline id: int & Stoppt die Ausführung des Workflows mit der übergebenen ID \\ \hline
+			\end{tabularx}
+		\end{center}
+		
+		\newpage
+
+		\subsubsection{EditorView}
+		
+		Beschreibt die Seite in der der Nutzer seine Workflows bearbeiten kann.\newline
+		
+		Attribute:
+		\begin{center}
+			\renewcommand{\arraystretch}{1.5}
+			\setlength\tabcolsep{5pt}
+			\begin{tabularx}{\textwidth}{|l|l|X|}
+				\hline
+				\rowcolor[gray]{0.75}[4.85pt]					
+				Name & Datentyp & Beschreibung \\ \hline
+				template_name & string & Name der Template-Datei \\ \hline		
+			\end{tabularx}
+		\end{center}
+		
+		\subsubsection{SettingsView}
+		
+		Beschreibt die Seite in der der Nutzer WPS Server eintragen und löschen kann sowie verfügbare Processe davon in das System synchronisieren.\newline
+		
+		Attribute:
+		\begin{center}
+			\renewcommand{\arraystretch}{1.5}
+			\setlength\tabcolsep{5pt}
+			\begin{tabularx}{\textwidth}{|l|l|X|}
+				\hline
+				\rowcolor[gray]{0.75}[4.85pt]					
+				Name & Datentyp & Beschreibung \\ \hline
+				template_name & string & Name der Template-Datei \\ \hline		
+			\end{tabularx}
+		\end{center}
+
+		\subsubsection{WorkflowsView}
+		
+		Beschreibt die Seite in der der Nutzer eine Liste seiner Workflows sieht.\newline
+
+		Attribute:
+		\begin{center}
+			\renewcommand{\arraystretch}{1.5}
+			\setlength\tabcolsep{5pt}
+			\begin{tabularx}{\textwidth}{|l|l|X|}
+				\hline
+				\rowcolor[gray]{0.75}[4.85pt]					
+				Name & Datentyp & Beschreibung \\ \hline
+				template\_name & string & Name der Template Datei \\ \hline				
+			\end{tabularx}
+		\end{center}
+		
+		\subsubsection{UserView}
+		
+		Bietet Schnittstelle, durch die der Client abfragen kann, ob der Besucher eingeloggt ist.\newline
+		
+		Methoden:
+		\begin{center}
+			\setlength\tabcolsep{5pt}
+			\renewcommand{\arraystretch}{1.5}
+				\begin{tabularx}{\textwidth}{|l|l|l|X|}
+				\hline
+				\rowcolor[gray]{0.75}[4.85pt]
+				Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+				index & HTTPResponse & request: HTTPRequest & Gibt die Accountdaten des eingeloggten Users oder eine Meldung, dass User nicht eingeloggt ist zurück \\ \hline
+				\end{tabularx}
+		\end{center}
+		
+		\newpage
+		
+		\subsubsection{ProcessView}
+		
+		Bietet Schnittstelle, durch die der Client die Processe abfragen und verwalten kann.\newline
+		
+		Methoden:
+		\begin{center}
+			\setlength\tabcolsep{5pt}
+			\renewcommand{\arraystretch}{1.5}
+				\begin{tabularx}{\textwidth}{|l|l|p{30mm}|X|}
+				\hline
+				\rowcolor[gray]{0.75}[4.85pt]
+				Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+				index & HTTPResponse & request: HTTPRequest & Gibt eine Liste aller verfügbaren Processes zurück \\ \hline
+				get & HTTPResponse & request: HTTPRequest\newline id: int & Gibt Details des Processes mit übergegebenem ID zurück \\ \hline
+				create & HTTPResponse & request: HTTPRequest & Erstellt einen neuen Process und gibt seine ID in der Response zurück \\ \hline
+				update & HTTPResponse & request: HTTPRequest\newline id: int & Speichert die in der Request übergegebenen Daten im Process mit der übergegebenen ID \\ \hline
+				delete & HTTPResponse & request: HTTPRequest\newline id: int & Löscht den Process mit der übergegebenen ID \\ \hline
+				\end{tabularx}
+		\end{center}
+		
+		\newpage
+		
+		\subsubsection{WPSView}
+		
+		Bietet Schnittstelle, durch die der Client die WPS Server abfragen und verwalten kann.\newline
+		f
+		Methoden:
+		\begin{center}
+			\setlength\tabcolsep{5pt}
+			\renewcommand{\arraystretch}{1.5}
+				\begin{tabularx}{\textwidth}{|l|l|p{30mm}|X|}
+				\hline
+				\rowcolor[gray]{0.75}[4.85pt]
+				Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+				index & HTTPResponse & request: HTTPRequest & Gibt eine Liste aller verfügbarer WPS Server zurück \\ \hline
+				get & HTTPResponse & request: HTTPRequest\newline id: int & Gibt Details des WPS mit der übergegebenen ID zurück \\ \hline
+				create & HTTPResponse & request: HTTPRequest & Erstellt einen neuen WPS Server und gibt seine ID in der Response zurück \\ \hline
+				update& HTTPResponse & request: HTTPRequest\newline id: int & Speichert die in der Request übergegebenen Daten im WPS Server mit der übergegebenen ID \\ \hline
+				delete & HTTPResponse & request: HTTPRequest\newline id: int & Löscht den WPS Server mit der übergegebenen ID \\ \hline
+				refresh & HTTPResponse & request: HTTPRequest\newline id: int & Lädt eine Liste aller verfügbarer Processes von dem WPS Server mit der übergegebenen ID und aktualisiert Processes in unserer Datenbank, wenn Änderungen vorliegen. Das erfolgt so:\newline Liste der Prozessen vom Server wird mit dieser aus unserer Datenbank verglichen \\ \hline
+				\end{tabularx}
+		\end{center}
+
+	\subsection{edu.kit.scc.pseworkflow.cron}
+
+%%% KLASSE CRON
+		\subsubsection{WorkflowJob}
+		
+	Hier wird die externe Bibliothek django-cron verwendet, und diese Klasse überschreibet die Klasse CronJobBase.\newline
+		Die Klasse erledigt Aufgaben, die ständig im Hintergrund laufen und nicht vom Benutzer gesteuert werden. Methoden in dieser Klasse werden in regelmäßigen Zeitabständen von \gls{Cron} aufgerufen (z.B. einmal pro Minute). Dazu gehören:
+		\begin{itemize}
+			\item Für jeden Laufenden Task (status = RUNNING) sein Status bei zugehörigem WPS-Server abfragen und, falls er geändert wurde, Änderungen in die Datenbank schreiben
+			\item Alle noch nicht ausgeführte Tasks durchgehen und an den zugehörigen WPS Server schicken, falls er frei ist
+		\end{itemize}
+		
+		An der Stelle lohnt es sich zu erwähnen, welche Bedeutung die Statusen der Tasks für Auführung der weiteren Tasks haben:
+		
+		\begin{itemize}
+			\item READY - um an den WPS-Server abgeschickt werden zu dürfen, müssen die Tasks diesen Status haben. Sie kriegen den, falls
+			\begin{itemize}
+				\item sie am Anfang des Workflows stehen und keine Tasks vor sich haben, oder
+				\item wenn vorheriger Task auf FINISHED gesetzt wird. Wenn es mehrere vorherige Tasks gibt, passiert es dann, wenn letzte von allen zu FINISHED wird
+			\end{itemize}
+			\item WAITING - der Task wartet auf Ergebnisse von vorherigen Tasks
+			\item RUNNING - der Task wird jetzt ausgeführt auf einem WPS-Server
+			\item FINISHED - der Task wurde erfolgreich auf einem WPS-Server beendet. Ggf. nächste Tasks können vom Status WAITING auf READY gesetzt werden
+			\item FAILED - Alle Tasks, die Output von FAILED Task als Input bekommen, werden nicht ausgeführt
+			\item DEPRECATED - Wenn der Workflow mindestens einen Task mit dem Status DEPRECATED enthält, wird seine Ausführung gestoppt, d. h. keine weitere Tasks werden an den WPS-Server geschickt
+		\end{itemize}
+		
+		Attribute:
+		\begin{center}
+			\renewcommand{\arraystretch}{1.5}
+			\setlength\tabcolsep{5pt}
+			\begin{tabularx}{\textwidth}{|l|l|X|}
+				\hline
+				\rowcolor[gray]{0.75}[4.85pt]					
+				Name & Datentyp & Beschreibung \\ \hline
+				schedule & Schedule & Klasse von django-cron Bibliothek, beschreibt, wann der Job ausgeführt werden muss \\ \hline
+				code & string & Code dieses Cron-Jobs \\ \hline
+			\end{tabularx}
+		\end{center}
+		
+		Methoden:
+		\begin{center}
+			\setlength\tabcolsep{5pt}
+			\renewcommand{\arraystretch}{1.5}
+			
+			\begin{tabularx}{\textwidth}{|l|l|l|X|}
+				\hline
+				\rowcolor[gray]{0.90}[4.85pt]
+				Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+				do & void & - & Überschreibt die Metode in der Parentklasse. Hier passiert alles, was in der Klassenbeschreibung steht \\ \hline
+			\end{tabularx}
+		\end{center}
+
+%%% ENDE DER KLASSE CRON
+
+	\newpage
+	
+%%% MODELS
+
+%%% KLASSE WORKFLOW
+		\subsection{edu.kit.scc.pseworkflow.models}
+			\subsubsection{Workflow}
+			Diese Klasse beschreibt einen \gls{Workflow}. Ein Workflow enthält einen oder mehrere \gls{Task}s. \newline
+			Diese Klasse erbt von der Django Klasse namens \glqq Model\grqq.\newline
+					
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					id & int & Primärschlüssel in der Datenbank. Wird von Django automatisch generiert \\ \hline
+					name & string & Anzeigetitel und Name des Workflows\\ \hline
+					description & string & Beschreibungstext des Workflows\\ \hline	
+					percent\_done & int & Fortschritt des Workflows in Prozent\\ \hline
+					created\_at & Date & Erzeugungsdatum des Workflows \\ \hline
+					updated\_at & Date & Datum der letzten Veränderung \\ \hline 
+					creator & User & Benutzer der den Workflow erstellt hat\\ \hline
+					last\_modifier & User & Benutzer der zuletzten den Workflow verändert hat\\ \hline
+				\end{tabularx}
+			\end{center}
+
+		
+			 Methoden:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+					save & void & keine & Speichert die Daten in die Datenbank; Überschreibt die Standard Methode. In dieser Methode wird die Workflow enthaltende JSON Datei geparst und danach werden einzelne Elemente eines Workflows separat gespeichert. \\ 
+					\hline
+				\end{tabularx}
+			\end{center}
+%%% ENDE DER KLASSE WORKFLOW
+%%% KLASSE SESSION
+
+		\subsubsection{Session}
+		
+		Diese Klasse speichert die letzten Workflow den ein Nutzer bearbeitet hat.
+		
+		Attribute:
+		\begin{center}
+			\renewcommand{\arraystretch}{1.5}
+			\setlength\tabcolsep{5pt}
+			\begin{tabularx}{\textwidth}{|l|l|X|}
+				\hline
+				\rowcolor[gray]{0.75}[4.85pt]					
+				Name & Datentyp & Beschreibung \\ \hline
+				id & int & Die ID der Session \\ \hline
+				user & User & Der zugehörige User \\ \hline
+				last_workflow & Workflow & Der Workflow der in der Session erstellt wurde \\ \hline
+			\end{tabularx}
+		\end{center}
+%%% ENDE DER KLASSE SESSION
+
+\newpage
+
+%%% KLASSE TASK
+		\subsubsection{Task}
+			Beschreibung eines einzelnen Tasks innerhalb eines Workflows, die in der Benutzeroberfläche als Knoten des Graphes dargestellt sind. Task ist eine Instanz eines WPS Prozesses, der von dem WPS Server zur Verfügung gestellt wird. Es kann mehrere Tasks geben, die später als derselbe WPS Prozess ausgeführt werden. \newline
+			Diese Klasse erbt von der Django Klasse namens \glqq Model\grqq .
+			
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Datentyp & Beschreibung \\ \hline 
+			   		id & int & Primärschlüssel in der Datenbank. Wird von Django automatisch generiert \\ \hline
+			   		workflow & Workflow & Workflow, dessen Tasks die Kante verbindet \\ \hline
+			   		process & Process & Der zugehörende WPS Prozess, der von dem WPS Server zur Verfügung gestellt wird. \\\hline
+			   		x & int & X Koordinate des Tasks in der Benutzeroberfläche. Damit werden Tasks immer genau an der Stelle im Editor angezeigt, wo sie gespeichert wurden\\ \hline
+			   		y & int & Y Koordinate des Tasks in der Benutzeroberfläche\\ \hline
+%TODO TODO TODO
+			   		status & Status & Ausführungsstatus des Tasks. Siehe workflow.Status Klasse \\ \hline
+			   		title & string & Titel des Tasks \\ \hline
+			   		abstract & string & Kurze Beschreibung des Tasks \\ \hline
+			   		status\_url & string & Url des Tasks auf dem WPS Server. Dient der  regelmäßigen Aktualisierung des Ausführungsstatus \\ \hline
+			   		started\_at & Date & Datum und die Uhrzeit des Ausführungstarts \\ \hline
+				\end{tabularx}
+			\end{center}			
+%%% ENDE DER KLASSE TASK
+
+\newpage
+
+%%% ENUMERATION EXECUTION STATUS
+		\subsubsection{Status (Enum)}	
+			Beschreibt die möglichen Ausführungsstati von Tasks. \newline
+			
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Beschreibung \\ \hline
+					READY & Der Task ist bereit ausgeführt zu werden \\ \hline
+					WAITING & In diesem Zustand wartet ein Task auf den Input eines noch nicht beendeten Tasks \\ \hline
+					RUNNING & Der Task ist momentan in Bearbeitung \\ \hline
+					FINISHED & Der Task wurde erfolgreich ausgeführt \\ \hline
+					FAILED & Bei der Ausführung des Tasks ist ein Fehler aufgetreten \\ \hline
+					DEPRECATED & Der Task gehört zum Process, der von dem WPS-Server gelöscht wurde, und sollte deswegen aus dem Workflow rausgenommen bzw. ersetzt werden \\ \hline
+				\end{tabularx}
+			\end{center}
+%%% ENDE DER ENUMERATION EXECUTION STATUS
+%%% KLASSE EDGE
+		\subsubsection{Edge}	
+				Diese Klasse beschreibt eine Kante, die in der Benutzeroberfläche zwei Taskknoten miteinander verbindet. \\newline
+				Diese Klasse erbt von der Django Klasse namens \glqq Model\grqq .\newline
+				
+				Attribute:
+				\begin{center}
+					\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+					
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Beschreibung \\ \hline 
+				   		id & int & Primärschlüssel in der Datenbank. Wird von Django automatisch generiert \\ \hline
+				   		workflow & Workflow & Workflow, dessen Tasks die Kante verbindet \\ \hline
+				   		from\_task & Task & Ausgangsknoten \\ \hline
+				   		to\_task & Task & Eingangsknoten \\ \hline
+				   		input & Input & Die Eingangsdaten eines Tasks\\ \hline
+				   		output & Output & Das Ergebnis eines Tasks \\
+				   		
+				   		\hline
+					\end{tabularx}
+				\end{center}
+%%% ENDE DER KLASSE EDGE
+
+\newpage
+
+%%% KLASSE PROCESS
+		\subsubsection{Process}
+			Diese Klasse beschreibt den WPS Prozess, der auf dem WPS Server als Code gespeichert ist. Alle Daten werden von dem WPS Server als XML Datei mittels HTTP Response (Describe Processes) empfangen und danach auf dem Django Server erstmal geparst und danach in der Datenbank gespeichert. \newline
+			Diese Klasse erbt von der Django Klasse namens \glqq Model\grqq .\newline
+			
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Beschreibung \\ \hline 
+					id & int & Primärschlüssel in der Datenbank. Wird von Django automatisch generiert \\ \hline
+					identifier & String & Eindeutige Kennung des WPS Prozesses \\ \hline
+					wps & WPS & Beschreibt den WPS Server, der den WPS Prozess zur Verfügung stellt \\ \hline
+					title & string & Titel des WPS Prozesses \\ \hline
+					abstract & string & Beschreibung des WPS Prozesses\\
+					\hline
+				\end{tabularx}
+			\end{center}
+%%% ENDE DER KLASSE PROCESS 
+%%% KLASSE WPS
+		\subsubsection{WPS}
+			Diese Klasse beschreibt den WPS Server, der die WPS Prozesse zur Verfügung stellt. \newline
+			Diese Klasse erbt von der Django Klasse namens \glqq Model\grqq .\newline
+			
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Beschreibung \\ \hline 
+					id & int & Primärschlüssel in der Datenbank. Wird von Django automatisch generiert \\ \hline
+					wps\_provider & WPSProvider & Der Besitzer des WPS Servers \\ \hline
+					title & string & Name des WPS Servers \\ \hline
+					abstract & string & Beschreibung des WPS Servers \\ \hline
+					capabilities\_url & string & URL des WPS Servers für die GetCapabilities Operation \\ \hline
+					describe\_url & string & URL des WPS Servers für die DescribeProcess Operation \\ \hline
+					execute\_url & string & URL des WPS Servers für die Execute Operation \\ \hline
+					
+				\end{tabularx}
+			\end{center}
+%%% ENDE DER KLASSE WPS
+
+\newpage
+
+%%% KLASSE WPSPROVIDER
+		\subsubsection{WPSProvider}
+			Beschreibt den Besitzer des WPS Servers. Obwohl man mehrere optionale Attribute auf dem WPS Server eingeben kann, werden nur die wichtigsten davon in der Datenbank gespeichert. \newline
+			Diese Klasse erbt von der Django Klasse namens \glqq Model\grqq .\newline
+			
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Beschreibung \\ \hline 
+					id & int & Primärschlüssel in der Datenbank. Wird von Django automatisch generiert \\ \hline
+					provider\_name & string & Name des WPS Server Providers\\ \hline
+					provider\_site & string & Internetadresse des WPS Providers \\ \hline
+					individual\_name & string & Name der Person\\ \hline
+					position\_name & string & Stelle der Person \\ \hline
+				\end{tabularx}
+			\end{center}
+%%% ENDE DER KLASSE WPSPROVIDER
+
+%%% KLASSE INPUTOUTPUT
+		\subsubsection{<<abstract>> InputOutput}
+			Beschreibt die Inputs und Outputs eines WPS Prozesses. Die Klasse ist abstrakt, dass heißt, dass es keine Tabelle namens InputOutput von Django erzeugt wird. \newline
+			Diese Klasse erbt von der Django Klasse namens \glqq Model\grqq .\newline
+			
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Beschreibung \\ \hline 
+					id & int & Primärschlüssel in der Datenbank. Wird von Django automatisch generiert \\ \hline
+					process & Process & WPS Prozess, zu dem die Inputs bzw. Outputs gehören \\ \hline
+					role & Role & Stellt fest, ob die Instanz ein Input oder Output ist \\ \hline
+					identifier & string & Eindeutige Kennung des Inputs oder Outputs \\ \hline
+					title & string & Titel des Inputs oder Outputs \\ \hline
+					abstract & string & Kurze Beschreibung des Inputs oder Outputs \\ \hline
+					datatype & Datatype & Bestimmt den Datentyp des Inputs oder Outputs. 
+%%%% TODO  TODO TODO
+					Siehe .... \\ \hline
+					min\_occurs & int & Minimales Vorkommen eines Inputs oder Outputs \\ \hline
+					max\_occurs & int & Maximales Vorkommen eines Inputs oder Outputs \\ \hline
+				\end{tabularx}
+			\end{center}
+			
+%%% ENDE DER KLASSE INPUTOUTPUT
+
+\newpage
+
+%%% KLASSE INPUT
+		\subsubsection{Input}
+			Beschreibt den Input (Eingangsdaten) des WPS Prozesses. \newline
+			Diese Klasse erbt die Attribute von der abstrakten Klasse InputOutput (siehe oben).
+
+%%% ENDE DER KLASSE INPUT
+%%% KLASSE OUTPUT 
+		\subsubsection{Ouput}
+			Beschreibt den Output (Endergebnis) des WPS Prozesses. \newline
+			Diese Klasse erbt die Attribute von der abstrakten Klasse InputOutput (siehe oben).
+ 
+%%% ENDE DER KLASSE OUTPUT
+%%% KLASSE DATATYPE (Enumeration)
+		\subsubsection{Datatype (Enum)}	
+			Beschreibt die möglichen Datentypen des WPS Prozesses. \newline
+			
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt] 
+					Name & Beschreibung \\ \hline 
+			   		LITERAL &  Literal Data ist ein String, normalerweise kurz. Es wird verwendet um numerische oder textuelle Parameter zu übergeben.   \\ \hline
+			   		COMPLEX & Complex Data sind normalerweise die Raster- oder Vektorgrafiken, es können aber auch beliebige dateibasierte Daten sein \\ \hline
+			   		BOUNDING_BOX & Koordinatenpaaren für 2D oder 3D Räume \\ \hline
+				\end{tabularx}
+			\end{center}
+
+%%% ENDE DER KLASSE  DATATYPE
+%%% ENUMERATION ROLE
+		\subsubsection{Role (Enum)}
+			Beschreibt die möglichen Werte des Attributs role der abstrakten InputOutput Klasse. \newline
+			
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Beschreibung \\ \hline 
+			   		INPUT & Eingabedaten eine WPS Prozesses \\ \hline
+			   		OUTPUT & Endergebnis eines WPS Prozesses \\ \hline
+				\end{tabularx}
+			\end{center}
+%%% ENDE DER ENUMERATION ROLE
+
+\newpage
+
+%%% KLASSE ARTEFACT
+		\subsubsection{<<abstract>> Artefact}
+			Beschreibt die eigentlichen Eingangsdaten oder die Endergebnise eines Tasks. Klasse ist abstrakt, das heißt, dass es keine Tabelle in der Datenbank namens \glqq Artefact \grqq erzeugt wird. \newline 
+			Diese Klasse erbt von der Django Klasse namens \glqq Model\grqq .\newline
+			
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Beschreibung \\ \hline 
+					id & int & Primärschlüssel in der Datenbank. Wird von Django automatisch generiert \\ \hline
+					task & Task & Der Task, zu dem die Inputs oder Outputs gehören\\ \hline
+					parameter\_id & int & Identifikator des Parameters \\ \hline
+					role & Role & Stellt fest, ob die Instanz ein Input oder Output ist \\ \hline
+					format & string & Format des Inputs oder Outputs \\ \hline
+					data & string & Der Wert dieses Attributs hängt von dem Datentyp ab. Falls der Datentyp Literal Data ist wird ein String mit dem Ergebnis gespeichert. Falls der Datentyp Complex Data oder Bounding Box Data ist, also falls das Ergebnis zu groß ist, um es in der Datenbank zu speichern, wird in diesem Attribut eine URL gespeichert die zum Ergebnis auf dem WPS Server führt \\ \hline
+					created\_at & datetime & Erstellungsdatum des Inputs/Outputs \\ \hline
+					updated\_at & datetime & Datum und die Uhrzeit der letzten Änderung \\ \hline
+				\end{tabularx}
+			\end{center}
+%%% ENDE DER KLASSE ARTEFACT
+%%% KLASSE INPUTARTEFACT
+		\subsubsection{InputArtefact}
+			Beschreibt den die Eingangsdaten des Tasks. \newline
+			Diese Klasse erbt alle Attribute von der abstrakten Klasse Artefact (siehe oben).
+			
+%%%ENDE DER KLASSE INPUTARTEFACT
+%%% KLASSE OUTPUTARTEFACT 
+		\subsubsection{OutputArtefact}
+			Beschreibt das Endergebnis des Tasks. \newline
+			Diese Klasse erbt alle Attribute von der abstrakten Klasse Artefact (siehe oben).
+			
+%%% ENDE DER KLASSE OUTPUTARTEFACT
+
+
+%##########
+%# Client
+%##########
+
+\newpage
+
+	\section{Client Klassen}
+	
+		\subsection{services}
+		
+			\subsubsection{AuthService}
+			
+			Beschreibt den Authentifizierungsservice für Nutzer. Die Klasse ist zuständig für login und logout.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					auth & Observable<User> & Ein Observable mit dem zugehörigen Nutzer \\ \hline
+				\end{tabularx}
+			\end{center}
+			
+			Methoden:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+					\begin{tabularx}{\textwidth}{|l|l|p{35mm}|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+					constructor & - & HTTPClient & Konstruktor \\ \hline
+					logout & Promise<boolean> & - & Nutzer-logout \\ \hline
+					login & Promise<boolean> & email: string\newline password: string & Nutzer-login \\ \hline
+					\end{tabularx}
+			\end{center}
+			
+			
+			\subsubsection{WPSService}
+			
+			Beschreibt die Schnittstelle für den Zugriff auf WPS-Services.\newline
+			
+			Methoden:
+			\begin{center}
+			\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+					\begin{tabularx}{\textwidth}{|l|l|p{35mm}|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+					constructor & - & HTTPClient & Konstruktor\\ \hline
+					all & Observable<WPS[]> & - & Ein Observable mit allen WPS Services\\ \hline
+					get & Observable<WPS> & id: number & Gibt ein Observable mit dem WPS Service mit der übergebenen ID zurück \\ \hline
+					create & Observable<WPS> & process: Process & Erzeugt ein Observable mit einem WPS Service mit dem übergebenen Prozess \\ \hline
+					remove & Promise<boolean> & id: number & Entfernt den WPS Service mit der übergebenen ID \\ \hline
+					update & Observable<WPS> & id: number\newline Partial<WPS> & Aktualisiert den WPS Service mit der übergebenen ID mit dem zweiten übergebenen Parameter \\ \hline
+					\end{tabularx}
+			\end{center}
+			
+			\subsubsection{WorkflowService}
+			
+			Beschreibt die Schnittstelle für den Zugriff auf Workflows.\newline
+				
+			Methoden:
+			\begin{center}
+			\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+					\begin{tabularx}{\textwidth}{|l|l|p{35mm}|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+					constructor & - & HTTPClient & Konstruktor \\ \hline
+					all & Observable<Workflow[]> & - & Ein Observable mit allen Workflows\\ \hline
+					get & Observable<Workflow> & id: number & Gibt ein Observable mit dem Workflow mit der übergebenen ID zurück \\ \hline
+					create & Observable<Workflow> & workflow: Workflow & Erzeugt ein Observable mit dem übergebenen Workflow \\ \hline
+					remove & Promise<boolean> & id: number & Entfernt den Workflow mit der übergebenen ID \\ \hline
+					update & Observable<Workflow> & id: number\newline Partial<Workflow> & Aktualisiert das Observable mit dem Workflow mit der übergebenen ID mit dem zweiten übergebenen Parameter \\ \hline
+					validate & boolean & workflow: Workflow & Überprüft die Syntax des übergebenen Workflows und gibt zurück ob er korrekt ist oder nicht \\ \hline
+					start & void & id: number & Startet den Workflow mit der übergebenen ID \\ \hline
+					stop & void & id: number & Stoppt den Workflow mit der übergebenen ID \\ \hline
+					\end{tabularx}
+			\end{center}
+%%% !!!			
+\newpage
+			
+			\subsubsection{ProcessService}
+			
+			Beschreibt die Schnittstelle für den Zugriff auf Prozesse.\newline
+			
+			Attribute:
+			\begin{center}
+			\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+					\begin{tabularx}{\textwidth}{|l|l|p{30mm}|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+					constructor & - & HTTPClient & Konstruktor \\ \hline
+					all & Observable<Process[]> & - & Gibt ein Observable mit allen Prozessen zurück \\ \hline
+					get & Observable<Process> & id: number & Gibt ein Observable mit dem Prozess mit der übergebenen ID zurück \\ \hline
+					create & Observable<Process> & process: Process & Erzeugt ein Observable mit dem übergebenen Prozess \\ \hline
+					remove & Promise<boolean>  & id: number & Entfernt den Prozess mit der übergebenen ID \\ \hline
+					update & Observable<Process> & id: number\newline Partial<Process> & Aktualisiert das Observablemit dem Prozess mit der übergebenen ID mit dem zweiten übergebenen Parameter \\ \hline
+				\end{tabularx}
+			\end{center}
+   
+%%% !!!
+\newpage
+		\subsection{models}
+			
+			\subsubsection{Workflow (Interface)}
+			
+			Dieses Interface beschreibt die Struktur der Workflows.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					edges & WorkflowEdge[] & Die Verbindungen zwischen Tasks im Workflow \\ \hline
+					tasks & Task[] & Die Tasks im Workflow \\ \hline
+					creator_id & number & Die ID des Workflow-Erstellers \\ \hline
+					shared & boolean & Diese Variable speichert ob der Workflow öffentlich oder privat ist \\ \hline
+					name & string & Der Name des Workflows \\ \hline
+					id & number & Die ID des Workflows \\ \hline
+					created_at & number & Das Datum an dem der Workflow erstellt wurde \\ \hline
+					updated_at & number & Das Datum an dem der Workflow das letzte mal aktualisiert wurde \\ \hline
+				\end{tabularx}
+			\end{center}
+				
+			\subsubsection{Edge (Interface)}
+			
+			Dieses Interface beschreibt die Struktur der Kanten.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					 id & number & Die ID der Kante \\ \hline
+					 a & Task & Der Task am Anfang der Kante \\ \hline
+					 b & Task & Der Task am Ende der Kante \\ \hline
+					 input_id & number & Die ID des Input-Punktes mit dem die Kante verbunden ist \\ \hline
+					 output_id & number & Die ID des Output-Punktes mit dem die Kante verbunden ist \\ \hline
+				\end{tabularx}
+			\end{center}
+%%%!!!
+\newpage
+
+			\subsubsection{Task (Interface)}
+			
+			Dieses Interface beschreibt die Struktur der Tasks die im Workflow die Knoten darstellen.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					id & number & Die ID des Tasks \\ \hline
+					y & number & Die y-Koordinate des Tasks\\ \hline
+					x & number & Die x-Koordinate des Tasks \\ \hline
+					status & TaskState & Der Status des Tasks \\ \hline
+					input_artefacts & Artefact <'input'> & Die Input-Parameter des Tasks \\ \hline
+					process_id & number & Die ID des Prozesses der im Task ausgeführt wird \\ \hline
+					output_artefacts & Artefact <'output'> & Die Output-Parameter des Tasks \\ \hline
+					created_at & number & Das Datum an dem der Task erstellt wurde \\ \hline
+					updated_at & number & Das Datum an dem der Task das letzte mal aktualisiert wurde \\ \hline
+				\end{tabularx}
+			\end{center}
+				
+			\subsubsection{Artefact<T> (Interface)}
+			
+			Dieses Interface beschreibt die Input/Output Daten. Die Klasse hat den generischen Typ T als role Attribut. Der Typ kann entweder Input oder Output sein.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					parameter_id & number & Die ID des Input- oder Output-Knotens zu der die Artefact-Instanz gehört \\ \hline
+					task_id & number & Die ID des Tasks zu dem die Artefact-Instanz gehört \\ \hline
+					workflow_id & number & Die ID des Workflows zu dem die Artefact-Instanz gehört \\ \hline
+					role & T & Die role gibt an ob die Artefact-Instanz als Input oder als Output verwendet wird \\ \hline
+					format & string & Gibt das Format der Artefact-Instanz an \\ \hline
+					data & string & Übergibt die Daten die in der Artefact-Instanz verwendet werden \\ \hline
+					created_at & number & Das Datum an dem die Artefact-Instanz erstellt wurde \\ \hline
+					updated_at & number & Das Datum an dem die Artefact-Instanz das letzte mal aktualisiert wurde\\ \hline
+				\end{tabularx}
+			\end{center}
+			
+			\subsubsection{TaskState (Enum)}
+			
+			Beschreibt die möglichen Werte des Attributs status der Task Klasse.\newline
+			
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Beschreibung \\ \hline
+					READY & Der Task ist bereit ausgeführt zu werden \\ \hline
+					WAITING & In diesem Zustand wartet ein Task auf den Input eines noch nicht beendeten Tasks \\ \hline
+					RUNNING & Der Task ist momentan in bearbeitung \\ \hline
+					FINISHED & Der Task wurde erfolgreich ausgeführt \\ \hline
+					FAILED & Bei der Ausführung des Tasks ist ein Fehler aufgetreten \\ \hline
+					DEPRECATED & Der Task gehört zum Process, der von dem WPS-Server gelöscht wurde, und sollte deswegen aus dem Workflow rausgenommen bzw. ersetzt werden \\ \hline
+				\end{tabularx}
+			\end{center}
+				
+			\subsubsection{Process (Interface)}
+			
+			Dieses Interface beschreibt die Prozesse die jeweils in einem Task enthalten sind.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					id & number & Die ID des Prozesses \\ \hline
+					title & string & Der Titel des Prozesses \\ \hline
+					abstract & string & Eine kurze Beschreibung des Prozesses \\ \hline
+					identifier & string & Die ID des Prozesses die vom WPS-Server festgelegt wird \\ \hline
+					inputs & ProcessParameter<'input'>[] & Der Typ der Input-Parameter des Prozesses \\ \hline
+					outputs & ProcessParameter<'output'>[] & Der Typ der Output-Parameter des Prozesses \\ \hline
+					wps_id & number & Die ID des WPS-Servers der den Prozess bereit stellt \\ \hline
+					created_timestamp & number & Das Datum an dem der Prozess erstellt wurde \\ \hline
+					updated_timestamp & number & Das Datum an dem der Prozess das letzte mal aktualisiert wurde \\ \hline
+				\end{tabularx}
+			\end{center}
+				
+			\subsubsection{ProcessParameter<T> (Interface)}
+			
+			Dieses generische Interface mit Typ T beschreibt die jeweiligen Input/Output Parameter des Prozesses. Die Daten werden dabei in einem für WPS gültigen Format angegeben.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					id & number & Die ID des Prozessparameters \\ \hline
+					role & T & Die role gibt an, ob der Parameter des als Input oder als Output verwendet wird \\ \hline
+					parameter_type & ProcessParameterType & Gibt an von welchem Typ der Parameter ist \\ \hline
+					title & string & Der Titel des Prozessparameters \\ \hline
+					abstract & string & Eine kurze Beschreibung des Prozessparameters \\ \hline
+					min_occurs & number & Gibt an wie oft dieser Prozessparameter mindestens vorkommen muss \\ \hline
+					max_occurs & number & Gibt an wie oft dieser Prozessparameter maximal vorkommen darf \\ \hline
+				\end{tabularx}
+			\end{center}
+				
+			\subsubsection{ProcessParamenterType (Enum)}
+			
+			Diese Aufzählung beschreibt die möglichen Werte die die parameter_type Variable der ProcessParameter<T>-Klasse haben kann.\newline
+			
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Beschreibung \\ \hline
+					COMPLEX & Oft Rasterbilddateien oder Vektorgrafiken \\ \hline
+					LITERAL & Der Parameter besteht aus Zeichen \\ \hline
+					BOUNDING_BOX & Sind in OGC OWS Common definiert als zwei Koordinatenpaare \\ \hline
+				\end{tabularx}
+			\end{center}
+				
+			\subsubsection{WPS (Interface)}
+			
+			Dieses Interface beschreibt jeweils einen WPS-Server.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					id & number & Die ID des WPS-Servers \\ \hline
+					provider & WPSProvider & Der Betreiber des WPS-Servers \\ \hline
+					abstract & string & Eine kurze Beschreibung des WPS-Servers \\ \hline
+					title & string & Der Titel des WPS-Servers \\ \hline
+				\end{tabularx}
+			\end{center}
+				
+			\subsubsection{WPSProvider (Interface)}
+			
+			Dieses Interface beschreibt jeweils einen WPS-Anbieter zu einem WPS-Server. Es wird im WPS Interface als Attribut provider verwendet.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					id & number & Die ID des Anbieters des WPS-Servers  \\ \hline
+					name & string & Der Name Anbieters des WPS-Servers \\ \hline
+					url & string & Die URL zum Anbieter des WPS-Servers \\ \hline
+				\end{tabularx}
+			\end{center}
+				
+			\subsubsection{User (Interface)}
+			
+			Dieses Interface beschreibt den Aufbau einer Nutzer-Instanz.\newline
+			
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					id & number & Die ID des Nutzers \\ \hline
+					created\_at & number & Das Datum an dem die Nutzer-Instanz erstellt wurde \\ \hline
+					updated\_at & number & Das Datum an dem die Nutzer-Instanz das letzte mal aktualisiert wurde\\ \hline
+					last\_workflow\_id & number & Die ID des Workflows den der Nutzer zuletzt im Editor geladen hatte \\ \hline
+					email & string & Die E-Mail Adresse des Nutzers \\ \hline
+					last\_name & string & Der Nachname des Nutzers\\ \hline
+					first\_name & string & Der Vorname des Nutzers\\ \hline
+					username & string & Der Nutzername des Nutzers\\ \hline
+					group & UserGroup & Die UserGroup des Nutzers\\ \hline			
+				\end{tabularx}
+			\end{center}
+				
+			\subsubsection{UserGroup (Enum)}
+			
+			Diese Aufzählung beschreibt mögliche Werte für die Benutzergruppe einer Nutzer-Instanz.\newline
+			
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Beschreibung \\ \hline
+					REGULAR & Ein normaler Nutzer \\ \hline
+					ADMIN & Ein Nutzer mit Admin-Rechten \\ \hline
+				\end{tabularx}
+			\end{center}
+	
+		\subsection{components}
+		
+			\subsubsection{OnInit (Interface)}
+			
+			Dieses Interface wird von den Komponentenklassen implementiert und bietet eine Standardschnittstelle für die Initialisierung.\newline
+			
+			Methoden:
+			\begin{center}
+			\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+					\begin{tabularx}{\textwidth}{|l|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+					ngOnInit & void & - & Initialisierung der Komponente \\ \hline
+					\end{tabularx}
+			\end{center}
+		
+			\subsubsection{AppComponent}
+			
+			Beschreibt die Seite der Anwendung. Dafür wird immer geprüft ob der Nutzer, der auf die Komponente zugreift, auch eingeloggt ist.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						authService & AuthService & Der Authentifikationsservice über den der Nutzer auf die Anwendung zugreift \\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+						constructor & - & au :AuthService & Konstruktor \\ \hline
+						ngOnInit & void & - & Initialisierung der Komponente \\ \hline
+						\end{tabularx}
+				\end{center}
+
+%%% !!!
+\newpage
+
+			\subsubsection{EditorPageComponent}
+			
+			Beschreibt die Komponenten der Editor-Seite die nicht durch Workflow-Komponenten dargestellt werden.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					editorComponent  & EditorPageComponent & Referenz zur Editor-Komponente \\ \hline
+					processListComponent  & ProcessListComponent & Referenz zur ProcessList-Komponente \\ \hline
+					showProcessList  & boolean & Ob die Prozess Liste angezeigt wird \\ \hline
+					snapshots  & Workflow[] & Eine Liste geänderten Workflows für die UNDO Funktionalität \\ \hline
+					onStart  & EventEmitter<Workflow> & Emittet beim Klick auf den Startknopf \\ \hline
+					onStop  & EventEmitter<Workflow> & Emittet beim Klick auf den Stopknopf \\ \hline
+					onFinish  & EventEmitter<Workflow> & Emittet beim Fertigstellen der Ausführung \\ \hline
+					onUndo  & EventEmitter<[Workflow, Workflow]> & Emittet beim Klick auf den UNDO-Knopf \\ \hline
+				\end{tabularx}
+			\end{center}
+			
+			Methoden:
+			\begin{center}
+			\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+					\begin{tabularx}{\textwidth}{|l|l|p{38mm}|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+					constructor& - & ws: WorkflowService\newline ps: ProcessService & Konstruktor \\ \hline
+					ngOnInit & void & - & Initialisierung der Komponente \\ \hline
+					load & void & workflow: Workflow & Läd den übergebenen Workflow \\ \hline
+					save & void & - & Speichert den übergebenen Workflow \\ \hline
+					start & void & - & Startet den übergebenen Workflow \\ \hline
+					stop & void & - & Stoppt den übergebenen Workflow \\ \hline
+					undo & void & steps = 1 & Macht die angegebene Zahl an letzten Aktionen rückgängig \\ \hline
+					\end{tabularx}
+			\end{center}
+			
+			\subsubsection{WorkflowPageComponent}
+			
+			Beschreibt die Darstellung der Workflows-Seite in der der Nutzer seine Workflows betrachten kann.\newline
+			
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]					
+					Name & Datentyp & Beschreibung \\ \hline
+					workflows & Observable<Workflow[]> & Aktuelle Workflows \\ \hline
+					selected & number & Die Anzahl an aktuell markierten Elementen auf der Workflow-Seite \\ \hline
+				\end{tabularx}
+			\end{center}
+				
+			Methoden:
+			\begin{center}
+			\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+					\begin{tabularx}{\textwidth}{|l|l|p{38mm}|X|}
+					\hline
+					\rowcolor[gray]{0.75}[4.85pt]
+					Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+					constructor & - & ws: WorkflowService & Konstruktor \\ \hline
+					ngOnInit & void & - & Initialisierung der Komponente \\ \hline
+					rename & void & id: number\newline name: string & Ändert den Namen des Elements auf der Workflow-Seite mit der übergebenen ID in den übergebenen Namen \\ \hline
+					delete & void & id: number & Löscht das Workflow Element mit der übergebenen ID \\ \hline
+					run & void & id: number & Führt den Workflow mit der übergebenen ID aus \\ \hline
+					edit & void & id: number & Läd den Workflow mit der übergebenen ID im Workflow-Editor \\ \hline
+					select & void & id: number & Markiert den Element auf der Workflow-Seite mit der übergebenen ID \\ \hline
+					\end{tabularx}
+			\end{center}
+
+%%% !!!
+\newpage
+
+			\subsubsection{AdminSettingsPage}
+			
+			Beschreibt die Seite auf der der Admin seine Einstellungen ändern kann.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						wps & Observable<WPS[]> & Ein Observable mit den aktuellsten WPS Objekte \\ \hline
+						selected & number & Die Anzahl an aktuell markierten Elementen auf der Einstellungsseite \\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+						constructor & - & ws: WPSService & Konstruktor \\ \hline
+						ngOnInit & void & - & Initialisierung der Komponente \\ \hline
+						refreshAllWPS & void & - & Läd alle WPS-Server und deren Services neu \\ \hline
+						addWPS & void & id: number & Fügt den WPS-Server mit der übergebenen ID hinzu \\ \hline
+						removeWPS & void & id: number & Entfernt den WPS-Server mit der übergebenen ID \\ \hline
+						\end{tabularx}
+				\end{center}
+			
+			\subsubsection{EditorComponent}
+			
+			Beschreibt den Teil des Editors in dem der Workflow bearbeitet wird. EditorComponent kann auch eine Instanz von EditorPageComponent sein.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						workflow & Workflow & Der Workflow der im aktuellen Editor geladen ist \\ \hline
+						background & ElementRef & Der Hintergrund der aktuellen Editor-Seite \\ \hline
+						selectedProcessIndex & number & Der in der Liste ausgewählte Prozess \\ \hline
+					\end{tabularx}
+				\end{center}
+				\newpage
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|p{35mm}|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+						constructor & - & el: ElementRef & Konstruktor \\ \hline
+						ngOnInit & void & - & Initialisierung der Komponente \\ \hline
+						getEdgeSVG & string & edge: Edge & SVG String Darstellung der eines Edges  \\ \hline
+						dragOver & boolean & event: DragEvent & Realisiert, dass Prozesse per Drag hinzugefügt werden können \\ \hline
+						dragStart & boolean & index: number\newline event: MouseEvent & Start des Drag and Drops \\ \hline
+						dragMove & boolean & event: MouseEvent & Wird durchgehend während des Drag and Drops ausgeführt \\ \hline
+						dragEnd & boolean & event: MouseEvent & Ende des Drag and Drops \\ \hline
+						\end{tabularx}
+				\end{center}
+			
+			\subsubsection{ProcessComponent}
+			
+			Beschreibt jeweils einen Prozess der auf der Editor-Seite als Knoten eines Workflows platziert werden kann und in der ProcessListComponent angezeigt wird.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						process & Process & Der zu repräsentierende Prozess \\ \hline
+						draggable & boolean & Ob ein Prozess per Drag and Drop verschoben werden kann. \\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|p{40mm}|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+						constructor & - & - & Konstruktor \\ \hline
+						ngOnInit & void & - & Initialisierung der Komponente \\ \hline
+						getParameterColor & string & type:\newline ProcessParameterType & Gibt eine Hintergrundfarbe je nach Input/Output Types zurück \\ \hline
+						dragStart & boolean & event:DragEvent & Wird beim Starten des Drag and Drops ausgeführt \\ \hline
+						openDetailDialog & void & - & Öfften eine Detailansicht des Prozesses \\ \hline
+						\end{tabularx}
+				\end{center}
+			
+			\subsubsection{TaskComponent}
+			
+			Beschreibt jeweils einen Task der auf der Editor-Seite als Knoten eines Workflows platziert wurde.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						task & Task & der zu repräsentierende Task \\ \hline
+						onClickInput & EventEmitter<ProcessParameter<'input'> > & Emittet beim Klick auf ein Input  \\ \hline
+						onClickOutput & EventEmitter<ProcessParameter<'output'> > & Emittet beim Klick auf ein Output \\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|p{40mm}|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+						constructor & - & - & Konstruktor \\ \hline
+						ngOnInit & void & - & Initialisierung der Komponente \\ \hline
+						getParameterColor & string & type:\newline ProcessParameterType & Gibt eine Hintergrundfarbe je nach Input/Output Types zurück \\ \hline
+						getStatusColor & string & type: TaskState & Gibt die Hintergrundfarbe für ein gewissen Task Zustand \\ \hline
+						openDetailDialog & void & - & Öffnet ein Dialogfenster mit einen Detailansicht des Tasks \\ \hline
+						getInputPosition & [number, number] & id: number & Gibt die X, Y Position der Input Artefakts \\ \hline
+						getOutputPosition & [number, number] & id: number & Gibt die X, Y Position der Output Artefakts \\ \hline
+						clickInput & void & - & Wird beim Klick auf ein Output Artefakt ausgeführt wird \\ \hline
+						clickOutput & void & - & Wird beim Klick auf ein Input Artefakt ausgeführt wird \\ \hline
+						\end{tabularx}
+				\end{center}
+			
+			\subsubsection{ProcessListComponent}
+			
+			Beschreibt die Komponente im Editor die die Liste der Prozesse enthält.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						processes & Process[] & Liste aller Prozesse \\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline 
+						constructor & - & - & Konstruktor \\ \hline
+						ngOnInit & void & - & Initialisierung der Komponente \\ \hline
+						\end{tabularx}
+				\end{center}
+			
+			\subsubsection{ArtefactDialogComponent}
+			
+			Beschreibt den Teil des Editors in dem die Inputs/Outputs stehen.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						task & Task & Ausgewählter Task \\ \hline
+						role & string & Input oder Output Artefakt \\ \hline
+						id & number & ID des Artefakts \\ \hline
+						representation & ArtefactRepresentationStrategy & Die ArtefactRepresentationStrategy des Komponente \\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|p{35mm}|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+						constructor & - & role: string\newline id: number & Konstruktor \\ \hline
+						ngOnInit & void & - & Initialisierung der Komponente \\ \hline
+						\end{tabularx}
+				\end{center}
+			
+			\subsubsection{ArtefactRepresentationStrategy (Interface)}
+			
+			Beschreibt eine Schnittstelle zur implementierung der Darstellung verschiedener Elemente.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						format & string & Das zu erkennende Format für das Artefakt \\ \hline
+						role & string & Input oder Output Artefakt\\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+						represent & TemplateRef & - & Gibt eine Repräsentation des Artefaktes zurück \\ \hline
+						\end{tabularx}
+				\end{center}
+			
+			\subsubsection{ErrorRepresentation}
+			
+			Beschreibt die Darstellung von Fehlern.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						format & string & Das zu erkennende format der Repräsentation \\ \hline
+						role & string & Input oder Output \\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+						represent & TemplateRef & - & Gibt ein Template für die Fehler-Repräsentation zurück \\ \hline
+						\end{tabularx}
+				\end{center}
+			
+			\subsubsection{JSONRepresentation}
+			
+			Beschreibt die Darstellung von Daten im JSON-Format.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						format & string & Das zu erkennende Format für das Artefakt \\ \hline
+						role & string & Input oder Output Artefakt \\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+						represent & TemplateRef & - & Gibt ein Template für die JSON-Repräsentation zurück \\ \hline
+						\end{tabularx}
+				\end{center}
+			
+			\subsubsection{XMLRepresentation}
+			
+			Beschreibt die Darstellung von Daten im XML-Format.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						format & string & Das zu erkennende Format für das Artefakt \\ \hline
+						role & string & Input oder Output Artefakt \\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+						represent & TemplateRef & - & Gibt ein Template für die XML-Repräsentation zurück \\ \hline
+						\end{tabularx}
+				\end{center}
+			
+			\subsubsection{ImageRepresentation}
+			
+			Beschreibt die Darstellung von Daten im Bild-Format.\newline
+			
+				Attribute:
+				\begin{center}
+					\renewcommand{\arraystretch}{1.5}
+					\setlength\tabcolsep{5pt}
+					\begin{tabularx}{\textwidth}{|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]					
+						Name & Datentyp & Beschreibung \\ \hline
+						format & string & Das zu erkennende Format für das Artefakt \\ \hline
+						role & string & Input oder Output Artefakt \\ \hline
+					\end{tabularx}
+				\end{center}
+				
+				Methoden:
+				\begin{center}
+				\setlength\tabcolsep{5pt}
+					\renewcommand{\arraystretch}{1.5}
+						\begin{tabularx}{\textwidth}{|l|l|l|X|}
+						\hline
+						\rowcolor[gray]{0.75}[4.85pt]
+						Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+						represent & TemplateRef & - & Gibt ein Template für die Bild-Repräsentation zurück \\ \hline
+						\end{tabularx}
+				\end{center}

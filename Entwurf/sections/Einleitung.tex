@@ -1,0 +1,21 @@
+\chapter{Einleitung}
+
+    Dieses Entwurfsdokument dient der Beschreibung der Architektur unserer Webanwendung WPSflow.
+    Neben den Paket-, Klassen- und Methodenbeschreibungen enthält das vorliegende Dokument verschiedene Arten von \Gls{UML} Diagrammen die einzelne Abläufe wie das Bearbeiten eines Workflows oder die Kommunikation zwischen der Anwendung und den \gls{WPS}-Servern anschaulich darstellen. \newline
+    Das Komponentendiagramm zeigt die Struktur des modellierten Systems und die Schnittstellen der Komponenten. \newline
+    Das Entity Relationship (ER) Diagramm zeigt, wie die Daten in einer relationalen Datenbank verwaltet werden.\newline
+    Die Sequenzdiagramme zeigen den zeitlichen Ablauf typischer Vorgänge.\newline 
+    Im Anhang finden Sie ein großformatiges Klassendiagramm, wobei die Klassen der Übersichtlichkeit halber farblich markiert sind.
+    \newline
+    \section{Entwurfsziele}
+    In der Entwurfsphase wurde auf die folgende Aspekte besonders viel Wert gelegt:
+        \begin{itemize}
+            \item Erweitbarkeit \newline
+                Das WPSflow Worfklow-System soll zum Zwecke einer zukünftigen Weiterentwicklung erweiterbar sein
+            \item Veränderbarkeit \newline
+                Es soll möglich sein einzelne Module des Workflow Systems einfach zu verändern 
+            \item Nutzerfreundlichkeit \newline
+                Die grafische Benutzeroberfläche (im folgenden GUI genannt) soll möglichst intuituv sein. Bei auftretenden Fehlern oder ungültigen Eingaben soll dem Benutzer ein entsprechender Hinweis angezeigt und die Möglichkeit einer erneuten Eingabe angeboten werden.
+        \end{itemize}
+    
+        

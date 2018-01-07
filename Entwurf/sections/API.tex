@@ -1,0 +1,71 @@
+\chapter{URLs}
+    \section{REST API}
+    Der Server bietet eine \gls{REST} API für die Kommunikation zwischen Client und Server an. 
+    Bei REST Anfragen werden dem Client die Daten als JSON geschickt und umgekehrt schickt der Client dem Server JSON Repräsentationen von der speichernden Daten. 
+    
+    \begin{center}
+	    \setlength\tabcolsep{5pt}
+    	\renewcommand{\arraystretch}{1.5}
+        	\begin{tabularx}{\textwidth}{|l|l|l|X|}
+        	\hline
+        	\rowcolor[gray]{0.75}[4.85pt]
+    		Method & URL & Handler & Beschreibung \\ \hline 
+            GET & /user & UserView.index & Rückgabe des eingeloggten Benutzers \\ \hline
+            \hline 
+            GET & /workflow & WorkflowView.index & Rückgabe aller Workflows eines Benutzers \\ \hline
+            POST & /workflow & WorkflowView.create & Erstellen eines neuen Workflows  \\ \hline
+            GET & /workflow/:id & WorkflowView.get & Rückgabe eines einzelnen Workflows \\ \hline
+            PATCH & /workflow/:id & WorkflowView.update & Bearbeiten eines Workflows \\ \hline
+            DELETE & /workflow/:id & WorkflowView.delete & Löschen eines Workflows \\ \hline
+            \hline 
+            GET & /process & ProcessView.index & Rückgabe aller Prozesse \\ \hline
+            POST & /process & ProcessView.create & Erstellen eines neuen Prozesses \\ \hline
+            GET & /process/:id & ProcessView.get & Rückgabe eines einzelnen Prozesses \\ \hline
+            PATCH & /process/:id & ProcessView.update & Bearbeiten eines Prozesses \\ \hline
+            DELETE & /process/:id & ProcessView.delete & Löschen eines Prozesses \\ \hline
+            \hline 
+            GET & /wps & WPSView.index & Rückgabe aller WPS Services \\ \hline
+            POST & /wps & WPSView.create & Erstellen eines neuen WPS Services \\ \hline
+            GET & /wps/:id & WPSView.get & Rückgabe eines einzelnen WPS Services \\ \hline
+            PATCH & /wps/:id & WPSView.update & Bearbeiten eines WPS Services \\ \hline
+            DELETE & /wps/:id & WPSView.delete & Löschen eines WPS Services \\ \hline
+        	\end{tabularx}
+	\end{center}
+
+%%% !!!
+\newpage
+
+	\section{URL Commands}
+	Neben der REST API kann der Server auch bestimmte Commands ausführen. Diese Commands werden ausschließlich per GET Anfragen an
+	den Server geschickt und verarbeitet.
+	
+	\begin{center}
+	    \setlength\tabcolsep{5pt}
+    	\renewcommand{\arraystretch}{1.5}
+        	\begin{tabularx}{\textwidth}{|l|l|l|X|}
+        	\hline
+        	\rowcolor[gray]{0.75}[4.85pt]
+    		Method & URL & Handler & Beschreibung \\ \hline 
+            GET & /workflow_start/:id & WorkflowView.start & Starten eines Worflows \\ \hline
+            GET & /workflow_stop/:id & WorkflowView.stop & Stoppen eines Worflows \\ \hline
+            GET & /wps_refresh & WPSView.refresh & Aktualisieren der gespeicherten WPS Service Daten \\ \hline
+        	\end{tabularx}
+	\end{center}
+	
+	\section{URLs mit HTML Response}
+	Da das Routing vom Client übernommen wird muss der Server bloß sicherstellen, dass die URLs zu den einzelnen Seiten existieren
+	und die index.html liefern.
+	
+	\begin{center}
+	    \setlength\tabcolsep{5pt}
+    	\renewcommand{\arraystretch}{1.5}
+        	\begin{tabularx}{\textwidth}{|l|l|X|}
+        	\hline
+        	\rowcolor[gray]{0.75}[4.85pt]
+    		Method & URL & Handler \\ \hline 
+            GET & / & EditorView.index \\ \hline
+            GET & /editor & EditorView.index \\ \hline
+            GET & /workflows & Workflows.index \\ \hline
+            GET & /settings & Settings.index \\ \hline
+        	\end{tabularx}
+	\end{center}
