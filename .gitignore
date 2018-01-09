@@ -13,7 +13,7 @@ bin/
 .pydevproject
 
 # Database
-#*.sqlite3
+*.sqlite3
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
