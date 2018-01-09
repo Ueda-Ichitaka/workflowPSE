@@ -1,0 +1,19 @@
+<div class="toolbar mat-elevation-z2" fxLayout="row" fxLayoutAlign="space-between">
+  <button mat-icon-button (click)="toggleProcessList()">
+    <mat-icon aria-label="Menu">{{ showProcessList ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}}</mat-icon>
+  </button>
+  <div>
+    <span class="title">My Geo Workflow</span>
+  </div>
+  <div>
+    <button mat-button>UNDO</button>
+    <button mat-raised-button color="primary">SAVE</button>
+  </div>
+</div>
+
+<app-editor class="editor"></app-editor>
+<app-process-list *ngIf="showProcessList" class="process-list"></app-process-list>
+
+<button mat-fab color="primary" class="run" disabled>
+  <mat-icon aria-label="Run">play_arrow</mat-icon>
+</button>

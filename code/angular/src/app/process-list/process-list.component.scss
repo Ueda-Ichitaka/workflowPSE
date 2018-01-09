@@ -1,0 +1,13 @@
+$app-process-list-padding: 5px;
+
+.card {
+    padding: $app-process-list-padding;
+    background: #fafafa;
+    height: calc(100% - #{$app-process-list-padding * 2});
+    overflow: hidden;
+}
+
+.list {
+    overflow-y: scroll;
+    height: 100%;
+}
