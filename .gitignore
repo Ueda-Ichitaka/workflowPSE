@@ -4,6 +4,7 @@
 .classpath
 .settings
 bin/
+.idea
 .recommenders/
 
 # PyDev
@@ -113,3 +114,5 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+
