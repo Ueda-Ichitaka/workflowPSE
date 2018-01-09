@@ -1,3 +1,4 @@
-# workflowPSE
+# WPS*flow*
 
-Worflow-System für Geodaten Code Repo
+## Motivation
+Die Motivation des Projektes WPSflow beruht auf der Virtuellen Forschungs umgebung für die Wasser- und Terrestrische Umweltforschung (V-For-Wa-Ter, bzw. http://vforwater.de/) welche eine generische, virtuelle Forschungsumgebung für den gemeinsamen,systemischen Umgang mit Daten aus der Wasser- und Umweltforschung im Rahmendes Netzwerks Wasserforschung Baden-Württemberg ist. Mit WPSflow wird hierfür ein Webportal entwickelt, welches den Nutzern erlaubtWorkflowszu erstellen, zu bearbeiten oder zu löschen. Sie können diesen Workflows auch Parameterübergeben, sie ausführen und den Ausführungsstatus in einer eigenen Übersichtsanzeigeüberwachen. Danach können Ergebnisse als Diagramm dargestellt werden.Da wir, dasWPSflow-Team, eine intuitive Bedienbarkeit und damit auch eine hoheNutzerfreundlichkeit anstreben hoffen wir auf eine große Zielgruppe und legen daherauch viel Wert auf Stabilität um Benutzung der Anwendung für den Nutzer möglichstreibungslos zu gestalten.
