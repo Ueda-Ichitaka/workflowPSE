@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { Process } from 'app/models/Process';
-import { ProcessParameterType } from 'app/models/ProcessParameter';
+import { Process } from '../models/Process';
+import { ProcessParameterType } from '../models/ProcessParameter';
 import { catchError, map, tap, switchMap } from 'rxjs/operators';
 
 @Injectable()

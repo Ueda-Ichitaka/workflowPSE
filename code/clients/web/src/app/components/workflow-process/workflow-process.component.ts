@@ -1,9 +1,9 @@
 import { Component, OnInit, HostBinding, Input, ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ProcessDetailDialogComponent } from 'app/process-detail-dialog/process-detail-dialog.component';
 import { ProcessParameterType } from 'app/models/ProcessParameter';
 import { HostListener } from '@angular/core/src/metadata/directives';
 import { ViewChild } from '@angular/core';
+import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
 
 @Component({
   selector: 'app-workflow-process',

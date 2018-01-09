@@ -1,24 +1,23 @@
 import {
   MatIconModule, MatInputModule, MatButtonModule, MatCheckboxModule, MatToolbarModule, MatTabsModule,
-  MatFormFieldModule, MatCardModule, MatListModule, MatTooltipModule, MatChipsModule, MatDialogModule
+  MatFormFieldModule, MatCardModule, MatListModule, MatTooltipModule, MatChipsModule, MatDialogModule, MatExpansionModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgModule } from '@angular/core';
-
-
-import { AppComponent } from './app.component';
-import { EditorPageComponent } from './editor-page/editor-page.component';
-import { WorkflowsPageComponent } from './workflows-page/workflows-page.component';
-import { ProcessListComponent } from './process-list/process-list.component';
-import { ProcessComponent } from './process/process.component';
-import { ProcessDetailDialogComponent } from './process-detail-dialog/process-detail-dialog.component';
+import { EditorPageComponent } from 'app/pages/editor-page/editor-page.component';
+import { WorkflowsPageComponent } from 'app/pages/workflows-page/workflows-page.component';
+import { AppComponent } from 'app/components/app/app.component';
+import { ProcessListComponent } from 'app/components/process-list/process-list.component';
+import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
+import { WorkflowProcessComponent } from 'app/components/workflow-process/workflow-process.component';
+import { EditorComponent } from 'app/components/editor/editor.component';
+import { ProcessComponent } from 'app/components/process/process.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ProcessService } from 'app/services/process.service';
-import { EditorComponent } from './editor/editor.component';
-import { WorkflowProcessComponent } from './workflow-process/workflow-process.component';
+
 
 
 const routes = [
@@ -56,6 +55,7 @@ const routes = [
     MatTooltipModule,
     MatChipsModule,
     MatDialogModule,
+    MatExpansionModule
   ],
   entryComponents: [
     ProcessDetailDialogComponent

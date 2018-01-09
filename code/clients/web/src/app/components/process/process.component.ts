@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, HostListener, HostBinding, ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ProcessDetailDialogComponent } from 'app/process-detail-dialog/process-detail-dialog.component';
 import { ProcessParameterType } from 'app/models/ProcessParameter';
+import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
 
 
 @Component({
