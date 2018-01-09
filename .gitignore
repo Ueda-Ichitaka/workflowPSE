@@ -13,7 +13,7 @@ bin/
 .pydevproject
 
 # Database
-*.sqlite3
+#*.sqlite3
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -70,6 +70,7 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
+migrations/
 
 # Flask stuff:
 instance/
