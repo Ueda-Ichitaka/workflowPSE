@@ -38,6 +38,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
+
+    'django_cron',      #Cron
+    'django_crontab',   #Crontab
+]
+
+#For django_crontab
+CRONJOBS = [
+    ('*/1 * * * *', 'base.cron.first_crontab_task')
+]
+
+
+#For django cron
+CRON_CLASSES = [
+    'base.cron.FirstCronTask',
 ]
 
 MIDDLEWARE = [
