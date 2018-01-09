@@ -7,4 +7,7 @@ export interface Process {
     identifier: string;
     inputs: ProcessParameter<'input'>[];
     outputs: ProcessParameter<'output'>[];
+    wps_id: number;
+    created_at: number;
+    updated_at: number;
 }
