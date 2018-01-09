@@ -7,7 +7,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WorkflowsPageComponent implements OnInit {
 
-  constructor() { }
+  workflows = [];
+
+  constructor() {
+    for (let i = 0; i < 20; i++) {
+      this.workflows.push({
+        id: i,
+        title: 'Workflow' + i
+      });
+    }
+  }
 
   ngOnInit() {
   }

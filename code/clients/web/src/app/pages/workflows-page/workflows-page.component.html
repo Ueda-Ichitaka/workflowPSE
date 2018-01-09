@@ -1,28 +1,21 @@
-<div class="container">
+<div class="container workflows-list">
+    <h1>My Workflows</h1>
     <mat-accordion>
-        <mat-expansion-panel>
-
+        <mat-expansion-panel *ngFor="let workflow of workflows">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    Personal data
+                    {{ workflow.title }}
                 </mat-panel-title>
-                <mat-panel-description>
-                    Type your name and age
-                </mat-panel-description>
             </mat-expansion-panel-header>
-
-        </mat-expansion-panel>
-
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    Self aware panel
-                </mat-panel-title>
-                <mat-panel-description>
-                    Currently I am {{panelOpenState ? 'open' : 'closed'}}
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <p>I'm visible because I am open</p>
+            <div class="actions">
+                <div class="actions-left">
+                    <button mat-button color="warn">DELETE</button>
+                </div>
+                <div class="actions-right">
+                    <button mat-raised-button>EDIT</button>
+                    <button mat-raised-button color="primary">RUN</button>
+                </div>
+            </div>
         </mat-expansion-panel>
     </mat-accordion>
 </div>
