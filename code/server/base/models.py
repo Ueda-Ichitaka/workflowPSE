@@ -55,6 +55,10 @@ class Process(models.Model):
     identifier = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
     abstract = models.TextField('Descriptive text', default='Add your super descriptive text here...')
+
+    class Meta:
+        verbose_name = "Process"
+        verbose_name_plural = "Processes"
         
 
 class Task(models.Model):    
