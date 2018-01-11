@@ -1,7 +1,7 @@
 import os
 import random
 
-from django_cron import Schedule, CronJobBase
+#from django_cron import Schedule, CronJobBase
 
 
 """
@@ -20,7 +20,7 @@ Django cron. Das geht bei mir immer noch nicht :(
 Wenn ich richtig verstanden habe, dann muss man den Manage Befehl (also python3 manage.py runcrons) selbst in Cron eintragen.
 """
 
-
+"""
 class FirstCronTask(CronJobBase):
     RUN_EVERY_MINS = 1
 
@@ -31,3 +31,4 @@ class FirstCronTask(CronJobBase):
         #os.mkdir('/home/paradigmen/C/' + str(random.randrange(1, 100)) + '/')
         #Testzeile
         pass
+"""

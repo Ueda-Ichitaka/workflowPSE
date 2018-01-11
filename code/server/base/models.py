@@ -32,13 +32,21 @@ class Workflow(models.Model):
     updated_at = models.DateTimeField(auto_now=False, auto_now_add=False)
     creator = models.ForeignKey(User, editable=False, related_name='creator_user', on_delete=models.CASCADE)
     last_modifier = models.ForeignKey(User, editable=True, null=True, blank=True, on_delete=models.SET_NULL)
-    
+
+    class Meta:
+        verbose_name = "Workflow"
+        verbose_name_plural = "Workflows"
+
 
 class WPSProvider(models.Model):
     provider_name = models.CharField(max_length=200)
     provider_site = models.URLField(max_length=1000)
     individual_name = models.CharField(max_length=200)
     position_name = models.CharField(max_length=200)
+
+    class Meta:
+        verbose_name = "WPSProvider"
+        verbose_name_plural = "WPSProviders"
 
 
 class WPS(models.Model):
@@ -48,7 +56,11 @@ class WPS(models.Model):
     capabilities_url = models.URLField(max_length=1000)
     describe_url = models.URLField(max_length=1000)
     execute_url = models.URLField(max_length=1000)    
-    
+
+    class Meta:
+        verbose_name = "WPS"
+        verbose_name_plural = "WPS"
+
     
 class Process(models.Model):
     wps = models.ForeignKey(WPS, on_delete=models.CASCADE)
@@ -72,10 +84,18 @@ class Task(models.Model):
     status_url = models.URLField(max_length=1000)
     started_at = models.DateTimeField(auto_now=False, auto_now_add=False)
 
+    class Meta:
+        verbose_name = "Task"
+        verbose_name_plural = "Tasks"
+
 
 class Session(models.Model):
     user = models.ForeignKey(User, editable= False, on_delete=models.CASCADE)
     last_workflow = models.ForeignKey(Workflow, null=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        verbose_name = "Session"
+        verbose_name_plural = "Sessions"
 
 
 class InputOutput(models.Model):
@@ -88,6 +108,10 @@ class InputOutput(models.Model):
     min_occurs = models.IntegerField()
     max_occurs = models.IntegerField()
 
+    class Meta:
+        verbose_name = "InputOutput"
+        verbose_name_plural = "InputOutputs"
+
 
 class Edge(models.Model):
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
@@ -95,7 +119,11 @@ class Edge(models.Model):
     to_task = models.ForeignKey(Task, on_delete=models.CASCADE)  #rename to in_task?
     input = models.ForeignKey(InputOutput, related_name='input', null=True, on_delete=models.SET_NULL)
     output =models.ForeignKey(InputOutput, null=True, on_delete=models.SET_NULL)
-    
+
+    class Meta:
+        verbose_name = "Edge"
+        verbose_name_plural = "Edges"
+
     
 class Artefact(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
@@ -105,3 +133,7 @@ class Artefact(models.Model):
     data = models.CharField(max_length=500)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=False)
     updated_at = models.DateTimeField(auto_now=False, auto_now_add=False)
+
+    class Meta:
+        verbose_name = "Artefact"
+        verbose_name_plural = "Atrefacts"
