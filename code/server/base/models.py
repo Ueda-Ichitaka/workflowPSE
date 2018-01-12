@@ -48,6 +48,9 @@ class WPSProvider(models.Model):
         verbose_name = "WPSProvider"
         verbose_name_plural = "WPSProviders"
 
+    def __str__(self):
+        return self.provider_name
+
 
 class WPS(models.Model):
     service_provider = models.ForeignKey(WPSProvider, on_delete=models.CASCADE)
@@ -61,7 +64,10 @@ class WPS(models.Model):
         verbose_name = "WPS"
         verbose_name_plural = "WPS"
 
-    
+    def __str__(self):
+        return self.title
+
+
 class Process(models.Model):
     wps = models.ForeignKey(WPS, on_delete=models.CASCADE)
     identifier = models.CharField(max_length=200)
@@ -71,7 +77,10 @@ class Process(models.Model):
     class Meta:
         verbose_name = "Process"
         verbose_name_plural = "Processes"
-        
+
+    def __str__(self):
+        return "%s from Server '%s'" % (self.title, self.wps.title)
+
 
 class Task(models.Model):    
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
@@ -111,6 +120,10 @@ class InputOutput(models.Model):
     class Meta:
         verbose_name = "InputOutput"
         verbose_name_plural = "InputOutputs"
+
+    def __str__(self):
+        inputOrOutput = 'Input' if self.role == '0' else 'Output'
+        return inputOrOutput + " of Process '" + self.process.title + "'"
 
 
 class Edge(models.Model):
