@@ -30,12 +30,17 @@ class Workflow(models.Model):
     percent_done = models.DecimalField(max_digits=3, decimal_places=0)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=False)
     updated_at = models.DateTimeField(auto_now=False, auto_now_add=False)
-    creator = models.ForeignKey(User, editable=False, related_name='creator_user', on_delete=models.CASCADE)
+    creator = models.ForeignKey(User, editable=True, related_name='creator_user', on_delete=models.CASCADE)
+    #Hab absichtlich editable auf true gesetzt, weil sonst taucht ein Fehler auf. Django kann nicht den creator id finden...
+
     last_modifier = models.ForeignKey(User, editable=True, null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = "Workflow"
         verbose_name_plural = "Workflows"
+
+    def __str__(self):
+        return self.name
 
 
 class WPSProvider(models.Model):
@@ -96,6 +101,9 @@ class Task(models.Model):
     class Meta:
         verbose_name = "Task"
         verbose_name_plural = "Tasks"
+
+    def __str__(self):
+        return "%s from Workflow '%s'" % (self.title, self.workflow.name)
 
 
 class Session(models.Model):
