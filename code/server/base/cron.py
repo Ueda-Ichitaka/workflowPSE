@@ -15,6 +15,73 @@ def first_crontab_task():
     pass
 
 
+def scheduler():
+    # Scheduler main function
+    pass
+
+
+def receiver():
+    # Receiver main function
+    pass
+
+
+def utils():
+    # Main fuction for combined utility functions
+    pass
+
+
+def xmlGenerator():
+    #generates xml from input data
+    pass
+
+
+def xmlParser():
+    #parses input xml
+    #checks data for changes
+    #writes changes to db
+    pass
+
+
+def readyCollector():
+    #gets a list of all workflows ready to execute from db
+    #returns list
+    pass
+
+
+def readyDataCollector():
+    #gets all data for xml generation from ready workflow from ready list
+    pass
+
+
+def workflowSender():
+    #sends generated xml to pywps server for execution
+    pass
+
+
+def listExistingFiles():
+    #part of datenhaltung
+    #generates a list of all uploaded files, their upload date, last edit, editor, etc
+    pass
+
+
+def deleteOldFiles():
+    #part of datenhaltung
+    #deletes files with last edit date > limit or other defined rule
+    pass
+
+
+def checkDB():
+    #checks database for correct data/data corruption
+    pass
+
+
+def checkFiles():
+    #checks uploaded files for corruption
+    pass
+
+
+
+
 """
 Django cron. Das geht bei mir immer noch nicht :(
 Wenn ich richtig verstanden habe, dann muss man den Manage Befehl (also python3 manage.py runcrons) selbst in Cron eintragen.
