@@ -146,7 +146,7 @@ class Edge(models.Model):
         verbose_name_plural = "Edges"
 
     def __str__(self):
-        return self.from_task.title + " to " + self.to_task.title + "(" + self.workflow.name + ")"
+        return self.from_task.title + " to " + self.to_task.title + " (" + self.workflow.name + ")"
 
     
 class Artefact(models.Model):
