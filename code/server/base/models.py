@@ -130,8 +130,8 @@ class InputOutput(models.Model):
         verbose_name_plural = "InputOutputs"
 
     def __str__(self):
-        inputOrOutput = 'Input' if self.role == '0' else 'Output'
-        return inputOrOutput + " of Process '" + self.process.title + "'"
+        input_or_output = 'Input' if self.role == '0' else 'Output'
+        return input_or_output + " of Process '" + self.process.title + "'"
 
 
 class Edge(models.Model):
@@ -144,6 +144,9 @@ class Edge(models.Model):
     class Meta:
         verbose_name = "Edge"
         verbose_name_plural = "Edges"
+
+    def __str__(self):
+        return self.from_task.title + " to " + self.to_task.title + "(" + self.workflow.name + ")"
 
     
 class Artefact(models.Model):
