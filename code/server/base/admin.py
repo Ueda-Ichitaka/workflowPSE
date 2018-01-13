@@ -3,8 +3,17 @@ from base.models import *
 
 
 # Register your models here.
+class TaskInline(admin.StackedInline):
+    model = Task
+    extra = 0
+
+    #For TabularInline
+    #fields = ['title', 'process', 'status', 'status_url']
+
+
 class WorkflowAdmin(admin.ModelAdmin):
     list_display = ['name', 'percent_done', 'creator']
+    inlines = [TaskInline]
 
     class Meta:
         model = Workflow
