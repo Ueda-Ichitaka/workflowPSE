@@ -11,55 +11,12 @@ import { ProcessParameterType } from 'app/models/ProcessParameter';
 })
 export class ProcessListComponent implements OnInit {
 
-  public processes: Process[];
+  public processes: Observable<Process[]>;
 
   constructor(private processService: ProcessService) { }
 
-  private createMock() {
-    for (let x = 0; x < 30; x++) {
-
-      const inputs = [];
-      const outputs = [];
-
-      for (let i = 0; i <= Math.round(Math.random() * 3); i++) {
-        inputs.push({
-          id: i,
-          role: 'input',
-          type: Math.round(Math.random() * 2),
-          title: 'input' + i,
-          abstract: 'This is input' + i,
-          min_occurs: 1,
-          max_occurs: 1,
-        });
-      }
-
-      for (let i = 0; i <= Math.random() * 3; i++) {
-        outputs.push({
-          id: i,
-          role: 'output',
-          type: Math.round(Math.random() * 2),
-          title: 'output' + i,
-          abstract: 'This is output' + i,
-          min_occurs: 1,
-          max_occurs: 1,
-        });
-      }
-
-
-
-      this.processService.create({
-        id: x,
-        title: 'Process' + x,
-        abstract: 'This describes process' + x,
-        identifier: 'process.' + x,
-        inputs,
-        outputs
-      });
-    }
-  }
-
   async ngOnInit() {
-    this.processes = await this.processService.all();
+    this.processes = this.processService.all();
   }
 
 }

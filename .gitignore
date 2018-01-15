@@ -7,6 +7,7 @@
 .classpath
 .settings
 bin/
+.idea
 .recommenders/
 
 # PyDev

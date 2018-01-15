@@ -6,7 +6,6 @@ from base.models import *
 class TaskInline(admin.StackedInline):
     model = Task
     extra = 0
-
     #For TabularInline
     #fields = ['title', 'process', 'status', 'status_url']
 
