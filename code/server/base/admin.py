@@ -1,12 +1,43 @@
 from django.contrib import admin
-from base.models import Session, Workflow, Task, Edge, Process, Artefact, WPS, WPSProvider, InputOutput
+from base.models import *
+
 
 # Register your models here.
+class TaskInline(admin.StackedInline):
+    model = Task
+    extra = 0
 
+    #For TabularInline
+    #fields = ['title', 'process', 'status', 'status_url']
+
+
+class WorkflowAdmin(admin.ModelAdmin):
+    list_display = ['name', 'percent_done', 'creator']
+    inlines = [TaskInline]
+
+    class Meta:
+        model = Workflow
+
+
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ['title', 'workflow', 'status', 'status_url']
+    list_filter = ['workflow']
+
+    class Meta:
+        model = Task
+
+
+class EdgeAdmin(admin.ModelAdmin):
+    list_filter = ['workflow']
+
+    class Meta:
+        model = Edge
+
+
+admin.site.register(Workflow, WorkflowAdmin)
+admin.site.register(Task, TaskAdmin)
+admin.site.register(Edge, EdgeAdmin)
 admin.site.register(Session)
-admin.site.register(Workflow)
-admin.site.register(Task)
-admin.site.register(Edge)
 admin.site.register(Process)
 admin.site.register(Artefact)
 admin.site.register(WPS)
