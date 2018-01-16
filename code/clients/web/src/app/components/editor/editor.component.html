@@ -3,6 +3,6 @@
         <svg:path *ngFor="let edge of edgePaths" [attr.d]="svgPath(edge)" stroke="#888888" stroke-width="2" fill="none" />
     </svg>
 
-    <app-workflow-process *ngFor="let d of drawnProcesses; let i = index" class="process" [style.left.px]="d.x" [style.top.px]="d.y"
-        [process]="d.process" (mousedown)="dragStart(i, $event)"></app-workflow-process>
+    <app-task *ngFor="let d of drawnProcesses; let i = index" class="process" [style.left.px]="d.x" [style.top.px]="d.y" [process]="d.process"
+        (mousedown)="dragStart(i, $event)"></app-task>
 </div>

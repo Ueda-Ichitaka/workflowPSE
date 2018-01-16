@@ -12,7 +12,7 @@ import { WorkflowsPageComponent } from 'app/pages/workflows-page/workflows-page.
 import { AppComponent } from 'app/components/app/app.component';
 import { ProcessListComponent } from 'app/components/process-list/process-list.component';
 import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
-import { WorkflowProcessComponent } from 'app/components/workflow-process/workflow-process.component';
+import { TaskComponent } from 'app/components/task/task.component';
 import { EditorComponent } from 'app/components/editor/editor.component';
 import { ProcessComponent } from 'app/components/process/process.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -35,7 +35,7 @@ const routes = [
     ProcessComponent,
     ProcessDetailDialogComponent,
     EditorComponent,
-    WorkflowProcessComponent
+    TaskComponent
   ],
   imports: [
     BrowserModule,

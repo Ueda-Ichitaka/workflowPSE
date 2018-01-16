@@ -1,6 +1,7 @@
-import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef, Input } from '@angular/core';
 import { Process } from 'app/models/Process';
 import { ViewChild } from '@angular/core';
+import { Workflow } from 'app/models/Workflow';
 
 @Component({
   selector: 'app-editor',
@@ -8,8 +9,6 @@ import { ViewChild } from '@angular/core';
   styleUrls: ['./editor.component.scss']
 })
 export class EditorComponent implements OnInit {
-
-
 
   public drawnProcesses: {
     process: Process,
@@ -37,6 +36,9 @@ export class EditorComponent implements OnInit {
   private movingOffX: number;
   private movingOffY: number;
 
+  @Input()
+  public workflow: Workflow;
+
   @ViewChild('background')
   public background: ElementRef;
 
@@ -45,6 +47,19 @@ export class EditorComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Create initial workflow if no workflow is provided
+    if (!this.workflow) {
+      this.workflow = {
+        id: -1,
+        title: 'my Workflow',
+        edges: [],
+        tasks: [],
+        creator_id: -1,
+        shared: false,
+        created_at: -1,
+        updated_at: -1
+      };
+    }
   }
 
   public svgPath(e) {

@@ -6,11 +6,11 @@ import { ViewChild } from '@angular/core';
 import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
 
 @Component({
-  selector: 'app-workflow-process',
-  templateUrl: './workflow-process.component.html',
-  styleUrls: ['./workflow-process.component.scss']
+  selector: 'app-task',
+  templateUrl: './task.component.html',
+  styleUrls: ['./task.component.scss']
 })
-export class WorkflowProcessComponent implements OnInit {
+export class TaskComponent implements OnInit {
 
   @Input()
   public process;
