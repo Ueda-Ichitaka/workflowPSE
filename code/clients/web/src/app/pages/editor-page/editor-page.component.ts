@@ -1,4 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { ProcessService } from 'app/services/process.service';
+import { Observable } from 'rxjs/Observable';
+import { Process } from 'app/models/Process';
 
 @Component({
   selector: 'app-editor-page',
@@ -7,12 +10,16 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class EditorPageComponent implements OnInit {
 
-  constructor() { }
+  constructor(public processService: ProcessService) { }
+
+
+  public processes: Observable<Process[]>;
 
   @Input()
   public showProcessList = true;
 
   ngOnInit() {
+    this.processes = this.processService.all();
   }
 
   public toggleProcessList() {

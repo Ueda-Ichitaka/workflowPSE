@@ -4,6 +4,7 @@ import { ProcessParameterType } from 'app/models/ProcessParameter';
 import { HostListener } from '@angular/core/src/metadata/directives';
 import { ViewChild } from '@angular/core';
 import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
+import { Process } from 'app/models/Process';
 
 @Component({
   selector: 'app-task',
@@ -13,7 +14,7 @@ import { ProcessDetailDialogComponent } from 'app/components/process-detail-dial
 export class TaskComponent implements OnInit {
 
   @Input()
-  public process;
+  public process: Process;
 
   @ViewChild('inputs')
   public inputContainer: ElementRef;
@@ -39,7 +40,7 @@ export class TaskComponent implements OnInit {
   }
 
   public ngOnInit() {
-    console.log(this.inputContainer);
+
   }
 
   public getInputPosition(id: number): [number, number] {
