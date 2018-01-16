@@ -2,7 +2,7 @@ import { Artefact } from 'app/models/Artefact';
 
 export enum TaskState {
     READY,
-    WAINTING,
+    WAITING,
     RUNNING,
     FINISHED,
     FAILED,
