@@ -209,5 +209,8 @@ export class EditorComponent implements OnInit {
 
       this.workflow.edges.push({ id: -1, a_id, b_id, input_id, output_id });
     }
+
+    setTimeout(() => console.log(this.workflow), 100);
+
   }
 }

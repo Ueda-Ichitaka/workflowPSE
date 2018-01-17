@@ -9,6 +9,15 @@ import { catchError, map, tap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { Subscriber } from 'rxjs/Subscriber';
 
+// tslint:disable-next-line:max-line-length
+// tslint:disable-next-line:no-unused-expression
+const w3 = `{"id":3,"title":"3 Workflow","edges":[{"id":-1,"a_id":2844,"b_id":141,"input_id":2,"output_id":1},{"id":-1,"a_id":5433,"b_id":141,"input_id":2,"output_id":5},{"id":-1,"a_id":141,"b_id":3515,"input_id":7,"output_id":3},{"id":-1,"a_id":2844,"b_id":3515,"input_id":6,"output_id":1},{"id":-1,"a_id":3515,"b_id":3974,"input_id":9,"output_id":8},{"id":-1,"a_id":3974,"b_id":7502,"input_id":4,"output_id":10},{"id":-1,"a_id":3974,"b_id":2269,"input_id":2,"output_id":11},{"id":-1,"a_id":7502,"b_id":3026,"input_id":6,"output_id":5},{"id":-1,"a_id":2269,"b_id":3026,"input_id":7,"output_id":3}],"tasks":[{"id":6230,"x":224,"y":48,"state":0,"process_id":1,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156453248,"updated_at":1516156453248},{"id":8049,"x":475,"y":47,"state":0,"process_id":2,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156455004,"updated_at":1516156455004},{"id":2098,"x":718,"y":48,"state":0,"process_id":3,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156457022,"updated_at":1516156457022},{"id":2844,"x":217,"y":144,"state":0,"process_id":4,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156463665,"updated_at":1516156463665},{"id":141,"x":534,"y":248,"state":0,"process_id":5,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156466725,"updated_at":1516156466725},{"id":5433,"x":493,"y":143,"state":0,"process_id":6,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156472462,"updated_at":1516156472462},{"id":3515,"x":342,"y":406,"state":0,"process_id":7,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156479425,"updated_at":1516156479425},{"id":3974,"x":638,"y":407,"state":0,"process_id":8,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156488852,"updated_at":1516156488852},{"id":7502,"x":611,"y":531,"state":0,"process_id":6,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156497198,"updated_at":1516156497198},{"id":2269,"x":868,"y":530,"state":0,"process_id":5,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156499193,"updated_at":1516156499193},{"id":3026,"x":797,"y":644,"state":0,"process_id":7,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156504789,"updated_at":1516156504789}],"creator_id":-1,"shared":false,"created_at":-1,"updated_at":-1}`;
+
+// tslint:disable-next-line:max-line-length
+// tslint:disable-next-line:no-unused-expression
+const w4 = `{"id":4,"title":"WPS flow workflow","edges":[{"id":-1,"a_id":4823,"b_id":3431,"input_id":0,"output_id":1},{"id":-1,"a_id":4814,"b_id":3431,"input_id":0,"output_id":1},{"id":-1,"a_id":3431,"b_id":1991,"input_id":6,"output_id":1},{"id":-1,"a_id":4814,"b_id":1991,"input_id":7,"output_id":1},{"id":-1,"a_id":1991,"b_id":1401,"input_id":9,"output_id":8},{"id":-1,"a_id":1401,"b_id":9390,"input_id":7,"output_id":11},{"id":-1,"a_id":1401,"b_id":9390,"input_id":6,"output_id":10},{"id":-1,"a_id":9390,"b_id":3999,"input_id":0,"output_id":8},{"id":-1,"a_id":9390,"b_id":9797,"input_id":6,"output_id":8},{"id":-1,"a_id":1991,"b_id":9797,"input_id":7,"output_id":8}],"tasks":[{"id":4823,"x":70,"y":67,"state":0,"process_id":4,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156645936,"updated_at":1516156645936},{"id":4814,"x":330,"y":66,"state":0,"process_id":4,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156647505,"updated_at":1516156647505},{"id":3431,"x":153,"y":203,"state":0,"process_id":4,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156649444,"updated_at":1516156649444},{"id":1991,"x":433,"y":310,"state":0,"process_id":7,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156651150,"updated_at":1516156651150},{"id":1401,"x":202,"y":431,"state":0,"process_id":8,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156666190,"updated_at":1516156666190},{"id":9390,"x":376,"y":522,"state":0,"process_id":7,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156671284,"updated_at":1516156671284},{"id":3999,"x":238,"y":696,"state":0,"process_id":4,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156687014,"updated_at":1516156687014},{"id":9797,"x":655,"y":629,"state":0,"process_id":7,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156694334,"updated_at":1516156694334}],"creator_id":-1,"shared":false,"created_at":-1,"updated_at":-1}`;
+
+
 @Injectable()
 export class WorkflowService {
 
@@ -84,7 +93,7 @@ export class WorkflowService {
 
   private testData: Workflow[] = [
     { id: 1, title: 'Workflow A', edges: this.mockEdges, tasks: this.mockTasks, creator_id: 0, shared: true, created_at: 0, updated_at: 0 },
-    { id: 2, title: 'Workflow B', edges: [], tasks: [], creator_id: 1, shared: false, created_at: 0, updated_at: 0 }
+    { id: 2, title: 'Workflow B', edges: [], tasks: [], creator_id: 1, shared: false, created_at: 0, updated_at: 0 },
   ];
 
   /**
@@ -95,6 +104,9 @@ export class WorkflowService {
   private testSubscriber: Subscriber<Workflow[]>;
 
   constructor(private http: HttpClient) {
+    this.testData.push(JSON.parse(w3));
+    this.testData.push(JSON.parse(w4));
+
     // Create test observable
     this.testObservable = new Observable(subscriber => {
       // Create test subscriber to update the observable later (in the create method)
