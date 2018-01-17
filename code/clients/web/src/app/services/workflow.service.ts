@@ -190,4 +190,13 @@ export class WorkflowService {
 
     return WorkflowValidationResult.SUCCESSFUL;
   }
+
+  public async execute(id: number): Promise<boolean> {
+
+    const index = this.testData.findIndex(workflow => workflow.id === id);
+
+    // TODO execute workflow
+
+    return true;
+  }
 }
