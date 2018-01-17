@@ -18,6 +18,14 @@ const w3 = `{"id":3,"title":"3 Workflow","edges":[{"id":-1,"a_id":2844,"b_id":14
 const w4 = `{"id":4,"title":"WPS flow workflow","edges":[{"id":-1,"a_id":4823,"b_id":3431,"input_id":0,"output_id":1},{"id":-1,"a_id":4814,"b_id":3431,"input_id":0,"output_id":1},{"id":-1,"a_id":3431,"b_id":1991,"input_id":6,"output_id":1},{"id":-1,"a_id":4814,"b_id":1991,"input_id":7,"output_id":1},{"id":-1,"a_id":1991,"b_id":1401,"input_id":9,"output_id":8},{"id":-1,"a_id":1401,"b_id":9390,"input_id":7,"output_id":11},{"id":-1,"a_id":1401,"b_id":9390,"input_id":6,"output_id":10},{"id":-1,"a_id":9390,"b_id":3999,"input_id":0,"output_id":8},{"id":-1,"a_id":9390,"b_id":9797,"input_id":6,"output_id":8},{"id":-1,"a_id":1991,"b_id":9797,"input_id":7,"output_id":8}],"tasks":[{"id":4823,"x":70,"y":67,"state":0,"process_id":4,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156645936,"updated_at":1516156645936},{"id":4814,"x":330,"y":66,"state":0,"process_id":4,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156647505,"updated_at":1516156647505},{"id":3431,"x":153,"y":203,"state":0,"process_id":4,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156649444,"updated_at":1516156649444},{"id":1991,"x":433,"y":310,"state":0,"process_id":7,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156651150,"updated_at":1516156651150},{"id":1401,"x":202,"y":431,"state":0,"process_id":8,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156666190,"updated_at":1516156666190},{"id":9390,"x":376,"y":522,"state":0,"process_id":7,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156671284,"updated_at":1516156671284},{"id":3999,"x":238,"y":696,"state":0,"process_id":4,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156687014,"updated_at":1516156687014},{"id":9797,"x":655,"y":629,"state":0,"process_id":7,"input_artefacts":[],"ouput_artefacts":[],"created_at":1516156694334,"updated_at":1516156694334}],"creator_id":-1,"shared":false,"created_at":-1,"updated_at":-1}`;
 
 
+export enum WorkflowValidationResult {
+  ERROR,
+  SUCCESSFUL,
+  TITLE_TO_LONG,
+  TITLE_TO_SHORT,
+  // TODO: @David Add additional results
+}
+
 @Injectable()
 export class WorkflowService {
 
@@ -167,4 +175,19 @@ export class WorkflowService {
     return true;
   }
 
+  // TODO: @David Validate workflow
+  public validate(workflow: Workflow): WorkflowValidationResult {
+
+    // check name
+    if (workflow.title.length > 255) {
+      return WorkflowValidationResult.TITLE_TO_LONG;
+    } else if (workflow.title.length < 1) {
+      return WorkflowValidationResult.TITLE_TO_SHORT;
+    }
+
+    // TODO: @David add additional checks
+    // - cycle check
+
+    return WorkflowValidationResult.SUCCESSFUL;
+  }
 }
