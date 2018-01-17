@@ -17,9 +17,14 @@ export class ProcessComponent implements OnInit {
   @HostBinding('draggable')
   public draggable = true;
 
+  @HostListener('click')
+  public hostClicked() {
+    this.openDialog();
+  }
+
   public constructor(public dialog: MatDialog, private el: ElementRef) { }
 
-  public openDetailDialog() {
+  public openDialog() {
     this.dialog.open(ProcessDetailDialogComponent, {
       data: this.process
     });

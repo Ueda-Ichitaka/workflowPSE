@@ -1,10 +1,11 @@
-import { Component, OnInit, HostBinding, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, HostBinding, Input, ElementRef, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ProcessParameterType } from 'app/models/ProcessParameter';
+import { ProcessParameterType, ProcessParameter } from 'app/models/ProcessParameter';
 import { HostListener } from '@angular/core/src/metadata/directives';
 import { ViewChild } from '@angular/core';
 import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
 import { Process } from 'app/models/Process';
+import { LocaleDataIndex } from '@angular/common/src/i18n/locale_data';
 
 @Component({
   selector: 'app-task',
@@ -22,9 +23,19 @@ export class TaskComponent implements OnInit {
   @ViewChild('outputs')
   public outputContainer: ElementRef;
 
+  @Output()
+  public parameterDrag = new EventEmitter<ProcessParameter<'input' | 'output'>>();
+
+  @Output()
+  public parameterDrop = new EventEmitter<ProcessParameter<'input' | 'output'>>();
+
   public constructor(public dialog: MatDialog, private el: ElementRef) { }
 
-  public openDetailDialog() {
+  public ngOnInit() {
+
+  }
+
+  public openDetail() {
     this.dialog.open(ProcessDetailDialogComponent, {
       data: this.process
     });
@@ -39,33 +50,25 @@ export class TaskComponent implements OnInit {
     }
   }
 
-  public ngOnInit() {
-
+  public parameterMouseDown(parameter: ProcessParameter<'input' | 'output'>) {
+    this.parameterDrag.emit(parameter);
   }
 
-  public getInputPosition(id: number): [number, number] {
-    const n = (<HTMLDivElement>this.inputContainer.nativeElement);
+  public parameterMouseUp(parameter: ProcessParameter<'input' | 'output'>) {
+    this.parameterDrop.emit(parameter);
+  }
+
+
+  public getParameterPosition(role: 'input' | 'output', id: number): [number, number] {
+    const n: HTMLDivElement = (role === 'input' ? this.inputContainer : this.outputContainer).nativeElement;
 
     for (let i = 0; i < n.childElementCount; i++) {
       if (n.children[i].getAttribute('data-id') === '' + id) {
         const rect = n.children[i].getBoundingClientRect();
-        return [rect.left, rect.top];
+        return [rect.left + 11, rect.top + 11];
       }
     }
-
     return null;
   }
 
-  public getOutputPosition(id: number): [number, number] {
-    const n = (<HTMLDivElement>this.outputContainer.nativeElement);
-
-    for (let i = 0; i < n.childElementCount; i++) {
-      if (n.children[i].getAttribute('data-id') === '' + id) {
-        const rect = n.children[i].getBoundingClientRect();
-        return [rect.left, rect.top];
-      }
-    }
-
-    return null;
-  }
 }

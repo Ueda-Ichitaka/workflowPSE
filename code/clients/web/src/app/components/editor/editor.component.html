@@ -1,8 +1,10 @@
 <div #background class="background" (dragover)="dragOver($event)" (drop)="drop($event)">
     <svg viewBox="0 0 2000 2000">
-        <svg:path *ngFor="let edge of edgePaths" [attr.d]="svgPath(edge)" stroke="#888888" stroke-width="2" fill="none" />
+        <svg:path *ngIf="movement.edge" [attr.d]="getSvgEdge(movement.edge)" stroke="#888888" stroke-width="2" fill="none" />
+        <svg:path *ngFor="let edge of edgePaths" [attr.d]="getSvgEdge(edge)" stroke="#888888" stroke-width="2" fill="none" />
     </svg>
 
-    <app-task *ngFor="let task of workflow.tasks; let i = index" class="task" [style.left.px]="task.x" [style.top.px]="task.y"
-        [process]="findProcess(task.process_id)" (mousedown)="dragStart(i, $event)"></app-task>
+    <app-task #AppTask *ngFor="let task of workflow.tasks; let i = index" class="task" [style.left.px]="task.x" [style.top.px]="task.y"
+        [process]="findProcess(task.process_id)" (mousedown)="dragStart(i, $event)" (parameterDrag)="parameterDrag($event, AppTask)"
+        (parameterDrop)="parameterDrop($event, AppTask)"></app-task>
 </div>
