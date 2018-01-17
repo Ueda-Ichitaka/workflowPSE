@@ -80,6 +80,17 @@ def checkFiles():
     pass
 
 
+def getWPSProcesses():
+    #
+    #do for all entries in wps tabular
+    #  get capabilities url
+    #  exec capabilities url
+    #  get response xml
+    #  do for all process entries in xml
+    #    parse
+    #    create entry in processes tabular with data
+    #     identifier, title, abstract
+    pass
 
 
 """
