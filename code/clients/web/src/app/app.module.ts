@@ -1,6 +1,7 @@
 import {
   MatIconModule, MatInputModule, MatButtonModule, MatCheckboxModule, MatToolbarModule, MatTabsModule,
-  MatFormFieldModule, MatCardModule, MatListModule, MatTooltipModule, MatChipsModule, MatDialogModule, MatExpansionModule, MatOptionModule, MatSelectModule, MatSidenavModule, MatMenuModule
+  MatFormFieldModule, MatCardModule, MatListModule, MatTooltipModule, MatChipsModule, MatDialogModule,
+  MatExpansionModule, MatOptionModule, MatSelectModule, MatSidenavModule, MatMenuModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
@@ -20,6 +21,7 @@ import { ProcessService } from 'app/services/process.service';
 import { WorkflowService } from 'app/services/workflow.service';
 import { WpsService } from 'app/services/wps.service';
 import { SettingsPageComponent } from 'app/pages/settings-page/settings-page.component';
+import { ArtefactDialogComponent } from 'app/components/artefact-dialog/artefact-dialog.component';
 
 
 
@@ -40,6 +42,7 @@ const routes = [
     ProcessListComponent,
     ProcessComponent,
     ProcessDetailDialogComponent,
+    ArtefactDialogComponent,
     EditorComponent,
     TaskComponent
   ],
@@ -67,7 +70,8 @@ const routes = [
     MatMenuModule
   ],
   entryComponents: [
-    ProcessDetailDialogComponent
+    ProcessDetailDialogComponent,
+    ArtefactDialogComponent
   ],
   providers: [ProcessService, WorkflowService, WpsService, WpsService],
   bootstrap: [AppComponent]

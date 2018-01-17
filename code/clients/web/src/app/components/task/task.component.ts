@@ -6,6 +6,7 @@ import { ProcessDetailDialogComponent } from 'app/components/process-detail-dial
 import { Process } from 'app/models/Process';
 import { LocaleDataIndex } from '@angular/common/src/i18n/locale_data';
 import { Task } from 'app/models/Task';
+import { ArtefactDialogComponent } from 'app/components/artefact-dialog/artefact-dialog.component';
 
 @Component({
   selector: 'app-task',
@@ -49,20 +50,18 @@ export class TaskComponent implements OnInit {
 
   @HostListener('mousedown', ['$event'])
   public hostMouseDown(event: MouseEvent) {
-    if (!(<HTMLElement>event.target).classList.contains('nomove')) {
-      this.mouseDownPos = [event.pageX, event.pageY];
-    }
+    this.mouseDownPos = [event.pageX, event.pageY];
   }
 
   @HostListener('mouseup', ['$event'])
   public hostMouseUp(event: MouseEvent) {
-
-    if (this.mouseDownPos) {
-      if (this.mouseDownPos[0] === event.pageX && this.mouseDownPos[1] === event.pageY) {
-        this.menuComponent.openMenu();
-      }
-      this.mouseDownPos = undefined;
+    if ((<HTMLElement>event.target).classList.contains('nomove')) {
+      return;
     }
+    if (this.mouseDownPos && this.mouseDownPos[0] === event.pageX && this.mouseDownPos[1] === event.pageY) {
+      this.menuComponent.openMenu();
+    }
+    this.mouseDownPos = undefined;
   }
 
   public clickDelete() {
@@ -84,11 +83,17 @@ export class TaskComponent implements OnInit {
     }
   }
 
-  public parameterMouseDown(parameter: ProcessParameter<'input' | 'output'>) {
+  public parameterMouseDown(parameter: ProcessParameter<'input' | 'output'>, event: MouseEvent) {
+    this.mouseDownPos = [event.pageX, event.pageY];
     this.parameterDrag.emit(parameter);
   }
 
-  public parameterMouseUp(parameter: ProcessParameter<'input' | 'output'>) {
+  public parameterMouseUp(parameter: ProcessParameter<'input' | 'output'>, event: MouseEvent) {
+    if (this.mouseDownPos && this.mouseDownPos[0] === event.pageX && this.mouseDownPos[1] === event.pageY) {
+      this.dialog.open(ArtefactDialogComponent, {
+        data: parameter
+      });
+    }
     this.parameterDrop.emit(parameter);
   }
 
