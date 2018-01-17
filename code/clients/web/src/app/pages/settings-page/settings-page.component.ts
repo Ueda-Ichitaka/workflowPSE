@@ -27,4 +27,8 @@ export class SettingsPageComponent implements OnInit {
   public ngOnInit() {
   }
 
+  public refresh() {
+    console.log("services refreshed");
+  }
+
 }

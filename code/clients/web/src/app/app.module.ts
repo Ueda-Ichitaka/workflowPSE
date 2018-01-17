@@ -19,7 +19,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ProcessService } from 'app/services/process.service';
 import { WorkflowService } from 'app/services/workflow.service';
 import { WpsService } from 'app/services/wps.service';
-import { SettingsPageComponent } from 'app/pages/settings-page/setting-page.component';
+import { SettingsPageComponent } from 'app/pages/settings-page/settings-page.component';
 
 
 
