@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
+import { Process } from 'app/models/Process';
 
 @Component({
   selector: 'app-process-detail-dialog',
@@ -8,8 +9,8 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 })
 export class ProcessDetailDialogComponent implements OnInit {
 
-  constructor( @Inject(MAT_DIALOG_DATA) public data: any) {
-    console.log(data);
+  constructor( @Inject(MAT_DIALOG_DATA) public process: Process) {
+
   }
 
   ngOnInit() {

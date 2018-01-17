@@ -59,8 +59,13 @@ export class EditorComponent implements OnInit {
     }
   }
 
-  public getSvgEdge(edge: [number, number, number, number]) {
-    return `M ${edge[0]} ${edge[1]} C ${edge[0]} ${edge[3]}, ${edge[2]} ${edge[1]}, ${edge[2]} ${edge[3]}`;
+  public getSvgEdge(edge: [number, number, number, number], mouse = false) {
+    let delta = Math.abs(edge[1] - edge[3]);
+    if (mouse === true && this.movement.parameter !== undefined) {
+      delta *= this.movement.parameter.role === 'input' ? -1 : 1;
+    }
+
+    return `M ${edge[0]} ${edge[1]} C ${edge[0]} ${edge[1] + delta}, ${edge[2]} ${edge[3] - delta}, ${edge[2]} ${edge[3]}`;
   }
 
   public get edges(): [number, number, number, number][] {
@@ -184,12 +189,11 @@ export class EditorComponent implements OnInit {
   }
 
   public parameterDrop(parameter: ProcessParameter<'input' | 'output'>, task: TaskComponent) {
-    if (parameter.role === this.movement.parameter.role) {
+    if (!this.movement.parameter || parameter.role === this.movement.parameter.role) {
       return;
     }
 
     if (this.movement.edge) {
-      console.log(this.movement);
       const input_id = parameter.role === 'input' ? parameter.id : this.movement.parameter.id;
       const output_id = parameter.role === 'output' ? parameter.id : this.movement.parameter.id;
       const a_id = parameter.role === 'output' ? task.task.id : this.movement.task.id;

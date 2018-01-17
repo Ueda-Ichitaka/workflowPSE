@@ -1,3 +1,26 @@
-<p>
-  process-detail-dialog works!
-</p>
+<h2 mat-dialog-title>{{ process.title }}</h2>
+<mat-dialog-content class="content">
+  <div>abstract: {{ process.abstract }}</div>
+  <div>identifier: {{ process.identifier }}</div>
+
+
+  <ul *ngFor="let input of process.inputs">
+    <li>title: {{ input.title }}</li>
+    <li>abstract: {{ input.abstract }}</li>
+    <li>type: {{ input.type }}</li>
+    <li>min_occurs: {{ input.min_occurs }}</li>
+    <li>max_occurs: {{ input.max_occurs }}</li>
+  </ul>
+
+  <ul *ngFor="let output of process.outputs">
+    <li>title: {{ output.title }}</li>
+    <li>abstract: {{ output.abstract }}</li>
+    <li>type: {{ output.type }}</li>
+    <li>min_occurs: {{ output.min_occurs }}</li>
+    <li>max_occurs: {{ output.max_occurs }}</li>
+  </ul>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>
