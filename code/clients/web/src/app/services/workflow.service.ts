@@ -51,31 +51,32 @@ export class WorkflowService {
 
   private mockTasks: Task[] = [
     {
-      id: 1, x: 1, y: 1, state: TaskState.READY, process_id: 1, input_artefacts: [this.mockInputArtefacts[0]],
+      id: 1, x: 100, y: 100, state: TaskState.READY, process_id: 1, input_artefacts: [this.mockInputArtefacts[0]],
       ouput_artefacts: [this.mockOutputArtefacts[0], this.mockOutputArtefacts[1]], created_at: 0, updated_at: 0
     },
     {
-      id: 2, x: 1, y: 50, state: TaskState.WAITING, process_id: 2, input_artefacts: [this.mockInputArtefacts[1]],
+      id: 2, x: 350, y: 100, state: TaskState.WAITING, process_id: 2, input_artefacts: [this.mockInputArtefacts[1]],
       ouput_artefacts: [this.mockOutputArtefacts[2]], created_at: 0, updated_at: 0
     },
     {
-      id: 3, x: 100, y: 50, state: TaskState.WAITING, process_id: 3, input_artefacts: [this.mockInputArtefacts[3]],
+      id: 3, x: 650, y: 100, state: TaskState.WAITING, process_id: 3, input_artefacts: [this.mockInputArtefacts[3]],
       ouput_artefacts: [this.mockOutputArtefacts[3], this.mockOutputArtefacts[4]], created_at: 0, updated_at: 0
     },
     {
-      id: 4, x: 1, y: 1, state: TaskState.WAITING, process_id: 4, input_artefacts: [this.mockInputArtefacts[4]],
+      id: 4, x: 200, y: 300, state: TaskState.WAITING, process_id: 4, input_artefacts: [this.mockInputArtefacts[4]],
       ouput_artefacts: [this.mockOutputArtefacts[5]], created_at: 0, updated_at: 0
     },
     {
-      id: 5, x: 1, y: 1, state: TaskState.WAITING, process_id: 5, input_artefacts: [this.mockInputArtefacts[5]],
+      id: 5, x: 450, y: 300, state: TaskState.WAITING, process_id: 5, input_artefacts: [this.mockInputArtefacts[5]],
       ouput_artefacts: [this.mockOutputArtefacts[6]], created_at: 0, updated_at: 0
     },
     {
-      id: 6, x: 1, y: 1, state: TaskState.WAITING, process_id: 6, input_artefacts: [this.mockInputArtefacts[6]],
+      id: 6, x: 700, y: 300, state: TaskState.WAITING, process_id: 6, input_artefacts: [this.mockInputArtefacts[6]],
       ouput_artefacts: [this.mockOutputArtefacts[7]], created_at: 0, updated_at: 0
     },
     {
-      id: 7, x: 1, y: 1, state: TaskState.WAITING, process_id: 7, input_artefacts: [this.mockInputArtefacts[7], this.mockInputArtefacts[8]],
+      id: 7, x: 300, y: 400, state: TaskState.WAITING, process_id: 7,
+      input_artefacts: [this.mockInputArtefacts[7], this.mockInputArtefacts[8]],
       ouput_artefacts: [this.mockOutputArtefacts[8]], created_at: 0, updated_at: 0
     },
   ];

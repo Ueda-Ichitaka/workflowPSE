@@ -69,24 +69,32 @@ export class EditorComponent implements OnInit {
   }
 
   public get edges(): [number, number, number, number][] {
+    if (this.taskComponents === undefined) {
+      return;
+    }
+
     const out = [];
     const n: HTMLElement = this.el.nativeElement;
     const r = n.getBoundingClientRect();
 
     for (const edge of this.workflow.edges) {
-      const [x1, y1] = this.taskComponents
+      const a = this.taskComponents
         .find(component => component.task.id === edge.a_id)
         .getParameterPosition('output', edge.output_id);
 
-      const [x2, y2] = this.taskComponents
+      const b = this.taskComponents
         .find(component => component.task.id === edge.b_id)
         .getParameterPosition('input', edge.input_id);
 
+      if (a === null || b === null) {
+        return;
+      }
+
       out.push([
-        x1 - r.left + n.scrollLeft,
-        y1 - r.top + n.scrollTop,
-        x2 - r.left + n.scrollLeft,
-        y2 - r.top + n.scrollTop,
+        a[0] - r.left + n.scrollLeft,
+        a[1] - r.top + n.scrollTop,
+        b[0] - r.left + n.scrollLeft,
+        b[1] - r.top + n.scrollTop,
       ]);
     }
     return out;
