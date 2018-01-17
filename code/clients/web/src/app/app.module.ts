@@ -1,6 +1,6 @@
 import {
   MatIconModule, MatInputModule, MatButtonModule, MatCheckboxModule, MatToolbarModule, MatTabsModule,
-  MatFormFieldModule, MatCardModule, MatListModule, MatTooltipModule, MatChipsModule, MatDialogModule, MatExpansionModule
+  MatFormFieldModule, MatCardModule, MatListModule, MatTooltipModule, MatChipsModule, MatDialogModule, MatExpansionModule, MatOptionModule, MatSelectModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
@@ -19,6 +19,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ProcessService } from 'app/services/process.service';
 import { WorkflowService } from 'app/services/workflow.service';
 import { WpsService } from 'app/services/wps.service';
+import { SettingsPageComponent } from 'app/pages/settings-page/setting-page.component';
 
 
 
@@ -27,6 +28,7 @@ const routes = [
   { path: 'editor', component: EditorPageComponent },
   { path: 'editor/:id', component: EditorPageComponent },
   { path: 'workflows', component: WorkflowsPageComponent },
+  { path: 'settings', component: SettingsPageComponent },
 ];
 
 @NgModule({
@@ -34,6 +36,7 @@ const routes = [
     AppComponent,
     EditorPageComponent,
     WorkflowsPageComponent,
+    SettingsPageComponent,
     ProcessListComponent,
     ProcessComponent,
     ProcessDetailDialogComponent,
@@ -58,12 +61,14 @@ const routes = [
     MatTooltipModule,
     MatChipsModule,
     MatDialogModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatOptionModule,
+    MatSelectModule
   ],
   entryComponents: [
     ProcessDetailDialogComponent
   ],
-  providers: [ProcessService, WorkflowService, WpsService],
+  providers: [ProcessService, WorkflowService, WpsService, WpsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
