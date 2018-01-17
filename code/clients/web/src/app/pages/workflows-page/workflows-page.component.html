@@ -7,6 +7,9 @@
                     {{ workflow.title }}
                 </mat-panel-title>
             </mat-expansion-panel-header>
+
+            <app-editor class="editor" [workflow]="getWorkflow(workflow.id) | async" [processes]="processes | async" class="editor"></app-editor>
+
             <div class="actions">
                 <div class="actions-left">
                     <button mat-button color="warn">DELETE</button>

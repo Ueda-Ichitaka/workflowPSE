@@ -8,6 +8,12 @@
 
 
 .actions {
+    margin-top: 20px;
     display: flex;
     justify-content: space-between;
+}
+
+.editor {
+    height: 50vh;
+    border: solid 1px #e0e0e0;
 }
