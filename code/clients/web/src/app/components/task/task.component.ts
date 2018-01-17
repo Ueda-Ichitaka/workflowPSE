@@ -6,6 +6,7 @@ import { ViewChild } from '@angular/core';
 import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
 import { Process } from 'app/models/Process';
 import { LocaleDataIndex } from '@angular/common/src/i18n/locale_data';
+import { Task } from 'app/models/Task';
 
 @Component({
   selector: 'app-task',
@@ -16,6 +17,9 @@ export class TaskComponent implements OnInit {
 
   @Input()
   public process: Process;
+
+  @Input()
+  public task: Task;
 
   @ViewChild('inputs')
   public inputContainer: ElementRef;
