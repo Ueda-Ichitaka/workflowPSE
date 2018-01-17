@@ -1,7 +1,7 @@
 <div class="container workflows-list">
     <h1>My Workflows</h1>
     <mat-accordion>
-        <mat-expansion-panel *ngFor="let workflow of workflows">
+        <mat-expansion-panel *ngFor="let workflow of workflows | async">
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     {{ workflow.title }}
@@ -12,7 +12,7 @@
                     <button mat-button color="warn">DELETE</button>
                 </div>
                 <div class="actions-right">
-                    <button mat-raised-button>EDIT</button>
+                    <button mat-raised-button (click)="edit(workflow.id)">EDIT</button>
                     <button mat-raised-button color="primary">RUN</button>
                 </div>
             </div>

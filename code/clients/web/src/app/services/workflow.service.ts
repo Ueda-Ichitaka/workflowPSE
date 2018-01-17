@@ -102,6 +102,10 @@ export class WorkflowService {
     });
   }
 
+  public all(): Observable<Workflow[]> {
+    return this.testObservable;
+  }
+
   public get(id: number): Observable<Workflow> {
     return this.testObservable.pipe(
       // Map Process[] to Process by findeing the right id

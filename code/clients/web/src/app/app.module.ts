@@ -17,12 +17,15 @@ import { EditorComponent } from 'app/components/editor/editor.component';
 import { ProcessComponent } from 'app/components/process/process.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ProcessService } from 'app/services/process.service';
+import { WorkflowService } from 'app/services/workflow.service';
+import { WpsService } from 'app/services/wps.service';
 
 
 
 const routes = [
   { path: '', component: EditorPageComponent },
   { path: 'editor', component: EditorPageComponent },
+  { path: 'editor/:id', component: EditorPageComponent },
   { path: 'workflows', component: WorkflowsPageComponent },
 ];
 
@@ -60,7 +63,7 @@ const routes = [
   entryComponents: [
     ProcessDetailDialogComponent
   ],
-  providers: [ProcessService],
+  providers: [ProcessService, WorkflowService, WpsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

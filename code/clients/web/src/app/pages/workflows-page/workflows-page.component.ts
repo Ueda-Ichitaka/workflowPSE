@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { WorkflowService } from 'app/services/workflow.service';
+import { Workflow } from 'app/models/Workflow';
+import { Observable } from 'rxjs/Observable';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-workflows-page',
@@ -7,18 +11,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WorkflowsPageComponent implements OnInit {
 
-  workflows = [];
+  public workflows: Observable<Workflow[]>;
 
-  constructor() {
-    for (let i = 0; i < 20; i++) {
-      this.workflows.push({
-        id: i,
-        title: 'Workflow' + i
-      });
-    }
+  constructor(private workflowService: WorkflowService, private router: Router) {
+    this.workflows = this.workflowService.all();
   }
 
-  ngOnInit() {
+  public ngOnInit() {
   }
 
+  public edit(id: number) {
+    this.router.navigate(['/editor', { id }]);
+  }
 }

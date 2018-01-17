@@ -8,7 +8,7 @@
   </div>
 </div>
 
-<app-editor [processes]="processes | async" class="editor"></app-editor>
+<app-editor [workflow]="workflow | async" [processes]="processes | async" class="editor"></app-editor>
 <app-process-list *ngIf="showProcessList" class="process-list"></app-process-list>
 
 <button mat-fab color="primary" class="run" disabled>
