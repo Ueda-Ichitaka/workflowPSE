@@ -1,7 +1,6 @@
-import { Component, OnInit, HostBinding, Input, ElementRef, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { Component, OnInit, HostBinding, Input, ElementRef, Output, EventEmitter, HostListener } from '@angular/core';
+import { MatDialog, MatMenu, MatMenuTrigger } from '@angular/material';
 import { ProcessParameterType, ProcessParameter } from 'app/models/ProcessParameter';
-import { HostListener } from '@angular/core/src/metadata/directives';
 import { ViewChild } from '@angular/core';
 import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
 import { Process } from 'app/models/Process';
@@ -27,16 +26,47 @@ export class TaskComponent implements OnInit {
   @ViewChild('outputs')
   public outputContainer: ElementRef;
 
+  @ViewChild(MatMenuTrigger)
+  public menuComponent: MatMenuTrigger;
+
   @Output()
   public parameterDrag = new EventEmitter<ProcessParameter<'input' | 'output'>>();
 
   @Output()
   public parameterDrop = new EventEmitter<ProcessParameter<'input' | 'output'>>();
 
+  @Output()
+  public taskRemove = new EventEmitter<Task>();
+
+  private mouseDownPos: number[];
+
   public constructor(public dialog: MatDialog, private el: ElementRef) { }
 
   public ngOnInit() {
 
+  }
+
+
+  @HostListener('mousedown', ['$event'])
+  public hostMouseDown(event: MouseEvent) {
+    if (!(<HTMLElement>event.target).classList.contains('nomove')) {
+      this.mouseDownPos = [event.pageX, event.pageY];
+    }
+  }
+
+  @HostListener('mouseup', ['$event'])
+  public hostMouseUp(event: MouseEvent) {
+
+    if (this.mouseDownPos) {
+      if (this.mouseDownPos[0] === event.pageX && this.mouseDownPos[1] === event.pageY) {
+        this.menuComponent.openMenu();
+      }
+      this.mouseDownPos = undefined;
+    }
+  }
+
+  public clickDelete() {
+    this.taskRemove.emit(this.task);
   }
 
   public openDetail() {

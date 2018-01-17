@@ -1,4 +1,11 @@
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="openDetail()">Info</button>
+  <button mat-menu-item (click)="clickDelete()">Delete</button>
+</mat-menu>
+
+
 <div class="title">{{ process.title }}</div>
+<span [matMenuTriggerFor]="menu"></span>
 
 <div class="inputs" #inputs>
   <span *ngFor="let input of process.inputs" [attr.data-id]="input.id" class="input nomove" [matTooltip]="input.title" matTooltipPosition="above"

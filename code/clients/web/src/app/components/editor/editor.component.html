@@ -7,5 +7,5 @@
 
     <app-task #AppTask *ngFor="let task of workflow.tasks; let i = index" class="task" [style.left.px]="task.x" [style.top.px]="task.y"
         [process]="findProcess(task.process_id)" [task]="task" (mousedown)="dragStart(i, $event)" (parameterDrag)="parameterDrag($event, AppTask)"
-        (parameterDrop)="parameterDrop($event, AppTask)"></app-task>
+        (parameterDrop)="parameterDrop($event, AppTask)" (taskRemove)="remove(task.id)"></app-task>
 </div>

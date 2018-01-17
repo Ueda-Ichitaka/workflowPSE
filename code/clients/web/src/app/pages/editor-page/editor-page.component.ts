@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { ProcessService } from 'app/services/process.service';
 import { Observable } from 'rxjs/Observable';
 import { Process } from 'app/models/Process';
@@ -16,6 +16,9 @@ export class EditorPageComponent implements OnInit {
   public workflow: Observable<Workflow>;
   public processes: Observable<Process[]>;
 
+  @ViewChild('sidenav')
+  public sidenavComponent;
+
   @Input()
   public showProcessList = true;
 
@@ -30,17 +33,19 @@ export class EditorPageComponent implements OnInit {
 
   ngOnInit() {
     this.processes = this.processService.all();
-
     this.route.params.subscribe(params => {
       if (params['id'] !== undefined) {
         this.workflow = this.workflowService.get(+params['id']);
       }
     });
-
   }
 
   public toggleProcessList() {
     this.showProcessList = !this.showProcessList;
+  }
+
+  public openSettings() {
+    this.sidenavComponent.toggle();
   }
 
 }

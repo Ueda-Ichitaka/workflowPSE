@@ -120,6 +120,12 @@ export class EditorComponent implements OnInit {
     this.workflow.tasks.push(task);
   }
 
+  public remove(task_id: number) {
+    const index = this.workflow.tasks.findIndex(task => task.id === task_id);
+    this.workflow.tasks.splice(index, 1);
+    this.workflow.edges = this.workflow.edges.filter(edge => edge.a_id !== task_id && edge.b_id !== task_id);
+  }
+
   public findProcess(id: number): Process {
     return this.processes.find(process => process.id === id);
   }
