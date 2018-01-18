@@ -28,6 +28,7 @@
     display: inline-block;
     color: rgba(55, 55, 55, 89);
     padding: 9px;
+    cursor: pointer;
 }
 
 .run {
@@ -42,4 +43,15 @@
     top: 118px;
     bottom: 8px;
     right: 8px;
+}
+
+.edit-name {
+    float: left;
+    margin-top: -12px;
+
+    & mat-icon {
+        color: #adadad;
+        font-size: 18px;
+    }
+   
 }

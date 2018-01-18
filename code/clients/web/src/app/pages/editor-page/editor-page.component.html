@@ -1,7 +1,18 @@
 <div class="toolbar mat-elevation-z2" fxLayout="row" fxLayoutAlign="space-between">
-  <div>
-    <span class="title">{{ (workflow | async).title }}</span>
+  <div *ngIf="workflow">
+    <div *ngIf="!editTitleMode; else editTitleTemplate" class="title">
+      {{ (workflow | async).title }}
+      <button mat-icon-button class="edit-name" (click)="editTitleMode = true">
+        <mat-icon aria-label="Example icon-button with a heart icon">edit</mat-icon>
+      </button>
+    </div>
+    <ng-template #editTitleTemplate>
+      <mat-form-field>
+        <input #input matInput [placeholder]="(workflow | async).title" (keyup.enter)="editTitle(input.value)">
+      </mat-form-field>
+    </ng-template>
   </div>
+
   <div>
     <button mat-button (click)="undo()" [disabled]="!canUndo()">UNDO</button>
     <button mat-raised-button color="primary">SAVE</button>

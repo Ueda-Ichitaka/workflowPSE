@@ -18,6 +18,8 @@ export class EditorPageComponent implements OnInit {
   public workflow: Observable<Workflow>;
   public processes: Observable<Process[]>;
 
+  public editTitleMode = false;
+
   @ViewChild('sidenav')
   public sidenavComponent;
 
@@ -59,6 +61,10 @@ export class EditorPageComponent implements OnInit {
   }
 
   public run(id: number) {
+    if (!this.workflow) {
+      return;
+    }
+
     this.workflow.pipe(
       take(1)
     ).subscribe(workflow => {
@@ -66,7 +72,21 @@ export class EditorPageComponent implements OnInit {
     });
   }
 
+  public editTitle(name: string) {
+    this.workflow.pipe(
+      take(1)
+    ).subscribe(workflow => {
+      workflow.title = name;
+      this.workflowService.update(workflow.id, workflow);
+    });
+    this.editTitleMode = false;
+  }
+
   public runs(): Observable<boolean> {
+    if (!this.workflow) {
+      return null;
+    }
+
     return this.workflow.pipe(
       take(1),
       map(w => this.workflowService.isRunning(w))
