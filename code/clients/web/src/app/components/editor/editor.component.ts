@@ -134,7 +134,13 @@ export class EditorComponent implements OnInit {
     // store index of moved task
     // no move on input/output parameter
     if (!(<HTMLElement>event.target).classList.contains('nomove')) {
-      this.movement = { index, x: event.offsetX, y: event.offsetY };
+      let x = event.offsetX;
+      let y = event.offsetY;
+      if ((<HTMLElement>event.target).localName !== 'app-task') {
+        x += 16;
+        y += 16;
+      }
+      this.movement = { index, x, y };
     } else {
       this.movement.index = undefined;
     }
