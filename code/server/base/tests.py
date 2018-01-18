@@ -2,10 +2,11 @@ from django.test import TestCase
 from base.models import WPS, WPSProvider
 import xml.etree.ElementTree as ET
 
+
 # Create your tests here.
 class ParsingTestCase(TestCase):
     def test_capabilities_parsing(self):
-        url_from_scc_vm = 'base/pseworkflow_getCapabilities.xml'
+        url_from_scc_vm = 'base/getCapabilitiesFromPyWPS.xml'
 
         xml_namespaces = {
             'gml': 'http://www.opengis.net/gml',
