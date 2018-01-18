@@ -17,6 +17,19 @@ import { WpsService } from 'app/services/wps.service';
   styleUrls: ['./settings-page.component.scss']
 })
 export class SettingsPageComponent implements OnInit {
+
+  update_options = [
+    {value: "wps_provider0", displayed: "WPS Provider"},
+    {value: "task1", displayed: "Task"}
+  ];
+
+  language_options = [
+    {value: "deutsch0", displayed: "Deutsch"},
+    {value: "english1", displayed: "English"}
+  ];
+
+  selected_language = "Deutsch";
+
   constructor(
     private processService: ProcessService,
     private wpsService: WpsService,
@@ -28,7 +41,11 @@ export class SettingsPageComponent implements OnInit {
   }
 
   public refresh() {
-    console.log('services refreshed');
+    console.log("services refreshed");
+  }
+
+  public onLangSelect(str) {
+    this.selected_language = str;
   }
 
 }
