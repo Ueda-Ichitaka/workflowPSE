@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>{{ process.title }}</h2>
+<mat-dialog-content class="content">
+
+  <mat-tab-group>
+    <mat-tab label="Info">
+      <div class="tab-content">
+        <div class="info-box">
+          <div>
+            <span class="info">abstract: </span>{{ process.abstract }}
+          </div>
+          <div>
+            <span class="info">identifier: </span>{{ process.identifier }}
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab *ngIf="process.inputs.length > 0" label="Inputs">
+      <div class="tab-content">
+        <div *ngFor="let input of process.inputs" class="info-box">
+          <div>{{ input.abstract }} </div>
+          <div>
+            <span class="info">type: </span>
+            <span [style.color]="getTypeColor(input.type)">{{ getTypeName(input.type) }}</span>
+          </div>
+          <div>
+            <span class="info">min occurs: </span> {{ input.min_occurs }}
+          </div>
+          <div>
+            <span class="info">max occurs: </span> {{ input.max_occurs }}
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+
+    <mat-tab *ngIf="process.outputs.length > 0" label="Outputs">
+      <div class="tab-content">
+        <div *ngFor="let output of process.outputs" class="info-box">
+          <div>{{ output.abstract }} </div>
+          <div>
+            <span class="info">type: </span>
+            <span [style.color]="getTypeColor(output.type)">{{ getTypeName(output.type) }}</span>
+          </div>
+          <div>
+            <span class="info">min occurs: </span> {{ output.min_occurs }}
+          </div>
+          <div>
+            <span class="info">max occurs: </span> {{ output.max_occurs }}
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+
+</mat-dialog-content>
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="end">
+  <button mat-button mat-dialog-close>CLOSE</button>
+</mat-dialog-actions>

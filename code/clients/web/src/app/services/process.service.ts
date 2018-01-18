@@ -71,7 +71,23 @@ export class ProcessService {
     {
       id: 9, title: 'Process I', abstract: 'this is process I', identifier: 'process.i',
       wps_id: 0, created_at: 0, updated_at: 0, inputs: [], outputs: []
-    }
+    },
+    {
+      id: 10, title: 'Process J', abstract: 'this is process J', identifier: 'process.j',
+      wps_id: 0, created_at: 0, updated_at: 0, inputs: [
+        { id: 12, role: 'input', type: 0, title: 'IO 12', abstract: '', min_occurs: 1, max_occurs: 1 },
+      ], outputs: [
+        { id: 13, role: 'output', type: 1, title: 'IO 13', abstract: '', min_occurs: 1, max_occurs: 1 },
+      ]
+    },
+    {
+      id: 11, title: 'Process H', abstract: 'this is process H', identifier: 'process.h',
+      wps_id: 0, created_at: 0, updated_at: 0, inputs: [
+        { id: 14, role: 'input', type: 1, title: 'IO 14', abstract: '', min_occurs: 1, max_occurs: 1 },
+      ], outputs: [
+        { id: 15, role: 'output', type: 2, title: 'IO 15', abstract: '', min_occurs: 1, max_occurs: 1 },
+      ]
+    },
   ];
 
   // ------------- END TEST DATA ---------------
@@ -79,6 +95,24 @@ export class ProcessService {
 
   private testObservable: Observable<Process[]>;
   private testSubscriber: Subscriber<Process[]>;
+
+  public static getTypeColor(type: ProcessParameterType): string {
+    switch (type) {
+      case ProcessParameterType.LITERAL: return '#03A9F4';
+      case ProcessParameterType.COMPLEX: return '#FFC107';
+      case ProcessParameterType.BOUNDING_BOX: return '#4CAF50';
+      default: return '#000000';
+    }
+  }
+
+  public static getTypeName(type: ProcessParameterType): string {
+    switch (type) {
+      case ProcessParameterType.LITERAL: return 'Literal';
+      case ProcessParameterType.COMPLEX: return 'Complex';
+      case ProcessParameterType.BOUNDING_BOX: return 'Bounding Box';
+      default: return 'Undefined';
+    }
+  }
 
   constructor(private http: HttpClient) {
     // Create test observable

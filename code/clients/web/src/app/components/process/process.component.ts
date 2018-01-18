@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, HostListener, HostBinding, ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ProcessParameterType } from 'app/models/ProcessParameter';
-import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
+import { ProcessDialogComponent } from 'app/components/process-dialog/process-dialog.component';
 
 
 @Component({
@@ -25,7 +25,7 @@ export class ProcessComponent implements OnInit {
   public constructor(public dialog: MatDialog, private el: ElementRef) { }
 
   public openDialog() {
-    this.dialog.open(ProcessDetailDialogComponent, {
+    this.dialog.open(ProcessDialogComponent, {
       data: this.process
     });
   }

@@ -2,7 +2,7 @@ import { Component, OnInit, HostBinding, Input, ElementRef, Output, EventEmitter
 import { MatDialog, MatMenu, MatMenuTrigger } from '@angular/material';
 import { ProcessParameterType, ProcessParameter } from 'app/models/ProcessParameter';
 import { ViewChild } from '@angular/core';
-import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
+import { ProcessDialogComponent } from 'app/components/process-dialog/process-dialog.component';
 import { Process } from 'app/models/Process';
 import { LocaleDataIndex } from '@angular/common/src/i18n/locale_data';
 import { Task } from 'app/models/Task';
@@ -69,7 +69,7 @@ export class TaskComponent implements OnInit {
   }
 
   public openDetail() {
-    this.dialog.open(ProcessDetailDialogComponent, {
+    this.dialog.open(ProcessDialogComponent, {
       data: this.process
     });
   }

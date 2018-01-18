@@ -12,7 +12,7 @@ import { EditorPageComponent } from 'app/pages/editor-page/editor-page.component
 import { WorkflowsPageComponent } from 'app/pages/workflows-page/workflows-page.component';
 import { AppComponent } from 'app/components/app/app.component';
 import { ProcessListComponent } from 'app/components/process-list/process-list.component';
-import { ProcessDetailDialogComponent } from 'app/components/process-detail-dialog/process-detail-dialog.component';
+import { ProcessDialogComponent } from 'app/components/process-dialog/process-dialog.component';
 import { TaskComponent } from 'app/components/task/task.component';
 import { EditorComponent } from 'app/components/editor/editor.component';
 import { ProcessComponent } from 'app/components/process/process.component';
@@ -41,7 +41,7 @@ const routes = [
     SettingsPageComponent,
     ProcessListComponent,
     ProcessComponent,
-    ProcessDetailDialogComponent,
+    ProcessDialogComponent,
     ArtefactDialogComponent,
     EditorComponent,
     TaskComponent
@@ -70,7 +70,7 @@ const routes = [
     MatMenuModule
   ],
   entryComponents: [
-    ProcessDetailDialogComponent,
+    ProcessDialogComponent,
     ArtefactDialogComponent
   ],
   providers: [ProcessService, WorkflowService, WpsService, WpsService],

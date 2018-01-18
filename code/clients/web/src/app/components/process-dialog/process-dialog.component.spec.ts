@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ArtefactDialogComponent } from './artefact-dialog.component';
+import { ProcessDialogComponent } from './process-dialog.component';
 
-describe('ProcessDetailDialogComponent', () => {
-  let component: ArtefactDialogComponent;
-  let fixture: ComponentFixture<ArtefactDialogComponent>;
+describe('ProcessDialogComponent', () => {
+  let component: ProcessDialogComponent;
+  let fixture: ComponentFixture<ProcessDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ArtefactDialogComponent]
+      declarations: [ProcessDialogComponent]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ArtefactDialogComponent);
+    fixture = TestBed.createComponent(ProcessDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

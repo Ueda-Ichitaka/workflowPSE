@@ -21,7 +21,7 @@ html {
 body {
     height: 100%;
     overflow: auto;
-    color: #4a4a4a;
+    color: rgba(55, 55, 55, 55);
 }
 
 
@@ -36,4 +36,12 @@ body {
         padding: 8px;
         margin: auto;
     }
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: rgba(34, 34, 34, 34);
+}
+
+.mat-dialog-container {
+    color: rgba(55, 55, 55, 55);
 }
