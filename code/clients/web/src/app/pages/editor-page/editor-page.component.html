@@ -8,9 +8,9 @@
   </div>
 </div>
 
-<app-editor [workflow]="workflow | async" [processes]="processes | async" class="editor"></app-editor>
+<app-editor class="editor" [workflow]="workflow | async" [processes]="processes | async" (workflowChanged)="workflowChanged($event)"></app-editor>
 <app-process-list *ngIf="showProcessList" class="process-list"></app-process-list>
 
-<button mat-fab color="primary" class="run" disabled>
+<button mat-fab color="primary" class="run" [disabled]="workflowError !== ''">
   <mat-icon aria-label="Run">play_arrow</mat-icon>
 </button>

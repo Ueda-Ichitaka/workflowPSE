@@ -1,6 +1,7 @@
 import {
   Component, OnInit, HostListener, ElementRef, Input, QueryList,
-  ViewChildren, NgZone, ChangeDetectionStrategy
+  ViewChildren, NgZone, ChangeDetectionStrategy, EventEmitter, Output,
+  ChangeDetectorRef
 } from '@angular/core';
 import { Process } from 'app/models/Process';
 import { Edge } from 'app/models/Edge';
@@ -39,7 +40,10 @@ export class EditorComponent implements OnInit {
   @ViewChildren(TaskComponent)
   private taskComponents: QueryList<TaskComponent>;
 
-  public constructor(private el: ElementRef, private zone: NgZone) {
+  @Output()
+  public workflowChanged = new EventEmitter<Workflow>();
+
+  public constructor(private el: ElementRef, private zone: NgZone, private cd: ChangeDetectorRef) {
 
   }
 
@@ -57,6 +61,8 @@ export class EditorComponent implements OnInit {
         updated_at: -1
       };
     }
+
+    setTimeout(() => { this.cd.detectChanges(); }, 100);
   }
 
   public getSvgEdge(edge: [number, number, number, number], mouse = false) {
@@ -118,12 +124,16 @@ export class EditorComponent implements OnInit {
 
     // add task to current workflow
     this.workflow.tasks.push(task);
+
+    this.workflowChanged.emit(this.workflow);
   }
 
   public remove(task_id: number) {
     const index = this.workflow.tasks.findIndex(task => task.id === task_id);
     this.workflow.tasks.splice(index, 1);
     this.workflow.edges = this.workflow.edges.filter(edge => edge.a_id !== task_id && edge.b_id !== task_id);
+
+    this.workflowChanged.emit(this.workflow);
   }
 
   public findProcess(id: number): Process {

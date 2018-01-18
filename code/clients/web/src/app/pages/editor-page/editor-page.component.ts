@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Process } from 'app/models/Process';
 import { ActivatedRoute } from '@angular/router';
 import { Workflow } from 'app/models/Workflow';
-import { WorkflowService } from 'app/services/workflow.service';
+import { WorkflowService, WorkflowValidationResult } from 'app/services/workflow.service';
 
 @Component({
   selector: 'app-editor-page',
@@ -22,6 +22,7 @@ export class EditorPageComponent implements OnInit {
   @Input()
   public showProcessList = true;
 
+  public workflowError = 'error';
 
   constructor(
     private processService: ProcessService,
@@ -44,8 +45,19 @@ export class EditorPageComponent implements OnInit {
     this.showProcessList = !this.showProcessList;
   }
 
-  public openSettings() {
-    this.sidenavComponent.toggle();
+  public workflowChanged(workflow: Workflow) {
+    const errorMessages = [
+      { type: WorkflowValidationResult.SUCCESSFUL, message: '' },
+      { type: WorkflowValidationResult.ERROR, message: 'Unknown Error' },
+      { type: WorkflowValidationResult.TITLE_TO_LONG, message: 'Workflow name is to long' },
+      { type: WorkflowValidationResult.TITLE_TO_SHORT, message: 'Workflow name is to short' },
+    ];
+
+    this.workflowError = errorMessages
+      .find(m => m.type === this.workflowService.validate(workflow))
+      .message;
+
+    console.log(this.workflowError);
   }
 
 }
