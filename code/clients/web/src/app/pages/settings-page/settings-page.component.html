@@ -1,22 +1,28 @@
 <div class="container">
     <h1>SETTINGS</h1>
 
-    <h3>Create new Services</h3>
+    <h3>WPS Server hinzufügen</h3>
 
     <div>
-        <mat-form-field>
-            <input matInput placeholder="Input">
-        </mat-form-field>
 
+    </div>
         <mat-form-field>
-            <textarea matInput placeholder="Textarea"></textarea>
+            <input matInput #wps_url_input placeholder="url">
         </mat-form-field>
+        <button mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>
+    <div>
 
-        <mat-form-field>
+        <div *ngFor="let wps of wps_list | async">
+            <span class="info">{{wps.title}}</span>
+            <span class="info">{{wps.provider.url}}</span>
+            <a mat-button (click)="remove(wps)">delete</a>
+        </div>
+
+        <!--<mat-form-field>
             <mat-select placeholder="Select">
                 <mat-option *ngFor="let option of update_options" [value]="option.value">{{option.displayed}}</mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field>-->
     </div>
 
     <button (click)="refresh()" mat-button>REFRESH</button>
@@ -25,7 +31,7 @@
 
     <div>
         <mat-form-field>
-            <mat-select placeholder="{{ language_options[0].displayed }}"> <!-- TODO make selectedOption in ts file and add ngIf here to set placeholder if no option was selected -->
+            <mat-select placeholder="{{ language_options[0].displayed }}" [(value)]="selected_language"> <!-- TODO make selectedOption in ts file and add ngIf here to set placeholder if no option was selected -->
                     <mat-option *ngFor="let option of language_options" [value]="option.value">{{option.displayed}}</mat-option>
             </mat-select>
         </mat-form-field>
