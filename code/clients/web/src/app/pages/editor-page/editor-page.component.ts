@@ -57,6 +57,7 @@ export class EditorPageComponent implements OnInit {
     return this.editorComponent.canUndo();
   }
 
+
   public workflowChanged(workflow: Workflow) {
     const errorMessages = [
       { type: WorkflowValidationResult.SUCCESSFUL, message: '' },

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { WorkflowService } from 'app/services/workflow.service';
+import { WorkflowService, WorkflowValidationResult } from 'app/services/workflow.service';
 import { Workflow } from 'app/models/Workflow';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
@@ -28,11 +28,27 @@ export class WorkflowsPageComponent implements OnInit {
   public ngOnInit() {
   }
 
+  public remove(id: number) {
+    this.workflowService.remove(id);
+  }
+
   public edit(id: number) {
     this.router.navigate(['/editor', { id }]);
   }
 
   public getWorkflow(id: number): Observable<Workflow> {
     return this.workflowService.get(id);
+  }
+
+  public run(id: number) {
+    this.workflowService.execute(id);
+  }
+
+  public validate(workflow): boolean {
+    return this.workflowService.validate(workflow) === WorkflowValidationResult.SUCCESSFUL;
+  }
+
+  public runs(worflow: Workflow): boolean {
+    return this.workflowService.isRunning(worflow);
   }
 }

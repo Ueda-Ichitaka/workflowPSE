@@ -8,6 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { catchError, map, tap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { Subscriber } from 'rxjs/Subscriber';
+import { MatSnackBar } from '@angular/material';
 
 // tslint:disable-next-line:max-line-length
 // tslint:disable-next-line:no-unused-expression
@@ -112,7 +113,7 @@ export class WorkflowService {
   private testObservable: Observable<Workflow[]>;
   private testSubscriber: Subscriber<Workflow[]>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private bar: MatSnackBar) {
     this.testData.push(JSON.parse(w3));
     this.testData.push(JSON.parse(w4));
 
@@ -176,6 +177,12 @@ export class WorkflowService {
     return true;
   }
 
+  public isRunning(workflow: Workflow): boolean {
+    const index = workflow.tasks
+      .findIndex(task => task.state === TaskState.WAITING || task.state === TaskState.FAILED);
+    return index !== -1;
+  }
+
   // TODO: @David Validate workflow
   public validate(workflow: Workflow): WorkflowValidationResult {
 
@@ -195,10 +202,16 @@ export class WorkflowService {
   }
 
   public async execute(id: number): Promise<boolean> {
+    const w = this.testData.find(workflow => workflow.id === id);
 
-    const index = this.testData.findIndex(workflow => workflow.id === id);
+    if (w.tasks.length > 0) {
+      w.tasks[0].state = TaskState.WAITING;
+    }
 
+    this.testSubscriber.next(this.testData);
     // TODO execute workflow
+
+    this.bar.open(`${w.title} Executed!`, 'CLOSE', { duration: 3000 });
 
     return true;
   }

@@ -1,7 +1,7 @@
 import {
   MatIconModule, MatInputModule, MatButtonModule, MatCheckboxModule, MatToolbarModule, MatTabsModule,
   MatFormFieldModule, MatCardModule, MatListModule, MatTooltipModule, MatChipsModule, MatDialogModule,
-  MatExpansionModule, MatOptionModule, MatSelectModule, MatSidenavModule, MatMenuModule
+  MatExpansionModule, MatOptionModule, MatSelectModule, MatSidenavModule, MatMenuModule, MatSnackBarModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
@@ -67,7 +67,8 @@ const routes = [
     MatExpansionModule,
     MatOptionModule,
     MatSelectModule,
-    MatMenuModule
+    MatMenuModule,
+    MatSnackBarModule
   ],
   entryComponents: [
     ProcessDialogComponent,

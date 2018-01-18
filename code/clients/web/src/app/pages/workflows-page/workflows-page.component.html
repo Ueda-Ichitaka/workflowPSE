@@ -12,11 +12,11 @@
 
             <div class="actions">
                 <div class="actions-left">
-                    <button mat-button color="warn">DELETE</button>
+                    <button mat-button color="warn" (click)="remove(workflow.id)">DELETE</button>
                 </div>
                 <div class="actions-right">
                     <button mat-raised-button (click)="edit(workflow.id)">EDIT</button>
-                    <button mat-raised-button color="primary">RUN</button>
+                    <button *ngIf="validate(workflow)" mat-raised-button color="primary" (click)="run(workflow.id)" [disabled]="runs(workflow)">{{runs(workflow) ? 'STOP' : 'RUN'}}</button>
                 </div>
             </div>
         </mat-expansion-panel>
