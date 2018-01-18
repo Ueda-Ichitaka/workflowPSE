@@ -16,7 +16,7 @@
                 </div>
                 <div class="actions-right">
                     <button mat-raised-button (click)="edit(workflow.id)">EDIT</button>
-                    <button *ngIf="validate(workflow)" mat-raised-button color="primary" (click)="run(workflow.id)" [disabled]="runs(workflow)">{{runs(workflow) ? 'STOP' : 'RUN'}}</button>
+                    <button *ngIf="validate(workflow)" mat-raised-button color="primary" (click)="run(workflow.id)" [disabled]="runs(workflow)">{{runs(workflow) ? 'RUNNING' : 'RUN'}}</button>
                 </div>
             </div>
         </mat-expansion-panel>

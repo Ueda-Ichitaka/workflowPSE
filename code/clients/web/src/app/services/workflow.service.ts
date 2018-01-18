@@ -167,6 +167,7 @@ export class WorkflowService {
   public async remove(id: number): Promise<boolean> {
     // Find index by workflow id
     const index = this.testData.findIndex(workflow => workflow.id === id);
+    const title = this.testData[index].title;
 
     // Remove from array
     this.testData.splice(index, 1);
@@ -174,6 +175,7 @@ export class WorkflowService {
     // Update observable
     this.testSubscriber.next(this.testData);
 
+    this.bar.open(`${title} Deleted`, 'CLOSE', { duration: 3000 });
     return true;
   }
 
@@ -211,7 +213,7 @@ export class WorkflowService {
     this.testSubscriber.next(this.testData);
     // TODO execute workflow
 
-    this.bar.open(`${w.title} Executed!`, 'CLOSE', { duration: 3000 });
+    this.bar.open(`${w.title} Executed`, 'CLOSE', { duration: 3000 });
 
     return true;
   }

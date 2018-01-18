@@ -1,6 +1,6 @@
 <div class="toolbar mat-elevation-z2" fxLayout="row" fxLayoutAlign="space-between">
   <div>
-    <span class="title">My Geo Workflow</span>
+    <span class="title">{{ (workflow | async).title }}</span>
   </div>
   <div>
     <button mat-button (click)="undo()" [disabled]="!canUndo()">UNDO</button>
@@ -11,6 +11,11 @@
 <app-editor class="editor" [workflow]="workflow | async" [processes]="processes | async" (workflowChanged)="workflowChanged($event)"></app-editor>
 <app-process-list *ngIf="showProcessList" class="process-list"></app-process-list>
 
-<button mat-fab color="primary" class="run" [disabled]="workflowError !== ''">
+<button *ngIf="!(runs() | async); else runningTemplate" mat-fab color="primary" class="run" [disabled]="workflowError !== ''"
+  (click)="run()">
   <mat-icon [matTooltip]="workflowError" aria-label="Run">play_arrow</mat-icon>
 </button>
+
+<ng-template #runningTemplate>
+  <mat-spinner class="run" diameter="56"></mat-spinner>
+</ng-template>

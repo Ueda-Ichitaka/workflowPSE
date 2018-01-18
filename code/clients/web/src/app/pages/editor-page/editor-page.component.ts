@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Workflow } from 'app/models/Workflow';
 import { WorkflowService, WorkflowValidationResult } from 'app/services/workflow.service';
 import { EditorComponent } from 'app/components/editor/editor.component';
+import { catchError, map, take, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-editor-page',
@@ -55,6 +56,21 @@ export class EditorPageComponent implements OnInit {
 
   public canUndo() {
     return this.editorComponent.canUndo();
+  }
+
+  public run(id: number) {
+    this.workflow.pipe(
+      take(1)
+    ).subscribe(workflow => {
+      this.workflowService.execute(workflow.id);
+    });
+  }
+
+  public runs(): Observable<boolean> {
+    return this.workflow.pipe(
+      take(1),
+      map(w => this.workflowService.isRunning(w))
+    );
   }
 
 
