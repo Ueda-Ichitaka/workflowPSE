@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.forms import ModelForm
 
 # Create your models here.
 
@@ -162,3 +163,21 @@ class Artefact(models.Model):
     class Meta:
         verbose_name = "Artefact"
         verbose_name_plural = "Atrefacts"
+
+
+class WorkflowForm(ModelForm):
+    class Meta:
+        model = WPS
+        fields = '__all__'
+
+
+class ProcessForm(ModelForm):
+    class Meta:
+        model = WPS
+        fields = '__all__'
+
+
+class WPSForm(ModelForm):
+    class Meta:
+        model = WPS
+        fields = '__all__'
