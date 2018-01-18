@@ -33,7 +33,6 @@ export class WorkflowsPageComponent implements OnInit {
   }
 
   public getWorkflow(id: number): Observable<Workflow> {
-    console.log('hi');
     return this.workflowService.get(id);
   }
 }

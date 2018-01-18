@@ -23,6 +23,7 @@ export enum WorkflowValidationResult {
   SUCCESSFUL,
   TITLE_TO_LONG,
   TITLE_TO_SHORT,
+  EMPTY,
   // TODO: @David Add additional results
 }
 
@@ -183,6 +184,8 @@ export class WorkflowService {
       return WorkflowValidationResult.TITLE_TO_LONG;
     } else if (workflow.title.length < 1) {
       return WorkflowValidationResult.TITLE_TO_SHORT;
+    } else if (workflow.tasks.length < 1) {
+      return WorkflowValidationResult.EMPTY;
     }
 
     // TODO: @David add additional checks

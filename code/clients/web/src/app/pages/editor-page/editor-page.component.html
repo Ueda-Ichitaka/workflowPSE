@@ -3,7 +3,7 @@
     <span class="title">My Geo Workflow</span>
   </div>
   <div>
-    <button mat-button>UNDO</button>
+    <button mat-button (click)="undo()" [disabled]="!canUndo()">UNDO</button>
     <button mat-raised-button color="primary">SAVE</button>
   </div>
 </div>
@@ -12,5 +12,5 @@
 <app-process-list *ngIf="showProcessList" class="process-list"></app-process-list>
 
 <button mat-fab color="primary" class="run" [disabled]="workflowError !== ''">
-  <mat-icon aria-label="Run">play_arrow</mat-icon>
+  <mat-icon [matTooltip]="workflowError" aria-label="Run">play_arrow</mat-icon>
 </button>

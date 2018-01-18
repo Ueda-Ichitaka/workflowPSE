@@ -5,6 +5,7 @@ import { Process } from 'app/models/Process';
 import { ActivatedRoute } from '@angular/router';
 import { Workflow } from 'app/models/Workflow';
 import { WorkflowService, WorkflowValidationResult } from 'app/services/workflow.service';
+import { EditorComponent } from 'app/components/editor/editor.component';
 
 @Component({
   selector: 'app-editor-page',
@@ -23,6 +24,9 @@ export class EditorPageComponent implements OnInit {
   public showProcessList = true;
 
   public workflowError = 'error';
+
+  @ViewChild(EditorComponent)
+  public editorComponent: EditorComponent;
 
   constructor(
     private processService: ProcessService,
@@ -45,19 +49,26 @@ export class EditorPageComponent implements OnInit {
     this.showProcessList = !this.showProcessList;
   }
 
+  public undo() {
+    this.editorComponent.undo();
+  }
+
+  public canUndo() {
+    return this.editorComponent.canUndo();
+  }
+
   public workflowChanged(workflow: Workflow) {
     const errorMessages = [
       { type: WorkflowValidationResult.SUCCESSFUL, message: '' },
       { type: WorkflowValidationResult.ERROR, message: 'Unknown Error' },
       { type: WorkflowValidationResult.TITLE_TO_LONG, message: 'Workflow name is to long' },
       { type: WorkflowValidationResult.TITLE_TO_SHORT, message: 'Workflow name is to short' },
+      { type: WorkflowValidationResult.EMPTY, message: 'Workflow is empty' },
     ];
 
     this.workflowError = errorMessages
       .find(m => m.type === this.workflowService.validate(workflow))
       .message;
-
-    console.log(this.workflowError);
   }
 
 }

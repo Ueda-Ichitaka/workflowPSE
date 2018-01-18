@@ -39,9 +39,9 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: rgba(34, 34, 34, 34);
+    color: rgba(89, 89, 89, 89);
 }
 
-.mat-dialog-container {
-    color: rgba(55, 55, 55, 55);
+.mat-dialog-container, .mat-expansion-panel-header-title {
+    color: rgba(55, 55, 55, 89);
 }

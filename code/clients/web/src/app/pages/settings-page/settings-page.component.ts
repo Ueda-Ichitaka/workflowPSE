@@ -28,7 +28,7 @@ export class SettingsPageComponent implements OnInit {
   }
 
   public refresh() {
-    console.log("services refreshed");
+    console.log('services refreshed');
   }
 
 }

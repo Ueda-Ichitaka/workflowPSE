@@ -19,6 +19,7 @@ interface MovementData {
   index?: number;
   x?: number;
   y?: number;
+  before?: string;
 }
 
 @Component({
@@ -36,6 +37,8 @@ export class EditorComponent implements OnInit {
   public processes: Process[];
 
   private movement: MovementData = {};
+
+  private snapshots: Workflow[] = [];
 
   @ViewChildren(TaskComponent)
   private taskComponents: QueryList<TaskComponent>;
@@ -62,7 +65,10 @@ export class EditorComponent implements OnInit {
       };
     }
 
-    setTimeout(() => { this.cd.detectChanges(); }, 100);
+    setTimeout(() => {
+      this.cd.detectChanges();
+      this.workflowChanged.emit(this.workflow);
+    }, 100);
   }
 
   public getSvgEdge(edge: [number, number, number, number], mouse = false) {
@@ -107,6 +113,7 @@ export class EditorComponent implements OnInit {
   }
 
   public add(process: Process, x: number, y: number) {
+    this.snapshot();
     const timestamp = (new Date()).getTime();
 
     // create task
@@ -129,6 +136,7 @@ export class EditorComponent implements OnInit {
   }
 
   public remove(task_id: number) {
+    this.snapshot();
     const index = this.workflow.tasks.findIndex(task => task.id === task_id);
     this.workflow.tasks.splice(index, 1);
     this.workflow.edges = this.workflow.edges.filter(edge => edge.a_id !== task_id && edge.b_id !== task_id);
@@ -150,7 +158,7 @@ export class EditorComponent implements OnInit {
         x += 16;
         y += 16;
       }
-      this.movement = { index, x, y };
+      this.movement = { index, x, y, before: JSON.stringify(this.workflow) };
     } else {
       this.movement.index = undefined;
     }
@@ -186,6 +194,11 @@ export class EditorComponent implements OnInit {
 
   @HostListener('mouseup')
   public dragEnd(event) {
+
+    if (this.movement.before !== undefined) {
+      this.snapshot(JSON.parse(this.movement.before));
+    }
+
     // reset movement data
     this.movement = {};
     // reset cursor
@@ -224,6 +237,7 @@ export class EditorComponent implements OnInit {
     }
 
     if (this.movement.edge) {
+      this.snapshot();
       const input_id = parameter.role === 'input' ? parameter.id : this.movement.parameter.id;
       const output_id = parameter.role === 'output' ? parameter.id : this.movement.parameter.id;
       const a_id = parameter.role === 'output' ? task.task.id : this.movement.task.id;
@@ -231,8 +245,26 @@ export class EditorComponent implements OnInit {
 
       this.workflow.edges.push({ id: -1, a_id, b_id, input_id, output_id });
     }
+  }
 
-    setTimeout(() => console.log(this.workflow), 100);
+  private snapshot(workflow?: Workflow) {
+    if (workflow) {
+      this.snapshots.push(workflow);
+    } else {
+      this.snapshots.push(JSON.parse(JSON.stringify(this.workflow)));
+    }
+  }
 
+  public undo() {
+    const snapshot = this.snapshots.pop();
+    if (snapshot !== undefined) {
+      this.workflow = snapshot;
+    }
+    this.cd.detectChanges();
+    this.workflowChanged.emit(this.workflow);
+  }
+
+  public canUndo(): boolean {
+    return this.snapshots.length > 0;
   }
 }
