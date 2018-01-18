@@ -1,5 +1,8 @@
 <div class="container">
-    <h1>this is a settings page</h1>
+    <h1>SETTINGS</h1>
+
+    <h3>Create new Services</h3>
+
     <div>
         <mat-form-field>
             <input matInput placeholder="Input">
@@ -11,10 +14,21 @@
 
         <mat-form-field>
             <mat-select placeholder="Select">
-                <mat-option value="option">Option</mat-option>
+                <mat-option *ngFor="let option of update_options" [value]="option.value">{{option.displayed}}</mat-option>
             </mat-select>
         </mat-form-field>
     </div>
 
     <button (click)="refresh()" mat-button>REFRESH</button>
+
+    <h3>Sprache</h3>
+
+    <div>
+        <mat-form-field>
+            <mat-select placeholder="{{ language_options[0].displayed }}"> <!-- TODO make selectedOption in ts file and add ngIf here to set placeholder if no option was selected -->
+                    <mat-option *ngFor="let option of language_options" [value]="option.value">{{option.displayed}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
 </div>
