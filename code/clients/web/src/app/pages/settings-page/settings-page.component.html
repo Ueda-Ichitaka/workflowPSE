@@ -7,25 +7,21 @@
 
     </div>
         <mat-form-field>
-            <input matInput #wps_url_input placeholder="url">
+            <input (keyup.enter)="addWPS(wps_url_input.value)" #wps_url_input autocomplete="url" matInput>
         </mat-form-field>
-        <button mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>
+        <!--<button *ngIf="wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>-->
+        <button [disabled]="!wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>
     <div>
 
-        <div *ngFor="let wps of wps_list | async">
-            <span class="info">{{wps.title}}</span>
-            <span class="info">{{wps.provider.url}}</span>
-            <a mat-button (click)="remove(wps)">delete</a>
-        </div>
-
-        <!--<mat-form-field>
-            <mat-select placeholder="Select">
-                <mat-option *ngFor="let option of update_options" [value]="option.value">{{option.displayed}}</mat-option>
-            </mat-select>
-        </mat-form-field>-->
+    <div *ngFor="let wps of wps_list | async">
+        <span class="wps_info">{{wps.title}}</span>
+        <span class="wps_info">{{wps.provider.url}}</span>
+        <a mat-button (click)="remove(wps)">delete</a>
     </div>
 
-    <button (click)="refresh()" mat-button>REFRESH</button>
+    </div>
+
+    <button (click)="refresh()" mat-button>REFRESH</button> <!-- TODO set some kind of timeout for refreshing -->
 
     <h3>Sprache</h3>
 

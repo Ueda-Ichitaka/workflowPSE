@@ -45,7 +45,7 @@ export class SettingsPageComponent implements OnInit {
   }
 
   public refresh() {
-    console.log(this.selected_language);
+    // TODO signal server to refresh wps services
     console.log("services refreshed");
   }
 
