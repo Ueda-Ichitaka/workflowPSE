@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 
 #For django_crontab
 CRONJOBS = [
-    ('*/1 * * * *', 'base.cron.first_crontab_task'),
+    ('*/1 * * * *', 'base.cron.test_capabilities_parsing'),
     ('*/5 * * * *', 'base.scheduler'),
     ('*/5 * * * *', 'base.receiver'),
     ('*/5 * * * *', 'base.utils'),
