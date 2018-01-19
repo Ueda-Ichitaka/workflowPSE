@@ -15,12 +15,14 @@ export class WpsService {
    * Todo: Remove hard coded test data, and add http support when server is ready.
    */
 
-  private mockWPSProvider: WPSProvider = { id: 0, title: "WPSProvider1", url: "example.com" }
+  private mockWPSProvider: WPSProvider[] = [
+    { id: 0, title: "WPSProvider1", url: "example.com" }
+  ];
   
   private testData: WPS[] = [
-    { id: 0, provider: this.mockWPSProvider, title: "WPS1", abstract: "WPS1 Service" },
-    { id: 1, provider: this.mockWPSProvider, title: "WPS2", abstract: "WPS2 Service" },
-    { id: 2, provider: this.mockWPSProvider, title: "WPS3", abstract: "WPS3 Service" }
+    { id: 0, provider: this.mockWPSProvider[0], title: "WPS1", abstract: "WPS1 Service" },
+    { id: 1, provider: this.mockWPSProvider[0], title: "WPS2", abstract: "WPS2 Service" },
+    { id: 2, provider: this.mockWPSProvider[0], title: "WPS3", abstract: "WPS3 Service" }
   ];
 
   /**
@@ -50,11 +52,15 @@ export class WpsService {
     );
   }
 
-  public create(wps: string): Observable<WPS> {
+  public create(url: string): Observable<WPS> {
     // Assign random id to wps
-    var id = Math.round(Math.random() * 1000);
+    var wps_id = Math.round(Math.random() * 1000);
+    var provider_id = Math.round(Math.random() * 100);
 
-    var wps_var: WPS = {id: id, provider: this.mockWPSProvider, title: `WPS${id}`, abstract: `WPS${id} Service`}
+    var provider_var: WPSProvider = { id: provider_id, title: `Provider${provider_id}`, url: url }
+    this.mockWPSProvider.push(<WPSProvider>provider_var)
+
+    var wps_var: WPS = { id: wps_id, provider: provider_var, title: `WPS${wps_id}`, abstract: `WPS${wps_id} Service` }
 
     // Add new WPS to WPS list
     this.testData.push(<WPS>wps_var);
