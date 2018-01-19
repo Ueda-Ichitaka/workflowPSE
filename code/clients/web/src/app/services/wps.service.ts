@@ -18,9 +18,9 @@ export class WpsService {
   private mockWPSProvider: WPSProvider = { id: 0, title: "WPSProvider1", url: "example.com" }
   
   private testData: WPS[] = [
-    {
-      id: 0, provider: this.mockWPSProvider, title: "WPS1", abstract: "WPS1 Service"
-    }
+    { id: 0, provider: this.mockWPSProvider, title: "WPS1", abstract: "WPS1 Service" },
+    { id: 1, provider: this.mockWPSProvider, title: "WPS2", abstract: "WPS2 Service" },
+    { id: 2, provider: this.mockWPSProvider, title: "WPS3", abstract: "WPS3 Service" }
   ];
 
   /**
@@ -39,6 +39,10 @@ export class WpsService {
     });
   }
 
+  public all(): Observable<WPS[]> {
+    return this.testObservable;
+  }
+
   public get(id: number): Observable<WPS> {
     return this.testObservable.pipe(
       // Map WPS[] to WPS by finding the right id
@@ -46,18 +50,20 @@ export class WpsService {
     );
   }
 
-  public create(wps: Partial<WPS>): Observable<WPS> {
+  public create(wps: string): Observable<WPS> {
     // Assign random id to wps
-    wps.id = Math.round(Math.random() * 10000000);
+    var id = Math.round(Math.random() * 1000);
+
+    var wps_var: WPS = {id: id, provider: this.mockWPSProvider, title: `WPS${id}`, abstract: `WPS${id} Service`}
 
     // Add new WPS to WPS list
-    this.testData.push(<WPS>wps);
+    this.testData.push(<WPS>wps_var);
 
     // Update subscriber
     this.testSubscriber.next(this.testData);
 
     // Return created wps
-    return this.get(wps.id);
+    return this.get(wps_var.id);
   }
 
   public update(id: number, wps: Partial<WPS>): Observable<WPS> {

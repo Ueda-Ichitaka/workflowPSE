@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ProcessService } from 'app/services/process.service';
 import { Process } from 'app/models/Process';
 import { WpsService } from 'app/services/wps.service';
+import { WPS } from '../../models/WPS';
 
 
 // TODO: @Marcel add settings page
@@ -18,6 +19,8 @@ import { WpsService } from 'app/services/wps.service';
 })
 export class SettingsPageComponent implements OnInit {
 
+  wps_list: Observable<WPS[]>;
+
   update_options = [
     {value: "wps_provider0", displayed: "WPS Provider"},
     {value: "task1", displayed: "Task"}
@@ -28,24 +31,35 @@ export class SettingsPageComponent implements OnInit {
     {value: "english1", displayed: "English"}
   ];
 
-  selected_language = "Deutsch";
+  selected_language = "english1";
 
   constructor(
     private processService: ProcessService,
     private wpsService: WpsService,
   ) {
-
+    
   }
 
   public ngOnInit() {
+    this.wps_list = this.wpsService.all();
   }
 
   public refresh() {
+    console.log(this.selected_language);
     console.log("services refreshed");
   }
 
   public onLangSelect(str) {
     this.selected_language = str;
+  }
+
+  public addWPS(url) {
+    this.wpsService.create(url);
+    
+  }
+
+  public remove(wps) {
+    this.wpsService.remove(wps.id);
   }
 
 }
