@@ -83,7 +83,7 @@ def checkFiles():
 
 
 def test_capabilities_parsing(self):
-    url_from_scc_vm = 'base/getCapabilitiesFromPyWPS.xml'
+    url_from_scc_vm = 'base/testfiles/getCapabilitiesFromPyWPS.xml'
 
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
@@ -97,48 +97,56 @@ def test_capabilities_parsing(self):
     tree = ET.parse(url_from_scc_vm)
     root = tree.getroot()
 
-    print(root.tag)
+    service_provider = parse_service_provider_info(root, xml_namespaces)
+    service_provider.save()
 
-    #Parse service provider and save him
-    service_provider_element = root.find('{http://www.opengis.net/ows/1.1}ServiceProvider')
+    wps_server = parse_wps_server_info(root, xml_namespaces, service_provider)
+    wps_server.save()
 
-    if service_provider_element is None:
-        print('ERROR')
-    else:
-        provider_name = service_provider_element.find('ows:ProviderName', xml_namespaces).text
-        provider_site = service_provider_element.find('ows:ProviderSite', xml_namespaces).attrib.get(
-            '{' + xml_namespaces.get('xlink') + '}href')
-        service_contact_element = service_provider_element.find('ows:ServiceContact', xml_namespaces)
-        if service_contact_element is None:
-            print('ERROR')
-        else:
-            individual_name = service_contact_element.find('ows:IndividualName', xml_namespaces).text
-            position_name = service_contact_element.find('ows:PositionName', xml_namespaces).text
 
-            provider = WPSProvider(provider_name=provider_name,
-                                   provider_site=provider_site,
-                                   individual_name=individual_name,
-                                   position_name=position_name)
-            provider.save()
-    #Saving of service provider ends here
 
-    #Parse wps server and save it
-    service_identification_element = root.find('ows:ServiceIdentification', xml_namespaces)
-    server_title = service_identification_element.find('ows:Title', xml_namespaces).text
-    server_abstract = service_identification_element.find('ows:Abstract', xml_namespaces).text
 
-    #server_get_capabilities_url = root.findall('ows:Operation')
 
+
+
+def parse_service_provider_info(root, namespaces):
+    service_provider_element = root.find('ows:ServiceProvider', namespaces)
+
+    provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
+    provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
+        '{' + namespaces.get('xlink') + '}href')
+
+    service_contact_element = service_provider_element.find('ows:ServiceContact', namespaces)
+
+    individual_name = service_contact_element.find('ows:IndividualName', namespaces).text
+    position_name = service_contact_element.find('ows:PositionName', namespaces).text
+
+    service_provider = WPSProvider(provider_name=provider_name,
+                           provider_site=provider_site,
+                           individual_name=individual_name,
+                           position_name=position_name)
+
+    return service_provider
+
+
+def parse_wps_server_info(root, namespaces, provider):
+    service_identification_element = root.find('ows:ServiceIdentification', namespaces)
+
+    server_title = service_identification_element.find('ows:Title', namespaces).text
+    server_abstract = service_identification_element.find('ows:Abstract', namespaces).text
+
+    operations_metadata_element = root.find('ows:OperationsMetadata', namespaces)
+
+    urls = operations_metadata_element.findall('ows:Operation/ows:DCP/ows:HTTP/ows:Get', namespaces)
 
     wps_server = WPS(service_provider=provider,
                      title=server_title,
                      abstract=server_abstract,
-                     capabilities_url='http://test.net',
-                     describe_url='http://test.net',
-                     execute_url='http://test.net')
+                     capabilities_url=urls[0],
+                     describe_url=urls[1],
+                     execute_url=urls[2])
 
-    wps_server.save()
-
+    return wps_server
 
 """
 Django cron. Das geht bei mir immer noch nicht :(
