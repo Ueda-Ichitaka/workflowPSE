@@ -5,7 +5,7 @@ import { ViewChild } from '@angular/core';
 import { ProcessDialogComponent } from 'app/components/process-dialog/process-dialog.component';
 import { Process } from 'app/models/Process';
 import { LocaleDataIndex } from '@angular/common/src/i18n/locale_data';
-import { Task } from 'app/models/Task';
+import { Task, TaskState } from 'app/models/Task';
 import { ArtefactDialogComponent } from 'app/components/artefact-dialog/artefact-dialog.component';
 
 @Component({
@@ -39,6 +39,9 @@ export class TaskComponent implements OnInit {
   @Output()
   public taskRemove = new EventEmitter<Task>();
 
+  @Input()
+  public showState = false;
+
   private mouseDownPos: number[];
 
   public constructor(public dialog: MatDialog, private el: ElementRef) { }
@@ -47,10 +50,24 @@ export class TaskComponent implements OnInit {
 
   }
 
+  public get stateInfo(): { name: string, color: string } {
+    const infoMap = [
+      { state: TaskState.DEPRECATED, name: 'DEPRECATED', color: '#E91E63' },
+      { state: TaskState.FAILED, name: 'FAILED', color: '#F44336' },
+      { state: TaskState.FINISHED, name: 'FINISHED', color: '#2196F3' },
+      { state: TaskState.READY, name: 'READY', color: '#03A9F4' },
+      { state: TaskState.RUNNING, name: 'RUNNING', color: '#FFC107' },
+      { state: TaskState.WAITING, name: 'WAITING', color: '#9E9E9E' },
+    ];
+
+    return infoMap.find(info => info.state === this.task.state);
+  }
 
   @HostListener('mousedown', ['$event'])
   public hostMouseDown(event: MouseEvent) {
-    this.mouseDownPos = [event.pageX, event.pageY];
+    if (event.button === 0) {
+      this.mouseDownPos = [event.pageX, event.pageY];
+    }
   }
 
   @HostListener('mouseup', ['$event'])
@@ -62,6 +79,12 @@ export class TaskComponent implements OnInit {
       this.menuComponent.openMenu();
     }
     this.mouseDownPos = undefined;
+  }
+
+  @HostListener('contextmenu', ['$event'])
+  public hostContextmenu(event: MouseEvent) {
+    this.menuComponent.openMenu();
+    return false;
   }
 
   public clickDelete() {

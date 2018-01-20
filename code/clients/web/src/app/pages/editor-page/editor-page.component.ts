@@ -89,7 +89,6 @@ export class EditorPageComponent implements OnInit {
     }
 
     return this.workflow.pipe(
-      take(1),
       map(w => this.workflowService.isRunning(w))
     );
   }

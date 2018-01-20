@@ -46,6 +46,9 @@ export class EditorComponent implements OnInit {
   @Output()
   public workflowChanged = new EventEmitter<Workflow>();
 
+  @Input()
+  public running = false;
+
   public constructor(private el: ElementRef, private zone: NgZone, private cd: ChangeDetectorRef) {
 
   }
@@ -155,6 +158,9 @@ export class EditorComponent implements OnInit {
   }
 
   public dragStart(index: number, event: MouseEvent) {
+    if (event.button !== 0) {
+      return;
+    }
     // store index of moved task
     // no move on input/output parameter
     if (!(<HTMLElement>event.target).classList.contains('nomove')) {

@@ -5,6 +5,7 @@
 
 
 <div class="title">{{ process.title }}</div>
+<span *ngIf="showState" class="state" [style.color]="stateInfo.color" [style.borderColor]="stateInfo.color">{{ stateInfo.name }}</span>
 <span [matMenuTriggerFor]="menu"></span>
 
 <div class="inputs" #inputs>
