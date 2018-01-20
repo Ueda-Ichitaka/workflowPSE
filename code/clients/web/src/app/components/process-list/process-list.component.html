@@ -1,6 +1,11 @@
 <mat-card class="card">
-  <mat-list class="list">
+  <mat-list *ngIf="processes | async; else loadingTemplate" class="list">
     <h3 matSubheader>Scc Server A</h3>
     <app-process *ngFor="let process of processes | async" [process]="process"></app-process>
   </mat-list>
+
+  <ng-template #loadingTemplate>
+    <mat-spinner class="loading" diameter="55" color="accent"></mat-spinner>
+  </ng-template>
+
 </mat-card>

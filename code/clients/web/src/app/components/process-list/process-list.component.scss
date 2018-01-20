@@ -1,5 +1,9 @@
 $app-process-list-padding: 5px;
 
+:host {
+    position: relative;
+}
+
 .card {
     padding: $app-process-list-padding;
     background: #fafafa;
@@ -10,4 +14,10 @@ $app-process-list-padding: 5px;
 .list {
     overflow-y: scroll;
     height: 100%;
+}
+
+.loading {
+    position: absolute;
+    top: calc(50% - 25px);
+    left: calc(50% - 25px);
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { ProcessService } from 'app/services/process.service';
 import { Observable } from 'rxjs/Observable';
 import { Process } from 'app/models/Process';
@@ -30,6 +30,10 @@ export class EditorPageComponent implements OnInit {
 
   @ViewChild(EditorComponent)
   public editorComponent: EditorComponent;
+
+
+  @ViewChild('tileInput')
+  public titleInputComponent: ElementRef;
 
   constructor(
     private processService: ProcessService,
@@ -81,6 +85,17 @@ export class EditorPageComponent implements OnInit {
       this.workflowChanged(workflow);
     });
     this.editTitleMode = false;
+
+  }
+
+  public clickTitleEdit() {
+    this.editTitleMode = true;
+    setTimeout(() => {
+      const native: HTMLInputElement = this.titleInputComponent.nativeElement;
+      native.focus();
+    }, 100);
+
+
   }
 
   public runs(): Observable<boolean> {

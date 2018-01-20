@@ -2,13 +2,13 @@
   <div *ngIf="workflow">
     <div *ngIf="!editTitleMode; else editTitleTemplate" class="title">
       {{ (workflow | async).title }}
-      <button mat-icon-button class="edit-name" (click)="editTitleMode = true">
+      <button mat-icon-button class="edit-name" (click)="clickTitleEdit()">
         <mat-icon aria-label="Example icon-button with a heart icon">edit</mat-icon>
       </button>
     </div>
     <ng-template #editTitleTemplate>
       <mat-form-field>
-        <input #input matInput [placeholder]="(workflow | async).title" (keyup.enter)="editTitle(input.value)">
+        <input #tileInput matInput [placeholder]="(workflow | async).title" (keyup.enter)="editTitle(tileInput.value)" autofocus>
       </mat-form-field>
     </ng-template>
   </div>

@@ -1,5 +1,5 @@
 <div #background class="background" (dragover)="dragOver($event)" (drop)="drop($event)">
-    <svg viewBox="0 0 3000 3000">
+    <svg viewBox="0 0 2000 2000">
         <svg:path *ngIf="movement.edge" [attr.d]="getSvgEdge(movement.edge, true)" stroke="#888888" stroke-width="2" fill="none"
         />
         <svg:path *ngFor="let edge of edges" [attr.d]="getSvgEdge(edge)" stroke="#888888" stroke-width="2" fill="none" />

@@ -77,7 +77,7 @@ export class EditorComponent implements OnInit {
 
   public scrollToMiddle() {
     const native: HTMLElement = this.el.nativeElement;
-    native.scrollTo(1000, 1000);
+    native.scrollTo(500, 500);
   }
 
   public getSvgEdge(edge: [number, number, number, number], mouse = false) {
@@ -150,6 +150,10 @@ export class EditorComponent implements OnInit {
   }
 
   public remove(task_id: number) {
+    if (this.running) {
+      return;
+    }
+
     this.snapshot();
     const index = this.workflow.tasks.findIndex(task => task.id === task_id);
     this.workflow.tasks.splice(index, 1);
@@ -164,7 +168,7 @@ export class EditorComponent implements OnInit {
   }
 
   public dragStart(index: number, event: MouseEvent) {
-    if (event.button !== 0) {
+    if (event.button !== 0 || this.running) {
       return;
     }
     // store index of moved task
@@ -237,6 +241,9 @@ export class EditorComponent implements OnInit {
   }
 
   public parameterDrag(parameter: ProcessParameter<'input' | 'output'>, task: TaskComponent) {
+    if (this.running) {
+      return;
+    }
     const [x, y] = task.getParameterPosition(parameter.role, parameter.id);
     this.movement = {
       edge: [0, 0, 0, 0],
@@ -250,7 +257,7 @@ export class EditorComponent implements OnInit {
   }
 
   public parameterDrop(parameter: ProcessParameter<'input' | 'output'>, task: TaskComponent) {
-    if (!this.movement.parameter || parameter.role === this.movement.parameter.role) {
+    if (this.running || !this.movement.parameter || parameter.role === this.movement.parameter.role) {
       return;
     }
 
@@ -274,6 +281,9 @@ export class EditorComponent implements OnInit {
   }
 
   public undo() {
+    if (this.running) {
+      return;
+    }
     const snapshot = this.snapshots.pop();
     if (snapshot !== undefined) {
       this.workflow = snapshot;
