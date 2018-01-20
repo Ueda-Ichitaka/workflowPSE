@@ -19,11 +19,24 @@ def first_crontab_task():
 
 def scheduler():
     # Scheduler main function
+    # check workflow list for execute flag
+    # for all workflows in ready list do
+    #    for task in workflow do
+    #       generate process xml
+    #       send xml to wps server
+    #
+    #todo: max parallel tasks schedule policy
     pass
 
 
 def receiver():
     # Receiver main function
+    # check output urls from servers
+    # for workflow in executing list do
+    #   for task in workflow do
+    #      check response url
+    #        check for changes to db 
+    #        update db data
     pass
 
 
@@ -105,10 +118,6 @@ def test_capabilities_parsing(self):
 
 
 
-
-
-
-
 def parse_service_provider_info(root, namespaces):
     service_provider_element = root.find('ows:ServiceProvider', namespaces)
 
@@ -147,6 +156,12 @@ def parse_wps_server_info(root, namespaces, provider):
                      execute_url=urls[2])
 
     return wps_server
+
+
+
+
+
+
 
 """
 Django cron. Das geht bei mir immer noch nicht :(

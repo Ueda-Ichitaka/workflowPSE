@@ -3,9 +3,10 @@ from django.views import generic
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
 from django.views.generic import View
 from django.views.generic import TemplateView
-from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from .models import *
 
 
@@ -26,45 +27,40 @@ class UserView(View):
 
 
 class WorkflowView(View):
-    # TODO: all TODO's in this view for are effective for corresponding methods in other views
-    @staticmethod
-    @require_GET
-    def index(request):
-        return as_json_response(list(Workflow.objects.all().values()))
+    # needed because Django needs CSRF token in cookie unless you put this
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(WorkflowView, self).dispatch(*args, **kwargs)
 
     @staticmethod
-    @require_POST
-    def create(request):
-        # TODO: validation needed?
+    def get(request, *args, **kwargs):
+        if 'workflow_id' in kwargs:
+            return as_json_response(model_to_dict(Workflow.objects.get(pk=kwargs['workflow_id'])))
+        else:
+            return as_json_response(list(Workflow.objects.all().values()))
+
+    @staticmethod
+    def post(request):
         workflow_form = WorkflowForm(request.POST)
         new_workflow = workflow_form.save()
 
-        # TODO: return something more than ID?
-        return JsonResponse({'id': new_workflow.pk})
+        return as_json_response(model_to_dict(new_workflow))
 
     @staticmethod
-    @require_GET
-    def get(request, workflow_id):
-        workflow = model_to_dict(Workflow.objects.get(pk=workflow_id))
-        return as_json_response(workflow)
-
-    @staticmethod
-    @require_http_methods(['PATCH'])
-    def update(request, workflow_id):
-        workflow = WPS.objects.get(pk=workflow_id)
+    def patch(request, *args, **kwargs):
+        workflow = WPS.objects.get(pk=kwargs['workflow_id'])
         workflow_form = WPSForm(request.POST, instance=workflow)
-        workflow_form.save()
+        workflow = workflow_form.save()
 
-        return JsonResponse({})
+        return as_json_response(model_to_dict(workflow))
 
     @staticmethod
-    @require_http_methods(['DELETE'])
-    def delete(request, workflow_id):
-        workflow = get_object_or_404(Workflow, pk=workflow_id)
-        workflow.delete()
+    def delete(request, *args, **kwargs):
+        workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
+        (deletedWorkflowCount, countOfDeletionsPerType) = workflow.delete()
+        deleted = (deletedWorkflowCount > 0)
 
-        # TODO: return something?
-        return JsonResponse({})
+        return JsonResponse({'deleted': deleted})
 
     @staticmethod
     @require_GET
@@ -78,79 +74,77 @@ class WorkflowView(View):
 
 
 class ProcessView(View):
-    @staticmethod
-    @require_GET
-    def index(request):
-        return as_json_response(list(Process.objects.all().values()))
+    # needed because Django needs CSRF token in cookie unless you put this
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(ProcessView, self).dispatch(*args, **kwargs)
 
     @staticmethod
-    @require_POST
-    def create(request):
+    def get(request, *args, **kwargs):
+        if 'process_id' in kwargs:
+            return as_json_response(model_to_dict(Process.objects.get(pk=kwargs['process_id'])))
+        else:
+            return as_json_response(list(Process.objects.all().values()))
+
+    @staticmethod
+    def post(request):
         process_form = ProcessForm(request.POST)
         new_process = process_form.save()
 
-        return JsonResponse({'id': new_process.id})
+        return as_json_response(model_to_dict(new_process))
 
     @staticmethod
-    @require_GET
-    def get(request, process_id):
-        process = model_to_dict(Process.objects.get(pk=process_id))
-        return as_json_response(process)
+    def patch(request, *args, **kwargs):
+        process = WPS.objects.get(pk=kwargs['process_id'])
+        process_form = WPSForm(request.POST, instance=process)
+        process = process_form.save()
+
+        return as_json_response(model_to_dict(process))
 
     @staticmethod
-    @require_http_methods(['PATCH'])
-    def update(request, process_id):
-        process = Process.objects.get(pk=process_id)
-        process_form = ProcessForm(request.POST, instance=process)
-        process_form.save()
+    def delete(request, *args, **kwargs):
+        process = get_object_or_404(Process, pk=kwargs['process_id'])
+        (deletedProcessCount, countOfDeletionsPerType) = process.delete()
+        deleted = (deletedProcessCount > 0)
 
-        return JsonResponse({})
-
-    @staticmethod
-    @require_http_methods(['DELETE'])
-    def delete(request, process_id):
-        process = get_object_or_404(Process, pk=process_id)
-        process.delete()
-
-        return JsonResponse({})
+        return JsonResponse({'deleted': deleted})
 
 
 class WPSView(View):
-    @staticmethod
-    @require_GET
-    def index(request):
-        return as_json_response(list(WPS.objects.all().values()))
+    # needed because Django needs CSRF token in cookie unless you put this
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(WPSView, self).dispatch(*args, **kwargs)
 
     @staticmethod
-    @require_POST
-    def create(request):
+    def get(request, *args, **kwargs):
+        if 'wps_id' in kwargs:
+            return as_json_response(model_to_dict(WPS.objects.get(pk=kwargs['wps_id'])))
+        else:
+            return as_json_response(list(WPS.objects.all().values()))
+
+    @staticmethod
+    def post(request):
         wps_form = WPSForm(request.POST)
         new_wps = wps_form.save()
 
-        return JsonResponse({'id': new_wps.pk})
+        return as_json_response(model_to_dict(new_wps))
 
     @staticmethod
-    @require_GET
-    def get(request, wps_id):
-        wps = model_to_dict(WPS.objects.get(pk=wps_id))
-        return as_json_response(wps)
-
-    @staticmethod
-    @require_http_methods(['PATCH'])
-    def update(request, wps_id):
-        wps = WPS.objects.get(pk=wps_id)
+    def patch(request, *args, **kwargs):
+        wps = WPS.objects.get(pk=kwargs['wps_id'])
         wps_form = WPSForm(request.POST, instance=wps)
-        wps_form.save()
+        wps = wps_form.save()
 
-        return JsonResponse({})
+        return as_json_response(model_to_dict(wps))
 
     @staticmethod
-    @require_http_methods(['DELETE'])
-    def delete(request, wps_id):
-        wps = get_object_or_404(WPS, pk=wps_id)
-        wps.delete()
+    def delete(request, *args, **kwargs):
+        wps = get_object_or_404(Process, pk=kwargs['wps_id'])
+        (deletedWPSCount, countOfDeletionsPerType) = wps.delete()
+        deleted = (deletedWPSCount > 0)
 
-        return JsonResponse({})
+        return JsonResponse({'deleted': deleted})
 
     @staticmethod
     @require_GET
