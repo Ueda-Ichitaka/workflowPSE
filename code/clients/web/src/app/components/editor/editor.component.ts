@@ -71,7 +71,13 @@ export class EditorComponent implements OnInit {
     setTimeout(() => {
       this.cd.detectChanges();
       this.workflowChanged.emit(this.workflow);
+      this.scrollToMiddle();
     }, 100);
+  }
+
+  public scrollToMiddle() {
+    const native: HTMLElement = this.el.nativeElement;
+    native.scrollTo(1000, 1000);
   }
 
   public getSvgEdge(edge: [number, number, number, number], mouse = false) {
