@@ -2,6 +2,7 @@ import { Component, OnInit, Input, HostListener, HostBinding, ElementRef } from 
 import { MatDialog } from '@angular/material';
 import { ProcessParameterType } from 'app/models/ProcessParameter';
 import { ProcessDialogComponent } from 'app/components/process-dialog/process-dialog.component';
+import { Process } from 'app/models/Process';
 
 
 @Component({
@@ -12,7 +13,7 @@ import { ProcessDialogComponent } from 'app/components/process-dialog/process-di
 export class ProcessComponent implements OnInit {
 
   @Input()
-  public process;
+  public process: Process;
 
   @HostBinding('draggable')
   public draggable = true;

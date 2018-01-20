@@ -75,12 +75,21 @@ export class EditorComponent implements OnInit {
     }, 100);
   }
 
+  public clickEdge(edges) {
+    const id = edges[4];
+    const index = this.workflow.edges.findIndex(edge => edge.id === id);
+    if (index !== -1) {
+      this.snapshot();
+      this.workflow.edges.splice(index, 1);
+    }
+  }
+
   public scrollToMiddle() {
     const native: HTMLElement = this.el.nativeElement;
     native.scrollTo(500, 500);
   }
 
-  public getSvgEdge(edge: [number, number, number, number], mouse = false) {
+  public getSvgEdge(edge: [number, number, number, number, number], mouse = false) {
     let delta = Math.abs(edge[1] - edge[3]);
     if (mouse === true && this.movement.parameter !== undefined) {
       delta *= this.movement.parameter.role === 'input' ? -1 : 1;
@@ -89,7 +98,7 @@ export class EditorComponent implements OnInit {
     return `M ${edge[0]} ${edge[1]} C ${edge[0]} ${edge[1] + delta}, ${edge[2]} ${edge[3] - delta}, ${edge[2]} ${edge[3]}`;
   }
 
-  public get edges(): [number, number, number, number][] {
+  public get edges(): [number, number, number, number, number][] {
     if (this.taskComponents === undefined) {
       return;
     }
@@ -121,6 +130,7 @@ export class EditorComponent implements OnInit {
         a[1] - r.top + n.scrollTop,
         b[0] - r.left + n.scrollLeft,
         b[1] - r.top + n.scrollTop,
+        edge.id
       ]);
     }
     return out;
@@ -261,6 +271,11 @@ export class EditorComponent implements OnInit {
       return;
     }
 
+    // Check same type
+    if (this.movement.parameter.type !== parameter.type) {
+      return;
+    }
+
     if (this.movement.edge) {
       this.snapshot();
       const input_id = parameter.role === 'input' ? parameter.id : this.movement.parameter.id;
@@ -268,7 +283,7 @@ export class EditorComponent implements OnInit {
       const a_id = parameter.role === 'output' ? task.task.id : this.movement.task.id;
       const b_id = parameter.role === 'input' ? task.task.id : this.movement.task.id;
 
-      this.workflow.edges.push({ id: -1, a_id, b_id, input_id, output_id });
+      this.workflow.edges.push({ id: Math.round(Math.random() * 10000), a_id, b_id, input_id, output_id });
     }
   }
 

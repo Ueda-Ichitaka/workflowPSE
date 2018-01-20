@@ -17,3 +17,8 @@
 .task {
     position: absolute;
 }
+
+.edge-big:hover {
+    cursor: grab;
+    stroke: #b10000;
+}
