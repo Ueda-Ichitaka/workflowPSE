@@ -90,13 +90,18 @@ export class EditorComponent implements OnInit {
     const r = n.getBoundingClientRect();
 
     for (const edge of this.workflow.edges) {
-      const a = this.taskComponents
-        .find(component => component.task.id === edge.a_id)
-        .getParameterPosition('output', edge.output_id);
+      const aComponent = this.taskComponents
+        .find(component => component.task.id === edge.a_id);
 
-      const b = this.taskComponents
-        .find(component => component.task.id === edge.b_id)
-        .getParameterPosition('input', edge.input_id);
+      const bComponent = this.taskComponents
+        .find(component => component.task.id === edge.b_id);
+
+      if (!aComponent || !bComponent) {
+        return;
+      }
+
+      const a = aComponent.getParameterPosition('output', edge.output_id);
+      const b = bComponent.getParameterPosition('input', edge.input_id);
 
       if (a === null || b === null) {
         return;
@@ -131,7 +136,7 @@ export class EditorComponent implements OnInit {
 
     // add task to current workflow
     this.workflow.tasks.push(task);
-
+    this.cd.detectChanges();
     this.workflowChanged.emit(this.workflow);
   }
 
@@ -141,6 +146,7 @@ export class EditorComponent implements OnInit {
     this.workflow.tasks.splice(index, 1);
     this.workflow.edges = this.workflow.edges.filter(edge => edge.a_id !== task_id && edge.b_id !== task_id);
 
+    this.cd.detectChanges();
     this.workflowChanged.emit(this.workflow);
   }
 

@@ -78,6 +78,7 @@ export class EditorPageComponent implements OnInit {
     ).subscribe(workflow => {
       workflow.title = name;
       this.workflowService.update(workflow.id, workflow);
+      this.workflowChanged(workflow);
     });
     this.editTitleMode = false;
   }
