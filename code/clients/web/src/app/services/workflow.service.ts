@@ -1,14 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Workflow } from '../models/Workflow';
-import { Edge } from '../models/Edge';
-import { Task, TaskState } from '../models/Task';
-import { Artefact } from '../models/Artefact';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { catchError, map, tap, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
-import { Subscriber } from 'rxjs/Subscriber';
-import { MatSnackBar } from '@angular/material';
+import {Injectable} from '@angular/core';
+import {Workflow} from '../models/Workflow';
+import {Edge} from '../models/Edge';
+import {Task, TaskState} from '../models/Task';
+import {Artefact} from '../models/Artefact';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs/Observable';
+import {map} from 'rxjs/operators';
+import {Subscriber} from 'rxjs/Subscriber';
+import {MatSnackBar} from '@angular/material';
 
 // tslint:disable-next-line:max-line-length
 // tslint:disable-next-line:no-unused-expression
@@ -25,6 +24,8 @@ export enum WorkflowValidationResult {
   TITLE_TO_LONG,
   TITLE_TO_SHORT,
   EMPTY,
+  LOOP_TO_SAME_TASK,
+  WRONG_INPUT_TYPES,
   // TODO: @David Add additional results
 }
 
@@ -37,35 +38,35 @@ export class WorkflowService {
    */
 
   private mockEdges: Edge[] = [
-    { id: 1, a_id: 1, b_id: 2, input_id: 1, output_id: 1 },
-    { id: 2, a_id: 1, b_id: 3, input_id: 1, output_id: 2 },
-    { id: 3, a_id: 2, b_id: 4, input_id: 1, output_id: 1 },
-    { id: 4, a_id: 3, b_id: 5, input_id: 1, output_id: 1 },
-    { id: 5, a_id: 3, b_id: 6, input_id: 1, output_id: 2 },
-    { id: 6, a_id: 4, b_id: 7, input_id: 1, output_id: 1 },
-    { id: 7, a_id: 5, b_id: 7, input_id: 2, output_id: 1 }
+    {id: 1, a_id: 1, b_id: 2, input_id: 1, output_id: 1},
+    {id: 2, a_id: 1, b_id: 3, input_id: 1, output_id: 2},
+    {id: 3, a_id: 2, b_id: 4, input_id: 1, output_id: 1},
+    {id: 4, a_id: 3, b_id: 5, input_id: 1, output_id: 1},
+    {id: 5, a_id: 3, b_id: 6, input_id: 1, output_id: 2},
+    {id: 6, a_id: 4, b_id: 7, input_id: 1, output_id: 1},
+    {id: 7, a_id: 5, b_id: 7, input_id: 2, output_id: 1}
   ];
 
   private mockInputArtefacts: Artefact<'input'>[] = [
-    { parameter_id: 1, task_id: 1, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS1', created_at: 0, updated_at: 0 },
-    { parameter_id: 4, task_id: 2, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS4', created_at: 0, updated_at: 0 },
-    { parameter_id: 5, task_id: 3, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS5', created_at: 0, updated_at: 0 },
-    { parameter_id: 8, task_id: 4, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS8', created_at: 0, updated_at: 0 },
-    { parameter_id: 10, task_id: 5, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS10', created_at: 0, updated_at: 0 },
-    { parameter_id: 12, task_id: 6, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS12', created_at: 0, updated_at: 0 },
-    { parameter_id: 14, task_id: 7, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS14', created_at: 0, updated_at: 0 },
-    { parameter_id: 15, task_id: 7, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS15', created_at: 0, updated_at: 0 }
+    {parameter_id: 1, task_id: 1, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS1', created_at: 0, updated_at: 0},
+    {parameter_id: 4, task_id: 2, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS4', created_at: 0, updated_at: 0},
+    {parameter_id: 5, task_id: 3, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS5', created_at: 0, updated_at: 0},
+    {parameter_id: 8, task_id: 4, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS8', created_at: 0, updated_at: 0},
+    {parameter_id: 10, task_id: 5, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS10', created_at: 0, updated_at: 0},
+    {parameter_id: 12, task_id: 6, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS12', created_at: 0, updated_at: 0},
+    {parameter_id: 14, task_id: 7, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS14', created_at: 0, updated_at: 0},
+    {parameter_id: 15, task_id: 7, workflow_id: 1, role: 'input', format: 'literal', data: 'HelloWPS15', created_at: 0, updated_at: 0}
   ];
 
   private mockOutputArtefacts: Artefact<'output'>[] = [
-    { parameter_id: 2, task_id: 1, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS2', created_at: 0, updated_at: 0 },
-    { parameter_id: 3, task_id: 1, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS3', created_at: 0, updated_at: 0 },
-    { parameter_id: 6, task_id: 3, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS6', created_at: 0, updated_at: 0 },
-    { parameter_id: 7, task_id: 3, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS7', created_at: 0, updated_at: 0 },
-    { parameter_id: 9, task_id: 4, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS9', created_at: 0, updated_at: 0 },
-    { parameter_id: 11, task_id: 5, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS11', created_at: 0, updated_at: 0 },
-    { parameter_id: 13, task_id: 6, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS13', created_at: 0, updated_at: 0 },
-    { parameter_id: 16, task_id: 7, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS16', created_at: 0, updated_at: 0 }
+    {parameter_id: 2, task_id: 1, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS2', created_at: 0, updated_at: 0},
+    {parameter_id: 3, task_id: 1, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS3', created_at: 0, updated_at: 0},
+    {parameter_id: 6, task_id: 3, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS6', created_at: 0, updated_at: 0},
+    {parameter_id: 7, task_id: 3, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS7', created_at: 0, updated_at: 0},
+    {parameter_id: 9, task_id: 4, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS9', created_at: 0, updated_at: 0},
+    {parameter_id: 11, task_id: 5, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS11', created_at: 0, updated_at: 0},
+    {parameter_id: 13, task_id: 6, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS13', created_at: 0, updated_at: 0},
+    {parameter_id: 16, task_id: 7, workflow_id: 1, role: 'output', format: 'literal', data: 'HelloWPS16', created_at: 0, updated_at: 0}
   ];
 
   private mockTasks: Task[] = [
@@ -102,8 +103,8 @@ export class WorkflowService {
 
 
   private testData: Workflow[] = [
-    { id: 1, title: 'Workflow A', edges: this.mockEdges, tasks: this.mockTasks, creator_id: 0, shared: true, created_at: 0, updated_at: 0 },
-    { id: 2, title: 'Workflow B', edges: [], tasks: [], creator_id: 1, shared: false, created_at: 0, updated_at: 0 },
+    {id: 1, title: 'Workflow A', edges: this.mockEdges, tasks: this.mockTasks, creator_id: 0, shared: true, created_at: 0, updated_at: 0},
+    {id: 2, title: 'Workflow B', edges: [], tasks: [], creator_id: 1, shared: false, created_at: 0, updated_at: 0},
   ];
 
   /**
@@ -175,7 +176,7 @@ export class WorkflowService {
     // Update observable
     this.testSubscriber.next(this.testData);
 
-    this.bar.open(`${title} Deleted`, 'CLOSE', { duration: 3000 });
+    this.bar.open(`${title} Deleted`, 'CLOSE', {duration: 3000});
     return true;
   }
 
@@ -188,6 +189,7 @@ export class WorkflowService {
   // TODO: @David Validate workflow
   public validate(workflow: Workflow): WorkflowValidationResult {
 
+
     // check name
     if (workflow.title.length > 255) {
       return WorkflowValidationResult.TITLE_TO_LONG;
@@ -195,6 +197,16 @@ export class WorkflowService {
       return WorkflowValidationResult.TITLE_TO_SHORT;
     } else if (workflow.tasks.length < 1) {
       return WorkflowValidationResult.EMPTY;
+    } else {
+
+      for (let i = 0; i < workflow.edges.length; i++) {
+        if (workflow.edges[i].a_id === workflow.edges[i].b_id) {
+          return WorkflowValidationResult.LOOP_TO_SAME_TASK;
+        }
+        if (workflow.edges[i].input_id + 1 !== workflow.edges[i].output_id) {
+          return WorkflowValidationResult.WRONG_INPUT_TYPES;
+        }
+      }
     }
 
     // TODO: @David add additional checks
@@ -213,7 +225,7 @@ export class WorkflowService {
     this.testSubscriber.next(this.testData);
     // TODO execute workflow
 
-    this.bar.open(`${w.title} Executed`, 'CLOSE', { duration: 3000 });
+    this.bar.open(`${w.title} Executed`, 'CLOSE', {duration: 3000});
 
     return true;
   }
