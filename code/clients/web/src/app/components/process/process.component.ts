@@ -22,6 +22,8 @@ export class ProcessComponent implements OnInit {
     this.openDialog();
   }
 
+
+
   public constructor(public dialog: MatDialog, private el: ElementRef) { }
 
   public openDialog() {
@@ -39,8 +41,6 @@ export class ProcessComponent implements OnInit {
     }
   }
 
-
-
   @HostListener('dragstart', ['$event'])
   public dragStart(event: DragEvent) {
     const native: HTMLElement = this.el.nativeElement;
@@ -55,6 +55,8 @@ export class ProcessComponent implements OnInit {
     }
 
   }
+
+
 
   public ngOnInit() {
 

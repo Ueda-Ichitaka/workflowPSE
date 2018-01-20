@@ -6,17 +6,29 @@ import { ActivatedRoute } from '@angular/router';
 import { Workflow } from 'app/models/Workflow';
 import { WorkflowService, WorkflowValidationResult } from 'app/services/workflow.service';
 import { EditorComponent } from 'app/components/editor/editor.component';
+import { trigger, state, transition, animate, style } from '@angular/animations';
 import { catchError, map, take, switchMap } from 'rxjs/operators';
+import { WpsService } from 'app/services/wps.service';
+import { WPS } from 'app/models/WPS';
 
 @Component({
   selector: 'app-editor-page',
   templateUrl: './editor-page.component.html',
-  styleUrls: ['./editor-page.component.scss']
+  styleUrls: ['./editor-page.component.scss'],
+  animations: [
+    trigger('slide', [
+      transition(':enter', [
+        style({ transform: 'translateX(200%)' }),
+        animate('233ms ease-in-out')
+      ]),
+    ])
+  ]
 })
 export class EditorPageComponent implements OnInit {
 
   public workflow: Observable<Workflow>;
   public processes: Observable<Process[]>;
+  public wps: Observable<WPS[]>;
 
   public editTitleMode = false;
 
@@ -38,6 +50,7 @@ export class EditorPageComponent implements OnInit {
   constructor(
     private processService: ProcessService,
     private workflowService: WorkflowService,
+    private wpsService: WpsService,
     private route: ActivatedRoute
   ) {
 
@@ -45,6 +58,7 @@ export class EditorPageComponent implements OnInit {
 
   ngOnInit() {
     this.processes = this.processService.all();
+    this.wps = this.wpsService.all();
     this.route.params.subscribe(params => {
       if (params['id'] !== undefined) {
         this.workflow = this.workflowService.get(+params['id']);

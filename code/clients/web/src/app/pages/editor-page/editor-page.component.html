@@ -21,7 +21,7 @@
 
 <app-editor class="editor" [workflow]="workflow | async" [processes]="processes | async" (workflowChanged)="workflowChanged($event)"
   [running]="runs() | async"></app-editor>
-<app-process-list *ngIf="showProcessList" class="process-list"></app-process-list>
+<app-process-list @slide *ngIf="showProcessList" [processes]="processes | async" [wps]="wps | async" class="process-list"></app-process-list>
 
 <button *ngIf="!(runs() | async); else runningTemplate" mat-fab color="primary" class="run" [disabled]="workflowError !== ''"
   (click)="run()">
