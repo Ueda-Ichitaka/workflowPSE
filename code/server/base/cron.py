@@ -19,11 +19,20 @@ def first_crontab_task():
 
 def scheduler():
     # Scheduler main function
+    # check workflow list for execute flag
+    # for all workflows in ready list do
+    #    for task in workflow do
+    #       generate process xml
+    #       send xml to wps server
+    #
+    #todo: max parallel tasks schedule policy
     pass
 
 
 def receiver():
     # Receiver main function
+    # check output urls from servers
+    # for
     pass
 
 
