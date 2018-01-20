@@ -32,11 +32,10 @@ class WorkflowView(View):
     def dispatch(self, *args, **kwargs):
         return super(WorkflowView, self).dispatch(*args, **kwargs)
 
-    # TODO: all TODO's in this view for are effective for corresponding methods in other views
     @staticmethod
     def get(request, *args, **kwargs):
-        if 'process_id' in kwargs:
-            return as_json_response(model_to_dict(Workflow.objects.get(pk=kwargs['process_id'])))
+        if 'workflow_id' in kwargs:
+            return as_json_response(model_to_dict(Workflow.objects.get(pk=kwargs['workflow_id'])))
         else:
             return as_json_response(list(Workflow.objects.all().values()))
 
@@ -45,24 +44,23 @@ class WorkflowView(View):
         workflow_form = WorkflowForm(request.POST)
         new_workflow = workflow_form.save()
 
-        # TODO: return something more than ID?
-        return JsonResponse(model_to_dict(new_workflow))
+        return as_json_response(model_to_dict(new_workflow))
 
     @staticmethod
     def patch(request, *args, **kwargs):
-        workflow = WPS.objects.get(pk=kwargs['process_id'])
+        workflow = WPS.objects.get(pk=kwargs['workflow_id'])
         workflow_form = WPSForm(request.POST, instance=workflow)
-        workflow_form.save()
+        workflow = workflow_form.save()
 
-        return JsonResponse({})
+        return as_json_response(model_to_dict(workflow))
 
     @staticmethod
     def delete(request, *args, **kwargs):
-        workflow = get_object_or_404(Workflow, pk=kwargs['process_id'])
-        workflow.delete()
+        workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
+        (deletedWorkflowCount, countOfDeletionsPerType) = workflow.delete()
+        deleted = (deletedWorkflowCount > 0)
 
-        # TODO: return something?
-        return JsonResponse({})
+        return JsonResponse({'deleted': deleted})
 
     @staticmethod
     @require_GET
@@ -93,22 +91,23 @@ class ProcessView(View):
         process_form = ProcessForm(request.POST)
         new_process = process_form.save()
 
-        return JsonResponse({'id': new_process.pk})
+        return as_json_response(model_to_dict(new_process))
 
     @staticmethod
     def patch(request, *args, **kwargs):
         process = WPS.objects.get(pk=kwargs['process_id'])
         process_form = WPSForm(request.POST, instance=process)
-        process_form.save()
+        process = process_form.save()
 
-        return JsonResponse({})
+        return as_json_response(model_to_dict(process))
 
     @staticmethod
     def delete(request, *args, **kwargs):
         process = get_object_or_404(Process, pk=kwargs['process_id'])
-        process.delete()
+        (deletedProcessCount, countOfDeletionsPerType) = process.delete()
+        deleted = (deletedProcessCount > 0)
 
-        return JsonResponse({})
+        return JsonResponse({'deleted': deleted})
 
 
 class WPSView(View):
@@ -129,22 +128,23 @@ class WPSView(View):
         wps_form = WPSForm(request.POST)
         new_wps = wps_form.save()
 
-        return JsonResponse({'id': new_wps.pk})
+        return as_json_response(model_to_dict(new_wps))
 
     @staticmethod
     def patch(request, *args, **kwargs):
         wps = WPS.objects.get(pk=kwargs['wps_id'])
         wps_form = WPSForm(request.POST, instance=wps)
-        wps_form.save()
+        wps = wps_form.save()
 
-        return JsonResponse({})
+        return as_json_response(model_to_dict(wps))
 
     @staticmethod
     def delete(request, *args, **kwargs):
-        wps = get_object_or_404(WPS, pk=kwargs['wps_id'])
-        wps.delete()
+        wps = get_object_or_404(Process, pk=kwargs['wps_id'])
+        (deletedWPSCount, countOfDeletionsPerType) = wps.delete()
+        deleted = (deletedWPSCount > 0)
 
-        return JsonResponse({})
+        return JsonResponse({'deleted': deleted})
 
     @staticmethod
     @require_GET
