@@ -8,6 +8,8 @@ import { Observable } from 'rxjs/Observable';
 import { map, filter, find, switchMap } from 'rxjs/operators';
 import { Subscriber } from 'rxjs/Subscriber';
 import { MatSnackBar } from '@angular/material';
+import { Process } from 'app/models/Process';
+import { ProcessService } from 'app/services/process.service';
 
 export enum WorkflowValidationResult {
   ERROR,
@@ -17,13 +19,17 @@ export enum WorkflowValidationResult {
   EMPTY,
   LOOP_TO_SAME_TASK,
   WRONG_INPUT_TYPES,
+  MISSING_TASK_INPUT,
   // TODO: @David Add additional results
 }
 
 @Injectable()
 export class WorkflowService {
+  private processes: Process[];
 
-  constructor(private http: HttpClient, private bar: MatSnackBar) { }
+  constructor(private http: HttpClient, private bar: MatSnackBar, private processService: ProcessService) {
+    this.getProcesses();
+  }
 
   private getKeyFromId(id: number): Observable<string> {
     return this.http.get<{ [key: string]: Workflow }>(`https://wpsflow.firebaseio.com/workflow.json`).pipe(
@@ -89,24 +95,73 @@ export class WorkflowService {
     } else if (workflow.tasks && workflow.tasks.length < 1) {
       return WorkflowValidationResult.EMPTY;
     } else {
-
-      if (workflow.edges) {
-        for (let i = 0; i < workflow.edges.length; i++) {
-          if (workflow.edges[i].a_id === workflow.edges[i].b_id) {
-            return WorkflowValidationResult.LOOP_TO_SAME_TASK;
+      for (let i = 0; i < workflow.edges.length; i++) {
+        // check for loop to same task
+        if (workflow.edges[i].a_id === workflow.edges[i].b_id) {
+          return WorkflowValidationResult.LOOP_TO_SAME_TASK;
+        }
+        // check for wrong input types
+        let inputTaskNumber: number = null;
+        let outputTaskNumber: number = null;
+        for (let j = 0; j < workflow.tasks.length; j++) {
+          if (workflow.tasks[j].id === workflow.edges[i].b_id) {
+            inputTaskNumber = workflow.tasks[j].process_id;
           }
-          if (workflow.edges[i].input_id + 1 !== workflow.edges[i].output_id) {
-            return WorkflowValidationResult.WRONG_INPUT_TYPES;
+          if (workflow.tasks[j].id === workflow.edges[i].a_id) {
+            outputTaskNumber = workflow.tasks[j].process_id;
           }
+        }
+        let inputProcessNumber: number = null;
+        let outputPrecessNumber: number = null;
+        for (let k = 0; k < this.processes.length; k++) {
+          if (this.processes[k].id === inputTaskNumber) {
+            inputProcessNumber = k;
+          }
+          if (this.processes[k].id === outputTaskNumber) {
+            outputPrecessNumber = k;
+          }
+        }
+        let processParameterTypeCorrect = false;
+        for (let l = 0; l < this.processes[inputProcessNumber].inputs.length; l++) {
+          for (let m = 0; m < this.processes[outputPrecessNumber].outputs.length; m++) {
+            if (this.processes[inputProcessNumber].inputs[l].type === this.processes[outputPrecessNumber].outputs[m].type) {
+              processParameterTypeCorrect = true;
+            }
+          }
+        }
+        if (!processParameterTypeCorrect) {
+          return WorkflowValidationResult.WRONG_INPUT_TYPES;
         }
       }
 
     }
+    // check for missing input
+    for (let i = 0; i < workflow.tasks.length; i++) {
+      let numberOfInputs = 0;
+      for (let k = 0; k < workflow.edges.length; k++) {
+        if (workflow.edges[k].b_id === workflow.tasks[i].id) {
+          numberOfInputs++;
+        }
+      }
+      for (let j = 0; j < this.processes.length; j++) {
+        if (workflow.tasks[i].process_id === this.processes[j].id) {
+          if (numberOfInputs < this.processes[j].inputs.length) {
+            return WorkflowValidationResult.MISSING_TASK_INPUT;
+          }
+        }
+      }
+    }
+    // - cycle check
+    if (false) {
+    }
 
     // TODO: @David add additional checks
-    // - cycle check
 
     return WorkflowValidationResult.SUCCESSFUL;
+  }
+
+  getProcesses(): void {
+    this.processService.all().subscribe(processes => this.processes = processes);
   }
 
   public async execute(id: number): Promise<boolean> {

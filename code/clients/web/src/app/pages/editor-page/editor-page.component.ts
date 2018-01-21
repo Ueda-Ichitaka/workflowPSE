@@ -158,6 +158,7 @@ export class EditorPageComponent implements OnInit {
       { type: WorkflowValidationResult.EMPTY, message: 'Workflow is empty' },
       { type: WorkflowValidationResult.LOOP_TO_SAME_TASK, message: 'Loop to same task' },
       { type: WorkflowValidationResult.WRONG_INPUT_TYPES, message: 'Wrong input types' },
+      { type: WorkflowValidationResult.MISSING_TASK_INPUT, message: 'Missing task input' },
     ];
 
     this.workflowError = errorMessages
