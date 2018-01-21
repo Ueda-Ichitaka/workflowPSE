@@ -16,7 +16,9 @@ export class ProcessService {
   private testData: Process[] = [
     {
       id: 1, title: 'Process A', abstract: 'this is process A', identifier: 'process.a',
-      wps_id: 0, created_at: 0, updated_at: 0, inputs: [], outputs: []
+      wps_id: 0, created_at: 0, updated_at: 0, inputs: [], outputs: [
+        { id: 19, role: 'output', type: 0, title: 'IO 1', abstract: '', min_occurs: 1, max_occurs: 1 },
+      ]
     },
     {
       id: 2, title: 'Process B', abstract: 'this is process B', identifier: 'process.b',
