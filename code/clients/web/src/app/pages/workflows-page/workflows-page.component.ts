@@ -16,6 +16,8 @@ export class WorkflowsPageComponent implements OnInit {
   public workflows: Workflow[];
   public processes: Process[];
 
+  public openedWorkflowID = -1;
+
   constructor(
     private processService: ProcessService,
     private workflowService: WorkflowService,
@@ -27,6 +29,16 @@ export class WorkflowsPageComponent implements OnInit {
   public ngOnInit() {
     this.workflowService.all().subscribe(workflows => this.workflows = workflows);
     this.processService.all().subscribe(processes => this.processes = processes);
+  }
+
+  public opened(workflow: Workflow) {
+    this.openedWorkflowID = workflow.id;
+  }
+
+  public closed(workflow: Workflow) {
+    if (this.openedWorkflowID === workflow.id) {
+      this.openedWorkflowID = -1;
+    }
   }
 
   public remove(id: number) {

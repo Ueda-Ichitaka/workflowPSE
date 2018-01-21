@@ -22,22 +22,22 @@ export class SettingsPageComponent implements OnInit {
   wps_list: Observable<WPS[]>;
 
   update_options = [
-    {value: "wps_provider0", displayed: "WPS Provider"},
-    {value: "task1", displayed: "Task"}
+    { value: 'wps_provider0', displayed: 'WPS Provider' },
+    { value: 'task1', displayed: 'Task' }
   ];
 
   language_options = [
-    {value: "deutsch0", displayed: "Deutsch"},
-    {value: "english1", displayed: "English"}
+    { value: 'deutsch0', displayed: 'Deutsch' },
+    { value: 'english1', displayed: 'English' }
   ];
 
-  selected_language = "deutsch0";
+  selected_language = 'deutsch0';
 
   constructor(
     private processService: ProcessService,
     private wpsService: WpsService,
   ) {
-    
+
   }
 
   public ngOnInit() {
@@ -46,7 +46,7 @@ export class SettingsPageComponent implements OnInit {
 
   public refresh() {
     // TODO signal server to refresh wps services
-    console.log("services refreshed");
+    console.log('services refreshed');
   }
 
   public onLangSelect(str) {
@@ -55,7 +55,7 @@ export class SettingsPageComponent implements OnInit {
 
   public addWPS(url) {
     this.wpsService.create(url);
-    
+
   }
 
   public remove(wps) {

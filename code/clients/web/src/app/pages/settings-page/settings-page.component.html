@@ -1,34 +1,32 @@
 <div class="container">
     <h1>SETTINGS</h1>
 
-    <h3>WPS Server hinzufügen</h3>
-
+    <h3>Add WPS Server</h3>
+    <mat-form-field>
+        <input (keyup.enter)="addWPS(wps_url_input.value)" #wps_url_input autocomplete="url" matInput>
+    </mat-form-field>
+    <!--<button *ngIf="wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>-->
+    <button [disabled]="!wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">ADD</button>
     <div>
 
-    </div>
-        <mat-form-field>
-            <input (keyup.enter)="addWPS(wps_url_input.value)" #wps_url_input autocomplete="url" matInput>
-        </mat-form-field>
-        <!--<button *ngIf="wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>-->
-        <button [disabled]="!wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>
-    <div>
-
-    <div *ngFor="let wps of wps_list | async">
-        <span class="wps_info">{{wps.title}}</span>
-        <span class="wps_info">{{wps.provider.url}}</span>
-        <a mat-button (click)="remove(wps)">delete</a>
-    </div>
+        <div *ngFor="let wps of wps_list | async">
+            <span class="wps_info">{{wps.title}}</span>
+            <span class="wps_info">{{wps.provider.url}}</span>
+            <a mat-button (click)="remove(wps)">DELETE</a>
+        </div>
 
     </div>
 
-    <button (click)="refresh()" mat-button>REFRESH</button> <!-- TODO set some kind of timeout for refreshing -->
+    <h3>Refresh WPS Server List</h3>
+    <button (click)="refresh()" mat-button>REFRESH</button>
+    <!-- TODO set some kind of timeout for refreshing -->
 
-    <h3>Sprache</h3>
-
+    <h3>Language</h3>
     <div>
         <mat-form-field>
-            <mat-select placeholder="{{ language_options[0].displayed }}" [(value)]="selected_language"> <!-- TODO make selectedOption in ts file and add ngIf here to set placeholder if no option was selected -->
-                    <mat-option *ngFor="let option of language_options" [value]="option.value">{{option.displayed}}</mat-option>
+            <mat-select placeholder="{{ language_options[0].displayed }}" [(value)]="selected_language">
+                <!-- TODO make selectedOption in ts file and add ngIf here to set placeholder if no option was selected -->
+                <mat-option *ngFor="let option of language_options" [value]="option.value">{{option.displayed}}</mat-option>
             </mat-select>
         </mat-form-field>
     </div>

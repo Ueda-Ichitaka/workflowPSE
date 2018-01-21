@@ -1,15 +1,14 @@
 <div class="container workflows-list">
     <h1>My Workflows</h1>
     <mat-accordion *ngIf="workflows && processes; else loadingTemplate">
-        <mat-expansion-panel *ngFor="let workflow of workflows">
+        <mat-expansion-panel *ngFor="let workflow of workflows" (opened)="opened(workflow)" (closed)="closed(workflow)">
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     {{ workflow.title }}
                 </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <app-editor class="editor" [workflow]="workflow" [processes]="processes" class="editor"></app-editor>
-
+            <app-editor *ngIf="workflow.id === openedWorkflowID" class="editor" [workflow]="workflow" [processes]="processes" class="editor"></app-editor>
             <div class="actions">
                 <div class="actions-left">
                     <button mat-button color="warn" (click)="remove(workflow.id)">DELETE</button>
@@ -19,6 +18,7 @@
                     <button *ngIf="validate(workflow)" mat-raised-button color="primary" (click)="run(workflow.id)" [disabled]="runs(workflow)">{{runs(workflow) ? 'RUNNING' : 'RUN'}}</button>
                 </div>
             </div>
+
         </mat-expansion-panel>
     </mat-accordion>
     <ng-template #loadingTemplate>
