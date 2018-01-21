@@ -1,30 +1,31 @@
 <div class="toolbar mat-elevation-z2" fxLayout="row" fxLayoutAlign="space-between">
   <div *ngIf="workflow">
-    <div *ngIf="!editTitleMode; else editTitleTemplate" class="title">
-      {{ (workflow | async).title }}
+    <div [style.display]="editTitleMode ? 'none' : 'block'" class="title">
+      {{ workflow?.title }}
       <button mat-icon-button class="edit-name" (click)="clickTitleEdit()">
         <mat-icon aria-label="Example icon-button with a heart icon">edit</mat-icon>
       </button>
     </div>
-    <ng-template #editTitleTemplate>
+    <div [style.display]="editTitleMode ? 'block' : 'none'">
       <mat-form-field>
-        <input #tileInput matInput [placeholder]="(workflow | async).title" (keyup.enter)="editTitle(tileInput.value)" autofocus>
+        <input #tileInput matInput [placeholder]="workflow?.title" (keyup.enter)="editTitle(tileInput.value)" autofocus>
       </mat-form-field>
-    </ng-template>
+    </div>
   </div>
 
   <div>
     <button mat-button (click)="undo()" [disabled]="!canUndo()">UNDO</button>
-    <button mat-raised-button color="primary">SAVE</button>
+    <button mat-raised-button (click)="save()" color="primary">SAVE</button>
   </div>
 </div>
 
-<app-editor class="editor" [workflow]="workflow | async" [processes]="processes | async" (workflowChanged)="workflowChanged($event)"
-  [running]="runs() | async"></app-editor>
+<app-editor class="editor" [workflow]="workflow" [processes]="processes | async" (workflowChanged)="workflowChanged($event)"
+  [running]="runs()"></app-editor>
+
+
 <app-process-list @slide *ngIf="showProcessList" [processes]="processes | async" [wps]="wps | async" class="process-list"></app-process-list>
 
-<button *ngIf="!(runs() | async); else runningTemplate" mat-fab color="primary" class="run" [disabled]="workflowError !== ''"
-  (click)="run()">
+<button *ngIf="!runs(); else runningTemplate" mat-fab color="primary" class="run" [disabled]="workflowError !== ''" (click)="run()">
   <mat-icon [matTooltip]="workflowError" aria-label="Run">play_arrow</mat-icon>
 </button>
 

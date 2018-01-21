@@ -41,7 +41,8 @@ export class EditorComponent implements OnInit {
   private snapshots: Workflow[] = [];
 
   @ViewChildren(TaskComponent)
-  private taskComponents: QueryList<TaskComponent>;
+  public taskComponents: QueryList<TaskComponent>;
+
 
   @Output()
   public workflowChanged = new EventEmitter<Workflow>();
@@ -53,19 +54,15 @@ export class EditorComponent implements OnInit {
 
   }
 
+  public empty() {
+    this.snapshots = [];
+    this.movement = {};
+  }
+
   ngOnInit() {
     // Create initial workflow if no workflow is provided
     if (!this.workflow) {
-      this.workflow = {
-        id: -1,
-        title: 'my Workflow',
-        edges: [],
-        tasks: [],
-        creator_id: -1,
-        shared: false,
-        created_at: -1,
-        updated_at: -1
-      };
+      this.empty();
     }
 
     setTimeout(() => {
@@ -99,13 +96,18 @@ export class EditorComponent implements OnInit {
   }
 
   public get edges(): [number, number, number, number, number][] {
-    if (this.taskComponents === undefined) {
-      return;
+    if (!this.taskComponents) {
+      return [];
+    }
+
+    if (!this.workflow.edges) {
+      this.workflow.edges = [];
     }
 
     const out = [];
     const n: HTMLElement = this.el.nativeElement;
     const r = n.getBoundingClientRect();
+
 
     for (const edge of this.workflow.edges) {
       const aComponent = this.taskComponents

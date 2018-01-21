@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { ProcessService } from 'app/services/process.service';
 import { Observable } from 'rxjs/Observable';
 import { Process } from 'app/models/Process';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Workflow } from 'app/models/Workflow';
 import { WorkflowService, WorkflowValidationResult } from 'app/services/workflow.service';
 import { EditorComponent } from 'app/components/editor/editor.component';
@@ -26,7 +26,7 @@ import { WPS } from 'app/models/WPS';
 })
 export class EditorPageComponent implements OnInit {
 
-  public workflow: Observable<Workflow>;
+  public workflow: Workflow;
   public processes: Observable<Process[]>;
   public wps: Observable<WPS[]>;
 
@@ -47,11 +47,14 @@ export class EditorPageComponent implements OnInit {
   @ViewChild('tileInput')
   public titleInputComponent: ElementRef;
 
+  private fresh = false;
+
   constructor(
     private processService: ProcessService,
     private workflowService: WorkflowService,
     private wpsService: WpsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
   ) {
 
   }
@@ -59,9 +62,27 @@ export class EditorPageComponent implements OnInit {
   ngOnInit() {
     this.processes = this.processService.all();
     this.wps = this.wpsService.all();
+
     this.route.params.subscribe(params => {
       if (params['id'] !== undefined) {
-        this.workflow = this.workflowService.get(+params['id']);
+        this.fresh = false;
+        this.workflowService.get(+params['id']).subscribe(w => {
+          w.edges = w.edges || [];
+          w.tasks = w.tasks || [];
+          this.workflow = w;
+        });
+      } else {
+        this.fresh = true;
+        this.workflow = {
+          id: Math.round(Math.random() * 10000),
+          title: 'My New Workflow',
+          edges: [],
+          tasks: [],
+          creator_id: 0,
+          shared: false,
+          created_at: (new Date()).getTime(),
+          updated_at: (new Date()).getTime(),
+        };
       }
     });
   }
@@ -75,7 +96,7 @@ export class EditorPageComponent implements OnInit {
   }
 
   public canUndo() {
-    return this.editorComponent.canUndo();
+    return this.editorComponent ? this.editorComponent.canUndo() : false;
   }
 
   public run(id: number) {
@@ -83,23 +104,22 @@ export class EditorPageComponent implements OnInit {
       return;
     }
 
-    this.workflow.pipe(
-      take(1)
-    ).subscribe(workflow => {
-      this.workflowService.execute(workflow.id);
-    });
+    this.workflowService.execute(this.workflow.id);
   }
 
   public editTitle(name: string) {
-    this.workflow.pipe(
-      take(1)
-    ).subscribe(workflow => {
-      workflow.title = name;
-      this.workflowService.update(workflow.id, workflow);
-      this.workflowChanged(workflow);
-    });
-    this.editTitleMode = false;
+    this.workflow.title = name;
 
+    if (this.fresh) {
+      this.workflowService.create(this.editorComponent.workflow).subscribe(obj => {
+        this.router.navigate(['/editor', { id: obj.id }]);
+      });
+    } else {
+      this.workflowService.update(this.workflow.id, this.workflow).toPromise();
+    }
+
+    this.workflowChanged(this.workflow);
+    this.editTitleMode = false;
   }
 
   public clickTitleEdit() {
@@ -108,18 +128,24 @@ export class EditorPageComponent implements OnInit {
       const native: HTMLInputElement = this.titleInputComponent.nativeElement;
       native.focus();
     }, 100);
-
-
   }
 
-  public runs(): Observable<boolean> {
+  public save() {
+    if (this.fresh) {
+      this.workflowService.create(this.editorComponent.workflow).subscribe(obj => {
+        this.router.navigate(['/editor', { id: obj.id }]);
+      });
+    } else {
+      this.workflowService.update(this.workflow.id, this.workflow).toPromise();
+    }
+  }
+
+  public runs(): boolean {
     if (!this.workflow) {
       return null;
     }
 
-    return this.workflow.pipe(
-      map(w => this.workflowService.isRunning(w))
-    );
+    return this.workflowService.isRunning(this.workflow);
   }
 
 

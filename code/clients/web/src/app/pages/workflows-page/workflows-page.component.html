@@ -1,14 +1,14 @@
 <div class="container workflows-list">
     <h1>My Workflows</h1>
-    <mat-accordion>
-        <mat-expansion-panel *ngFor="let workflow of workflows | async">
+    <mat-accordion *ngIf="workflows && processes; else loadingTemplate">
+        <mat-expansion-panel *ngFor="let workflow of workflows">
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     {{ workflow.title }}
                 </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <app-editor class="editor" [workflow]="getWorkflow(workflow.id) | async" [processes]="processes | async" class="editor"></app-editor>
+            <app-editor class="editor" [workflow]="workflow" [processes]="processes" class="editor"></app-editor>
 
             <div class="actions">
                 <div class="actions-left">
@@ -21,4 +21,7 @@
             </div>
         </mat-expansion-panel>
     </mat-accordion>
+    <ng-template #loadingTemplate>
+        <mat-spinner class="spinner" color="accent"></mat-spinner>
+    </ng-template>
 </div>

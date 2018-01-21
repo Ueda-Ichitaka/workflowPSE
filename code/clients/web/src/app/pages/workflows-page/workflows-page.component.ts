@@ -13,23 +13,28 @@ import { Process } from 'app/models/Process';
 })
 export class WorkflowsPageComponent implements OnInit {
 
-  public workflows: Observable<Workflow[]>;
-  public processes: Observable<Process[]>;
+  public workflows: Workflow[];
+  public processes: Process[];
 
   constructor(
     private processService: ProcessService,
     private workflowService: WorkflowService,
     private router: Router,
   ) {
-    this.processes = this.processService.all();
-    this.workflows = this.workflowService.all();
+
   }
 
   public ngOnInit() {
+    this.workflowService.all().subscribe(workflows => this.workflows = workflows);
+    this.processService.all().subscribe(processes => this.processes = processes);
   }
 
   public remove(id: number) {
-    this.workflowService.remove(id);
+    const index = this.workflows.findIndex(workflow => workflow.id === id);
+    if (index !== -1) {
+      this.workflows.splice(index, 1);
+      this.workflowService.remove(id);
+    }
   }
 
   public edit(id: number) {

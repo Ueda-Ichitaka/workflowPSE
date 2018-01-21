@@ -6,6 +6,7 @@ import { ProcessParameterType } from '../models/ProcessParameter';
 import { catchError, map, tap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { Subscriber } from 'rxjs/Subscriber';
+import { filter } from 'rxjs/operators/filter';
 
 @Injectable()
 export class ProcessService {
