@@ -94,7 +94,7 @@ export class WorkflowService {
       return WorkflowValidationResult.TITLE_TO_SHORT;
     } else if (workflow.tasks && workflow.tasks.length < 1) {
       return WorkflowValidationResult.EMPTY;
-    } else {
+    } else if (workflow.edges) {
       for (let i = 0; i < workflow.edges.length; i++) {
         // check for loop to same task
         if (workflow.edges[i].a_id === workflow.edges[i].b_id) {
@@ -136,21 +136,24 @@ export class WorkflowService {
 
     }
     // check for missing input
-    for (let i = 0; i < workflow.tasks.length; i++) {
-      let numberOfInputs = 0;
-      for (let k = 0; k < workflow.edges.length; k++) {
-        if (workflow.edges[k].b_id === workflow.tasks[i].id) {
-          numberOfInputs++;
+    if (workflow.tasks && workflow.edges) {
+      for (let i = 0; i < workflow.tasks.length; i++) {
+        let numberOfInputs = 0;
+        for (let k = 0; k < workflow.edges.length; k++) {
+          if (workflow.edges[k].b_id === workflow.tasks[i].id) {
+            numberOfInputs++;
+          }
         }
-      }
-      for (let j = 0; j < this.processes.length; j++) {
-        if (workflow.tasks[i].process_id === this.processes[j].id) {
-          if (numberOfInputs < this.processes[j].inputs.length) {
-            return WorkflowValidationResult.MISSING_TASK_INPUT;
+        for (let j = 0; j < this.processes.length; j++) {
+          if (workflow.tasks[i].process_id === this.processes[j].id) {
+            if (numberOfInputs < this.processes[j].inputs.length) {
+              return WorkflowValidationResult.MISSING_TASK_INPUT;
+            }
           }
         }
       }
     }
+
     // - cycle check
     if (false) {
     }
