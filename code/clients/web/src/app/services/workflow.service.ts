@@ -8,6 +8,8 @@ import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators';
 import {Subscriber} from 'rxjs/Subscriber';
 import {MatSnackBar} from '@angular/material';
+import {Process} from '../models/Process';
+import {ProcessService} from './process.service';
 
 // tslint:disable-next-line:max-line-length
 // tslint:disable-next-line:no-unused-expression
@@ -113,8 +115,9 @@ export class WorkflowService {
 
   private testObservable: Observable<Workflow[]>;
   private testSubscriber: Subscriber<Workflow[]>;
+  private processes: Process[];
 
-  constructor(private http: HttpClient, private bar: MatSnackBar) {
+  constructor(private http: HttpClient, private bar: MatSnackBar, private processService: ProcessService) {
     this.testData.push(JSON.parse(w3));
     this.testData.push(JSON.parse(w4));
 
@@ -124,6 +127,7 @@ export class WorkflowService {
       this.testSubscriber = subscriber;
       subscriber.next(this.testData);
     });
+    this.getProcesses();
   }
 
   public all(): Observable<Workflow[]> {
@@ -198,21 +202,53 @@ export class WorkflowService {
     } else if (workflow.tasks.length < 1) {
       return WorkflowValidationResult.EMPTY;
     } else {
-
       for (let i = 0; i < workflow.edges.length; i++) {
         if (workflow.edges[i].a_id === workflow.edges[i].b_id) {
           return WorkflowValidationResult.LOOP_TO_SAME_TASK;
         }
-        if (workflow.edges[i].input_id + 1 !== workflow.edges[i].output_id) {
+        let inputTaskNumber: number = null;
+        let outputTaskNumber: number = null;
+        for (let j = 0; j < workflow.tasks.length; j++) {
+          if (workflow.tasks[j].id === workflow.edges[i].b_id) {
+            inputTaskNumber = workflow.tasks[j].process_id;
+          }
+          if (workflow.tasks[j].id === workflow.edges[i].a_id) {
+            outputTaskNumber = workflow.tasks[j].process_id;
+          }
+        }
+        let inputProcessNumber: number = null;
+        let outputPrecessNumber: number = null;
+        for (let k = 0; k < this.processes.length; k++) {
+          if (this.processes[k].id === inputTaskNumber) {
+            inputProcessNumber = k;
+          }
+          if (this.processes[k].id === outputTaskNumber) {
+            outputPrecessNumber = k;
+          }
+        }
+        let processParameterTypeCorrect = false;
+        for (let l = 0; l < this.processes[inputProcessNumber].inputs.length; l++) {
+          for (let m = 0; m < this.processes[outputPrecessNumber].outputs.length; m++) {
+            if (this.processes[inputProcessNumber].inputs[l].type === this.processes[outputPrecessNumber].outputs[m].type) {
+              processParameterTypeCorrect = true;
+            }
+          }
+        }
+        if (!processParameterTypeCorrect) {
           return WorkflowValidationResult.WRONG_INPUT_TYPES;
         }
       }
+
     }
 
     // TODO: @David add additional checks
     // - cycle check
 
     return WorkflowValidationResult.SUCCESSFUL;
+  }
+
+  getProcesses(): void {
+    this.processService.all().subscribe(processes => this.processes = processes);
   }
 
   public async execute(id: number): Promise<boolean> {
