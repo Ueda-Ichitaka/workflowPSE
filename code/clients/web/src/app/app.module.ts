@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { EditorPageComponent } from 'app/pages/editor-page/editor-page.component';
 import { WorkflowsPageComponent } from 'app/pages/workflows-page/workflows-page.component';
 import { AppComponent } from 'app/components/app/app.component';
@@ -75,7 +75,7 @@ const routes = [
     ProcessDialogComponent,
     ArtefactDialogComponent
   ],
-  providers: [ProcessService, WorkflowService, WpsService, WpsService],
-  bootstrap: [AppComponent]
+  providers: [ ProcessService, WorkflowService, WpsService, WpsService, { provide: LOCALE_ID, useValue: 'en' } ],
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { }

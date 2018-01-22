@@ -15,7 +15,7 @@ import { WPS } from 'app/models/WPS';
 export class ProcessListComponent implements OnInit {
 
   @Input()
-  private processes: Process[];
+  public processes: Process[];
 
   @Input()
   public wps: WPS[];

@@ -31,7 +31,7 @@ export class SettingsPageComponent implements OnInit {
     { value: 'english1', displayed: 'English' }
   ];
 
-  selected_language = 'deutsch0';
+  selected_language = { value: 'deutsch0', displayed: 'Deutsch' };
 
   constructor(
     private processService: ProcessService,

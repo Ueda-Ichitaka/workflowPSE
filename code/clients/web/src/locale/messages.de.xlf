@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="settings_header" datatype="html">
+        <source>Settings</source>
+        <target>Einstellungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/settings-page/settings-page.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings_wps_header" datatype="html">
+        <source>Add WPS server</source>
+        <target>WPS Server hinzufügen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/settings-page/settings-page.component.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="add" datatype="html">
+        <source>Add</source>
+        <target>Hinzufügen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/settings-page/settings-page.component.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="delete" datatype="html">
+        <source>Delete</source>
+        <target>Löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/settings-page/settings-page.component.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings_reload_wps" datatype="html">
+        <source>Reload WPS server</source>
+        <target>WPS Server neu laden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/settings-page/settings-page.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reload" datatype="html">
+        <source>Reload</source>
+        <target>Neu laden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/settings-page/settings-page.component.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="language" datatype="html">
+        <source>Language</source>
+        <target>Sprache</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/settings-page/settings-page.component.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

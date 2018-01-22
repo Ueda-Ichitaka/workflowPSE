@@ -1,32 +1,31 @@
 <div class="container">
-    <h1>SETTINGS</h1>
+    <h1 i18n="@@settings_header">Settings</h1>
 
-    <h3>Add WPS Server</h3>
+    <h3 i18n="@@settings_wps_header">Add WPS server</h3>
     <mat-form-field>
         <input (keyup.enter)="addWPS(wps_url_input.value)" #wps_url_input autocomplete="url" matInput>
     </mat-form-field>
     <!--<button *ngIf="wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>-->
-    <button [disabled]="!wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">ADD</button>
-    <div>
+    <button [disabled]="!wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)" i18n="@@add">Add</button>
 
+    <div>
         <div *ngFor="let wps of wps_list | async">
             <span class="wps_info">{{wps.title}}</span>
             <span class="wps_info">{{wps.provider.url}}</span>
-            <a mat-button (click)="remove(wps)">DELETE</a>
+            <a mat-button (click)="remove(wps)" i18n="@@delete">Delete</a>
         </div>
-
     </div>
 
-    <h3>Refresh WPS Server List</h3>
-    <button (click)="refresh()" mat-button>REFRESH</button>
+    <h3 i18n="@@settings_reload_wps">Reload WPS server</h3>
+    <button (click)="refresh()" mat-button i18n="@@reload">Reload</button>
     <!-- TODO set some kind of timeout for refreshing -->
 
-    <h3>Language</h3>
+    <h3 i18n="@@language">Language</h3>
     <div>
         <mat-form-field>
-            <mat-select placeholder="{{ language_options[0].displayed }}" [(value)]="selected_language">
+            <mat-select placeholder="{{ selected_language.displayed }}" [(value)]="selected_language.value">
                 <!-- TODO make selectedOption in ts file and add ngIf here to set placeholder if no option was selected -->
-                <mat-option *ngFor="let option of language_options" [value]="option.value">{{option.displayed}}</mat-option>
+                <mat-option (click)="onLangSelect(option)" *ngFor="let option of language_options" [value]="option.value">{{option.displayed}}</mat-option>
             </mat-select>
         </mat-form-field>
     </div>
