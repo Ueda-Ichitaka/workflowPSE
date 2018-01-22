@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { Workflow } from '../models/Workflow';
 import { Edge } from '../models/Edge';
 import { Task, TaskState } from '../models/Task';
@@ -20,27 +20,33 @@ export enum WorkflowValidationResult {
   LOOP_TO_SAME_TASK,
   WRONG_INPUT_TYPES,
   MISSING_TASK_INPUT,
-  // TODO: @David Add additional results
+  MISSING_WORKFLOW,
+  MISSING_PROCESSES,
 }
 
 @Injectable()
 export class WorkflowService {
-  private processes: Process[];
+  private processes?: Process[];
 
   constructor(private http: HttpClient, private bar: MatSnackBar, private processService: ProcessService) {
-    this.getProcesses();
+    this.processService.all().subscribe(processes => this.processes = processes);
   }
 
   private getKeyFromId(id: number): Observable<string> {
     return this.http.get<{ [key: string]: Workflow }>(`https://wpsflow.firebaseio.com/workflow.json`).pipe(
       map(obj => Object.entries(obj).find(([key, workflow]) => workflow.id === id)),
-      map(([key, workflow]) => key)
+      map(([key, workflow]) => key),
     );
   }
 
   public all(): Observable<Workflow[]> {
     return this.http.get<{ [key: string]: Workflow }>(`https://wpsflow.firebaseio.com/workflow.json`).pipe(
-      map(obj => Object.values(obj))
+      map(obj => Object.values(obj)),
+      map(obj => obj.map(workflow => {
+        workflow.edges = workflow.edges || [];
+        workflow.tasks = workflow.tasks || [];
+        return workflow;
+      }))
     );
   }
 
@@ -82,9 +88,11 @@ export class WorkflowService {
   }
 
   // TODO: @David Validate workflow
-  public validate(workflow: Partial<Workflow>): WorkflowValidationResult {
+  public validate(workflow: Workflow): WorkflowValidationResult {
     if (!workflow) {
-      return WorkflowValidationResult.ERROR;
+      return WorkflowValidationResult.MISSING_WORKFLOW;
+    } else if (!this.processes) {
+      return WorkflowValidationResult.MISSING_PROCESSES;
     }
 
     // check name
@@ -161,10 +169,6 @@ export class WorkflowService {
     // TODO: @David add additional checks
 
     return WorkflowValidationResult.SUCCESSFUL;
-  }
-
-  getProcesses(): void {
-    this.processService.all().subscribe(processes => this.processes = processes);
   }
 
   public async execute(id: number): Promise<boolean> {

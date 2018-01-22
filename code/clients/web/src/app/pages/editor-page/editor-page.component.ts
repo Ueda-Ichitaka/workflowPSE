@@ -159,11 +159,12 @@ export class EditorPageComponent implements OnInit {
       { type: WorkflowValidationResult.LOOP_TO_SAME_TASK, message: 'Loop to same task' },
       { type: WorkflowValidationResult.WRONG_INPUT_TYPES, message: 'Wrong input types' },
       { type: WorkflowValidationResult.MISSING_TASK_INPUT, message: 'Missing task input' },
+      { type: WorkflowValidationResult.MISSING_WORKFLOW, message: 'No Workflow provided' },
+      { type: WorkflowValidationResult.MISSING_PROCESSES, message: 'No Process List provided' },
     ];
 
-    this.workflowError = errorMessages
-      .find(m => m.type === this.workflowService.validate(workflow))
-      .message;
+    const result = errorMessages.find(m => m.type === this.workflowService.validate(workflow));
+    this.workflowError = result ? result.message : 'No Error Message Found';
   }
 
 }

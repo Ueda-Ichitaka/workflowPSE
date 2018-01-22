@@ -7,6 +7,7 @@ import { catchError, map, tap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { Subscriber } from 'rxjs/Subscriber';
 import { filter } from 'rxjs/operators/filter';
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Injectable()
 export class ProcessService {
@@ -32,11 +33,23 @@ export class ProcessService {
   constructor(private http: HttpClient) { }
 
   public all(): Observable<Process[]> {
-    return this.http.get<Process[]>(`https://wpsflow.firebaseio.com/process.json`);
+    return this.http.get<Process[]>(`https://wpsflow.firebaseio.com/process.json`).pipe(
+      map(obj => obj.map(process => {
+        process.inputs = process.inputs || [];
+        process.outputs = process.outputs || [];
+        return process;
+      }))
+    );
   }
 
   public get(id: number): Observable<Process> {
-    return this.http.get<Process>(`https://wpsflow.firebaseio.com/process/${id}.json`);
+    return this.http.get<Process>(`https://wpsflow.firebaseio.com/process/${id}.json`).pipe(
+      map(process => {
+        process.inputs = process.inputs || [];
+        process.outputs = process.outputs || [];
+        return process;
+      })
+    );
   }
 
   public create(process: Partial<Process>): Observable<Process> {
