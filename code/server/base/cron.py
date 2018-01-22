@@ -1,7 +1,7 @@
 import os
 import random
 import xml.etree.ElementTree as ET
-from base.models import WPSProvider, WPS
+from base.models import WPSProvider, WPS, Task, InputOutput
 
 #from django_cron import Schedule, CronJobBase
 
@@ -20,8 +20,21 @@ def first_crontab_task():
 def scheduler():
     # Scheduler main function
     # check workflow list for execute flag
-    # for all workflows in ready list do
-    #    for task in workflow do
+    # for all tasks in db do
+    #    check status for execute status
+    task_list = list(Task.objects.filter(status='0').values())
+    for task in task_list:
+        print(task["id"], task["title"], task["status"], sep=" ")
+        task_id = task["id"]
+
+        input_list = list(InputOutput.objects.filter(process=task["id"], role='0').values())
+        for input in input_list:
+            print(input)
+
+    #    for all tasks to execute do
+    #       traverse InputOutput table
+    #           if InputOutput.process_id == Task.id
+    #               select
     #       generate process xml
     #       send xml to wps server
     #
