@@ -1,12 +1,10 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Workflow } from '../models/Workflow';
 import { Edge } from '../models/Edge';
-import { Task, TaskState } from '../models/Task';
-import { Artefact } from '../models/Artefact';
+import { TaskState } from '../models/Task';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { map, filter, find, switchMap } from 'rxjs/operators';
-import { Subscriber } from 'rxjs/Subscriber';
+import { map, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { Process } from 'app/models/Process';
 import { ProcessService } from 'app/services/process.service';
@@ -14,8 +12,8 @@ import { ProcessService } from 'app/services/process.service';
 export enum WorkflowValidationResult {
   ERROR,
   SUCCESSFUL,
-  TITLE_TO_LONG,
-  TITLE_TO_SHORT,
+  TITLE_TOO_LONG,
+  TITLE_TOO_SHORT,
   EMPTY,
   LOOP_TO_SAME_TASK,
   WRONG_INPUT_TYPES,
@@ -97,9 +95,9 @@ export class WorkflowService {
 
     // check name
     if (workflow.title.length > 255) {
-      return WorkflowValidationResult.TITLE_TO_LONG;
+      return WorkflowValidationResult.TITLE_TOO_LONG;
     } else if (workflow.title.length < 1) {
-      return WorkflowValidationResult.TITLE_TO_SHORT;
+      return WorkflowValidationResult.TITLE_TOO_SHORT;
     } else if (workflow.tasks && workflow.tasks.length < 1) {
       return WorkflowValidationResult.EMPTY;
     } else if (workflow.edges) {

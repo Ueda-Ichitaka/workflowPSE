@@ -1,7 +1,7 @@
 import {
   MatIconModule, MatInputModule, MatButtonModule, MatCheckboxModule, MatToolbarModule, MatTabsModule,
   MatFormFieldModule, MatCardModule, MatListModule, MatTooltipModule, MatChipsModule, MatDialogModule,
-  MatExpansionModule, MatOptionModule, MatSelectModule, MatSidenavModule, MatMenuModule, MatSnackBarModule, MatProgressSpinnerModule
+  MatExpansionModule, MatOptionModule, MatSelectModule, MatMenuModule, MatSnackBarModule, MatProgressSpinnerModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';

@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { WorkflowService } from 'app/services/workflow.service';
-import { Workflow } from 'app/models/Workflow';
 import { Observable } from 'rxjs/Observable';
-import { Router } from '@angular/router';
 import { ProcessService } from 'app/services/process.service';
-import { Process } from 'app/models/Process';
 import { WpsService } from 'app/services/wps.service';
 import { WPS } from '../../models/WPS';
 

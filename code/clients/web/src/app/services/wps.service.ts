@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import { WPS } from '../models/WPS';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { catchError, map, tap, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
-import { Subscriber } from 'rxjs/Subscriber';
-import { WPSProvider } from 'app/models/WPSProvider';
+import { map, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 
 @Injectable()

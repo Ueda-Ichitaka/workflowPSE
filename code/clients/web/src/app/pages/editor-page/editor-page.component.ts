@@ -6,8 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Workflow } from 'app/models/Workflow';
 import { WorkflowService, WorkflowValidationResult } from 'app/services/workflow.service';
 import { EditorComponent } from 'app/components/editor/editor.component';
-import { trigger, state, transition, animate, style } from '@angular/animations';
-import { catchError, map, take, switchMap } from 'rxjs/operators';
+import { trigger, transition, animate, style } from '@angular/animations';
 import { WpsService } from 'app/services/wps.service';
 import { WPS } from 'app/models/WPS';
 
