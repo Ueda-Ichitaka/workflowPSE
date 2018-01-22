@@ -162,7 +162,7 @@ class Artefact(models.Model):
 
     class Meta:
         verbose_name = "Artefact"
-        verbose_name_plural = "Atrefacts"
+        verbose_name_plural = "Artefacts"
 
 
 class WorkflowForm(ModelForm):
