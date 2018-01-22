@@ -3,7 +3,7 @@
     <div [style.display]="editTitleMode ? 'none' : 'block'" class="title">
       {{ workflow?.title }}
       <button mat-icon-button class="edit-name" (click)="clickTitleEdit()">
-        <mat-icon aria-label="Example icon-button with a heart icon">edit</mat-icon>
+        <mat-icon aria-label="Example icon-button with a heart icon" i18n="@@edit">Edit</mat-icon>
       </button>
     </div>
     <div [style.display]="editTitleMode ? 'block' : 'none'">
@@ -14,8 +14,8 @@
   </div>
 
   <div>
-    <button mat-button (click)="undo()" [disabled]="!canUndo()">UNDO</button>
-    <button mat-raised-button (click)="save()" color="primary">SAVE</button>
+    <button mat-button (click)="undo()" [disabled]="!canUndo()" i18n="@@undo">Undo</button>
+    <button mat-raised-button (click)="save()" color="primary" i18n="@@save">Save</button>
   </div>
 </div>
 

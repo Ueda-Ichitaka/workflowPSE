@@ -58,6 +58,78 @@
           <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="editor_header" datatype="html">
+        <source>Editor</source>
+        <target>Editor</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/app/app.component.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="workflows_header" datatype="html">
+        <source>Workflows</source>
+        <target>Workflows</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/app/app.component.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="close" datatype="html">
+        <source>Close</source>
+        <target>Schließen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/process-dialog/process-dialog.component.ts</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/artefact-dialog/artefact-dialog.component.ts</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="info" datatype="html">
+        <source>Info</source>
+        <target>Info</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/task/task.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="edit" datatype="html">
+        <source>Edit</source>
+        <target>Bearbeiten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/editor-page/editor-page.component.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/workflows-page/workflows-page.component.ts</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="undo" datatype="html">
+        <source>Undo</source>
+        <target>Rückgängig</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/editor-page/editor-page.component.ts</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="save" datatype="html">
+        <source>Save</source>
+        <target>Speichern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/editor-page/editor-page.component.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="my_workflows" datatype="html">
+        <source>My Workflows</source>
+        <target>Meine Workflows</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/pages/workflows-page/workflows-page.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

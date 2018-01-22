@@ -27,11 +27,11 @@ export class SettingsPageComponent implements OnInit {
   ];
 
   language_options = [
-    { value: 'deutsch0', displayed: 'Deutsch' },
-    { value: 'english1', displayed: 'English' }
+    { value: 'de', displayed: 'Deutsch' },
+    { value: 'en', displayed: 'English' }
   ];
 
-  selected_language = { value: 'deutsch0', displayed: 'Deutsch' };
+  selected_language = { value: 'de', displayed: 'Deutsch' };
 
   constructor(
     private processService: ProcessService,
