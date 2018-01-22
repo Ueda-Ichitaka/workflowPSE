@@ -152,8 +152,8 @@ export class EditorPageComponent implements OnInit {
     const errorMessages = [
       { type: WorkflowValidationResult.SUCCESSFUL, message: '' },
       { type: WorkflowValidationResult.ERROR, message: 'Unknown Error' },
-      { type: WorkflowValidationResult.TITLE_TO_LONG, message: 'Workflow name is to long' },
-      { type: WorkflowValidationResult.TITLE_TO_SHORT, message: 'Workflow name is to short' },
+      { type: WorkflowValidationResult.TITLE_TOO_LONG, message: 'Workflow name is to long' },
+      { type: WorkflowValidationResult.TITLE_TOO_SHORT, message: 'Workflow name is to short' },
       { type: WorkflowValidationResult.EMPTY, message: 'Workflow is empty' },
       { type: WorkflowValidationResult.LOOP_TO_SAME_TASK, message: 'Loop to same task' },
       { type: WorkflowValidationResult.WRONG_INPUT_TYPES, message: 'Wrong input types' },
