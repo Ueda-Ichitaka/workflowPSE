@@ -35,9 +35,19 @@ class WorkflowView(View):
     @staticmethod
     def get(request, *args, **kwargs):
         if 'workflow_id' in kwargs:
-            return as_json_response(model_to_dict(Workflow.objects.get(pk=kwargs['workflow_id'])))
+            workflow = Workflow.objects.get(pk=kwargs['workflow_id'])
+            returned = model_to_dict(workflow)
+            returned['edges'] = list(workflow.edge_set.all().values())
+            returned['tasks'] = list(workflow.task_set.all().values())
+            return as_json_response(returned)
         else:
-            return as_json_response(list(Workflow.objects.all().values()))
+            returned = list(Workflow.objects.all().values())
+
+            for (i, workflow) in enumerate(returned):
+                returned[i]['tasks'] = list(Task.objects.filter(workflow=workflow['id']).values())
+                returned[i]['edges'] = list(Edge.objects.filter(workflow=workflow['id']).values())
+
+            return as_json_response(returned)
 
     @staticmethod
     def post(request):
@@ -88,7 +98,14 @@ class ProcessView(View):
             returned['outputs'] = list(process.inputoutput_set.all().filter(role=1).values())
             return as_json_response(returned)
         else:
-            return as_json_response(list(Process.objects.all().values()))
+            returned = list(Process.objects.all().values())
+
+            for (i, process) in enumerate(returned):
+                returned[i]['inputs'] = list(InputOutput.objects.filter(process=process['id']).filter(role=0).values())
+                returned[i]['outputs'] = list(InputOutput.objects.filter(process=process['id']).filter(role=1).values())
+
+            return as_json_response(returned)
+
 
     @staticmethod
     def post(request):
@@ -123,9 +140,17 @@ class WPSView(View):
     @staticmethod
     def get(request, *args, **kwargs):
         if 'wps_id' in kwargs:
-            return as_json_response(model_to_dict(WPS.objects.get(pk=kwargs['wps_id'])))
+            wps = WPS.objects.get(pk=kwargs['wps_id'])
+            returned = model_to_dict(wps)
+            returned['provider'] = model_to_dict(wps.service_provider)
+            return as_json_response(returned)
         else:
-            return as_json_response(list(WPS.objects.all().values()))
+            returned = list(WPS.objects.all().values())
+
+            for (i, wps) in enumerate(returned):
+                returned[i]['provider'] = model_to_dict(WPSProvider.objects.get(pk=wps['service_provider_id']))
+
+            return as_json_response(returned)
 
     @staticmethod
     def post(request):
