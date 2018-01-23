@@ -6,8 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Workflow } from 'app/models/Workflow';
 import { WorkflowService, WorkflowValidationResult } from 'app/services/workflow.service';
 import { EditorComponent } from 'app/components/editor/editor.component';
-import { trigger, state, transition, animate, style } from '@angular/animations';
-import { catchError, map, take, switchMap } from 'rxjs/operators';
+import { trigger, transition, animate, style } from '@angular/animations';
 import { WpsService } from 'app/services/wps.service';
 import { WPS } from 'app/models/WPS';
 
@@ -153,8 +152,8 @@ export class EditorPageComponent implements OnInit {
     const errorMessages = [
       { type: WorkflowValidationResult.SUCCESSFUL, message: '' },
       { type: WorkflowValidationResult.ERROR, message: 'Unknown Error' },
-      { type: WorkflowValidationResult.TITLE_TO_LONG, message: 'Workflow name is to long' },
-      { type: WorkflowValidationResult.TITLE_TO_SHORT, message: 'Workflow name is to short' },
+      { type: WorkflowValidationResult.TITLE_TOO_LONG, message: 'Workflow name is to long' },
+      { type: WorkflowValidationResult.TITLE_TOO_SHORT, message: 'Workflow name is to short' },
       { type: WorkflowValidationResult.EMPTY, message: 'Workflow is empty' },
       { type: WorkflowValidationResult.LOOP_TO_SAME_TASK, message: 'Loop to same task' },
       { type: WorkflowValidationResult.WRONG_INPUT_TYPES, message: 'Wrong input types' },

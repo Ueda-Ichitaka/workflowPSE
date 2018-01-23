@@ -4,12 +4,9 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { Process } from 'app/models/Process';
-import { Edge } from 'app/models/Edge';
-import { ViewChild } from '@angular/core';
 import { Workflow } from 'app/models/Workflow';
 import { Task, TaskState } from 'app/models/Task';
 import { ProcessParameter } from 'app/models/ProcessParameter';
-import { MediaQueryListListener } from '@angular/flex-layout';
 import { TaskComponent } from 'app/components/task/task.component';
 
 interface MovementData {

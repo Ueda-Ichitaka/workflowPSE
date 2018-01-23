@@ -1,8 +1,5 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
-import { ProcessService } from 'app/services/process.service';
-import { Observable } from 'rxjs/Observable';
 import { Process } from 'app/models/Process';
-import { ProcessParameterType } from 'app/models/ProcessParameter';
 import { WPS } from 'app/models/WPS';
 
 

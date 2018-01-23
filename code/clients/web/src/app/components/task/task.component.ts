@@ -1,10 +1,9 @@
-import { Component, OnInit, HostBinding, Input, ElementRef, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, Output, EventEmitter, HostListener } from '@angular/core';
 import { MatDialog, MatMenu, MatMenuTrigger } from '@angular/material';
 import { ProcessParameterType, ProcessParameter } from 'app/models/ProcessParameter';
 import { ViewChild } from '@angular/core';
 import { ProcessDialogComponent } from 'app/components/process-dialog/process-dialog.component';
 import { Process } from 'app/models/Process';
-import { LocaleDataIndex } from '@angular/common/src/i18n/locale_data';
 import { Task, TaskState } from 'app/models/Task';
 import { ArtefactDialogComponent } from 'app/components/artefact-dialog/artefact-dialog.component';
 

@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { Artefact } from 'app/models/Artefact';
 import { ProcessParameter } from 'app/models/ProcessParameter';
 import { ProcessService } from 'app/services/process.service';
 

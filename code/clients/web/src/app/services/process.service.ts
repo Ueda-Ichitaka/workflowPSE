@@ -3,11 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Process } from '../models/Process';
 import { ProcessParameterType } from '../models/ProcessParameter';
-import { catchError, map, tap, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
-import { Subscriber } from 'rxjs/Subscriber';
-import { filter } from 'rxjs/operators/filter';
-import { forEach } from '@angular/router/src/utils/collection';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ProcessService {
