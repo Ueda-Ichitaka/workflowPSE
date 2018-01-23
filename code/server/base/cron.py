@@ -151,7 +151,8 @@ def checkFiles():
 def get_capabilities_parsing():
     #Works only with absolute path.
     #In future will work with url
-    url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/getCapabilitiesFromPyWPS.xml'
+    get_cap_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsGetCapabilities.xml'
+    desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
 
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
@@ -162,24 +163,26 @@ def get_capabilities_parsing():
     }
 
     #Parse the xml file
-    tree = ET.parse(url_from_scc_vm)
+    tree = ET.parse(get_cap_url_from_scc_vm)
     root = tree.getroot()
 
     service_provider = parse_service_provider_info(root, xml_namespaces)
     service_provider.save()
+    os.mkdir('/home/denis/Documents/prov' + str(random.randrange(1, 100)) + '/')
 
-    #wps_server = parse_wps_server_info(root, xml_namespaces, service_provider)
-    #wps_server.save()
+    wps_server = parse_wps_server_info(root, xml_namespaces, service_provider)
+    wps_server.save()
+    os.mkdir('/home/denis/Documents/serv' + str(random.randrange(1, 100)) + '/')
 
+    describe_processes_parsing(wps_server)
+    os.mkdir('/home/denis/Documents/proc' + str(random.randrange(1, 100)) + '/')
 
 
 def parse_service_provider_info(root, namespaces):
     service_provider_element = root.find('ows:ServiceProvider', namespaces)
-    os.mkdir('/home/denis/Documents/' + str(random.randrange(1, 100)) + '/')
     provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
-    #provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
-    #    '{' + namespaces.get('xlink') + '}href')
-    provider_site = 'www.example.com' #Repair
+    provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
+        '{' + namespaces.get('xlink') + '}href')
 
     service_contact_element = service_provider_element.find('ows:ServiceContact', namespaces)
 
@@ -187,10 +190,9 @@ def parse_service_provider_info(root, namespaces):
     position_name = service_contact_element.find('ows:PositionName', namespaces).text
 
     service_provider = WPSProvider(provider_name=provider_name,
-                           provider_site=provider_site,
-                           individual_name=individual_name,
-                           position_name=position_name)
-
+                                   provider_site=provider_site,
+                                   individual_name=individual_name,
+                                   position_name=position_name)
     return service_provider
 
 
@@ -202,7 +204,10 @@ def parse_wps_server_info(root, namespaces, provider):
 
     operations_metadata_element = root.find('ows:OperationsMetadata', namespaces)
 
-    urls = operations_metadata_element.findall('ows:Operation/ows:DCP/ows:HTTP/ows:Get', namespaces)
+    urls_elements = operations_metadata_element.findall('ows:Operation/ows:DCP/ows:HTTP/ows:Get', namespaces)
+    urls = []
+    for item in urls_elements:
+        urls.append(item.attrib.get('{' + namespaces.get('xlink') + '}href'))
 
     wps_server = WPS(service_provider=provider,
                      title=server_title,
@@ -214,7 +219,31 @@ def parse_wps_server_info(root, namespaces, provider):
     return wps_server
 
 
+def describe_processes_parsing(wps_server):
+    desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
 
+    xml_namespaces = {
+        'gml': 'http://www.opengis.net/gml',
+        'xlink': 'http://www.w3.org/1999/xlink',
+        'wps': 'http://www.opengis.net/wps/1.0.0',
+        'ows': 'http://www.opengis.net/ows/1.1',
+        'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
+    }
+
+    tree = ET.parse(desc_proc_url_from_scc_vm)
+    root = tree.getroot()
+
+    process_elements = root.findall('ProcessDescription')
+    for process_element in process_elements:
+        process_identifier = process_element.find('ows:Identifier', xml_namespaces).text
+        process_title = process_element.find('ows:Title', xml_namespaces).text
+        process_abstract = process_element.find('ows:Abstract', xml_namespaces).text if process_element.find('ows:Abstract', xml_namespaces) is not None else 'Null'
+
+        process = Process(wps=wps_server,
+                          identifier=process_identifier,
+                          title=process_title,
+                          abstract=process_abstract)
+        process.save()
 
 
 
