@@ -1,5 +1,8 @@
 import { Artefact } from 'app/models/Artefact';
 
+/**
+ * describes the current state of a task
+ */
 export enum TaskState {
     NONE,
     READY,
@@ -10,7 +13,12 @@ export enum TaskState {
     DEPRECATED
 }
 
-
+/**
+ * tasks describe the actual task elements which are
+ * displayed in the editor
+ * with process_id, every task links to a process
+ * which is executed if this task is run
+ */
 export interface Task {
     id: number;
     x: number;
@@ -22,3 +30,4 @@ export interface Task {
     created_at: number;
     updated_at: number;
 }
+
