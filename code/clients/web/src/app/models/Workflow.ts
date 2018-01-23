@@ -1,6 +1,10 @@
 import { Edge } from 'app/models/Edge';
 import { Task } from 'app/models/Task';
 
+/**
+ * a workflow contains all related
+ * edges and tasks
+ */
 export interface Workflow {
     id: number;
     title: string;

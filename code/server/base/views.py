@@ -38,7 +38,13 @@ class WorkflowView(View):
             workflow = Workflow.objects.get(pk=kwargs['workflow_id'])
             returned = model_to_dict(workflow)
             returned['edges'] = list(workflow.edge_set.all().values())
-            returned['tasks'] = list(workflow.task_set.all().values())
+            tasks = list(workflow.task_set.all().values())
+
+            for (j, task) in enumerate(tasks):
+                tasks[j]['input_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
+                tasks[j]['output_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
+
+            returned['tasks'] = tasks
             return as_json_response(returned)
         else:
             returned = list(Workflow.objects.all().values())
