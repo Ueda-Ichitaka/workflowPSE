@@ -3,11 +3,11 @@ import {
   ViewChildren, NgZone, ChangeDetectionStrategy, EventEmitter, Output,
   ChangeDetectorRef
 } from '@angular/core';
-import { Process } from 'app/models/Process';
-import { Workflow } from 'app/models/Workflow';
-import { Task, TaskState } from 'app/models/Task';
-import { ProcessParameter } from 'app/models/ProcessParameter';
-import { TaskComponent } from 'app/components/task/task.component';
+import {Process} from 'app/models/Process';
+import {Workflow} from 'app/models/Workflow';
+import {Task, TaskState} from 'app/models/Task';
+import {ProcessParameter} from 'app/models/ProcessParameter';
+import {TaskComponent} from 'app/components/task/task.component';
 
 interface MovementData {
   parameter?: ProcessParameter<'input' | 'output'>;
@@ -48,7 +48,6 @@ export class EditorComponent implements OnInit {
   public running = false;
 
   public constructor(private el: ElementRef, private zone: NgZone, private cd: ChangeDetectorRef) {
-
   }
 
   public empty() {
@@ -189,7 +188,7 @@ export class EditorComponent implements OnInit {
         x += 16;
         y += 16;
       }
-      this.movement = { index, x, y, before: JSON.stringify(this.workflow) };
+      this.movement = {index, x, y, before: JSON.stringify(this.workflow)};
     } else {
       this.movement.index = undefined;
     }
@@ -205,7 +204,7 @@ export class EditorComponent implements OnInit {
     // get movement data
     const n: HTMLElement = this.el.nativeElement;
     const r = n.getBoundingClientRect();
-    const { index, x, y } = this.movement;
+    const {index, x, y} = this.movement;
 
     if (this.movement.edge === undefined) {
       // Task movement
@@ -246,7 +245,8 @@ export class EditorComponent implements OnInit {
     try {
       const process: Process = JSON.parse(event.dataTransfer.getData('json'));
       this.add(process, event.offsetX - 100, event.offsetY - 50);
-    } catch (e) { }
+    } catch (e) {
+    }
   }
 
   public parameterDrag(parameter: ProcessParameter<'input' | 'output'>, task: TaskComponent) {
@@ -282,7 +282,7 @@ export class EditorComponent implements OnInit {
       const a_id = parameter.role === 'output' ? task.task.id : this.movement.task.id;
       const b_id = parameter.role === 'input' ? task.task.id : this.movement.task.id;
 
-      this.workflow.edges.push({ id: Math.round(Math.random() * 10000), a_id, b_id, input_id, output_id });
+      this.workflow.edges.push({id: Math.round(Math.random() * 10000), a_id, b_id, input_id, output_id});
     }
   }
 
@@ -307,6 +307,6 @@ export class EditorComponent implements OnInit {
   }
 
   public canUndo(): boolean {
-    return this.snapshots.length > 0;
+    return this.snapshots.length > 0 && !this.running;
   }
 }
