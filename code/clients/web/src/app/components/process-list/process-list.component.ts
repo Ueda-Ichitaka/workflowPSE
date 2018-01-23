@@ -17,13 +17,17 @@ export class ProcessListComponent implements OnInit {
   @Input()
   public wps: WPS[];
 
-
+  /**
+   * creates a process list object
+   */
   public constructor() { }
 
-  public ngOnInit() {
+  public ngOnInit() { }
 
-  }
-
+  /**
+   * returns the process by the wps id
+   * @param id the id of the wps
+   */
   public processByWPS(id: number) {
     return this.processes.filter(process => process.wps_id === id);
   }

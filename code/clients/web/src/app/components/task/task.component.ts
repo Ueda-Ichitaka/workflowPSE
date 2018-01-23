@@ -7,6 +7,9 @@ import { Process } from 'app/models/Process';
 import { Task, TaskState } from 'app/models/Task';
 import { ArtefactDialogComponent } from 'app/components/artefact-dialog/artefact-dialog.component';
 
+/**
+ * describes a tuple of a task and parameter
+ */
 export interface TaskParameterTuple {
   task: Task;
   parameter: ProcessParameter<'input' | 'output'>;
@@ -51,12 +54,20 @@ export class TaskComponent implements OnInit {
 
   private mouseDownPos: number[];
 
+  /**
+   * creates a task object
+   * @param dialog material dialog
+   * @param el element reference
+   */
   public constructor(public dialog: MatDialog, private el: ElementRef) { }
 
   public ngOnInit() {
 
   }
 
+  /**
+   * @returns the task state as an object
+   */
   public get stateInfo(): { name: string, color: string } {
     const infoMap = [
       { state: TaskState.DEPRECATED, name: 'DEPRECATED', color: '#E91E63' },
@@ -70,6 +81,10 @@ export class TaskComponent implements OnInit {
     return infoMap.find(info => info.state === this.task.state);
   }
 
+  /**
+   * triggered when the user clicks
+   * @param event the user clicks the mouse button
+   */
   @HostListener('mousedown', ['$event'])
   public hostMouseDown(event: MouseEvent) {
     if (event.button === 0) {
@@ -77,6 +92,10 @@ export class TaskComponent implements OnInit {
     }
   }
 
+  /**
+   * triggered when user releases mouse button
+   * @param event user releases mouse button
+   */
   @HostListener('mouseup', ['$event'])
   public hostMouseUp(event: MouseEvent) {
     if ((<HTMLElement>event.target).classList.contains('nomove')) {
@@ -88,22 +107,36 @@ export class TaskComponent implements OnInit {
     this.mouseDownPos = undefined;
   }
 
+  /**
+   * opens task menu
+   * @param event context menu event
+   */
   @HostListener('contextmenu', ['$event'])
   public hostContextmenu(event: MouseEvent) {
     this.menuComponent.openMenu();
     return false;
   }
 
+  /**
+   * deletes the task
+   */
   public clickDelete() {
     this.taskRemove.emit(this.task);
   }
 
+  /**
+   * opens the process dialog
+   */
   public openDetail() {
     this.dialog.open(ProcessDialogComponent, {
       data: this.process
     });
   }
 
+  /**
+   * returns the color of the process parameter
+   * @param type type of the process parameter
+   */
   public getParameterColor(type: ProcessParameterType): string {
     switch (type) {
       case ProcessParameterType.LITERAL: return '#03A9F4';
@@ -113,6 +146,11 @@ export class TaskComponent implements OnInit {
     }
   }
 
+  /**
+   * triggered when user clicks on task
+   * @param parameter process parameter
+   * @param event user clicks mouse
+   */
   public parameterMouseDown(parameter: ProcessParameter<'input' | 'output'>, event: MouseEvent) {
     if (this.hasArtefact(parameter)) {
       return;
@@ -122,6 +160,11 @@ export class TaskComponent implements OnInit {
     this.parameterDrag.emit(parameter);
   }
 
+  /**
+   * opens artefact dialog
+   * @param parameter process parameter
+   * @param event user releases mouse button
+   */
   public parameterMouseUp(parameter: ProcessParameter<'input' | 'output'>, event: MouseEvent) {
     if (this.mouseDownPos && this.mouseDownPos[0] === event.pageX && this.mouseDownPos[1] === event.pageY) {
       this.dialog.open(ArtefactDialogComponent, {
@@ -137,15 +180,29 @@ export class TaskComponent implements OnInit {
     }
   }
 
+  /**
+   * adds data to an artefact
+   * @param parameter process parameter
+   * @param data the added data
+   */
   public addArtefact(parameter: ProcessParameter<'input' | 'output'>, data: object) {
     this.changeArtefact.emit([{ task: this.task, parameter }, data]);
   }
 
+  /**
+   * returns if the task component has an artefact
+   * @param parameter process parameter
+   */
   public hasArtefact(parameter: ProcessParameter<'input' | 'output'>) {
     const index = this.task.input_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id);
     return index !== -1;
   }
 
+  /**
+   * returns the parameter position
+   * @param role the parameter role which can either be input or output
+   * @param id the parameter id
+   */
   public getParameterPosition(role: 'input' | 'output', id: number): [number, number] {
     const n: HTMLDivElement = (role === 'input' ? this.inputContainer : this.outputContainer).nativeElement;
 
