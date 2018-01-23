@@ -1,7 +1,7 @@
 import os
 import random
 import xml.etree.ElementTree as ET
-from base.models import WPSProvider, WPS, Task, InputOutput
+from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process
 
 #from django_cron import Schedule, CronJobBase
 
@@ -24,12 +24,31 @@ def scheduler():
     #    check status for execute status
     task_list = list(Task.objects.filter(status='0').values())
     for task in task_list:
-        print(task["id"], task["title"], task["status"], sep=" ")
-        task_id = task["id"]
+        print(task["id"], task["process_id"], task["title"], task["status"], sep=" ")
+        task_id = task["id"]   # id of task
+        wf_id=task["workflow_id"]  # id of workflow of task
+        proc_id=task["process_id"]  # id of pywps process, evaluate to identifier
 
-        input_list = list(InputOutput.objects.filter(process=task["id"], role='0').values())
+        process_list = list(Process.objects.filter(id=task["process_id"]).values())
+        for process in process_list:
+            print(process["id"], process["identifier"], sep=" ")
+
+
+        input_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='0').values())
         for input in input_list:
-            print(input)
+            print(input["id"], input["identifier"], input["title"], input["datatype"], input["format"], sep=" ")
+            input_identifier=input["identifier"]
+            input_title=input["title"]
+            input_datatype=input["datatype"]
+            input_data_format=input["format"]
+
+
+            artefact_list = list(Artefact.objects.filter(task_id=task["id"], parameter=input["id"]).values())
+                for artefact in artefact_list:
+                print(artefact["id"], artefact["data"], sep=" ")
+                artefact_data=artefact["data"]
+
+
 
     #    for all tasks to execute do
     #       traverse InputOutput table
@@ -39,7 +58,7 @@ def scheduler():
     #       send xml to wps server
     #
     #todo: max parallel tasks schedule policy
-    pass
+
 
 
 def receiver():
