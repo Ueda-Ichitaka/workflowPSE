@@ -38,17 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
-
- #   'django_cron',      #Cron
-    'django_crontab',   #Crontab
+    'django_crontab',
 ]
 
 #For django_crontab
 CRONJOBS = [
-    ('*/1 * * * *', 'base.cron.test_capabilities_parsing'),
-    ('*/1 * * * *', 'base.scheduler'),
-    ('*/5 * * * *', 'base.receiver'),
-    ('*/5 * * * *', 'base.utils'),
+    ('*/1 * * * *', 'base.cron.get_capabilities_parsing'),
 ]
 
 """

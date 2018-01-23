@@ -108,8 +108,10 @@ def checkFiles():
     pass
 
 
-def test_capabilities_parsing(self):
-    url_from_scc_vm = 'base/testfiles/getCapabilitiesFromPyWPS.xml'
+def get_capabilities_parsing():
+    #Works only with absolute path.
+    #In future will work with url
+    url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/getCapabilitiesFromPyWPS.xml'
 
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
@@ -126,17 +128,18 @@ def test_capabilities_parsing(self):
     service_provider = parse_service_provider_info(root, xml_namespaces)
     service_provider.save()
 
-    wps_server = parse_wps_server_info(root, xml_namespaces, service_provider)
-    wps_server.save()
+    #wps_server = parse_wps_server_info(root, xml_namespaces, service_provider)
+    #wps_server.save()
 
 
 
 def parse_service_provider_info(root, namespaces):
     service_provider_element = root.find('ows:ServiceProvider', namespaces)
-
+    os.mkdir('/home/denis/Documents/' + str(random.randrange(1, 100)) + '/')
     provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
-    provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
-        '{' + namespaces.get('xlink') + '}href')
+    #provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
+    #    '{' + namespaces.get('xlink') + '}href')
+    provider_site = 'www.example.com' #Repair
 
     service_contact_element = service_provider_element.find('ows:ServiceContact', namespaces)
 
