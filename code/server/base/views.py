@@ -82,7 +82,11 @@ class ProcessView(View):
     @staticmethod
     def get(request, *args, **kwargs):
         if 'process_id' in kwargs:
-            return as_json_response(model_to_dict(Process.objects.get(pk=kwargs['process_id'])))
+            process = Process.objects.get(pk=kwargs['process_id'])
+            returned = model_to_dict(process)
+            returned['inputs'] = list(process.inputoutput_set.all().filter(role=0).values())
+            returned['outputs'] = list(process.inputoutput_set.all().filter(role=1).values())
+            return as_json_response(returned)
         else:
             return as_json_response(list(Process.objects.all().values()))
 
