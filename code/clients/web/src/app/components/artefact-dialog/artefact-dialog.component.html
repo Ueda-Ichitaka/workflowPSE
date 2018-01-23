@@ -8,8 +8,8 @@
 <mat-dialog-content class="content">
   <p class="abstract">{{ parameter.abstract }}</p>
   <mat-divider></mat-divider>
-  <div class="type-container" [ngSwitch]="parameter.type">
-
+  <!-- INPUT -->
+  <div *ngIf="parameter.role === 'input'" class="type-container" [ngSwitch]="parameter.type">
     <div fxLayout="row" fxLayoutAlign="space-between">
       <span class="subtitle">Change Input</span>
       <button mat-icon-button (click)="clickEditButton()">
@@ -61,10 +61,15 @@
     </div>
   </div>
 
+  <!-- OUTPUT -->
+  <div *ngIf="parameter.role === 'output'" class="type-container">
+    <p>output</p>
+  </div>
+
 </mat-dialog-content>
 
 <mat-divider></mat-divider>
 <mat-dialog-actions fxLayout="row" fxLayoutAlign="end">
   <button mat-button mat-dialog-close i18n="@@close">Close</button>
-  <button mat-raised-button mat-dialog-close i18n="@@save" color="primary">Save</button>
+  <button mat-raised-button (click)="save()" i18n="@@save" color="primary">Save</button>
 </mat-dialog-actions>

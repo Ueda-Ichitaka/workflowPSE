@@ -83,6 +83,29 @@ export class EditorComponent implements OnInit {
     native.scrollTo(500, 500);
   }
 
+  public changeArtefact(event) {
+    let task: Task = event[0].task;
+    task = this.workflow.tasks.find(t => t.id === task.id);
+
+    const parameter: ProcessParameter<'input' | 'output'> = event[0].parameter;
+    const data: any = event[1];
+
+    if (parameter.role === 'input') {
+      task.input_artefacts = task.input_artefacts || [];
+      task.input_artefacts.push({
+        parameter_id: parameter.id,
+        task_id: task.id,
+        workflow_id: this.workflow.id,
+        role: parameter.role,
+        format: data.format,
+        data: data.value,
+        created_at: (new Date).getTime(),
+        updated_at: (new Date).getTime(),
+      });
+    }
+
+  }
+
   public getSvgEdge(edge: [number, number, number, number, number], mouse = false) {
     let delta = Math.abs(edge[1] - edge[3]);
     if (mouse === true && this.movement.parameter !== undefined) {

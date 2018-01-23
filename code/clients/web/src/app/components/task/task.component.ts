@@ -7,6 +7,11 @@ import { Process } from 'app/models/Process';
 import { Task, TaskState } from 'app/models/Task';
 import { ArtefactDialogComponent } from 'app/components/artefact-dialog/artefact-dialog.component';
 
+export interface TaskParameterTuple {
+  task: Task;
+  parameter: ProcessParameter<'input' | 'output'>;
+}
+
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
@@ -37,6 +42,9 @@ export class TaskComponent implements OnInit {
 
   @Output()
   public taskRemove = new EventEmitter<Task>();
+
+  @Output()
+  public changeArtefact = new EventEmitter<[TaskParameterTuple, object]>();
 
   @Input()
   public showState = false;
@@ -113,12 +121,23 @@ export class TaskComponent implements OnInit {
   public parameterMouseUp(parameter: ProcessParameter<'input' | 'output'>, event: MouseEvent) {
     if (this.mouseDownPos && this.mouseDownPos[0] === event.pageX && this.mouseDownPos[1] === event.pageY) {
       this.dialog.open(ArtefactDialogComponent, {
-        data: parameter
+        data: {
+          task: this,
+          parameter
+        }
       });
     }
     this.parameterDrop.emit(parameter);
   }
 
+  public addArtefact(parameter: ProcessParameter<'input' | 'output'>, data: object) {
+    this.changeArtefact.emit([{ task: this.task, parameter }, data]);
+  }
+
+  public hasArtefact(parameter: ProcessParameter<'input' | 'output'>) {
+    const index = this.task.input_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id);
+    return index !== -1;
+  }
 
   public getParameterPosition(role: 'input' | 'output', id: number): [number, number] {
     const n: HTMLDivElement = (role === 'input' ? this.inputContainer : this.outputContainer).nativeElement;

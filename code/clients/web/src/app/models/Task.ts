@@ -10,7 +10,6 @@ export enum TaskState {
     DEPRECATED
 }
 
-
 export interface Task {
     id: number;
     x: number;
