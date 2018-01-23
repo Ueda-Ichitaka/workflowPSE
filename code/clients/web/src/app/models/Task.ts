@@ -1,6 +1,7 @@
 import { Artefact } from 'app/models/Artefact';
 
 export enum TaskState {
+    NONE,
     READY,
     WAITING,
     RUNNING,
