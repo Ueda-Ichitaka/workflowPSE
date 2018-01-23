@@ -45,3 +45,15 @@ h1, h2, h3, h4, h5, h6 {
 .mat-dialog-container, .mat-expansion-panel-header-title {
     color: rgba(55, 55, 55, 89);
 }
+
+button {
+    text-transform: uppercase;
+}
+
+pre {
+    margin: 0;
+}
+
+code {
+    border-radius: 3px;
+}

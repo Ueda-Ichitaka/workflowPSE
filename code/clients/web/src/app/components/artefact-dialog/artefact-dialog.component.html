@@ -1,12 +1,55 @@
-<h2 mat-dialog-title> {{ parameter.title }} </h2>
+<h2 mat-dialog-title> {{ parameter.title }}</h2>
+
+<div class="badges">
+  <span class="badge">{{ parameter.role }}</span>
+  <span *ngIf="getTypeInfo(parameter.type); let info" class="badge" [style.color]="info[1]" [style.borderColor]="info[1]">{{ info[0] }}</span>
+</div>
+
 <mat-dialog-content class="content">
-  <div>role: {{ parameter.role }}</div>
-  <div>type: {{ parameter.type }}</div>
-  <div>title: {{ parameter.title }}</div>
-  <div>abstract: {{ parameter.abstract }}</div>
-  <div>min_occurs: {{ parameter.min_occurs }}</div>
-  <div>max_occurs: {{ parameter.max_occurs }}</div>
+  <p class="abstract">{{ parameter.abstract }}</p>
+  <mat-divider></mat-divider>
+  <div class="type-container" [ngSwitch]="parameter.type">
+    <ng-container *ngSwitchCase="0">
+
+      <div fxLayout="row" fxLayoutAlign="space-between">
+        <span class="subtitle">Input Data</span>
+        <button mat-icon-button (click)="clickEditButton()">
+          <mat-icon>{{editMode ? 'check' : 'edit'}}</mat-icon>
+        </button>
+      </div>
+
+      <div [style.display]="editMode ? 'block' : 'none'">
+        <mat-form-field>
+          <mat-select placeholder="Format" [(value)]="selectedFormat">
+            <mat-option value="markdown">No Format</mat-option>
+            <mat-option value="sql">SQL</mat-option>
+            <mat-option value="xml">XML</mat-option>
+            <mat-option value="json">JSON</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="data-field">
+          <textarea #text matInput [(ngModel)]="data" placeholder="Input Data" matTextareaAutosize matAutosizeMinRows="5"></textarea>
+        </mat-form-field>
+      </div>
+
+
+      <pre [style.display]="editMode ? 'none' : 'block'">
+        <code #code></code>
+      </pre>
+
+    </ng-container>
+    <ng-container *ngSwitchCase="1">
+      <p>Complex</p>
+    </ng-container>
+    <ng-container *ngSwitchCase="2">
+      <p>Bounding Box</p>
+    </ng-container>
+  </div>
+
 </mat-dialog-content>
-<mat-dialog-actions>
+
+<mat-divider></mat-divider>
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="end">
   <button mat-button mat-dialog-close i18n="@@close">Close</button>
+  <button mat-raised-button mat-dialog-close i18n="@@save" color="primary">Save</button>
 </mat-dialog-actions>

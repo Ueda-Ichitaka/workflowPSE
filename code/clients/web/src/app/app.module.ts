@@ -22,6 +22,7 @@ import { WorkflowService } from 'app/services/workflow.service';
 import { WpsService } from 'app/services/wps.service';
 import { SettingsPageComponent } from 'app/pages/settings-page/settings-page.component';
 import { ArtefactDialogComponent } from 'app/components/artefact-dialog/artefact-dialog.component';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -69,13 +70,14 @@ const routes = [
     MatSelectModule,
     MatMenuModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    FormsModule
   ],
   entryComponents: [
     ProcessDialogComponent,
     ArtefactDialogComponent
   ],
-  providers: [ ProcessService, WorkflowService, WpsService, WpsService, { provide: LOCALE_ID, useValue: 'en' } ],
-  bootstrap: [ AppComponent ]
+  providers: [ProcessService, WorkflowService, WpsService, WpsService, { provide: LOCALE_ID, useValue: 'en' }],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
