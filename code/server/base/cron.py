@@ -2,6 +2,7 @@ import os
 import random
 import xml.etree.ElementTree as ET
 from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process
+from email import policy
 
 #from django_cron import Schedule, CronJobBase
 
@@ -22,8 +23,15 @@ def scheduler():
     # check workflow list for execute flag
     # for all tasks in db do
     #    check status for execute status
+    
+    os.mkdir('/home/ueda/Desktop/test/')
+    
+    
+    with open('outfile.txt', 'a') as the_file:
+        the_file.write('Hello\n')
+    
     task_list = list(Task.objects.filter(status='0').values())
-    for task in task_list:
+    for task in task_list:        
         print(task["id"], task["process_id"], task["title"], task["status"], sep=" ")
         task_id = task["id"]   # id of task
         wf_id=task["workflow_id"]  # id of workflow of task
@@ -44,10 +52,9 @@ def scheduler():
 
 
             artefact_list = list(Artefact.objects.filter(task_id=task["id"], parameter=input["id"]).values())
-                for artefact in artefact_list:
+            for artefact in artefact_list:
                 print(artefact["id"], artefact["data"], sep=" ")
                 artefact_data=artefact["data"]
-
 
 
     #    for all tasks to execute do
@@ -59,6 +66,20 @@ def scheduler():
     #
     #todo: max parallel tasks schedule policy
 
+
+def scheduler_execute():
+    #sends task to execution
+    #receives response url
+    pass
+
+
+def scheduler_check_execute():
+    #execute policy
+    pass
+
+
+def generateExecuteXML():
+    pass
 
 
 def receiver():

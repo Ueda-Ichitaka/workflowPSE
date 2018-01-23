@@ -3,16 +3,17 @@
 
     <h3 i18n="@@settings_wps_header">Add WPS server</h3>
     <mat-form-field>
-        <input (keyup.enter)="addWPS(wps_url_input.value)" #wps_url_input autocomplete="url" matInput>
+        <input placeholder="url" (keyup.enter)="addWPS(wps_url_input.value)" #wps_url_input autocomplete="url" matInput>
     </mat-form-field>
-    <!--<button *ngIf="wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>-->
+    <!--<mat-label *ngIf="!wps_url_input.value" style="color:red">Please insert a valid URL</mat-label>
+    <button *ngIf="wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>-->
     <button [disabled]="!wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)" i18n="@@add">Add</button>
 
     <div>
         <div *ngFor="let wps of wps_list | async">
             <span class="wps_info">{{wps.title}}</span>
             <span class="wps_info">{{wps.provider.url}}</span>
-            <a mat-button (click)="remove(wps)" i18n="@@delete">Delete</a>
+            <a mat-button (click)="remove(wps.id)" i18n="@@delete">Delete</a>
         </div>
     </div>
 

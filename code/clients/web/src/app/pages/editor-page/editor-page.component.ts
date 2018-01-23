@@ -48,6 +48,14 @@ export class EditorPageComponent implements OnInit {
 
   private fresh = false;
 
+  /**
+   * creates the editor page
+   * @param processService which gets process data
+   * @param workflowService which gets workflow data
+   * @param wpsService which gets wps data
+   * @param route to get route information
+   * @param router manages routing
+   */
   constructor(
     private processService: ProcessService,
     private workflowService: WorkflowService,
@@ -58,6 +66,10 @@ export class EditorPageComponent implements OnInit {
 
   }
 
+  /**
+   * is executed an appropriate time after
+   * creating the object to initiate the editor
+   */
   ngOnInit() {
     this.processes = this.processService.all();
     this.wps = this.wpsService.all();
@@ -86,19 +98,34 @@ export class EditorPageComponent implements OnInit {
     });
   }
 
+  /**
+   * toggles wether the process list
+   * is shown
+   */
   public toggleProcessList() {
     this.showProcessList = !this.showProcessList;
   }
 
+  /**
+   * reverts the last delta by
+   * redrawing the last workflow
+   */
   public undo() {
     this.editorComponent.undo();
     console.log(this.workflow);
   }
 
+  /**
+   * tells if delta exists
+   */
   public canUndo() {
     return this.editorComponent ? this.editorComponent.canUndo() : false;
   }
 
+  /**
+   * executes workflow if not empty
+   * @param id the id of the workflow
+   */
   public run(id: number) {
     if (!this.workflow) {
       return;
@@ -107,6 +134,10 @@ export class EditorPageComponent implements OnInit {
     this.workflowService.execute(this.workflow.id);
   }
 
+  /**
+   * changes the name of the workflow
+   * @param name new name of the workflow
+   */
   public editTitle(name: string) {
     this.workflow.title = name;
 
@@ -122,6 +153,9 @@ export class EditorPageComponent implements OnInit {
     this.editTitleMode = false;
   }
 
+  /**
+   * enables clicking the title in order to change it
+   */
   public clickTitleEdit() {
     this.editTitleMode = true;
     setTimeout(() => {
@@ -130,6 +164,10 @@ export class EditorPageComponent implements OnInit {
     }, 100);
   }
 
+  /**
+   * saves the workflow, if not existing
+   * yet, a new workflow is created
+   */
   public save() {
     if (this.fresh) {
       this.workflowService.create(this.editorComponent.workflow).subscribe(obj => {
@@ -140,6 +178,9 @@ export class EditorPageComponent implements OnInit {
     }
   }
 
+  /**
+   * tells wether the current workflow is running
+   */
   public runs(): boolean {
     if (!this.workflow) {
       return null;
@@ -148,7 +189,10 @@ export class EditorPageComponent implements OnInit {
     return this.workflowService.isRunning(this.workflow);
   }
 
-
+  /**
+   * tells if the workflow has changed
+   * @param workflow the workflow which is checked
+   */
   public workflowChanged(workflow: Workflow) {
     const errorMessages = [
       { type: WorkflowValidationResult.SUCCESSFUL, message: '' },

@@ -48,7 +48,6 @@ export class EditorComponent implements OnInit {
   public running = false;
 
   public constructor(private el: ElementRef, private zone: NgZone, private cd: ChangeDetectorRef) {
-
   }
 
   public empty() {
@@ -270,7 +269,8 @@ export class EditorComponent implements OnInit {
     try {
       const process: Process = JSON.parse(event.dataTransfer.getData('json'));
       this.add(process, event.offsetX - 100, event.offsetY - 50);
-    } catch (e) { }
+    } catch (e) {
+    }
   }
 
   public parameterDrag(parameter: ProcessParameter<'input' | 'output'>, task: TaskComponent) {
@@ -331,6 +331,6 @@ export class EditorComponent implements OnInit {
   }
 
   public canUndo(): boolean {
-    return this.snapshots.length > 0;
+    return this.snapshots.length > 0 && !this.running;
   }
 }

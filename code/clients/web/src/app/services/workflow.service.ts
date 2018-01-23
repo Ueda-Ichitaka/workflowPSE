@@ -145,7 +145,7 @@ export class WorkflowService {
   }
 
   /**
-   * returns if the workflow is running
+   * returns if the workflow is running (workflow can't be running if not runnable)
    * @param {Partial<Workflow>} workflow
    * @returns {boolean}
    */
@@ -153,9 +153,17 @@ export class WorkflowService {
     if (!workflow.tasks) {
       return false;
     }
-    const index = workflow.tasks
-      .findIndex(task => task.state === TaskState.WAITING || task.state === TaskState.FAILED);
-    return index !== -1;
+    for (let i = 0; i < workflow.tasks.length; i++) {
+      if (workflow.tasks[i].state === TaskState.NONE) {
+        return false;
+      }
+    }
+    for (let i = 0; i < workflow.tasks.length; i++) {
+      if (workflow.tasks[i].state === TaskState.RUNNING) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -275,7 +283,7 @@ export class WorkflowService {
    * @returns {boolean}
    */
   private checkCycle(currentWorkflowEdge: Edge, workflow: Partial<Workflow>, visitedTasks: number[]): boolean {
-     visitedTasks.push(currentWorkflowEdge.a_id);
+    visitedTasks.push(currentWorkflowEdge.a_id);
     // check task at end of edge
     for (let i = 0; i < workflow.tasks.length; i++) {
       if (this.contains(visitedTasks, currentWorkflowEdge.b_id)) {
