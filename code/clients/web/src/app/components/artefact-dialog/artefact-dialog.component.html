@@ -9,16 +9,27 @@
   <p class="abstract">{{ parameter.abstract }}</p>
   <mat-divider></mat-divider>
   <div class="type-container" [ngSwitch]="parameter.type">
-    <ng-container *ngSwitchCase="0">
 
-      <div fxLayout="row" fxLayoutAlign="space-between">
-        <span class="subtitle">Input Data</span>
-        <button mat-icon-button (click)="clickEditButton()">
-          <mat-icon>{{editMode ? 'check' : 'edit'}}</mat-icon>
-        </button>
-      </div>
+    <div fxLayout="row" fxLayoutAlign="space-between">
+      <span class="subtitle">Change Input</span>
+      <button mat-icon-button (click)="clickEditButton()">
+        <mat-icon>{{editMode ? 'check' : 'edit'}}</mat-icon>
+      </button>
+    </div>
+    <pre [style.display]="editMode ? 'none' : 'block'">
+        <code #code></code>
+    </pre>
 
-      <div [style.display]="editMode ? 'block' : 'none'">
+    <div [style.display]="editMode ? 'block' : 'none'">
+      <!-- Literal Input -->
+      <ng-container *ngSwitchCase="0">
+        <mat-form-field class="data-field">
+          <input matInput [(ngModel)]="data.value" placeholder="Input Data">
+        </mat-form-field>
+      </ng-container>
+
+      <!-- Compley Input -->
+      <ng-container *ngSwitchCase="1">
         <mat-form-field>
           <mat-select placeholder="Format" [(value)]="selectedFormat">
             <mat-option value="markdown">No Format</mat-option>
@@ -28,22 +39,26 @@
           </mat-select>
         </mat-form-field>
         <mat-form-field class="data-field">
-          <textarea #text matInput [(ngModel)]="data" placeholder="Input Data" matTextareaAutosize matAutosizeMinRows="5"></textarea>
+          <textarea matInput [(ngModel)]="data.value" placeholder="Input Data" matTextareaAutosize matAutosizeMinRows="5"></textarea>
         </mat-form-field>
-      </div>
+      </ng-container>
 
-
-      <pre [style.display]="editMode ? 'none' : 'block'">
-        <code #code></code>
-      </pre>
-
-    </ng-container>
-    <ng-container *ngSwitchCase="1">
-      <p>Complex</p>
-    </ng-container>
-    <ng-container *ngSwitchCase="2">
-      <p>Bounding Box</p>
-    </ng-container>
+      <!-- Bounding Box Input -->
+      <ng-container *ngSwitchCase="2">
+        <mat-form-field class="data-field-small">
+          <input matInput [(ngModel)]="data.tx" placeholder="Top X" type="number">
+        </mat-form-field>
+        <mat-form-field class="data-field-small">
+          <input matInput [(ngModel)]="data.ty" placeholder="Top Y" type="number">
+        </mat-form-field>
+        <mat-form-field class="data-field-small">
+          <input matInput [(ngModel)]="data.bx" placeholder="Bottom X" type="number">
+        </mat-form-field>
+        <mat-form-field class="data-field-small">
+          <input matInput [(ngModel)]="data.by" placeholder="Bottom Y" type="number">
+        </mat-form-field>
+      </ng-container>
+    </div>
   </div>
 
 </mat-dialog-content>

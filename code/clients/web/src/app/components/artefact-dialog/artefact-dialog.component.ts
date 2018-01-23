@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { ProcessParameter } from 'app/models/ProcessParameter';
+import { ProcessParameter, ProcessParameterType } from 'app/models/ProcessParameter';
 import { ProcessService } from 'app/services/process.service';
 
 declare var hljs: any;
@@ -12,7 +12,7 @@ declare var hljs: any;
 export class ArtefactDialogComponent implements OnInit {
 
   public selectedFormat = 'markdown';
-  public data;
+  public data: any = {};
 
   public editMode = true;
 
@@ -23,9 +23,6 @@ export class ArtefactDialogComponent implements OnInit {
   @ViewChild('code')
   public codeComponent: ElementRef;
 
-  @ViewChild('text')
-  public textAreaComponent: ElementRef;
-
   public ngOnInit() {
   }
 
@@ -35,19 +32,27 @@ export class ArtefactDialogComponent implements OnInit {
 
 
   public clickEditButton() {
+    const el: HTMLElement = this.codeComponent.nativeElement;
+
     if (this.editMode) {
-      const el: HTMLElement = this.codeComponent.nativeElement;
       el.className = '';
-      el.classList.add(this.selectedFormat);
       el.innerHTML = '';
 
-      el.appendChild(document.createTextNode(this.data));
+      const format = this.parameter.type === ProcessParameterType.COMPLEX
+        ? this.selectedFormat
+        : 'markdown';
 
-      setTimeout(() => {
-        hljs.highlightBlock(el);
-      }, 20);
+      el.classList.add(format);
+
+      const data = this.parameter.type === ProcessParameterType.BOUNDING_BOX
+        ? `${this.data.tx}, ${this.data.ty}, ${this.data.bx}, ${this.data.by}`
+        : this.data.value;
+
+
+      el.appendChild(document.createTextNode(data));
     }
 
+    setTimeout(() => { hljs.highlightBlock(el); }, 20);
     this.editMode = !this.editMode;
   }
 }
