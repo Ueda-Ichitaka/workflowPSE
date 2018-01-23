@@ -44,7 +44,13 @@ class WorkflowView(View):
             returned = list(Workflow.objects.all().values())
 
             for (i, workflow) in enumerate(returned):
-                returned[i]['tasks'] = list(Task.objects.filter(workflow=workflow['id']).values())
+                tasks = list(Task.objects.filter(workflow=workflow['id']).values())
+
+                for (j, task) in enumerate(tasks):
+                    tasks[j]['input_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
+                    tasks[j]['output_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
+
+                returned[i]['tasks'] = tasks
                 returned[i]['edges'] = list(Edge.objects.filter(workflow=workflow['id']).values())
 
             return as_json_response(returned)
