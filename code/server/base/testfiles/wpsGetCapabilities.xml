@@ -119,6 +119,26 @@
       <ows:Identifier>testjson</ows:Identifier>
       <ows:Title>Process Test</ows:Title>
     </wps:Process>
+    <wps:Process wps:processVersion="1.0.0">
+      <ows:Identifier>addition</ows:Identifier>
+      <ows:Title>Addition Process</ows:Title>
+      <ows:Abstract>Addiert zwei Input Zahlen (integers)</ows:Abstract>
+    </wps:Process>
+    <wps:Process wps:processVersion="1.0.0">
+      <ows:Identifier>division</ows:Identifier>
+      <ows:Title>Division Process</ows:Title>
+      <ows:Abstract>Dividiert zwei Zahlen. Liefert sowohl den Quotient, als auch den Rest der Division</ows:Abstract>
+    </wps:Process>
+    <wps:Process wps:processVersion="1.0.0">
+      <ows:Identifier>square</ows:Identifier>
+      <ows:Title>Square Process</ows:Title>
+      <ows:Abstract>Quadriert den Input</ows:Abstract>
+    </wps:Process>
+    <wps:Process wps:processVersion="1.0.0">
+      <ows:Identifier>increment</ows:Identifier>
+      <ows:Title>Increment Process</ows:Title>
+      <ows:Abstract>Inkrementiert den Input</ows:Abstract>
+    </wps:Process>
   </wps:ProcessOfferings>
   <wps:Languages>
     <wps:Default>
