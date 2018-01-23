@@ -1,13 +1,13 @@
-import { Injectable, OnInit } from '@angular/core';
-import { Workflow } from '../models/Workflow';
-import { Edge } from '../models/Edge';
-import { TaskState } from '../models/Task';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { map, switchMap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material';
-import { Process } from 'app/models/Process';
-import { ProcessService } from 'app/services/process.service';
+import {Injectable} from '@angular/core';
+import {Workflow} from '../models/Workflow';
+import {Edge} from '../models/Edge';
+import {TaskState} from '../models/Task';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs/Observable';
+import {map, switchMap} from 'rxjs/operators';
+import {MatSnackBar} from '@angular/material';
+import {Process} from 'app/models/Process';
+import {ProcessService} from 'app/services/process.service';
 
 export enum WorkflowValidationResult {
   ERROR,
@@ -20,6 +20,7 @@ export enum WorkflowValidationResult {
   MISSING_TASK_INPUT,
   MISSING_WORKFLOW,
   MISSING_PROCESSES,
+  CYCLE_IN_WORKFLOW,
 }
 
 @Injectable()
@@ -55,21 +56,21 @@ export class WorkflowService {
   }
 
   public create(workflow: Partial<Workflow>): Observable<Workflow> {
-    this.bar.open(`Created Workflow`, 'CLOSE', { duration: 3000 });
+    this.bar.open(`Created Workflow`, 'CLOSE', {duration: 3000});
     return this.http.post<Workflow>(`https://wpsflow.firebaseio.com/workflow.json`, workflow).pipe(
       map(obj => <Workflow>workflow)
     );
   }
 
   public update(id: number, workflow: Partial<Workflow>): Observable<Workflow> {
-    this.bar.open(`Saved Workflow`, 'CLOSE', { duration: 3000 });
+    this.bar.open(`Saved Workflow`, 'CLOSE', {duration: 3000});
     return this.getKeyFromId(id).pipe(
       switchMap(key => this.http.put<Workflow>(`https://wpsflow.firebaseio.com/workflow/${key}.json`, workflow))
     );
   }
 
   public async remove(id: number): Promise<boolean> {
-    this.bar.open(`Deleted Workflow`, 'CLOSE', { duration: 3000 });
+    this.bar.open(`Deleted Workflow`, 'CLOSE', {duration: 3000});
     return this.getKeyFromId(id).pipe(
       switchMap(key => this.http.delete<boolean>(`https://wpsflow.firebaseio.com/workflow/${key}.json`))
     ).toPromise();
@@ -161,12 +162,55 @@ export class WorkflowService {
     }
 
     // - cycle check
-    if (false) {
+    if (workflow.tasks && workflow.edges) {
+      let checkedTasks: number[] = [];
+      for (let i = 0; i < workflow.edges.length; i++) {
+        let visitedTasks: number[] = [];
+        if (!this.contains(checkedTasks, workflow.edges[i].a_id)) {
+          if (this.checkCycle(workflow.edges[i], workflow, visitedTasks)) {
+            return WorkflowValidationResult.CYCLE_IN_WORKFLOW;
+          }
+          checkedTasks = visitedTasks;
+        }
+      }
     }
 
     // TODO: @David add additional checks
 
     return WorkflowValidationResult.SUCCESSFUL;
+  }
+
+  private contains<T>(array: Array<T>, variable: T): boolean {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === variable) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private checkCycle(currentWorkflowEdge: Edge, workflow: Partial<Workflow>, visitedTasks: number[]): boolean {
+     visitedTasks.push(currentWorkflowEdge.a_id);
+    // check task at end of edge
+    for (let i = 0; i < workflow.tasks.length; i++) {
+      if (this.contains(visitedTasks, currentWorkflowEdge.b_id)) {
+        return true;
+      }
+      if (workflow.tasks[i].id === currentWorkflowEdge.b_id) {
+        // check for new edges at task
+        let cycle = false;
+        for (let j = 0; j < workflow.edges.length; j++) {
+          if (workflow.edges[j].a_id === workflow.tasks[i].id) {
+            if (this.contains(visitedTasks, workflow.edges[j].b_id)) {
+              return true;
+            }
+            cycle = cycle || this.checkCycle(workflow.edges[j], workflow, visitedTasks);
+          }
+        }
+        return cycle;
+      }
+    }
+    return false;
   }
 
   public async execute(id: number): Promise<boolean> {
