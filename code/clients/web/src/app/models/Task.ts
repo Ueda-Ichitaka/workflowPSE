@@ -17,7 +17,7 @@ export interface Task {
     state: TaskState;
     process_id: number;
     input_artefacts: Artefact<'input'>[];
-    ouput_artefacts: Artefact<'output'>[];
+    output_artefacts: Artefact<'output'>[];
     created_at: number;
     updated_at: number;
 }

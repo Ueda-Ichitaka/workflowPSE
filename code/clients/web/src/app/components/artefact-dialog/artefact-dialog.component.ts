@@ -6,6 +6,7 @@ import { Process } from 'app/models/Process';
 import { Task } from 'app/models/Task';
 import { TaskComponent } from 'app/components/task/task.component';
 import { analyzeFile } from '@angular/compiler';
+import { Artefact } from 'app/models/Artefact';
 
 interface ArtefactDialogData {
   task: TaskComponent;
@@ -31,6 +32,21 @@ export class ArtefactDialogComponent implements OnInit {
   constructor( @Inject(MAT_DIALOG_DATA) data: ArtefactDialogData, public dialog: MatDialogRef<ArtefactDialogComponent>) {
     this.task = data.task;
     this.parameter = data.parameter;
+
+    // Get all artefacts of this tasks
+    const artefacts: Artefact<'input' | 'output'>[] = this.parameter.role === 'input'
+      ? this.task.task.input_artefacts
+      : this.task.task.output_artefacts;
+
+    const artefact = artefacts.find(a => a.parameter_id === this.parameter.id);
+
+    // Check if parameter has artefact
+    if (artefact) {
+      this.data = {
+        value: artefact.data,
+        format: artefact.format,
+      };
+    }
   }
 
   @ViewChild('code')
@@ -73,11 +89,14 @@ export class ArtefactDialogComponent implements OnInit {
     }
 
     const out = {
-      value: this.data.value || `${this.data.tx},${this.data.ty},${this.data.bx},${this.data.by}`,
+      value: this.parameter.type === ProcessParameterType.BOUNDING_BOX
+        ? `${this.data.tx},${this.data.ty},${this.data.bx},${this.data.by}`
+        : this.data.value,
+
       format: this.selectedFormat === 'markdown' ? 'plain' : this.selectedFormat
     };
 
-    if (out.value.length > 0) {
+    if (out.value && out.value.length > 0) {
       this.task.addArtefact(this.parameter, out);
     }
 

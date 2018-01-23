@@ -114,6 +114,10 @@ export class TaskComponent implements OnInit {
   }
 
   public parameterMouseDown(parameter: ProcessParameter<'input' | 'output'>, event: MouseEvent) {
+    if (this.hasArtefact(parameter)) {
+      return;
+    }
+
     this.mouseDownPos = [event.pageX, event.pageY];
     this.parameterDrag.emit(parameter);
   }
@@ -126,8 +130,11 @@ export class TaskComponent implements OnInit {
           parameter
         }
       });
+    } else {
+      if (!this.hasArtefact(parameter)) {
+        this.parameterDrop.emit(parameter);
+      }
     }
-    this.parameterDrop.emit(parameter);
   }
 
   public addArtefact(parameter: ProcessParameter<'input' | 'output'>, data: object) {

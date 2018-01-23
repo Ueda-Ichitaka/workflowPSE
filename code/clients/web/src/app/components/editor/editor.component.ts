@@ -104,6 +104,7 @@ export class EditorComponent implements OnInit {
       });
     }
 
+    this.workflow.edges = this.workflow.edges.filter(e => e.a_id !== task.id && e.b_id !== task.id);
   }
 
   public getSvgEdge(edge: [number, number, number, number, number], mouse = false) {
@@ -164,13 +165,13 @@ export class EditorComponent implements OnInit {
 
     // create task
     const task: Task = {
-      id: Math.round(Math.random() * 10000),
+      id: -Math.round(Math.random() * 10000),
       x,
       y,
       state: TaskState.READY,
       process_id: process.id,
       input_artefacts: [],
-      ouput_artefacts: [],
+      output_artefacts: [],
       created_at: timestamp,
       updated_at: timestamp,
     };
@@ -305,7 +306,7 @@ export class EditorComponent implements OnInit {
       const a_id = parameter.role === 'output' ? task.task.id : this.movement.task.id;
       const b_id = parameter.role === 'input' ? task.task.id : this.movement.task.id;
 
-      this.workflow.edges.push({ id: Math.round(Math.random() * 10000), a_id, b_id, input_id, output_id });
+      this.workflow.edges.push({ id: -Math.round(Math.random() * 10000), a_id, b_id, input_id, output_id });
     }
   }
 

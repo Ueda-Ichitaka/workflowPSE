@@ -73,7 +73,7 @@ export class EditorPageComponent implements OnInit {
       } else {
         this.fresh = true;
         this.workflow = {
-          id: Math.round(Math.random() * 10000),
+          id: -Math.round(Math.random() * 10000),
           title: 'My New Workflow',
           edges: [],
           tasks: [],
