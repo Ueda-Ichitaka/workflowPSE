@@ -9,6 +9,9 @@ import { Task, TaskState } from 'app/models/Task';
 import { ProcessParameter } from 'app/models/ProcessParameter';
 import { TaskComponent } from 'app/components/task/task.component';
 
+/**
+ * is used to undo/redo movements of elements
+ */
 interface MovementData {
   parameter?: ProcessParameter<'input' | 'output'>;
   edge?: [number, number, number, number];
@@ -47,14 +50,26 @@ export class EditorComponent implements OnInit {
   @Input()
   public running = false;
 
+  /**
+   * creates an editor object
+   * @param el element reference
+   * @param zone used to optimize performance
+   * @param cd detects changes
+   */
   public constructor(private el: ElementRef, private zone: NgZone, private cd: ChangeDetectorRef) {
   }
 
+  /**
+   * empties editors deltas
+   */
   public empty() {
     this.snapshots = [];
     this.movement = {};
   }
 
+  /**
+   * is called after an appropriate amount of time after object creation
+   */
   ngOnInit() {
     // Create initial workflow if no workflow is provided
     if (!this.workflow) {
@@ -68,6 +83,10 @@ export class EditorComponent implements OnInit {
     }, 100);
   }
 
+  /**
+   * is called when an edge is clicked
+   * @param edges the workflows edges
+   */
   public clickEdge(edges) {
     const id = edges[4];
     const index = this.workflow.edges.findIndex(edge => edge.id === id);
@@ -77,11 +96,18 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  /**
+   * moves the view to the middle
+   */
   public scrollToMiddle() {
     const native: HTMLElement = this.el.nativeElement;
     native.scrollTo(500, 500);
   }
 
+  /**
+   * changes an artefact
+   * @param event the event that triggers the call
+   */
   public changeArtefact(event) {
     let task: Task = event[0].task;
     task = this.workflow.tasks.find(t => t.id === task.id);
@@ -106,6 +132,11 @@ export class EditorComponent implements OnInit {
     this.workflow.edges = this.workflow.edges.filter(e => e.a_id !== task.id && e.b_id !== task.id);
   }
 
+  /**
+   * returns edge as svg data
+   * @param edge the edge
+   * @param mouse the mouse
+   */
   public getSvgEdge(edge: [number, number, number, number, number], mouse = false) {
     let delta = Math.abs(edge[1] - edge[3]);
     if (mouse === true && this.movement.parameter !== undefined) {
@@ -115,6 +146,9 @@ export class EditorComponent implements OnInit {
     return `M ${edge[0]} ${edge[1]} C ${edge[0]} ${edge[1] + delta}, ${edge[2]} ${edge[3] - delta}, ${edge[2]} ${edge[3]}`;
   }
 
+  /**
+   * returns edges if there are any
+   */
   public get edges(): [number, number, number, number, number][] {
     if (!this.taskComponents) {
       return [];
@@ -158,6 +192,12 @@ export class EditorComponent implements OnInit {
     return out;
   }
 
+  /**
+   * adds the process at the given coordinates
+   * @param process the process to add
+   * @param x x coordinate in the editor
+   * @param y y coordinate in the editor
+   */
   public add(process: Process, x: number, y: number) {
     this.snapshot();
     const timestamp = (new Date()).getTime();
@@ -181,6 +221,10 @@ export class EditorComponent implements OnInit {
     this.workflowChanged.emit(this.workflow);
   }
 
+  /**
+   * removes a task from the editor
+   * @param task_id the id of the task
+   */
   public remove(task_id: number) {
     if (this.running) {
       return;
@@ -195,10 +239,20 @@ export class EditorComponent implements OnInit {
     this.workflowChanged.emit(this.workflow);
   }
 
+  /**
+   * finds the process with the given id
+   * @param id the id of the process
+   */
   public findProcess(id: number): Process {
     return this.processes.find(process => process.id === id);
   }
 
+  /**
+   * triggered when the user starts to drag an edge from
+   * a parameter to somewhere else
+   * @param index the parameter index
+   * @param event the user clicks on a parameter node
+   */
   public dragStart(index: number, event: MouseEvent) {
     if (event.button !== 0 || this.running) {
       return;
@@ -218,6 +272,11 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  /**
+   * triggered when the user moves the cursor to
+   * from a parameter node to somewhere creating an edge
+   * @param event the user moves the mouse
+   */
   @HostListener('mousemove', ['$event'])
   public dragMove(event: MouseEvent) {
     // return if no task / parameter is selected
@@ -246,6 +305,12 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  /**
+   * triggered when the user releases the mouse button
+   * when he drags an edge from one parameter node to
+   * another
+   * @param event the user releases the mouse button
+   */
   @HostListener('mouseup')
   public dragEnd(event) {
 
@@ -259,11 +324,19 @@ export class EditorComponent implements OnInit {
     document.body.style.cursor = 'default';
   }
 
+  /**
+   * TODO
+   * @param event drag over event
+   */
   public dragOver(event: DragEvent): boolean {
     // this needs to return false validate dropping area
     return false;
   }
 
+  /**
+   * process is dropped
+   * @param event user drops element
+   */
   public drop(event: DragEvent) {
     // get process data from drag and drop event
     try {
@@ -273,6 +346,11 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  /**
+   * drags a parameter
+   * @param parameter the parameter
+   * @param task the task
+   */
   public parameterDrag(parameter: ProcessParameter<'input' | 'output'>, task: TaskComponent) {
     if (this.running) {
       return;
@@ -289,6 +367,11 @@ export class EditorComponent implements OnInit {
     document.body.style.cursor = 'pointer';
   }
 
+  /**
+   * drops a parameter
+   * @param parameter the parameter
+   * @param task the task
+   */
   public parameterDrop(parameter: ProcessParameter<'input' | 'output'>, task: TaskComponent) {
     if (this.running || !this.movement.parameter || parameter.role === this.movement.parameter.role) {
       return;
@@ -310,6 +393,10 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  /**
+   * creates a new snapshot
+   * @param workflow the workflow
+   */
   private snapshot(workflow?: Workflow) {
     if (workflow) {
       this.snapshots.push(workflow);
@@ -318,6 +405,9 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  /**
+   * loads last workflow and thus reverts change
+   */
   public undo() {
     if (this.running) {
       return;

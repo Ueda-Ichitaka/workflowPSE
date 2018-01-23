@@ -15,6 +15,9 @@ declare const require;
 // we use the webpack raw-loader to return the content as a string
 const translations = require(`raw-loader!./locale/messages.de.xlf`);
 
+/**
+ * translation is loaded here
+ */
 platformBrowserDynamic().bootstrapModule(AppModule, {
   missingTranslation: MissingTranslationStrategy.Error,
   providers: [

@@ -11,17 +11,27 @@ import { ProcessService } from 'app/services/process.service';
 })
 export class ProcessDialogComponent implements OnInit {
 
-  constructor( @Inject(MAT_DIALOG_DATA) public process: Process) {
-
-  }
+  /**
+   * creates a process dialog object
+   * @param process the associated process 
+   */
+  constructor( @Inject(MAT_DIALOG_DATA) public process: Process) { }
 
   ngOnInit() {
   }
 
+  /**
+   * returns the name of the parameter type
+   * @param type the type of the parameter
+   */
   public getTypeName(type: ProcessParameterType) {
     return ProcessService.getTypeName(type);
   }
 
+  /**
+   * returns the color of the parameter type
+   * @param type the type of the parameter
+   */
   public getTypeColor(type: ProcessParameterType) {
     return ProcessService.getTypeColor(type);
   }

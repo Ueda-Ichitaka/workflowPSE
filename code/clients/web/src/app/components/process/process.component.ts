@@ -18,21 +18,34 @@ export class ProcessComponent implements OnInit {
   @HostBinding('draggable')
   public draggable = true;
 
+  /**
+   * triggered if host clicks
+   */
   @HostListener('click')
   public hostClicked() {
     this.openDialog();
   }
 
-
-
+  /**
+   * creates a process object
+   * @param dialog the dialog that opens a process dialog
+   * @param el element reference
+   */
   public constructor(public dialog: MatDialog, private el: ElementRef) { }
 
+  /**
+   * opens a process dialog
+   */
   public openDialog() {
     this.dialog.open(ProcessDialogComponent, {
       data: this.process
     });
   }
 
+  /**
+   * returns the color of the parameter
+   * @param type the parameter type
+   */
   public getParameterColor(type: ProcessParameterType): string {
     switch (type) {
       case ProcessParameterType.LITERAL: return '#03A9F4';
@@ -42,6 +55,10 @@ export class ProcessComponent implements OnInit {
     }
   }
 
+  /**
+   * triggered if user starts to drag element
+   * @param event the user starts dragging an element
+   */
   @HostListener('dragstart', ['$event'])
   public dragStart(event: DragEvent) {
     const native: HTMLElement = this.el.nativeElement;
