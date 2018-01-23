@@ -13,27 +13,20 @@ Django crontab. Version, die bei mir sicher funktioniert hat
 """
 
 
-def first_crontab_task():
-    #os.mkdir('/home/paradigmen/C/' + str(random.randrange(1, 100)) + '/')
-    #Testzeile
-    pass
-
 
 def scheduler():
     # Scheduler main function
     
     # redirect stout to file
-    #orig_stdout  = sys.stdout
-    #f = open('/home/ueda/workspace/PSE/code/server/outfile.txt', 'w')
-    #sys.stdout = f
-    
-    
+    orig_stdout  = sys.stdout
+    f = open('/home/ueda/workspace/PSE/code/server/outfile.txt', 'w')
+    sys.stdout = f
+        
     task_list = list(Task.objects.filter(status='0').values())
     for task in task_list:        
-        #print("")
-        #print("<wps:Execute>")     
-        #print("task id:", task["id"], "process id:", task["process_id"], "task titel:", task["title"], "task status:", task["status"], sep=" ")
- 
+        
+        print("")
+    
         root = ET.Element('wps:Execute')
         root.set('service', 'WPS')
         root.set('version', '1.0.0')
@@ -43,8 +36,7 @@ def scheduler():
         #proc_id=task["process_id"]  # id of pywps process, evaluate to identifier
 
         process_list = list(Process.objects.filter(id=task["process_id"]).values())
-        for process in process_list:            
-            #print("process id:", process["id"], "process identifier:", process["identifier"], sep=" ")
+        for process in process_list:                    
             
             identifier = ET.SubElement(root, 'ows:Identifier')
             identifier.text = process["identifier"]
@@ -53,8 +45,6 @@ def scheduler():
             
         input_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='0').values())
         for input in input_list:            
-            #print("<input>")
-            #print("input id:", input["id"], "input identifier:", input["identifier"], "input titel:", input["title"], "datatype:", input["datatype"], "format:", input["format"], sep=" ")
             
             inputElement = ET.SubElement(inputs, 'wps:Input')
             inputIdent = ET.SubElement(inputElement, 'ows:Identifier')
@@ -74,30 +64,13 @@ def scheduler():
                 data = ET.SubElement(inputData, 'wps:DataTypeComesHere')
                 data.text = artefact["data"]
                 
-                #print("artefact id:", artefact["id"], "data:", artefact["data"], sep=" ")
-                #artefact_data=artefact["data"]
-            
-            #print("</input>")
-        
-        #print("")
-        #print('/home/ueda/workspace/PSE/code/server/base/testfiles/task' + str(task["id"]) + '.xml')
-        
-        #mydata_rough = ET.tostring(root, 'utf-8')
-        #reparsed = minidom.parseString(mydata_rough)
-        #myfile = open('/home/ueda/workspace/PSE/code/server/base/testfiles/task' + str(task["id"]) + '.xml', 'w')
-        #mydata = reparsed.toprettyxml(indent="\t")
-        #myfile.write(str(mydata))
+        print('/home/ueda/workspace/PSE/code/server/base/testfiles/task' + str(task["id"]) + '.xml')
         
         tree = ET.ElementTree(root)
         tree.write('/home/ueda/workspace/PSE/code/server/base/testfiles/task' + str(task["id"]) + '.xml')
-        
-        #print(" ", str(ET.tostring(tree))
-        #myfile.close()
-        
-        
-        
-    #sys.stdout = orig_stdout
-    #f.close()
+                      
+    sys.stdout = orig_stdout
+    f.close()
 
 
 
