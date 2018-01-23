@@ -167,13 +167,13 @@ class Artefact(models.Model):
 
 class WorkflowForm(ModelForm):
     class Meta:
-        model = WPS
+        model = Workflow
         fields = '__all__'
 
 
 class ProcessForm(ModelForm):
     class Meta:
-        model = WPS
+        model = Process
         fields = '__all__'
 
 
