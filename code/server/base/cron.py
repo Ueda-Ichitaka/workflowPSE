@@ -265,8 +265,10 @@ def describe_processes_parsing(wps_server):
             for input_element in input_elements:
                 input_identifier = input_element.find('ows:Identifier', xml_namespaces).text
                 input_title = input_element.find('ows:Title', xml_namespaces).text
-                abstract_tag = input_element.find('ows:Abstract', xml_namespaces)
-                input_abstract = abstract_tag.text if abstract_tag is not None else 'Null'
+
+                input_abstract_element = input_element.find('ows:Abstract', xml_namespaces)
+                input_abstract = input_abstract_element.text if input_abstract_element is not None else 'No description for input available'
+
                 input_datatype = None
                 input_format = None
 
@@ -274,13 +276,12 @@ def describe_processes_parsing(wps_server):
                     input_datatype = DATATYPE[0][0]
                     literal_data_element = input_element.find('LiteralData')
                     input_format = literal_data_element.find('ows:DataType', xml_namespaces).text
-                elif input_element.find('') is not None:
+                elif input_element.find('ComplexData') is not None:
                     input_datatype = DATATYPE[1][0]
                     input_format = None
                 elif input_element.find('BoundingBoxData') is not None:
                     input_datatype = DATATYPE[2][0]
                     input_format = None
-
 
                 input_min_occurs = input_element.attrib.get('minOccurs')
                 input_max_occurs = input_element.attrib.get('maxOccurs')
@@ -296,19 +297,48 @@ def describe_processes_parsing(wps_server):
                                     max_occurs=input_max_occurs)
                 input.save()
 
-                print(input.process.title)
-                print(input.role)
-                print(input.identifier)
-                print(input.title)
-                print(input.abstract)
-                print(input.datatype)
-
 
 
 ###OUTPUT PARSING
-        #outputs_container_element = process_element.find('ProcessOutputs')
-        #output_elements = outputs_container_element.findall('Output')
+        outputs_container_element = process_element.find('ProcessOutputs')
+        if outputs_container_element is None:
+            print(process.title + ' has no outputs (Impossible)')
+        else:
+            output_elements = outputs_container_element.findall('Output')
+            for output_element in output_elements:
+                output_identifier = output_element.find('ows:Identifier', xml_namespaces).text
+                output_title = output_element.find('ows:Title', xml_namespaces).text
 
+                output_abstract_element = output_element.find('ows:Abstract', xml_namespaces)
+                output_abstract = output_abstract_element.text if output_abstract_element is not None else 'No description for output avaible'
+
+                output_datatype = None
+                output_format = None
+
+                if input_element.find('LiteralData') is not None:
+                    output_datatype = DATATYPE[0][0]
+                    literal_data_element = input_element.find('LiteralData')
+                    output_format = literal_data_element.find('ows:DataType', xml_namespaces).text
+                elif input_element.find('ComplexData') is not None:
+                    output_datatype = DATATYPE[1][0]
+                    output_format = None
+                elif input_element.find('BoundingBoxData') is not None:
+                    output_datatype = DATATYPE[2][0]
+                    output_format = None
+
+                output_min_occurs = 1
+                output_max_occurs = 1
+
+                output = InputOutput(process=process,
+                                     role=ROLE[1][0],
+                                     identifier=output_identifier,
+                                     title=output_title,
+                                     abstract=output_abstract,
+                                     datatype=output_datatype,
+                                     format=output_format,
+                                     min_occurs=output_min_occurs,
+                                     max_occurs=output_max_occurs)
+                output.save()
 
 
 
