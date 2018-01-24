@@ -1,7 +1,7 @@
 import os, sys
 import random
 import xml.etree.ElementTree as ET
-from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process
+from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, ROLE, DATATYPE
 from email import policy
 from xml.dom import minidom
 
@@ -158,12 +158,11 @@ def checkFiles():
 def get_capabilities_parsing():
     #Works only with absolute path.
     #In future will work with url
-<<<<<<< HEAD
+
     get_cap_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsGetCapabilities.xml'
     desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
-=======
+
     url_from_scc_vm = '/home/ueda/workspace/PSE/code/server/base/testfiles/getCapabilitiesFromPyWPS.xml'
->>>>>>> 501ce2c75b1a8bb718d44606a1dcc861b69f0110
 
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
@@ -191,10 +190,7 @@ def get_capabilities_parsing():
 
 def parse_service_provider_info(root, namespaces):
     service_provider_element = root.find('ows:ServiceProvider', namespaces)
-<<<<<<< HEAD
-=======
     #os.mkdir('/home/denis/Documents/' + str(random.randrange(1, 100)) + '/')
->>>>>>> 501ce2c75b1a8bb718d44606a1dcc861b69f0110
     provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
     provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
         '{' + namespaces.get('xlink') + '}href')
@@ -247,7 +243,6 @@ def describe_processes_parsing(wps_server):
 
     tree = ET.parse(desc_proc_url_from_scc_vm)
     root = tree.getroot()
-
     process_elements = root.findall('ProcessDescription')
     for process_element in process_elements:
         process_identifier = process_element.find('ows:Identifier', xml_namespaces).text
@@ -259,6 +254,61 @@ def describe_processes_parsing(wps_server):
                           title=process_title,
                           abstract=process_abstract)
         process.save()
+
+###INPUT PARSING
+        inputs_container_element = process_element.find('DataInputs')
+        if inputs_container_element is None:
+            print(process.title + ' has not inputs')
+        else:
+            input_elements = inputs_container_element.findall('Input')
+
+            for input_element in input_elements:
+                input_identifier = input_element.find('ows:Identifier', xml_namespaces).text
+                input_title = input_element.find('ows:Title', xml_namespaces).text
+                abstract_tag = input_element.find('ows:Abstract', xml_namespaces)
+                input_abstract = abstract_tag.text if abstract_tag is not None else 'Null'
+                input_datatype = None
+                input_format = None
+
+                if input_element.find('LiteralData') is not None:
+                    input_datatype = DATATYPE[0][0]
+                    literal_data_element = input_element.find('LiteralData')
+                    input_format = literal_data_element.find('ows:DataType', xml_namespaces).text
+                elif input_element.find('') is not None:
+                    input_datatype = DATATYPE[1][0]
+                    input_format = None
+                elif input_element.find('BoundingBoxData') is not None:
+                    input_datatype = DATATYPE[2][0]
+                    input_format = None
+
+
+                input_min_occurs = input_element.attrib.get('minOccurs')
+                input_max_occurs = input_element.attrib.get('maxOccurs')
+
+                input = InputOutput(process=process,
+                                    role=ROLE[0][0],
+                                    identifier=input_identifier,
+                                    title=input_title,
+                                    abstract=input_abstract,
+                                    datatype=input_datatype,
+                                    format=input_format,
+                                    min_occurs=input_min_occurs,
+                                    max_occurs=input_max_occurs)
+                input.save()
+
+                print(input.process.title)
+                print(input.role)
+                print(input.identifier)
+                print(input.title)
+                print(input.abstract)
+                print(input.datatype)
+
+
+
+###OUTPUT PARSING
+        #outputs_container_element = process_element.find('ProcessOutputs')
+        #output_elements = outputs_container_element.findall('Output')
+
 
 
 
