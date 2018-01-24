@@ -162,7 +162,6 @@ def get_capabilities_parsing():
     get_cap_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsGetCapabilities.xml'
     desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
 
-    url_from_scc_vm = '/home/ueda/workspace/PSE/code/server/base/testfiles/getCapabilitiesFromPyWPS.xml'
 
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
@@ -173,14 +172,15 @@ def get_capabilities_parsing():
     }
 
     #Parse the xml file
-    tree = ET.parse(get_cap_url_from_scc_vm)
-    root = tree.getroot()
+    get_capabilities_tree = ET.parse(get_cap_url_from_scc_vm)
+    get_capabilities_root = get_capabilities_tree.getroot()
 
-    service_provider = parse_service_provider_info(root, xml_namespaces)
+    service_provider = parse_service_provider_info(get_capabilities_root, xml_namespaces)
     service_provider.save()
+
     os.mkdir('/home/denis/Documents/prov' + str(random.randrange(1, 100)) + '/')
 
-    wps_server = parse_wps_server_info(root, xml_namespaces, service_provider)
+    wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
     wps_server.save()
     os.mkdir('/home/denis/Documents/serv' + str(random.randrange(1, 100)) + '/')
 
@@ -190,7 +190,6 @@ def get_capabilities_parsing():
 
 def parse_service_provider_info(root, namespaces):
     service_provider_element = root.find('ows:ServiceProvider', namespaces)
-    #os.mkdir('/home/denis/Documents/' + str(random.randrange(1, 100)) + '/')
     provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
     provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
         '{' + namespaces.get('xlink') + '}href')
@@ -230,6 +229,13 @@ def parse_wps_server_info(root, namespaces, provider):
     return wps_server
 
 
+def already_exists_in_database_provider(service_provider):
+    if WPS.objects.get(provider_name=service_provider.provider_name) is None:
+        return False
+    else:
+        return True
+
+
 def describe_processes_parsing(wps_server):
     desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
 
@@ -245,14 +251,7 @@ def describe_processes_parsing(wps_server):
     root = tree.getroot()
     process_elements = root.findall('ProcessDescription')
     for process_element in process_elements:
-        process_identifier = process_element.find('ows:Identifier', xml_namespaces).text
-        process_title = process_element.find('ows:Title', xml_namespaces).text
-        process_abstract = process_element.find('ows:Abstract', xml_namespaces).text if process_element.find('ows:Abstract', xml_namespaces) is not None else 'Null'
-
-        process = Process(wps=wps_server,
-                          identifier=process_identifier,
-                          title=process_title,
-                          abstract=process_abstract)
+        process = parse_process_info(process_element, xml_namespaces, wps_server)
         process.save()
 
 ###INPUT PARSING
@@ -341,7 +340,18 @@ def describe_processes_parsing(wps_server):
                 output.save()
 
 
+def parse_process_info(process_element, namespaces, wps_server):
+    process_identifier = process_element.find('ows:Identifier', namespaces).text
+    process_title = process_element.find('ows:Title', namespaces).text
 
+    process_abstract_element = process_element.find('ows:Abstract', namespaces)
+    process_abstract = process_abstract_element.text if process_abstract_element is not None else 'No process description avaible'
+
+    process = Process(wps=wps_server,
+                      identifier=process_identifier,
+                      title=process_title,
+                      abstract=process_abstract)
+    return process
 
 """
 Django cron. Das geht bei mir immer noch nicht :(
