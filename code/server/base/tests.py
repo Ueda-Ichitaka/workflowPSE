@@ -1,5 +1,5 @@
 from django.test import TestCase
-from base.models import WPSProvider
+from base.models import WPSProvider, WPS
 import base.cron
 import xml.etree.ElementTree as ET
 
@@ -40,6 +40,33 @@ class ParsingTestCase(TestCase):
         wps_provider = base.cron.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
         wps_server = base.cron.parse_wps_server_info(self.capabilities_root, self.xml_namespaces, wps_provider)
         base.cron.get_capabilities_parsing()
+
+    def test_overwrite_server(self):
+        provider = base.cron.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
+        provider.save()
+        old_database_entry = WPS(service_provider=provider,
+                                 title='Title',
+                                 abstract='Description',
+                                 capabilities_url='http://pywps.org/capab',
+                                 describe_url='http://pywps.org/desc',
+                                 execute_url='http://pywps.org/exec')
+        old_database_entry.save()
+        new_entry = WPS(service_provider=provider,
+                        title='Title',
+                        abstract='new_Description',
+                        capabilities_url='http://new_pywps.org/capab',
+                        describe_url='http://new_pywps.org/desc',
+                        execute_url='http://new_pywps.org/exec')
+
+        base.cron.overwrite_server(old_database_entry, new_entry)
+        new_database_entry = WPS.objects.get(title='Title')
+        self.assertEqual(old_database_entry.pk, new_database_entry.pk)
+        self.assertEqual(new_database_entry.abstract, new_entry.abstract)
+        self.assertEqual(new_database_entry.capabilities_url, new_entry.capabilities_url)
+        self.assertEqual(new_database_entry.describe_url, new_entry.describe_url)
+        self.assertEqual(new_database_entry.execute_url, new_entry.execute_url)
+
+
 
 
 

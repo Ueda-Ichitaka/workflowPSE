@@ -175,16 +175,53 @@ def get_capabilities_parsing():
     get_capabilities_root = get_capabilities_tree.getroot()
 
     service_provider = parse_service_provider_info(get_capabilities_root, xml_namespaces)
-    service_provider.save()
+    service_provider_from_database = search_provider_in_database(service_provider)
+    if service_provider_from_database is None:
+        service_provider.save()
+    else:
+        service_provider = service_provider_from_database
+
 
     os.mkdir('/home/denis/Documents/prov' + str(random.randrange(1, 100)) + '/')
 
     wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
-    wps_server.save()
+    wps_server_from_database = search_server_in_database(wps_server)
+    if wps_server_from_database is None:
+        wps_server.save()
+    else:
+        wps_server = overwrite_server(wps_server_from_database, wps_server)
     os.mkdir('/home/denis/Documents/serv' + str(random.randrange(1, 100)) + '/')
 
     describe_processes_parsing(wps_server)
     os.mkdir('/home/denis/Documents/proc' + str(random.randrange(1, 100)) + '/')
+
+
+def search_provider_in_database(service_provider):
+    for provider in WPSProvider.objects.all():
+        if service_provider.provider_name == provider.provider_name \
+                and service_provider.provider_site == provider.provider_site:
+            return provider
+
+    return None
+
+
+def search_server_in_database(wps_server):
+    for server in WPS.objects.all():
+        if server.title == wps_server.title:
+            return server
+
+
+    return None
+
+
+def overwrite_server(old_entry, new_entry):
+    old_entry.abstract = new_entry.abstract
+    old_entry.capabilities_url = new_entry.capabilities_url
+    old_entry.describe_url = new_entry.describe_url
+    old_entry.execute_url = new_entry.execute_url
+
+    old_entry.save()
+    return old_entry
 
 
 def parse_service_provider_info(root, namespaces):
