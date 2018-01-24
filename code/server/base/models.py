@@ -6,12 +6,13 @@ from enum import Enum
 # Create your models here.
 
 STATUS = (
-    ('0', 'READY'),
-    ('1', 'WAITING'),
-    ('2', 'RUNNING'),
-    ('3', 'FINISHED'),
-    ('4', 'FAILED'),
-    ('5', 'DEPRECATED'),
+    ('0', 'NONE'),
+    ('1', 'READY'),
+    ('2', 'WAITING'),
+    ('3', 'RUNNING'),
+    ('4', 'FINISHED'),
+    ('5', 'FAILED'),
+    ('6', 'DEPRECATED'),
 )
 
 ROLE = (
@@ -98,7 +99,7 @@ class Task(models.Model):
     title = models.CharField(max_length=200)
     abstract = models.TextField('Descriptive text', default='Add your super descriptive text here...')
     status_url = models.URLField(max_length=1000)
-    started_at = models.DateTimeField(auto_now=False, auto_now_add=False)
+    started_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Task"
@@ -120,7 +121,7 @@ class Session(models.Model):
 class InputOutput(models.Model):
     process = models.ForeignKey(Process, on_delete=models.CASCADE)
     role = models.CharField(max_length=1, choices=ROLE)
-    identifier = models.CharField(max_length=200)
+    identifier = models.CharField(max_length=200, null=True)
     title = models.CharField(max_length=200)
     abstract = models.TextField('Descriptive text', default='Add your super descriptive text here...')
     datatype = models.CharField(max_length=1, choices=DATATYPE, null=True)
@@ -158,27 +159,9 @@ class Artefact(models.Model):
     role = models.CharField(max_length=1, choices=ROLE)
     format = models.CharField(max_length=200)
     data = models.CharField(max_length=500)
-    created_at = models.DateTimeField(auto_now=False, auto_now_add=False)
-    updated_at = models.DateTimeField(auto_now=False, auto_now_add=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Artefact"
         verbose_name_plural = "Artefacts"
-
-
-class WorkflowForm(ModelForm):
-    class Meta:
-        model = Workflow
-        fields = '__all__'
-
-
-class ProcessForm(ModelForm):
-    class Meta:
-        model = Process
-        fields = '__all__'
-
-
-class WPSForm(ModelForm):
-    class Meta:
-        model = WPS
-        fields = '__all__'

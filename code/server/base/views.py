@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render
 from django.views import generic
 from django.forms.models import model_to_dict
@@ -33,7 +35,7 @@ class WorkflowView(View):
         return super(WorkflowView, self).dispatch(*args, **kwargs)
 
     @staticmethod
-    def get(request, *args, **kwargs):
+    def get(request, **kwargs):
         if 'workflow_id' in kwargs:
             workflow = Workflow.objects.get(pk=kwargs['workflow_id'])
             returned = model_to_dict(workflow)
@@ -63,21 +65,122 @@ class WorkflowView(View):
 
     @staticmethod
     def post(request):
-        workflow_form = WorkflowForm(request.POST)
-        new_workflow = workflow_form.save()
+        new_data = json.loads(request.body)
 
-        return as_json_response(model_to_dict(new_workflow))
+        new_workflow = Workflow.objects.create(
+            name=new_data['title'],
+            percent_done=0,
+            creator_id=1,  # TODO: request.user.id
+            last_modifier_id=1  # TODO: request.user.id
+        )
+
+        temporary_to_new_task_ids = {}
+
+        for new_task_data in new_data['tasks']:
+            new_task = Task.objects.create(
+                workflow_id=new_workflow.id,
+                process_id=new_task_data['process_id'],
+                x=new_task_data['x'],
+                y=new_task_data['y'],
+                status=new_task_data['state']
+            )
+
+            temporary_to_new_task_ids[new_task_data['id']] = new_task.id
+
+            # TODO: kann man davon ausgehen, dass bei Erstellen auf jeden Fall keine Artefakte mitgeliefert werden?
+            # TODO: ist es sinnvoll, Artefakte durch Workflow zu speichern? Vllt das in einen getrennten View packen?
+
+        for new_edge_data in new_data['edges']:
+            Edge.objects.create(
+                workflow_id=new_workflow.id,
+                from_task_id=temporary_to_new_task_ids[new_edge_data['a_id']],
+                to_task_id=temporary_to_new_task_ids[new_edge_data['b_id']],
+                input_id=new_edge_data['input_id'],
+                output_id=new_edge_data['output_id']
+            )
+
+        return WorkflowView.get(request, workflow_id=new_workflow.id)
 
     @staticmethod
-    def patch(request, *args, **kwargs):
-        workflow = WPS.objects.get(pk=kwargs['workflow_id'])
-        workflow_form = WPSForm(request.POST, instance=workflow)
-        workflow = workflow_form.save()
+    def patch(request, **kwargs):
+        new_data = json.loads(request.body)
+        workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
 
-        return as_json_response(model_to_dict(workflow))
+        workflow.name = new_data['name']
+        workflow.last_modifier = 1  # TODO: request.user.id
+
+        workflow.save()
+
+        temporary_to_new_task_ids = {}
+
+        for task_data in new_data['tasks']:
+            if task_data['id'] > 0:
+                task = get_object_or_404(Task, pk=task_data['id'])
+
+                task.workflow_id = workflow.id,
+                task.process_id = task_data['process_id'],
+                task.x = task_data['x'],
+                task.y = task_data['y'],
+                task.status = task_data['state']
+
+                task.save()
+
+                artefacts_data = task_data['input_artefacts'] + task_data['output_artefacts']
+
+                for artefact_data in artefacts_data:
+                    if artefact_data['id'] > 0:
+                        artefact = get_object_or_404(Artefact, pk=artefact_data['id'])
+
+                        artefact.task_id = task.id
+                        artefact.parameter_id = artefact_data['parameter_id']
+                        artefact.role = artefact_data['role']
+                        artefact.format = artefact_data['format']
+                        artefact.data = artefact_data['data']
+                        
+                        artefact.save()
+                    else:
+                        Artefact.objects.create(
+                            task_id=task.id,
+                            parameter_id=artefact_data['parameter_id'],
+                            role=artefact_data['role'],
+                            format=artefact_data['format'],
+                            data=artefact_data['data']
+                        )
+            else:
+                task = Task.objects.create(
+                    workflow_id=workflow.id,
+                    process_id=task_data['process_id'],
+                    x=task_data['x'],
+                    y=task_data['y'],
+                    status=task_data['state']
+                )
+
+            temporary_to_new_task_ids[task_data['id']] = task.id
+
+        for edge_data in new_data['edges']:
+            if edge_data['id'] > 0:
+                edge = get_object_or_404(Edge, pk=edge_data['id'])
+
+                edge.workflow = workflow,
+                edge.from_task_id = temporary_to_new_task_ids[edge_data['a_id']],
+                edge.to_task_id = temporary_to_new_task_ids[edge_data['b_id']],
+                edge.input_id = edge_data['input_id'],
+                edge.output_id = edge_data['output_id']
+
+                edge.save()
+            else:
+                Edge.objects.create(
+                    workflow_id=workflow.id,
+                    from_task_id=temporary_to_new_task_ids[edge_data['a_id']],
+                    to_task_id=temporary_to_new_task_ids[edge_data['b_id']],
+                    input_id=edge_data['input_id'],
+                    output_id=edge_data['output_id']
+                )
+
+        return WorkflowView.get(request, workflow_id=kwargs['workflow_id'])
 
     @staticmethod
-    def delete(request, *args, **kwargs):
+    def delete(request, **kwargs):
         workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
         (deletedWorkflowCount, countOfDeletionsPerType) = workflow.delete()
         deleted = (deletedWorkflowCount > 0)
@@ -87,11 +190,15 @@ class WorkflowView(View):
     @staticmethod
     @require_GET
     def start(request, workflow_id):
+        Task.objects.filter(workflow=workflow_id).update(status=1)
+
         return JsonResponse({})
 
     @staticmethod
     @require_GET
     def stop(request, workflow_id):
+        Task.objects.filter(workflow=workflow_id).update(status=0)
+
         return JsonResponse({})
 
 
@@ -102,7 +209,7 @@ class ProcessView(View):
         return super(ProcessView, self).dispatch(*args, **kwargs)
 
     @staticmethod
-    def get(request, *args, **kwargs):
+    def get(request, **kwargs):
         if 'process_id' in kwargs:
             process = Process.objects.get(pk=kwargs['process_id'])
             returned = model_to_dict(process)
@@ -118,24 +225,74 @@ class ProcessView(View):
 
             return as_json_response(returned)
 
-
     @staticmethod
     def post(request):
-        process_form = ProcessForm(request.POST)
-        new_process = process_form.save()
+        new_data = json.loads(request.body)
 
-        return as_json_response(model_to_dict(new_process))
+        new_process = Process.objects.create(
+            wps_id=new_data['wps_id'],
+            identifier=new_data['identifier'],
+            title=new_data['title'],
+            abstract=new_data['abstract']
+        )
+
+        inputoutputs_data = new_data['inputs'] + new_data['outputs']
+
+        for inputoutput_data in inputoutputs_data:
+            InputOutput.objects.create(
+                process_id=new_process.id,
+                role=(0 if inputoutput_data['role'] == 'input' else 1),
+                title=inputoutput_data['title'],
+                abstract=inputoutput_data['abstract'],
+                datatype=inputoutput_data['type'],
+                min_occurs=inputoutput_data['min_occurs'],
+                max_occurs=inputoutput_data['max_occurs']
+            )
+
+        return ProcessView.get(request, process_id=new_process.id)
 
     @staticmethod
-    def patch(request, *args, **kwargs):
-        process = WPS.objects.get(pk=kwargs['process_id'])
-        process_form = WPSForm(request.POST, instance=process)
-        process = process_form.save()
+    def patch(request, **kwargs):
+        new_data = json.loads(request.body)
+        process = get_object_or_404(Process, pk=kwargs['process_id'])
 
-        return as_json_response(model_to_dict(process))
+        process.wps_id = new_data['wps_id'],
+        process.identifier = new_data['identifier'],
+        process.title = new_data['title'],
+        process.abstract = new_data['abstract']
+
+        process.save()
+
+        inputoutputs_data = new_data['inputs'] + new_data['outputs']
+
+        for inputoutput_data in inputoutputs_data:
+            if inputoutput_data['id'] > 0:
+                inputoutput = get_object_or_404(InputOutput, inputoutput_data['id'])
+
+                inputoutput.process_id = process.id,
+                inputoutput.role = (0 if inputoutput_data['role'] == 'input' else 1),
+                inputoutput.title = inputoutput_data['title'],
+                inputoutput.abstract = inputoutput_data['abstract'],
+                inputoutput.datatype = inputoutput_data['type'],
+                inputoutput.min_occurs = inputoutput_data['min_occurs'],
+                inputoutput.max_occurs = inputoutput_data['max_occurs']
+
+                inputoutput.save()
+            else:
+                InputOutput.objects.create(
+                    process_id=process.id,
+                    role=(0 if inputoutput_data['role'] == 'input' else 1),  # TODO: change it on client-side?
+                    title=inputoutput_data['title'],
+                    abstract=inputoutput_data['abstract'],
+                    datatype=inputoutput_data['type'],
+                    min_occurs=inputoutput_data['min_occurs'],
+                    max_occurs=inputoutput_data['max_occurs']
+                )
+
+        return ProcessView.get(request, process_id=kwargs['process_id'])
 
     @staticmethod
-    def delete(request, *args, **kwargs):
+    def delete(request, **kwargs):
         process = get_object_or_404(Process, pk=kwargs['process_id'])
         (deletedProcessCount, countOfDeletionsPerType) = process.delete()
         deleted = (deletedProcessCount > 0)
@@ -150,7 +307,7 @@ class WPSView(View):
         return super(WPSView, self).dispatch(*args, **kwargs)
 
     @staticmethod
-    def get(request, *args, **kwargs):
+    def get(request, **kwargs):
         if 'wps_id' in kwargs:
             wps = WPS.objects.get(pk=kwargs['wps_id'])
             returned = model_to_dict(wps)
@@ -166,21 +323,53 @@ class WPSView(View):
 
     @staticmethod
     def post(request):
-        wps_form = WPSForm(request.POST)
-        new_wps = wps_form.save()
+        new_data = json.loads(request.body)
 
-        return as_json_response(model_to_dict(new_wps))
+        new_wps_provider = WPSProvider.objects.create(
+            provider_name=new_data['provider']['title'],
+            provider_site=new_data['provider']['url']
+        )
+
+        new_wps = WPS.objects.create(
+            service_provider_id=new_wps_provider.id,
+            title=new_data['title'],
+            abstract=new_data['abstract']
+        )
+
+        return WPSView.get(request, wps_id=new_wps.id)
 
     @staticmethod
-    def patch(request, *args, **kwargs):
-        wps = WPS.objects.get(pk=kwargs['wps_id'])
-        wps_form = WPSForm(request.POST, instance=wps)
-        wps = wps_form.save()
+    def patch(request, **kwargs):
+        new_data = json.loads(request.body)
+        wps = get_object_or_404(WPS, pk=kwargs['wps_id'])
 
-        return as_json_response(model_to_dict(wps))
+        if new_data['provider']['id'] > 0:
+            wps_provider = get_object_or_404(WPSProvider, pk=new_data['provider']['id'])
+
+            wps_provider.provider_name = new_data['provider']['title']
+            wps_provider.provider_site = new_data['provider']['url']
+
+            wps_provider.save()
+
+            wps_provider_id = new_data['provider']['id']
+        else:
+            new_wps_provider = WPSProvider.objects.create(
+                provider_name=new_data['provider']['title'],
+                provider_site=new_data['provider']['url']
+            )
+
+            wps_provider_id = new_wps_provider.id
+
+        wps.service_provider_id = wps_provider_id,
+        wps.title = new_data['title'],
+        wps.abstract = new_data['abstract']
+
+        wps.save()
+
+        return WPSView.get(request, wps_id=kwargs['wps_id'])
 
     @staticmethod
-    def delete(request, *args, **kwargs):
+    def delete(request, **kwargs):
         wps = get_object_or_404(Process, pk=kwargs['wps_id'])
         (deletedWPSCount, countOfDeletionsPerType) = wps.delete()
         deleted = (deletedWPSCount > 0)
