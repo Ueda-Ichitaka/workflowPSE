@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.forms import ModelForm
+from enum import Enum
 
 # Create your models here.
 
@@ -122,7 +123,7 @@ class InputOutput(models.Model):
     identifier = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
     abstract = models.TextField('Descriptive text', default='Add your super descriptive text here...')
-    datatype = models.CharField(max_length=1, choices=DATATYPE)
+    datatype = models.CharField(max_length=1, choices=DATATYPE, null=True)
     format = models.CharField(max_length=200, null=True)
     min_occurs = models.IntegerField()
     max_occurs = models.IntegerField()
