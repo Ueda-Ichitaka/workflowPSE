@@ -30,8 +30,8 @@ class Workflow(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField('Descriptive text', default='Add your super descriptive text here...')
     percent_done = models.DecimalField(max_digits=3, decimal_places=0)
-    created_at = models.DateTimeField(auto_now=False, auto_now_add=False)
-    updated_at = models.DateTimeField(auto_now=False, auto_now_add=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(User, editable=True, related_name='creator_user', on_delete=models.CASCADE)
     #Hab absichtlich editable auf true gesetzt, weil sonst taucht ein Fehler auf. Django kann nicht den creator id finden...
 
