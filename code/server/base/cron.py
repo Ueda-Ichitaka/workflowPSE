@@ -160,7 +160,6 @@ def get_capabilities_parsing():
     #In future will work with url
 
     get_cap_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsGetCapabilities.xml'
-    desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
 
 
     xml_namespaces = {
@@ -237,6 +236,8 @@ def already_exists_in_database_provider(service_provider):
 
 
 def describe_processes_parsing(wps_server):
+    # Works only with absolute path.
+    # In future will work with url
     desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
 
     xml_namespaces = {
@@ -254,89 +255,23 @@ def describe_processes_parsing(wps_server):
         process = parse_process_info(process_element, xml_namespaces, wps_server)
         process.save()
 
-###INPUT PARSING
+###Save Inputs
         inputs_container_element = process_element.find('DataInputs')
-        if inputs_container_element is None:
-            print(process.title + ' has not inputs')
-        else:
+        if inputs_container_element is not None:
             input_elements = inputs_container_element.findall('Input')
 
             for input_element in input_elements:
-                input_identifier = input_element.find('ows:Identifier', xml_namespaces).text
-                input_title = input_element.find('ows:Title', xml_namespaces).text
-
-                input_abstract_element = input_element.find('ows:Abstract', xml_namespaces)
-                input_abstract = input_abstract_element.text if input_abstract_element is not None else 'No description for input available'
-
-                input_datatype = None
-                input_format = None
-
-                if input_element.find('LiteralData') is not None:
-                    input_datatype = DATATYPE[0][0]
-                    literal_data_element = input_element.find('LiteralData')
-                    input_format = literal_data_element.find('ows:DataType', xml_namespaces).text
-                elif input_element.find('ComplexData') is not None:
-                    input_datatype = DATATYPE[1][0]
-                    input_format = None
-                elif input_element.find('BoundingBoxData') is not None:
-                    input_datatype = DATATYPE[2][0]
-                    input_format = None
-
-                input_min_occurs = input_element.attrib.get('minOccurs')
-                input_max_occurs = input_element.attrib.get('maxOccurs')
-
-                input = InputOutput(process=process,
-                                    role=ROLE[0][0],
-                                    identifier=input_identifier,
-                                    title=input_title,
-                                    abstract=input_abstract,
-                                    datatype=input_datatype,
-                                    format=input_format,
-                                    min_occurs=input_min_occurs,
-                                    max_occurs=input_max_occurs)
+                input = parse_input_info(input_element, xml_namespaces, process)
                 input.save()
 
 
-
-###OUTPUT PARSING
+###Save Outputs
         outputs_container_element = process_element.find('ProcessOutputs')
-        if outputs_container_element is None:
-            print(process.title + ' has no outputs (Impossible)')
-        else:
+        if outputs_container_element is not None:
             output_elements = outputs_container_element.findall('Output')
+
             for output_element in output_elements:
-                output_identifier = output_element.find('ows:Identifier', xml_namespaces).text
-                output_title = output_element.find('ows:Title', xml_namespaces).text
-
-                output_abstract_element = output_element.find('ows:Abstract', xml_namespaces)
-                output_abstract = output_abstract_element.text if output_abstract_element is not None else 'No description for output avaible'
-
-                output_datatype = None
-                output_format = None
-
-                if input_element.find('LiteralData') is not None:
-                    output_datatype = DATATYPE[0][0]
-                    literal_data_element = input_element.find('LiteralData')
-                    output_format = literal_data_element.find('ows:DataType', xml_namespaces).text
-                elif input_element.find('ComplexData') is not None:
-                    output_datatype = DATATYPE[1][0]
-                    output_format = None
-                elif input_element.find('BoundingBoxData') is not None:
-                    output_datatype = DATATYPE[2][0]
-                    output_format = None
-
-                output_min_occurs = 1
-                output_max_occurs = 1
-
-                output = InputOutput(process=process,
-                                     role=ROLE[1][0],
-                                     identifier=output_identifier,
-                                     title=output_title,
-                                     abstract=output_abstract,
-                                     datatype=output_datatype,
-                                     format=output_format,
-                                     min_occurs=output_min_occurs,
-                                     max_occurs=output_max_occurs)
+                output = parse_output_info(output_element, xml_namespaces, process)
                 output.save()
 
 
@@ -345,7 +280,8 @@ def parse_process_info(process_element, namespaces, wps_server):
     process_title = process_element.find('ows:Title', namespaces).text
 
     process_abstract_element = process_element.find('ows:Abstract', namespaces)
-    process_abstract = process_abstract_element.text if process_abstract_element is not None else 'No process description avaible'
+    process_abstract = process_abstract_element.text if process_abstract_element is not None \
+        else 'No process description available'
 
     process = Process(wps=wps_server,
                       identifier=process_identifier,
@@ -353,6 +289,78 @@ def parse_process_info(process_element, namespaces, wps_server):
                       abstract=process_abstract)
     return process
 
+
+def parse_input_info(input_element, namespaces, process):
+    input_identifier = input_element.find('ows:Identifier', namespaces).text
+    input_title = input_element.find('ows:Title', namespaces).text
+
+    input_abstract_element = input_element.find('ows:Abstract', namespaces)
+    input_abstract = input_abstract_element.text if input_abstract_element is not None \
+        else 'No description for input available'
+
+    input_datatype = None
+    input_format = None
+
+    if input_element.find('LiteralData') is not None:
+        input_datatype = DATATYPE[0][0]
+        literal_data_element = input_element.find('LiteralData')
+        input_format = literal_data_element.find('ows:DataType', namespaces).text
+    elif input_element.find('ComplexData') is not None:
+        input_datatype = DATATYPE[1][0]
+        input_format = None
+    elif input_element.find('BoundingBoxData') is not None:
+        input_datatype = DATATYPE[2][0]
+        input_format = None
+
+    input_min_occurs = input_element.attrib.get('minOccurs')
+    input_max_occurs = input_element.attrib.get('maxOccurs')
+
+    input = InputOutput(process=process,
+                        role=ROLE[0][0],
+                        identifier=input_identifier,
+                        title=input_title,
+                        abstract=input_abstract,
+                        datatype=input_datatype,
+                        format=input_format,
+                        min_occurs=input_min_occurs,
+                        max_occurs=input_max_occurs)
+    return input
+
+
+def parse_output_info(output_element, namespaces, process):
+    output_identifier = output_element.find('ows:Identifier', namespaces).text
+    output_title = output_element.find('ows:Title', namespaces).text
+
+    output_abstract_element = output_element.find('ows:Abstract', namespaces)
+    output_abstract = output_abstract_element.text if output_abstract_element is not None else 'No description for output avaible'
+
+    output_datatype = None
+    output_format = None
+
+    if output_element.find('LiteralData') is not None:
+        output_datatype = DATATYPE[0][0]
+        literal_data_element = output_element.find('LiteralData')
+        output_format = literal_data_element.find('ows:DataType', namespaces).text
+    elif output_element.find('ComplexData') is not None:
+        output_datatype = DATATYPE[1][0]
+        output_format = None
+    elif output_element.find('BoundingBoxData') is not None:
+        output_datatype = DATATYPE[2][0]
+        output_format = None
+
+    output_min_occurs = 1
+    output_max_occurs = 1
+
+    output = InputOutput(process=process,
+                         role=ROLE[1][0],
+                         identifier=output_identifier,
+                         title=output_title,
+                         abstract=output_abstract,
+                         datatype=output_datatype,
+                         format=output_format,
+                         min_occurs=output_min_occurs,
+                         max_occurs=output_max_occurs)
+    return output
 """
 Django cron. Das geht bei mir immer noch nicht :(
 Wenn ich richtig verstanden habe, dann muss man den Manage Befehl (also python3 manage.py runcrons) selbst in Cron eintragen.
