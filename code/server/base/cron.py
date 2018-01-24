@@ -68,6 +68,7 @@ def scheduler():
         
         tree = ET.ElementTree(root)
         tree.write('/home/ueda/workspace/PSE/code/server/base/testfiles/task' + str(task["id"]) + '.xml')
+        print(ET.tostring(root))
                       
     sys.stdout = orig_stdout
     f.close()
