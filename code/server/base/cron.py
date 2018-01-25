@@ -22,7 +22,7 @@ def scheduler():
     f = open('/home/ueda/workspace/PSE/code/server/outfile.txt', 'w')
     sys.stdout = f
         
-    task_list = list(Task.objects.filter(status='0').values())
+    task_list = list(Task.objects.filter(status='1').values())
     for task in task_list:        
         
         print("")
@@ -30,10 +30,12 @@ def scheduler():
         root = ET.Element('wps:Execute')
         root.set('service', 'WPS')
         root.set('version', '1.0.0')
+        root.set('xmlns:wps', 'http://www.opengis.net/wps/1.0.0')
+        root.set('xmlns:ows', 'http://www.opengis.net/ows/1.1')
+        root.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+        root.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
+        root.set('xsi:schemaLocation', 'http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd')
  
-        #task_id = task["id"]   # id of task
-        #wf_id=task["workflow_id"]  # id of workflow of task
-        #proc_id=task["process_id"]  # id of pywps process, evaluate to identifier
 
         process_list = list(Process.objects.filter(id=task["process_id"]).values())
         for process in process_list:                    
@@ -53,22 +55,28 @@ def scheduler():
             inputIdent.text = input["identifier"]
             inputTitle.text = input["title"]
                         
-            #input_identifier=input["identifier"]
-            #input_title=input["title"]
-            #input_datatype=input["datatype"]
-            #input_data_format=input["format"]
 
             artefact_list = list(Artefact.objects.filter(task_id=task["id"], parameter=input["id"]).values())
             for artefact in artefact_list:
                 
-                data = ET.SubElement(inputData, 'wps:DataTypeComesHere')
+                type = input["datatype"]
+                if type == '0':
+                    type = "LiteralData"
+                elif type == '1':
+                    type = "ComplexData"   
+                elif type == '2':
+                    type = "BoundingBoxData"
+                         
+                data = ET.SubElement(inputData, 'wps:' + type)
                 data.text = artefact["data"]
+                
+                print("datatype: ", input["datatype"], " ", dict(DATATYPE).get(input["datatype"]))
                 
         print('/home/ueda/workspace/PSE/code/server/base/testfiles/task' + str(task["id"]) + '.xml')
         
         tree = ET.ElementTree(root)
         tree.write('/home/ueda/workspace/PSE/code/server/base/testfiles/task' + str(task["id"]) + '.xml')
-        print(ET.tostring(root))
+        print(ET.tostring(root, 'unicode', 'xml'))
                       
     sys.stdout = orig_stdout
     f.close()
