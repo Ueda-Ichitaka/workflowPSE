@@ -6,3 +6,20 @@ datatype:  0   LITERAL
 datatype:  0   LITERAL
 /home/ueda/workspace/PSE/code/server/base/testfiles/task2.xml
 <wps:Execute service="WPS" version="1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd"><ows:Identifier>sleep</ows:Identifier><wps:DataInputs><wps:Input><ows:Identifier>delay</ows:Identifier><ows:Title>Delay between every update</ows:Title><wps:Data><wps:LiteralData datatype="float">20</wps:LiteralData></wps:Data></wps:Input></wps:DataInputs><wps:ResponseForm><wps:ResponseDocument lineage="true" status="true" storeExecuteResponse="true"><wps:Output asReference="true"><ows:Identifier>sleep_output</ows:Identifier><ows:Title>Sleep Output</ows:Title></wps:Output></wps:ResponseDocument></wps:ResponseForm></wps:Execute>
+execute url of task  2  :  http://localhost/wps
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><wps:Execute service="WPS" version="1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd"><ows:Identifier>sleep</ows:Identifier><wps:DataInputs><wps:Input><ows:Identifier>delay</ows:Identifier><ows:Title>Delay between every update</ows:Title><wps:Data><wps:LiteralData datatype="float">20</wps:LiteralData></wps:Data></wps:Input></wps:DataInputs><wps:ResponseForm><wps:ResponseDocument lineage="true" status="true" storeExecuteResponse="true"><wps:Output asReference="true"><ows:Identifier>sleep_output</ows:Identifier><ows:Title>Sleep Output</ows:Title></wps:Output></wps:ResponseDocument></wps:ResponseForm></wps:Execute>
+
+post response: 
+<!-- PyWPS 4.0.0 -->
+<wps:ExecuteResponse xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ows="http://www.opengis.net/ows/1.1" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US" serviceInstance="http://pse.rudolphrichard.de:5000/wps?service=WPS&amp;request=GetCapabilities" statusLocation="http://pse.rudolphrichard.de:5000/outputs/b7970ef8-01e1-11e8-a318-0a31244ce4e0.xml">
+  <wps:Process wps:processVersion="None">
+    <ows:Identifier>sleep</ows:Identifier>
+    <ows:Title>Sleep Process</ows:Title>
+    <ows:Abstract>The process will sleep for a given delay             or 10 seconds if not a valid value</ows:Abstract>
+  </wps:Process>
+  <wps:Status creationTime="2018-01-25T16:09:19Z">
+    <wps:ProcessAccepted>PyWPS Process sleep accepted</wps:ProcessAccepted>
+  </wps:Status>
+</wps:ExecuteResponse>
+
+

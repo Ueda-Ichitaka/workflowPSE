@@ -5,6 +5,7 @@ from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, 
 from email import policy
 from xml.dom import minidom
 from django.http import response
+import requests
 
 #from django_cron import Schedule, CronJobBase
 
@@ -27,6 +28,10 @@ def scheduler():
     sys.stdout = f
         
     xmlGenerator(xmlDir)
+    sendTask(2, xmlDir)
+    #send task to server
+    #while sending write status url to db. id of task in db is number of task xml filename
+    #
                       
     sys.stdout = orig_stdout
     f.close()
@@ -110,6 +115,43 @@ def xmlGenerator(xmlDir):
 
 
 
+def sendTask(task_id, xmlDir):
+    #should be changed to something without list
+    task_list = list(Task.objects.filter(id=task_id).values())
+    for task in task_list:
+                   
+        execute_url = getExecuteUrl(task)
+        print("execute url of task ", task_id, " : ", execute_url)
+                
+        #send to url
+        filepath = str(xmlDir) + 'task' + str(task_id) + '.xml'
+        #file = {'': open(filepath, 'r').read()}
+        file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read()) #'<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + 
+        print(str(file))
+        response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file)
+        print("")
+        print("post response: ")        
+        print(response.text)
+        print("")
+        
+        #get response from send
+        #write status url from response to task
+        #task["status_url"] = "bla" 
+
+
+def getExecuteUrl(task):
+    execute_url = ""
+        
+    #get process -> wps -> url
+    process_list = list(Process.objects.filter(id=task["process_id"]).values())
+    for process in process_list:
+        wps_list = list(WPS.objects.filter(id=process["wps_id"]).values())
+        for wps in wps_list:
+            execute_url = wps["execute_url"]
+            #print("execute url: ", execute_url)
+
+    return execute_url
+
 def scheduler_execute():
     #sends task to execution
     #receives response url
@@ -142,22 +184,6 @@ def xmlParser():
     #parses input xml
     #checks data for changes
     #writes changes to db
-    pass
-
-
-def readyCollector():
-    #gets a list of all workflows ready to execute from db
-    #returns list
-    pass
-
-
-def readyDataCollector():
-    #gets all data for xml generation from ready workflow from ready list
-    pass
-
-
-def workflowSender():
-    #sends generated xml to pywps server for execution
     pass
 
 
