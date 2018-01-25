@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, ROLE, DATATYPE
 from email import policy
 from xml.dom import minidom
+from django.http import response
 
 #from django_cron import Schedule, CronJobBase
 
@@ -82,6 +83,23 @@ def xmlGenerator(xmlDir):
                 data.text = artefact["data"]
                 
                 print("datatype: ", input["datatype"], " ", dict(DATATYPE).get(input["datatype"]))
+        
+        responseForm = ET.SubElement(root, 'wps:ResponseForm')
+        responseDoc = ET.SubElement(responseForm, 'wps:ResponseDocument')
+        responseDoc.set('storeExecuteResponse', 'true')
+        responseDoc.set('lineage', 'true')
+        responseDoc.set('status', 'true')
+        
+        output_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='1').values())
+        for out in output_list:         
+        
+            outputElement = ET.SubElement(responseDoc, 'wps:Output')
+            outputElement.set('asReference', 'true')
+            outIdent = ET.SubElement(outputElement, 'ows:Identifier')
+            outTitle = ET.SubElement(outputElement, 'ows:Title')
+            outIdent.text = out["identifier"]
+            outTitle.text = out["title"]
+        
                 
         print(xmlDir + 'task' + str(task["id"]) + '.xml')
         
