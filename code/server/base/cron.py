@@ -17,11 +17,22 @@ Django crontab. Version, die bei mir sicher funktioniert hat
 def scheduler():
     # Scheduler main function
     
+    outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
+    xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
+    
     # redirect stout to file
     orig_stdout  = sys.stdout
-    f = open('/home/ueda/workspace/PSE/code/server/outfile.txt', 'w')
+    f = open(outFile, 'w')
     sys.stdout = f
         
+    xmlGenerator(xmlDir)
+                      
+    sys.stdout = orig_stdout
+    f.close()
+
+
+def xmlGenerator(xmlDir):
+    #generates xml from input data
     task_list = list(Task.objects.filter(status='1').values())
     for task in task_list:        
         
@@ -72,14 +83,11 @@ def scheduler():
                 
                 print("datatype: ", input["datatype"], " ", dict(DATATYPE).get(input["datatype"]))
                 
-        print('/home/ueda/workspace/PSE/code/server/base/testfiles/task' + str(task["id"]) + '.xml')
+        print(xmlDir + 'task' + str(task["id"]) + '.xml')
         
         tree = ET.ElementTree(root)
-        tree.write('/home/ueda/workspace/PSE/code/server/base/testfiles/task' + str(task["id"]) + '.xml')
+        tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
         print(ET.tostring(root, 'unicode', 'xml'))
-                      
-    sys.stdout = orig_stdout
-    f.close()
 
 
 
@@ -93,9 +101,6 @@ def scheduler_check_execute():
     #execute policy
     pass
 
-
-def generateExecuteXML():
-    pass
 
 
 def receiver():
@@ -111,11 +116,6 @@ def receiver():
 
 def utils():
     # Main fuction for combined utility functions
-    pass
-
-
-def xmlGenerator():
-    #generates xml from input data
     pass
 
 

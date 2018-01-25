@@ -1,1 +1,0 @@
-<wps:Execute service="WPS" version="1.0.0"><ows:Identifier>increm</ows:Identifier><wps:DataInputs><wps:Input><ows:Identifier>increm_input</ows:Identifier><ows:Title>Increment input</ows:Title><wps:Data /></wps:Input></wps:DataInputs></wps:Execute>
