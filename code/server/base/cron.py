@@ -121,23 +121,26 @@ def sendTask(task_id, xmlDir):
     for task in task_list:
                    
         execute_url = getExecuteUrl(task)
-        print("execute url of task ", task_id, " : ", execute_url)
                 
         #send to url
         filepath = str(xmlDir) + 'task' + str(task_id) + '.xml'
-        #file = {'': open(filepath, 'r').read()}
         file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read()) #'<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + 
-        print(str(file))
         response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file)
+        
         print("")
         print("post response: ")        
         print(response.text)
         print("")
-        
-        #get response from send
-        #write status url from response to task
-        #task["status_url"] = "bla" 
 
+        #get response from send
+        xml = ET.fromstring(response.text)
+        print(xml.get('statusLocation'))
+        
+        #write status url from response to task
+        p = Task.objects.get(id=task_id)
+        p.status_url = xml.get('statusLocation')
+        p.save()
+        
 
 def getExecuteUrl(task):
     execute_url = ""
