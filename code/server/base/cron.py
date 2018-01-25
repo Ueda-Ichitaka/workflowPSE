@@ -81,6 +81,7 @@ def xmlGenerator(xmlDir):
                          
                 data = ET.SubElement(inputData, 'wps:' + type)
                 data.text = artefact["data"]
+                data.set('datatype', artefact["format"])
                 
                 print("datatype: ", input["datatype"], " ", dict(DATATYPE).get(input["datatype"]))
         

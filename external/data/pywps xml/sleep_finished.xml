@@ -1,0 +1,34 @@
+<wps:ExecuteResponse xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US" serviceInstance="http://pse.rudolphrichard.de:5000/wps?service=WPS&request=GetCapabilities" statusLocation="http://pse.rudolphrichard.de:5000/outputs/4d4afd74-01c9-11e8-bfbf-0a31244ce4e0.xml">
+    <wps:Process wps:processVersion="None">
+        <ows:Identifier>sleep</ows:Identifier>
+        <ows:Title>Sleep Process</ows:Title>
+        <ows:Abstract>The process will sleep for a given delay             or 10 seconds if not a valid value</ows:Abstract>
+    </wps:Process>
+    <wps:Status creationTime="2018-01-25T13:16:13Z">
+        <wps:ProcessSucceeded>PyWPS Process Sleep Process finished</wps:ProcessSucceeded>
+    </wps:Status>
+    <wps:DataInputs>
+        <wps:Input>
+            <ows:Identifier>delay</ows:Identifier>
+            <ows:Title>Delay between every update</ows:Title>
+            <wps:Data>
+                <wps:LiteralData dataType="float">20.0</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+    </wps:DataInputs>
+    <wps:OutputDefinitions>
+        <wps:Output>
+            <ows:Identifier>sleep_output</ows:Identifier>
+            <ows:Title>Sleep Output</ows:Title>
+        </wps:Output>
+    </wps:OutputDefinitions>
+    <wps:ProcessOutputs>
+        <wps:Output>
+            <ows:Identifier>sleep_output</ows:Identifier>
+            <ows:Title>Sleep Output</ows:Title>
+            <wps:Data>
+                <wps:LiteralData dataType="urn:ogc:def:dataType:OGC:1.1:string">done sleeping</wps:LiteralData>
+            </wps:Data>
+        </wps:Output>
+    </wps:ProcessOutputs>
+</wps:ExecuteResponse>
