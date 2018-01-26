@@ -6,6 +6,7 @@ from django.http import response
 import requests
 from datetime import datetime
 
+# TODO: naming convention, code formatting
 
 # TODO: tests
 def scheduler():
@@ -15,16 +16,16 @@ def scheduler():
     outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
     xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
     
-    # redirect stout to file
+    # redirect stout to file, output logging
     orig_stdout  = sys.stdout
     f = open(outFile, 'w')
     sys.stdout = f
-        
+    
+    #generate execute xmls for all tasks with status ready
     xmlGenerator(xmlDir)
+    
+    #send task
     sendTask(2, xmlDir)
-    #send task to server
-    #while sending write status url to db. id of task in db is number of task xml filename
-    #
                       
     sys.stdout = orig_stdout
     f.close()
@@ -36,7 +37,7 @@ def xmlGenerator(xmlDir):
     task_list = list(Task.objects.filter(status='1').values())
     for task in task_list:        
         
-        print("")
+        #print("")
     
         root = ET.Element('wps:Execute')
         root.set('service', 'WPS')
@@ -82,7 +83,7 @@ def xmlGenerator(xmlDir):
                 data.text = artefact["data"]
                 data.set('datatype', artefact["format"])
                 
-                print("datatype: ", input["datatype"], " ", dict(DATATYPE).get(input["datatype"]))
+                #print("datatype: ", input["datatype"], " ", dict(DATATYPE).get(input["datatype"]))
         
         responseForm = ET.SubElement(root, 'wps:ResponseForm')
         responseDoc = ET.SubElement(responseForm, 'wps:ResponseDocument')
@@ -101,11 +102,11 @@ def xmlGenerator(xmlDir):
             outTitle.text = out["title"]
         
                 
-        print(xmlDir + 'task' + str(task["id"]) + '.xml')
+        #print(xmlDir + 'task' + str(task["id"]) + '.xml')
         
         tree = ET.ElementTree(root)
         tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
-        print(ET.tostring(root, 'unicode', 'xml'))
+        #print(ET.tostring(root, 'unicode', 'xml'))
 
 
 # TODO: tests, documentation
@@ -121,7 +122,7 @@ def sendTask(task_id, xmlDir):
         file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read()) #'<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + 
         response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file) # TODO: replace with variable
         
-        print("")
+        #print("")
         print("post response: ")        
         print(response.text)
         print("")
@@ -142,13 +143,15 @@ def sendTask(task_id, xmlDir):
         p.status = '3'
         p.started_at = datetime.now()
         p.save()
+        # TODO: delete execute xml file
         
 
 # TODO: tests, documentation
+# Traverses
 def getExecuteUrl(task):
     execute_url = ""
         
-    #get process -> wps -> url
+    #traverse db tables task -> process -> wps -> url
     process_list = list(Process.objects.filter(id=task["process_id"]).values())
     for process in process_list:
         wps_list = list(WPS.objects.filter(id=process["wps_id"]).values())
@@ -240,7 +243,8 @@ def get_capabilities_parsing():
     else:
         service_provider = service_provider_from_database
 
-
+    
+    # TODO: use? else remove
     os.mkdir('/home/denis/Documents/prov' + str(random.randrange(1, 100)) + '/')
 
     wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
@@ -249,9 +253,11 @@ def get_capabilities_parsing():
         wps_server.save()
     else:
         wps_server = overwrite_server(wps_server_from_database, wps_server)
+    # TODO: use? else remove
     os.mkdir('/home/denis/Documents/serv' + str(random.randrange(1, 100)) + '/')
 
     describe_processes_parsing(wps_server)
+    # TODO: use? else remove
     os.mkdir('/home/denis/Documents/proc' + str(random.randrange(1, 100)) + '/')
 
 
@@ -341,6 +347,7 @@ def already_exists_in_database_provider(service_provider):
 def describe_processes_parsing(wps_server):
     # Works only with absolute path.
     # In future will work with url
+    # TODO: change to http request
     desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
 
     xml_namespaces = {
