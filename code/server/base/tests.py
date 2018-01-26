@@ -1,5 +1,5 @@
 from django.test import TestCase
-from base.models import WPSProvider, WPS
+from base.models import WPSProvider, WPS, Process, InputOutput
 import base.cron
 import xml.etree.ElementTree as ET
 
@@ -40,6 +40,14 @@ class ParsingTestCase(TestCase):
         wps_provider = base.cron.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
         wps_server = base.cron.parse_wps_server_info(self.capabilities_root, self.xml_namespaces, wps_provider)
         base.cron.get_capabilities_parsing()
+
+    def test_add_wps_server(self):
+        test_url = ['http://pse.rudolphrichard.de:5000']
+        base.cron.add_wps_server(test_url)
+        print(WPS.objects.all(), WPSProvider.objects.all())
+
+        print(str(Process.objects.all().__len__()) + ' processes available')
+
 
     def test_overwrite_server(self):
         provider = base.cron.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
