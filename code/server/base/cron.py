@@ -2,23 +2,16 @@ import os, sys
 import random
 import xml.etree.ElementTree as ET
 from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, ROLE, DATATYPE
-from email import policy
-from xml.dom import minidom
 from django.http import response
 import requests
-
-#from django_cron import Schedule, CronJobBase
-
-
-"""
-Django crontab. Version, die bei mir sicher funktioniert hat
-"""
+from datetime import datetime
 
 
-
+# TODO: tests
 def scheduler():
     # Scheduler main function
     
+    # TODO: set to changeable by settings & config file
     outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
     xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
     
@@ -37,8 +30,9 @@ def scheduler():
     f.close()
 
 
+# TODO: tests, documentation
 def xmlGenerator(xmlDir):
-    #generates xml from input data
+    #generates xml for every task set to ready
     task_list = list(Task.objects.filter(status='1').values())
     for task in task_list:        
         
@@ -114,7 +108,7 @@ def xmlGenerator(xmlDir):
         print(ET.tostring(root, 'unicode', 'xml'))
 
 
-
+# TODO: tests, documentation
 def sendTask(task_id, xmlDir):
     #should be changed to something without list
     task_list = list(Task.objects.filter(id=task_id).values())
@@ -125,7 +119,7 @@ def sendTask(task_id, xmlDir):
         #send to url
         filepath = str(xmlDir) + 'task' + str(task_id) + '.xml'
         file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read()) #'<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + 
-        response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file)
+        response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file) # TODO: replace with variable
         
         print("")
         print("post response: ")        
@@ -134,14 +128,23 @@ def sendTask(task_id, xmlDir):
 
         #get response from send
         xml = ET.fromstring(response.text)
+        
+        # TODO: check response for errors
+        # response should be 
+        
         print(xml.get('statusLocation'))
         
         #write status url from response to task
+        #set status to running
+        # update start time
         p = Task.objects.get(id=task_id)
         p.status_url = xml.get('statusLocation')
+        p.status = '3'
+        p.started_at = datetime.now()
         p.save()
         
 
+# TODO: tests, documentation
 def getExecuteUrl(task):
     execute_url = ""
         
@@ -151,22 +154,24 @@ def getExecuteUrl(task):
         wps_list = list(WPS.objects.filter(id=process["wps_id"]).values())
         for wps in wps_list:
             execute_url = wps["execute_url"]
-            #print("execute url: ", execute_url)
 
     return execute_url
 
+
+# TODO: tests, documentation, implement
 def scheduler_execute():
     #sends task to execution
     #receives response url
     pass
 
 
+# TODO: tests, documentation, implement
 def scheduler_check_execute():
     #execute policy
     pass
 
 
-
+# TODO: tests, documentation, implement
 def receiver():
     # Receiver main function
     # check output urls from servers
@@ -178,11 +183,14 @@ def receiver():
     pass
 
 
+# TODO: tests, documentation, implement
 def utils():
     # Main fuction for combined utility functions
     pass
 
 
+
+# TODO: remove, left here for compatibility because all other collaborators don't push their progress
 def xmlParser():
     #parses input xml
     #checks data for changes
@@ -190,32 +198,26 @@ def xmlParser():
     pass
 
 
+# TODO: tests, documentation, implement
 def listExistingFiles():
     #part of datenhaltung
     #generates a list of all uploaded files, their upload date, last edit, editor, etc
     pass
 
 
+# TODO: tests, documentation, implement
 def deleteOldFiles():
     #part of datenhaltung
     #deletes files with last edit date > limit or other defined rule
     pass
 
 
-def checkDB():
-    #checks database for correct data/data corruption
-    pass
-
-
-def checkFiles():
-    #checks uploaded files for corruption
-    pass
-
-
+# TODO: tests, documentation
 def get_capabilities_parsing():
     #Works only with absolute path.
     #In future will work with url
 
+    # TODO: online mode; fetch response from server
     get_cap_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsGetCapabilities.xml'
 
 
@@ -253,6 +255,7 @@ def get_capabilities_parsing():
     os.mkdir('/home/denis/Documents/proc' + str(random.randrange(1, 100)) + '/')
 
 
+# TODO: tests, documentation
 def search_provider_in_database(service_provider):
     for provider in WPSProvider.objects.all():
         if service_provider.provider_name == provider.provider_name \
@@ -262,6 +265,7 @@ def search_provider_in_database(service_provider):
     return None
 
 
+# TODO: tests, documentation
 def search_server_in_database(wps_server):
     for server in WPS.objects.all():
         if server.title == wps_server.title:
@@ -271,6 +275,7 @@ def search_server_in_database(wps_server):
     return None
 
 
+# TODO: tests, documentation
 def overwrite_server(old_entry, new_entry):
     old_entry.abstract = new_entry.abstract
     old_entry.capabilities_url = new_entry.capabilities_url
@@ -281,6 +286,7 @@ def overwrite_server(old_entry, new_entry):
     return old_entry
 
 
+# TODO: tests, documentation
 def parse_service_provider_info(root, namespaces):
     service_provider_element = root.find('ows:ServiceProvider', namespaces)
     provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
@@ -299,6 +305,7 @@ def parse_service_provider_info(root, namespaces):
     return service_provider
 
 
+# TODO: tests, documentation
 def parse_wps_server_info(root, namespaces, provider):
     service_identification_element = root.find('ows:ServiceIdentification', namespaces)
 
@@ -322,6 +329,7 @@ def parse_wps_server_info(root, namespaces, provider):
     return wps_server
 
 
+# TODO: tests, documentation
 def already_exists_in_database_provider(service_provider):
     if WPS.objects.get(provider_name=service_provider.provider_name) is None:
         return False
@@ -329,6 +337,7 @@ def already_exists_in_database_provider(service_provider):
         return True
 
 
+# TODO: tests, documentation
 def describe_processes_parsing(wps_server):
     # Works only with absolute path.
     # In future will work with url
@@ -369,6 +378,7 @@ def describe_processes_parsing(wps_server):
                 output.save()
 
 
+# TODO: tests, documentation
 def parse_process_info(process_element, namespaces, wps_server):
     process_identifier = process_element.find('ows:Identifier', namespaces).text
     process_title = process_element.find('ows:Title', namespaces).text
@@ -384,6 +394,7 @@ def parse_process_info(process_element, namespaces, wps_server):
     return process
 
 
+# TODO: tests, documentation
 def parse_input_info(input_element, namespaces, process):
     input_identifier = input_element.find('ows:Identifier', namespaces).text
     input_title = input_element.find('ows:Title', namespaces).text
@@ -421,6 +432,7 @@ def parse_input_info(input_element, namespaces, process):
     return input
 
 
+# TODO: tests, documentation
 def parse_output_info(output_element, namespaces, process):
     output_identifier = output_element.find('ows:Identifier', namespaces).text
     output_title = output_element.find('ows:Title', namespaces).text
@@ -455,20 +467,6 @@ def parse_output_info(output_element, namespaces, process):
                          min_occurs=output_min_occurs,
                          max_occurs=output_max_occurs)
     return output
-"""
-Django cron. Das geht bei mir immer noch nicht :(
-Wenn ich richtig verstanden habe, dann muss man den Manage Befehl (also python3 manage.py runcrons) selbst in Cron eintragen.
-"""
 
-"""
-class FirstCronTask(CronJobBase):
-    RUN_EVERY_MINS = 1
 
-    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-    code = 'testCron.firstCronTask'
 
-    def do(self):
-        #os.mkdir('/home/paradigmen/C/' + str(random.randrange(1, 100)) + '/')
-        #Testzeile
-        pass
-"""

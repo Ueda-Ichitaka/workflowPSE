@@ -1,17 +1,18 @@
 import json
 
-from django.shortcuts import render
-from django.views import generic
+#from django.shortcuts import render
+#from django.views import generic
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
-from django.views.generic import View
-from django.views.generic import TemplateView
-from .models import *
+from django.views.generic import TemplateView, View
+# TODO: refactor to only used imports
+from base.models import *
 
 
+# TODO: tests, documentation
 def as_json_response(list):
     return JsonResponse(list, safe=False)
 
@@ -20,6 +21,7 @@ class IndexView(TemplateView):
     template_name = "base/index.html"
 
 
+# TODO: tests, documentation
 class UserView(View):
     @staticmethod
     @require_GET
@@ -28,6 +30,7 @@ class UserView(View):
         return as_json_response(model_to_dict(request.user))
 
 
+# TODO: tests, documentation
 class WorkflowView(View):
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
@@ -202,6 +205,7 @@ class WorkflowView(View):
         return JsonResponse({})
 
 
+# TODO: tests, documentation
 class ProcessView(View):
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
@@ -300,6 +304,7 @@ class ProcessView(View):
         return JsonResponse({'deleted': deleted})
 
 
+# TODO: tests, documentation
 class WPSView(View):
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
@@ -382,13 +387,16 @@ class WPSView(View):
         return JsonResponse({})
 
 
+# TODO: tests, documentation
 class WorkflowsView(TemplateView):
     template_name = "base/workflows.html"
 
 
+# TODO: tests, documentation
 class EditorView(TemplateView):
     template_name = "base/editor.html"
 
 
+# TODO: tests, documentation
 class SettingsView(TemplateView):
     template_name = "base/settings.html"
