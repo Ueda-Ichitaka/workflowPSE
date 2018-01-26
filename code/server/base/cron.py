@@ -8,9 +8,15 @@ from datetime import datetime
 
 # TODO: naming convention, code formatting
 
+
 # TODO: tests
 def scheduler():
-    # Scheduler main function
+    """
+    Scheduler main function
+    :return:
+    :rtype:
+    """
+
     
     # TODO: set to changeable by settings & config file
     outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
@@ -33,7 +39,15 @@ def scheduler():
 
 # TODO: tests, documentation
 def xmlGenerator(xmlDir):
-    #generates xml for every task set to ready
+    """
+    generates xml for every task set to ready
+    :param xmlDir:
+    :type xmlDir:
+    :return:
+    :rtype:
+    """
+
+
     task_list = list(Task.objects.filter(status='1').values())
     for task in task_list:        
         
@@ -111,6 +125,15 @@ def xmlGenerator(xmlDir):
 
 # TODO: tests, documentation
 def sendTask(task_id, xmlDir):
+    """
+
+    :param task_id:
+    :type task_id:
+    :param xmlDir:
+    :type xmlDir:
+    :return:
+    :rtype:
+    """
     #should be changed to something without list
     task_list = list(Task.objects.filter(id=task_id).values())
     for task in task_list:
@@ -147,8 +170,14 @@ def sendTask(task_id, xmlDir):
         
 
 # TODO: tests, documentation
-# Traverses
 def getExecuteUrl(task):
+    """
+
+    :param task:
+    :type task:
+    :return:
+    :rtype:
+    """
     execute_url = ""
         
     #traverse db tables task -> process -> wps -> url
@@ -170,12 +199,22 @@ def scheduler_execute():
 
 # TODO: tests, documentation, implement
 def scheduler_check_execute():
+    """
+
+    :return:
+    :rtype:
+    """
     #execute policy
     pass
 
 
 # TODO: tests, documentation, implement
 def receiver():
+    """
+
+    :return:
+    :rtype:
+    """
     # Receiver main function
     # check output urls from servers
     # for workflow in executing list do
@@ -188,6 +227,11 @@ def receiver():
 
 # TODO: tests, documentation, implement
 def utils():
+    """
+
+    :return:
+    :rtype:
+    """
     # Main fuction for combined utility functions
     pass
 
@@ -195,6 +239,11 @@ def utils():
 
 # TODO: remove, left here for compatibility because all other collaborators don't push their progress
 def xmlParser():
+    """
+
+    :return:
+    :rtype:
+    """
     #parses input xml
     #checks data for changes
     #writes changes to db
@@ -203,6 +252,11 @@ def xmlParser():
 
 # TODO: tests, documentation, implement
 def listExistingFiles():
+    """
+
+    :return:
+    :rtype:
+    """
     #part of datenhaltung
     #generates a list of all uploaded files, their upload date, last edit, editor, etc
     pass
@@ -210,6 +264,11 @@ def listExistingFiles():
 
 # TODO: tests, documentation, implement
 def deleteOldFiles():
+    """
+
+    :return:
+    :rtype:
+    """
     #part of datenhaltung
     #deletes files with last edit date > limit or other defined rule
     pass
@@ -217,6 +276,11 @@ def deleteOldFiles():
 
 # TODO: tests, documentation
 def get_capabilities_parsing():
+    """
+
+    :return:
+    :rtype:
+    """
     #Works only with absolute path.
     #In future will work with url
 
@@ -263,6 +327,13 @@ def get_capabilities_parsing():
 
 # TODO: tests, documentation
 def search_provider_in_database(service_provider):
+    """
+
+    :param service_provider:
+    :type service_provider:
+    :return:
+    :rtype:
+    """
     for provider in WPSProvider.objects.all():
         if service_provider.provider_name == provider.provider_name \
                 and service_provider.provider_site == provider.provider_site:
@@ -273,6 +344,13 @@ def search_provider_in_database(service_provider):
 
 # TODO: tests, documentation
 def search_server_in_database(wps_server):
+    """
+
+    :param wps_server:
+    :type wps_server:
+    :return:
+    :rtype:
+    """
     for server in WPS.objects.all():
         if server.title == wps_server.title:
             return server
@@ -283,6 +361,15 @@ def search_server_in_database(wps_server):
 
 # TODO: tests, documentation
 def overwrite_server(old_entry, new_entry):
+    """
+
+    :param old_entry:
+    :type old_entry:
+    :param new_entry:
+    :type new_entry:
+    :return:
+    :rtype:
+    """
     old_entry.abstract = new_entry.abstract
     old_entry.capabilities_url = new_entry.capabilities_url
     old_entry.describe_url = new_entry.describe_url
@@ -294,6 +381,15 @@ def overwrite_server(old_entry, new_entry):
 
 # TODO: tests, documentation
 def parse_service_provider_info(root, namespaces):
+    """
+
+    :param root:
+    :type root:
+    :param namespaces:
+    :type namespaces:
+    :return:
+    :rtype:
+    """
     service_provider_element = root.find('ows:ServiceProvider', namespaces)
     provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
     provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
@@ -313,6 +409,17 @@ def parse_service_provider_info(root, namespaces):
 
 # TODO: tests, documentation
 def parse_wps_server_info(root, namespaces, provider):
+    """
+
+    :param root:
+    :type root:
+    :param namespaces:
+    :type namespaces:
+    :param provider:
+    :type provider:
+    :return:
+    :rtype:
+    """
     service_identification_element = root.find('ows:ServiceIdentification', namespaces)
 
     server_title = service_identification_element.find('ows:Title', namespaces).text
@@ -337,6 +444,13 @@ def parse_wps_server_info(root, namespaces, provider):
 
 # TODO: tests, documentation
 def already_exists_in_database_provider(service_provider):
+    """
+
+    :param service_provider:
+    :type service_provider:
+    :return:
+    :rtype:
+    """
     if WPS.objects.get(provider_name=service_provider.provider_name) is None:
         return False
     else:
@@ -345,6 +459,13 @@ def already_exists_in_database_provider(service_provider):
 
 # TODO: tests, documentation
 def describe_processes_parsing(wps_server):
+    """
+
+    :param wps_server:
+    :type wps_server:
+    :return:
+    :rtype:
+    """
     # Works only with absolute path.
     # In future will work with url
     # TODO: change to http request
@@ -387,6 +508,17 @@ def describe_processes_parsing(wps_server):
 
 # TODO: tests, documentation
 def parse_process_info(process_element, namespaces, wps_server):
+    """
+
+    :param process_element:
+    :type process_element:
+    :param namespaces:
+    :type namespaces:
+    :param wps_server:
+    :type wps_server:
+    :return:
+    :rtype:
+    """
     process_identifier = process_element.find('ows:Identifier', namespaces).text
     process_title = process_element.find('ows:Title', namespaces).text
 
@@ -403,6 +535,17 @@ def parse_process_info(process_element, namespaces, wps_server):
 
 # TODO: tests, documentation
 def parse_input_info(input_element, namespaces, process):
+    """
+
+    :param input_element:
+    :type input_element:
+    :param namespaces:
+    :type namespaces:
+    :param process:
+    :type process:
+    :return:
+    :rtype:
+    """
     input_identifier = input_element.find('ows:Identifier', namespaces).text
     input_title = input_element.find('ows:Title', namespaces).text
 
@@ -441,6 +584,17 @@ def parse_input_info(input_element, namespaces, process):
 
 # TODO: tests, documentation
 def parse_output_info(output_element, namespaces, process):
+    """
+
+    :param output_element:
+    :type output_element:
+    :param namespaces:
+    :type namespaces:
+    :param process:
+    :type process:
+    :return:
+    :rtype:
+    """
     output_identifier = output_element.find('ows:Identifier', namespaces).text
     output_title = output_element.find('ows:Title', namespaces).text
 
