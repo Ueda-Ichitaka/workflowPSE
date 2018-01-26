@@ -586,6 +586,14 @@ def parse_output_info(output_element, namespaces, process):
     :type process:
     :return:
     :rtype:
+    @param output_element:
+    @type output_element:
+    @param namespaces:
+    @type namespaces:
+    @param process:
+    @type process:
+    @return:
+    @rtype:
     """
     output_identifier = output_element.find('ows:Identifier', namespaces).text
     output_title = output_element.find('ows:Title', namespaces).text
