@@ -12,7 +12,6 @@ from lxml import etree
 # TODO: naming convention, code formatting
 
 ns_map = {
-
     # wps namespaced tags
     "Capabilities"	        :	"{{{}}}Capabilities".format(ns["wps"]),
     "ProcessDescriptions"   :	"{{{}}}ProcessDescriptions".format(ns["wps"]),
@@ -49,13 +48,12 @@ ns_map = {
     "Spacing"			    :	"{{{}}}Spacing".format(ns["ows"]),
     "AnyValue"			    :	"{{{}}}AnyValue".format(ns["ows"]),
     "Metadata"			    :	"{{{}}}Metadata".format(ns["ows"]),
+
+    # xlink namespaced tags
+    "href"                  :   "{{{}}}href".format(ns["xlink"])
 }
 
-possible_stats = ["ProcessAccepted",
-				"ProcessStarted",
-				"ProcessPaused",
-				"ProcessSucceeded",
-				"ProcessFailed"]
+possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "ProcessSucceeded", "ProcessFailed"]
 
 # TODO: tests
 def scheduler():
@@ -330,7 +328,6 @@ def add_wps_server(server_urls):
     :rtype:
     """
 
-<<<<<<< HEAD
     #Parse the xml file
     get_capabilities_tree = ET.parse(get_cap_url_from_scc_vm)
     get_capabilities_root = get_capabilities_tree.getroot()
@@ -358,7 +355,6 @@ def add_wps_server(server_urls):
     describe_processes_parsing(wps_server)
     # TODO: use? else remove
     os.mkdir('/home/denis/Documents/proc' + str(random.randrange(1, 100)) + '/')
-=======
     #server_urls = ['http://pse.rudolphrichard.de:5000/wps?request=GetCapabilities&service=WPS']
     for server_url in server_urls:
         if server_url[-1] != '/':
@@ -396,7 +392,6 @@ def add_wps_server(server_urls):
             wps_server = overwrite_server(wps_server_from_database, wps_server)
 
     update_wps_processes()
->>>>>>> 264c0afe614e08d86502cc6cbcb0f29030c3e28a
 
 
 # TODO: tests, documentation
@@ -539,7 +534,6 @@ def parse_execute_response(root):
         provider = None
         wps = None
 
-
     if process is None:
         print("no process found")
         return 2
@@ -550,7 +544,7 @@ def parse_execute_response(root):
         proc = Process.objects.get(wps=wps_service, identifier=p_id)
         task = Task.objects.get(process=proc)
     except Process.DoesNotExist or Task.DoesNotExist as e:
-        print(f"{e}:\nprocess does not exist in db - maybe false identifier")
+        print(f"{e}:\nobject does not exist in db - maybe false identifier")
         return 2
 
     if process_status is None:
@@ -559,8 +553,8 @@ def parse_execute_response(root):
 
     process_status = etree.QName(process_status[0].tag).localname
 
-    new_status = STATUS[3][1] if process_status in possible_stats[:2] else STATUS[4][1] if process_status == possible_stats[
-        3] else STATUS[5][1]
+    new_status = STATUS[3][1] if process_status in possible_stats[:2] else STATUS[4][1]\
+                                if process_status == possible_stats[3] else STATUS[5][1]
     # print(new_status)
     task.status = new_status
     task.save()
@@ -578,6 +572,15 @@ def parse_execute_response(root):
     for output in outputs:
         out_id = output.find(ns_map["Identifier"])
         out_title = output.find(ns_map["Title"])
+
+        try:
+            inout = InputOutput.objects.get(process=proc, identifier=out_id, title=out_title)
+            artefact = Artefact.objects.get(task=task, parameter=inout, role='1')
+        except InputOutput.DoesNotExist or Artefact.DoesNotExist as e:
+            print(f"{e}:\nobject does not exist in db - maybe false identifier")
+            # goto loop header
+            continue
+
         # everything the same up to here for each output type
 
         data_elem = output.find(ns_map["Data"])
@@ -587,14 +590,24 @@ def parse_execute_response(root):
             # normal case, if status is finished
 
             # as there is always only 1 child, just take the first
-            data_elem = data_elem.getchildren()[0]
+            try:
+                data_elem = data_elem.getchildren()[0]
+            except:
+                print("data has no child")
+                # goto loop header
+                continue
 
             if data_elem.tag == ns_map["LiteralData"]:
                 literal_format = ";".join(("dataType=" + data_elem.get("dataType"), "uom=" + data_elem.get("uom")))
                 literal_data = data_elem.text
-                # TODO save artefact to db
-                print(literal_data)
-                print(literal_format)
+
+                if len(literal_data) < 490:
+                    artefact.format = literal_format
+                    artefact.data = literal_data
+                    artefact.save()
+                else:
+                    # TODO save data to file if length is >= 490, because db only takes 500 chars
+                    print()
 
             if data_elem.tag == ns_map["BoundingBox"]:
                 lower_corner = data_elem.find(ns_map["LowerCorner"])
@@ -607,15 +620,38 @@ def parse_execute_response(root):
 
                 bbox_data = ";".join(("LowerCorner:" + lower_corner.text, "UpperCorner:" + upper_corner.text))
 
-            # TODO write to db
+                artefact.format = bbox_format
+                artefact.data = bbox_data
+                artefact.save()
 
             if data_elem.tag == ns_map["ComplexData"]:
-                complex_data_info = ";".join(("mimeType:" + data_elem.get("mimeType"), "encoding:" + data_elem.get("encoding"),
+                # complex_format = "mimeType:{};encoding:{};schema:{}".format(data_elem.get("mimeType"),
+                #                                     data_elem.get("encoding"), data_elem.get("schema"))
+                complex_format = ";".join(("mimeType:" + data_elem.get("mimeType"), "encoding:" + data_elem.get("encoding"),
                                               "schema:" + data_elem.get("schema")))
+                complex_data = None
+                complex_child = data_elem.getchildren()
+                if len(complex_child) == 0:
+                    complex_data = data_elem.text
+                elif data_elem.find(ns_map["CData"]) is not None:
+                    # cdata is base64 encoded
+                    complex_data = data_elem.find(ns_map["CData"]).text
+
+                if complex_data and len(complex_data) < 490:
+                    artefact.format = complex_format
+                    artefact.data = complex_data
+                    artefact.save()
 
         if reference is not None:
-            # complecdata found, usually gets passed by url reference
-            print("reference found")
+            # complexdata found, usually gets passed by url reference
+            # TODO test ?!
+            reference_format = "href:{};mimeType:{};encoding:{};schema:{}".format(reference.get(ns_map["href"]),
+                                        reference.get("mimeType"), reference.get("encoding"), reference.get("schema"))
+            reference_url = reference.text
+
+            artefact.format = reference_format
+            artefact.data = reference_url
+            artefact.save()
 
 
 
