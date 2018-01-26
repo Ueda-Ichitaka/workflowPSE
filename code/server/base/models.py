@@ -28,6 +28,9 @@ DATATYPE = (
 
 
 class Workflow(models.Model):
+    """
+    description comes here
+    """
     name = models.CharField(max_length=200)
     description = models.TextField('Descriptive text', default='Add your super descriptive text here...')
     percent_done = models.DecimalField(max_digits=3, decimal_places=0)
@@ -47,6 +50,9 @@ class Workflow(models.Model):
 
 
 class WPSProvider(models.Model):
+    """
+        description comes here
+    """
     provider_name = models.CharField(max_length=200)
     provider_site = models.URLField(max_length=1000)
     individual_name = models.CharField(max_length=200)
@@ -61,6 +67,9 @@ class WPSProvider(models.Model):
 
 
 class WPS(models.Model):
+    """
+        description comes here
+    """
     service_provider = models.ForeignKey(WPSProvider, on_delete=models.CASCADE)
     title = models.CharField(max_length = 200)
     abstract = models.TextField('Descriptive text', default='Add your super descriptive text here...')
@@ -77,6 +86,9 @@ class WPS(models.Model):
 
 
 class Process(models.Model):
+    """
+        description comes here
+    """
     wps = models.ForeignKey(WPS, on_delete=models.CASCADE)
     identifier = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
@@ -90,7 +102,10 @@ class Process(models.Model):
         return "%s from Server '%s'" % (self.title, self.wps.title)
 
 
-class Task(models.Model):    
+class Task(models.Model):
+    """
+        description comes here
+    """
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
     process = models.ForeignKey(Process, on_delete=models.CASCADE)
     x = models.DecimalField(max_digits=5, decimal_places=0)
@@ -110,6 +125,9 @@ class Task(models.Model):
 
 
 class Session(models.Model):
+    """
+        description comes here
+    """
     user = models.ForeignKey(User, editable= False, on_delete=models.CASCADE)
     last_workflow = models.ForeignKey(Workflow, null=True, on_delete=models.SET_NULL)
 
@@ -119,6 +137,9 @@ class Session(models.Model):
 
 
 class InputOutput(models.Model):
+    """
+        description comes here
+    """
     process = models.ForeignKey(Process, on_delete=models.CASCADE)
     role = models.CharField(max_length=1, choices=ROLE)
     identifier = models.CharField(max_length=200, null=True)
@@ -139,6 +160,9 @@ class InputOutput(models.Model):
 
 
 class Edge(models.Model):
+    """
+        description comes here
+    """
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
     from_task = models.ForeignKey(Task, related_name='out_task', on_delete=models.CASCADE) #rename to out_task?
     to_task = models.ForeignKey(Task, on_delete=models.CASCADE)  #rename to in_task?
@@ -154,6 +178,9 @@ class Edge(models.Model):
 
     
 class Artefact(models.Model):
+    """
+        description comes here
+    """
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     parameter = models.ForeignKey(InputOutput, null=True, on_delete=models.SET_NULL)
     role = models.CharField(max_length=1, choices=ROLE)

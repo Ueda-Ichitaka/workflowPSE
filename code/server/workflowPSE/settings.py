@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
     'django_crontab',
+    'django.contrib.admindocs',
 ]
 
 #For django_crontab
