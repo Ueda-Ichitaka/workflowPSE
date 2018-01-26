@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, ROLE, DATATYPE
 from django.http import response
 import requests
+import urllib.request
 from datetime import datetime
 
 # TODO: naming convention, code formatting
@@ -275,54 +276,50 @@ def deleteOldFiles():
 
 
 # TODO: tests, documentation
-def get_capabilities_parsing():
+def add_wps_server(server_urls):
     """
-
+    :param server_urls: List of urls given by admin on admin page
     :return:
     :rtype:
     """
-    #Works only with absolute path.
-    #In future will work with url
 
-    # TODO: online mode; fetch response from server
-    get_cap_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsGetCapabilities.xml'
+    #server_urls = ['http://pse.rudolphrichard.de:5000/wps?request=GetCapabilities&service=WPS']
+    for server_url in server_urls:
+        if server_url[-1] != '/':
+            server_url = server_url + '/'
 
+        server_url = server_url + 'wps?request=GetCapabilities&service=WPS'
+        temp_xml, headers = urllib.request.urlretrieve(server_url)
 
-    xml_namespaces = {
-        'gml': 'http://www.opengis.net/gml',
-        'xlink': 'http://www.w3.org/1999/xlink',
-        'wps': 'http://www.opengis.net/wps/1.0.0',
-        'ows': 'http://www.opengis.net/ows/1.1',
-        'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
-    }
+        #TODO: method, that parse xml namespaces
+        xml_namespaces = {
+            'gml': 'http://www.opengis.net/gml',
+            'xlink': 'http://www.w3.org/1999/xlink',
+            'wps': 'http://www.opengis.net/wps/1.0.0',
+            'ows': 'http://www.opengis.net/ows/1.1',
+            'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
+        }
 
-    #Parse the xml file
-    get_capabilities_tree = ET.parse(get_cap_url_from_scc_vm)
-    get_capabilities_root = get_capabilities_tree.getroot()
+        #Parse the xml file
+        get_capabilities_tree = ET.parse(temp_xml)
+        get_capabilities_root = get_capabilities_tree.getroot()
 
-    service_provider = parse_service_provider_info(get_capabilities_root, xml_namespaces)
-    service_provider_from_database = search_provider_in_database(service_provider)
-    if service_provider_from_database is None:
-        service_provider.save()
-    else:
-        service_provider = service_provider_from_database
+    #Parse and save informations about server provider
+        service_provider = parse_service_provider_info(get_capabilities_root, xml_namespaces)
+        service_provider_from_database = search_provider_in_database(service_provider)
+        if service_provider_from_database is None:
+            service_provider.save()
+        else:
+            service_provider = service_provider_from_database
+    #Parse and save informations about wps server
+        wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
+        wps_server_from_database = search_server_in_database(wps_server)
+        if wps_server_from_database is None:
+            wps_server.save()
+        else:
+            wps_server = overwrite_server(wps_server_from_database, wps_server)
 
-    
-    # TODO: use? else remove
-    os.mkdir('/home/denis/Documents/prov' + str(random.randrange(1, 100)) + '/')
-
-    wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
-    wps_server_from_database = search_server_in_database(wps_server)
-    if wps_server_from_database is None:
-        wps_server.save()
-    else:
-        wps_server = overwrite_server(wps_server_from_database, wps_server)
-    # TODO: use? else remove
-    os.mkdir('/home/denis/Documents/serv' + str(random.randrange(1, 100)) + '/')
-
-    describe_processes_parsing(wps_server)
-    # TODO: use? else remove
-    os.mkdir('/home/denis/Documents/proc' + str(random.randrange(1, 100)) + '/')
+    update_wps_processes()
 
 
 # TODO: tests, documentation
@@ -354,7 +351,6 @@ def search_server_in_database(wps_server):
     for server in WPS.objects.all():
         if server.title == wps_server.title:
             return server
-
 
     return None
 
@@ -442,23 +438,11 @@ def parse_wps_server_info(root, namespaces, provider):
     return wps_server
 
 
-# TODO: tests, documentation
-def already_exists_in_database_provider(service_provider):
-    """
 
-    :param service_provider:
-    :type service_provider:
-    :return:
-    :rtype:
-    """
-    if WPS.objects.get(provider_name=service_provider.provider_name) is None:
-        return False
-    else:
-        return True
 
 
 # TODO: tests, documentation
-def describe_processes_parsing(wps_server):
+def update_wps_processes():
     """
 
     :param wps_server:
@@ -469,7 +453,8 @@ def describe_processes_parsing(wps_server):
     # Works only with absolute path.
     # In future will work with url
     # TODO: change to http request
-    desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
+
+    #desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
 
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
@@ -479,31 +464,38 @@ def describe_processes_parsing(wps_server):
         'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
     }
 
-    tree = ET.parse(desc_proc_url_from_scc_vm)
-    root = tree.getroot()
-    process_elements = root.findall('ProcessDescription')
-    for process_element in process_elements:
-        process = parse_process_info(process_element, xml_namespaces, wps_server)
-        process.save()
+    wps_servers = WPS.objects.all()
+    for wps_server in wps_servers:
+        # TODO: repair hardcode
+        describe_processes_url = wps_server.describe_url + '?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
 
-###Save Inputs
-        inputs_container_element = process_element.find('DataInputs')
-        if inputs_container_element is not None:
-            input_elements = inputs_container_element.findall('Input')
+        temp_xml, headers = urllib.request.urlretrieve(describe_processes_url)
 
-            for input_element in input_elements:
-                input = parse_input_info(input_element, xml_namespaces, process)
-                input.save()
+        tree = ET.parse(temp_xml)
+        root = tree.getroot()
+        process_elements = root.findall('ProcessDescription')
+        for process_element in process_elements:
+            process = parse_process_info(process_element, xml_namespaces, wps_server)
+            process.save()
+
+    ###Save Inputs
+            inputs_container_element = process_element.find('DataInputs')
+            if inputs_container_element is not None:
+                input_elements = inputs_container_element.findall('Input')
+
+                for input_element in input_elements:
+                    input = parse_input_info(input_element, xml_namespaces, process)
+                    input.save()
 
 
-###Save Outputs
-        outputs_container_element = process_element.find('ProcessOutputs')
-        if outputs_container_element is not None:
-            output_elements = outputs_container_element.findall('Output')
+    ###Save Outputs
+            outputs_container_element = process_element.find('ProcessOutputs')
+            if outputs_container_element is not None:
+                output_elements = outputs_container_element.findall('Output')
 
-            for output_element in output_elements:
-                output = parse_output_info(output_element, xml_namespaces, process)
-                output.save()
+                for output_element in output_elements:
+                    output = parse_output_info(output_element, xml_namespaces, process)
+                    output.save()
 
 
 # TODO: tests, documentation
