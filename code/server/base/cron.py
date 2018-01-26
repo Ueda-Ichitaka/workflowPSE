@@ -8,49 +8,55 @@ import urllib.request
 from datetime import datetime
 from pywps import OGCTYPE, NAMESPACES as ns
 from lxml import etree
+from lxml.builder import ElementMaker
 
 # TODO: naming convention, code formatting
 
+E = ElementMaker()
+WPS = ElementMaker(namespace = ns['wps'], nsmap = ns)
+OWS = ElementMaker(namespace = ns['ows'], nsmap = ns)
+XLINK = ElementMaker(namespace = ns['ows'], nsmap = ns)
+
 ns_map = {
     # wps namespaced tags
-    "Capabilities"	        :	"{{{}}}Capabilities".format(ns["wps"]),
-    "ProcessDescriptions"   :	"{{{}}}ProcessDescriptions".format(ns["wps"]),
-    "ExecuteResponse"	    :	"{{{}}}ExecuteResponse".format(ns["wps"]),
-    "Process"			    :	"{{{}}}Process".format(ns["wps"]),
-    "Status"			    :	"{{{}}}Status".format(ns["wps"]),
-    "Data"				    :	"{{{}}}Data".format(ns["wps"]),
-    "LiteralData"		    :	"{{{}}}LiteralData".format(ns["wps"]),
-    "ComplexData"		    :	"{{{}}}ComplexData".format(ns["wps"]),
-    "Output"			    :	"{{{}}}Output".format(ns["wps"]),
-    "ProcessOutputs"	    :	"{{{}}}ProcessOutputs".format(ns["wps"]),
-    "Input"				    :	"{{{}}}Input".format(ns["wps"]),
-    "DataInput"			    :	"{{{}}}DataInput".format(ns["wps"]),
-    "Default"			    :	"{{{}}}Default".format(ns["wps"]),
-    "Format"			    :	"{{{}}}Format".format(ns["wps"]),
-    "MimeType"			    :	"{{{}}}MimeType".format(ns["wps"]),
-    "Supported"			    :	"{{{}}}Supported".format(ns["wps"]),
-    "CRS"				    :	"{{{}}}CRS".format(ns["wps"]),
-    "Reference"			    :	"{{{}}}Reference".format(ns["wps"]),
+    "Capabilities" : "{{{ns['wps']}}}Capabilities",
+    "ProcessDescriptions" :	"{{{ns['wps']}}}ProcessDescriptions",
+    "ExecuteResponse" : "{{{ns['wps']}}}ExecuteResponse",
+    "Process" : "{{{ns['wps']}}}Process",
+    "Status" : "{{{ns['wps']}}}Status",
+    "Data" : "{{{ns['wps']}}}Data",
+    "LiteralData" :	"{{{ns['wps']}}}LiteralData",
+    "ComplexData" :	"{{{ns['wps']}}}ComplexData",
+    "Output" : "{{{ns['wps']}}}Output",
+    "ProcessOutputs" : "{{{ns['wps']}}}ProcessOutputs",
+    "Input" : "{{{ns['wps']}}}Input",
+    "DataInput" : "{{{ns['wps']}}}DataInput",
+    "Default" :	"{{{ns['wps']}}}Default",
+    "Format" : "{{{ns['wps']}}}Format",
+    "MimeType" : "{{{ns['wps']}}}MimeType",
+    "Supported" : "{{{ns['wps']}}}Supported",
+    "CRS" :	"{{{ns['wps']}}}CRS",
+    "Reference" : "{{{ns['wps']}}}Reference",
 
     # ows namespaced tags
-    "Identifier"		    :	"{{{}}}Identifier".format(ns["ows"]),
-    "Title"				    :	"{{{}}}Title".format(ns["ows"]),
-    "Abstract"			    :	"{{{}}}Abstract".format(ns["ows"]),
-    "BoundingBox"		    :	"{{{}}}BoundingBox".format(ns["wps"]),
-    "DataType"			    :	"{{{}}}DataType".format(ns["ows"]),
-    "AllowedValues"		    :	"{{{}}}AllowedValues".format(ns["ows"]),
-    "Value"				    :	"{{{}}}Value".format(ns["ows"]),
-    "Range"				    :	"{{{}}}Range".format(ns["ows"]),
-    "MinimumValue"		    :	"{{{}}}MinimumValue".format(ns["ows"]),
-    "MaximumValue"		    :	"{{{}}}MaximumValue".format(ns["ows"]),
-    "LowerCorner"		    :	"{{{}}}LowerCorner".format(ns["ows"]),
-    "UpperCorner"		    :	"{{{}}}UpperCorner".format(ns["ows"]),
-    "Spacing"			    :	"{{{}}}Spacing".format(ns["ows"]),
-    "AnyValue"			    :	"{{{}}}AnyValue".format(ns["ows"]),
-    "Metadata"			    :	"{{{}}}Metadata".format(ns["ows"]),
+    "Identifier" : "{{{ns['ows']}}}Identifier",
+    "Title" : "{{{ns['ows']}}}Title",
+    "Abstract" : "{{{ns['ows']}}}Abstract",
+    "BoundingBox" :	"{{{ns['ows']}}}BoundingBox",
+    "DataType" : "{{{ns['ows']}}}DataType",
+    "AllowedValues" : "{{{ns['ows']}}}AllowedValues",
+    "Value" : "{{{ns['ows']}}}Value",
+    "Range" : "{{{ns['ows']}}}Range",
+    "MinimumValue" : "{{{ns['ows']}}}MinimumValue",
+    "MaximumValue" : "{{{ns['ows']}}}MaximumValue",
+    "LowerCorner" : "{{{ns['ows']}}}LowerCorner",
+    "UpperCorner" : "{{{ns['ows']}}}UpperCorner",
+    "Spacing" : "{{{ns['ows']}}}Spacing",
+    "AnyValue" : "{{{ns['ows']}}}AnyValue",
+    "Metadata" : "{{{ns['ows']}}}Metadata",
 
     # xlink namespaced tags
-    "href"                  :   "{{{}}}href".format(ns["xlink"])
+    "href" : "{{{ns['xlink']}}}href",
 }
 
 possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "ProcessSucceeded", "ProcessFailed"]
