@@ -30,19 +30,18 @@ def scheduler():
     f = open(outFile, 'w')
     sys.stdout = f
 
-
-    for x in Workflow.objects.all():
-        for y in Task.objects.filter(workflow = x, status = 1):
+    for current_workflow in Workflow.objects.all():
+        for current_task in Task.objects.filter(workflow = current_workflow, status = 1):
             previous_tasks_finished = True
-            for z in Edge.objects.filter(to_task = y):
-                if z.from_task.status == '4':
+            for current_edge in Edge.objects.filter(to_task = current_task):
+                if current_edge.from_task.status == '4':
                     previous_tasks_finished = True
                 else:
                     previous_tasks_finished = False
                     break
             if previous_tasks_finished:
-                y.status = '2'
-                y.save()
+                current_task.status = '2'
+                current_task.save()
 
     
 
