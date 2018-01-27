@@ -19,6 +19,16 @@ def scheduler():
     @return:
     @rtype:
     """
+    # redirect stout to file, output logging
+
+    # TODO: set to changeable by settings & config file
+    outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
+    xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
+
+    orig_stdout = sys.stdout
+    f = open(outFile, 'w')
+    sys.stdout = f
+
 
     for x in Workflow.objects.all():
         for y in Task.objects.filter(workflow = x, status = 1):
@@ -34,14 +44,9 @@ def scheduler():
                 y.save()
 
     
-    # TODO: set to changeable by settings & config file
-    outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
-    xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
 
-    # redirect stout to file, output logging
-    orig_stdout  = sys.stdout
-    f = open(outFile, 'w')
-    sys.stdout = f
+
+
 
     #generate execute xmls for all tasks with status ready
     xmlGenerator(xmlDir)
