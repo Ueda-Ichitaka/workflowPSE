@@ -2,7 +2,7 @@ import os, sys
 import random
 import base.utils as utils_module
 import xml.etree.ElementTree as ET
-from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, ROLE, DATATYPE, STATUS
+from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, ROLE, DATATYPE, STATUS, Workflow, Edge
 from django.http import response
 import requests
 import urllib.request
@@ -71,6 +71,20 @@ def scheduler():
    @return:
    @rtype:
    """
+
+   for x in Workflow.objects.all():
+       for y in Task.objects.filter(workflow = x, status = 1):
+           previous_tasks_finished = True
+           for z in Edge.objects.filter(to_task = y):
+               if z.from_task.status == '4':
+                   previous_tasks_finished = True
+               else:
+                   previous_tasks_finished = False
+                   break
+           if previous_tasks_finished:
+               y.status = '2'
+               y.save()
+
     # TODO: set to changeable by settings & config file
     outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
     xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
