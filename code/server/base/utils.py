@@ -1,5 +1,6 @@
 from base.models import WPSProvider, WPS, Process, InputOutput
 from base.models import DATATYPE, ROLE
+import base.cron
 import os
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -107,7 +108,7 @@ def add_wps_server(server_urls):
         else:
             wps_server = overwrite_server(wps_server_from_database, wps_server)
 
-    #base.cron.update_wps_processes()
+    base.cron.update_wps_processes()
 
 
 def search_provider_in_database(service_provider):
