@@ -15,7 +15,7 @@ from lxml.builder import ElementMaker
 
 E = ElementMaker()
 # TODO: please rename it. It conflicts with WPS model!
-WPS = ElementMaker(namespace = ns['wps'], nsmap = ns)
+#WPS = ElementMaker(namespace = ns['wps'], nsmap = ns)
 
 OWS = ElementMaker(namespace = ns['ows'], nsmap = ns)
 XLINK = ElementMaker(namespace = ns['ows'], nsmap = ns)
