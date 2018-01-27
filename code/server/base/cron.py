@@ -341,34 +341,6 @@ def add_wps_server(server_urls):
     :return: None
     :rtype:
     """
-
-    #Parse the xml file
-    get_capabilities_tree = ET.parse(get_cap_url_from_scc_vm)
-    get_capabilities_root = get_capabilities_tree.getroot()
-
-    service_provider = parse_service_provider_info(get_capabilities_root, xml_namespaces)
-    service_provider_from_database = search_provider_in_database(service_provider)
-    if service_provider_from_database is None:
-        service_provider.save()
-    else:
-        service_provider = service_provider_from_database
-
-
-    # TODO: use? else remove
-    os.mkdir('/home/denis/Documents/prov' + str(random.randrange(1, 100)) + '/')
-
-    wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
-    wps_server_from_database = search_server_in_database(wps_server)
-    if wps_server_from_database is None:
-        wps_server.save()
-    else:
-        wps_server = overwrite_server(wps_server_from_database, wps_server)
-    # TODO: use? else remove
-    os.mkdir('/home/denis/Documents/serv' + str(random.randrange(1, 100)) + '/')
-
-    describe_processes_parsing(wps_server)
-    # TODO: use? else remove
-    os.mkdir('/home/denis/Documents/proc' + str(random.randrange(1, 100)) + '/')
     #server_urls = ['http://pse.rudolphrichard.de:5000/wps?request=GetCapabilities&service=WPS']
     for server_url in server_urls:
         if server_url[-1] != '/':
