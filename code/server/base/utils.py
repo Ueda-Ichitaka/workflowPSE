@@ -20,7 +20,7 @@ def add_wps_server(server_urls):
     :return: None
     :rtype:
     """
-    #server_urls = ['http://pse.rudolphrichard.de:5000/wps?request=GetCapabilities&service=WPS']
+    # server_urls = ['http://pse.rudolphrichard.de:5000/wps?request=GetCapabilities&service=WPS']
     for server_url in server_urls:
         if server_url[-1] != '/':
             server_url = server_url + '/'
@@ -28,7 +28,7 @@ def add_wps_server(server_urls):
         server_url = server_url + 'wps?request=GetCapabilities&service=WPS'
         temp_xml, headers = urllib.request.urlretrieve(server_url)
 
-        #TODO: method, that parse xml namespaces
+        # TODO: method, that parse xml namespaces
         xml_namespaces = {
             'gml': 'http://www.opengis.net/gml',
             'xlink': 'http://www.w3.org/1999/xlink',
@@ -37,18 +37,18 @@ def add_wps_server(server_urls):
             'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
         }
 
-        #Parse the xml file
+    # Parse the xml file
         get_capabilities_tree = ET.parse(temp_xml)
         get_capabilities_root = get_capabilities_tree.getroot()
 
-    #Parse and save informations about server provider
+    # Parse and save information about server provider
         service_provider = parse_service_provider_info(get_capabilities_root, xml_namespaces)
         service_provider_from_database = search_provider_in_database(service_provider)
         if service_provider_from_database is None:
             service_provider.save()
         else:
             service_provider = service_provider_from_database
-    #Parse and save informations about wps server
+    # Parse and save information about wps server
         wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
         wps_server_from_database = search_server_in_database(wps_server)
         if wps_server_from_database is None:
@@ -56,7 +56,7 @@ def add_wps_server(server_urls):
         else:
             wps_server = overwrite_server(wps_server_from_database, wps_server)
 
-    base.cron.update_wps_processes()
+    #base.cron.update_wps_processes()
 
 
 def search_provider_in_database(service_provider):
@@ -64,7 +64,7 @@ def search_provider_in_database(service_provider):
     Check that the service_provider instance given in parameter
     is not already in database.
     Assumption: the istances are equal, if their 'provider_name' and
-    'provider_site' attributs are equal
+    'provider_site' attributes are equal
     If database has the same instance, it will be returned.
     If database not contains instance, it will be saved.
 
@@ -85,10 +85,11 @@ def search_server_in_database(wps_server):
     """
     Check that the wps_service instance given in parameter
     is not already in database.
-    Assumption: the instances are equal, if their 'title' attributs
+    Assumption: the instances are equal, if their 'title' attributes
     are equal.
     If database has the same instance, it will be returned.
     If database not contains instance, it will be saved.
+
     :param wps_server: An instance of wps_server
     :type wps_server: WPS
     :return: saved instance | None
@@ -183,6 +184,7 @@ def parse_wps_server_info(root, namespaces, provider):
 
     return wps_server
 
+
 # TODO: tests, documentation
 def parse_process_info(process_element, namespaces, wps_server):
     """
@@ -208,6 +210,7 @@ def parse_process_info(process_element, namespaces, wps_server):
                       title=process_title,
                       abstract=process_abstract)
     return process
+
 
 # TODO: tests, documentation
 def parse_input_info(input_element, namespaces, process):
