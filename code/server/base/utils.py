@@ -15,10 +15,10 @@ def add_wps_server(server_urls):
 
     After that the method update_wps_processes will called.
 
-    :param server_urls: List of urls given by admin on admin page
-    :type server_urls: str list
-    :return: None
-    :rtype:
+    @param server_urls: List of urls given by admin on admin page
+    @type server_urls: str list
+    @return: None
+    @rtype:
     """
     # server_urls = ['http://pse.rudolphrichard.de:5000/wps?request=GetCapabilities&service=WPS']
     for server_url in server_urls:
@@ -68,10 +68,10 @@ def search_provider_in_database(service_provider):
     If database has the same instance, it will be returned.
     If database not contains instance, None will be returned.
 
-    :param service_provider: A instance of service_provider
-    :type service_provider: WPSProvider
-    :return: saved instance | None
-    :rtype: WPSProvider | None
+    @param service_provider: A instance of service_provider
+    @type service_provider: WPSProvider
+    @return: saved instance | None
+    @rtype: WPSProvider | None
     """
     for provider in WPSProvider.objects.all():
         if service_provider.provider_name == provider.provider_name \
@@ -90,10 +90,10 @@ def search_server_in_database(wps_server):
     If database has the same instance, it will be returned.
     If database not contains instance, None will be returned.
 
-    :param wps_server: An instance of wps_server
-    :type wps_server: WPS
-    :return: saved instance | None
-    :rtype: WPS | None
+    @param wps_server: An instance of wps_server
+    @type wps_server: WPS
+    @return: saved instance | None
+    @rtype: WPS | None
     """
     for server in WPS.objects.all():
         if server.title == wps_server.title:
@@ -110,10 +110,10 @@ def search_process_in_database(parsed_process):
     are equal
     If database has the same instance, it will be returned.
     If database not contains instance, None will be returned.
-    :param parsed_process: An instance od process
-    :type parsed_process: Process
-    :return: saved instance | None
-    :rtype: Process | None
+    @param parsed_process: An instance od process
+    @type parsed_process: Process
+    @return: saved instance | None
+    @rtype: Process | None
     """
     for process_from_database in Process.objects.all():
         if process_from_database.identifier == parsed_process.identifier:
@@ -143,12 +143,12 @@ def search_input_output_in_database(parsed_input_output):
 def overwrite_server(old_entry, new_entry):
     """
 
-    :param old_entry:
-    :type old_entry:
-    :param new_entry:
-    :type new_entry:
-    :return:
-    :rtype:
+    @param old_entry:
+    @type old_entry:
+    @param new_entry:
+    @type new_entry:
+    @return:
+    @rtype:
     """
     old_entry.abstract = new_entry.abstract
     old_entry.capabilities_url = new_entry.capabilities_url
@@ -162,9 +162,12 @@ def overwrite_server(old_entry, new_entry):
 def overwrite_process(old_entry, new_entry):
     """
 
-    :param old_entry:
-    :param new_entry:
-    :return:
+    @param old_entry:
+    @type old_entry:
+    @param new_entry:
+    @type new_entry:
+    @return:
+    @rtype:
     """
     old_entry.title = new_entry.title
     old_entry.abstract = new_entry.abstract
@@ -196,12 +199,12 @@ def overwrite_input_output(old_entry, new_entry):
 def parse_service_provider_info(root, namespaces):
     """
 
-    :param root:
-    :type root:
-    :param namespaces:
-    :type namespaces:
-    :return:
-    :rtype:
+    @param root:
+    @type root:
+    @param namespaces:
+    @type namespaces:
+    @return:
+    @rtype:
     """
     service_provider_element = root.find('ows:ServiceProvider', namespaces)
     provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
@@ -224,14 +227,14 @@ def parse_service_provider_info(root, namespaces):
 def parse_wps_server_info(root, namespaces, provider):
     """
 
-    :param root:
-    :type root:
-    :param namespaces:
-    :type namespaces:
-    :param provider:
-    :type provider:
-    :return:
-    :rtype:
+    @param root:
+    @type root:
+    @param namespaces:
+    @type namespaces:
+    @param provider:
+    @type provider:
+    @return:
+    @rtype:
     """
     service_identification_element = root.find('ows:ServiceIdentification', namespaces)
 
@@ -259,14 +262,14 @@ def parse_wps_server_info(root, namespaces, provider):
 def parse_process_info(process_element, namespaces, wps_server):
     """
 
-    :param process_element:
-    :type process_element:
-    :param namespaces:
-    :type namespaces:
-    :param wps_server:
-    :type wps_server:
-    :return:
-    :rtype:
+    @param process_element:
+    @type process_element:
+    @param namespaces:
+    @type namespaces:
+    @param wps_server:
+    @type wps_server:
+    @return:
+    @rtype:
     """
     process_identifier = process_element.find('ows:Identifier', namespaces).text
     process_title = process_element.find('ows:Title', namespaces).text
@@ -286,14 +289,14 @@ def parse_process_info(process_element, namespaces, wps_server):
 def parse_input_info(input_element, namespaces, process):
     """
 
-    :param input_element:
-    :type input_element:
-    :param namespaces:
-    :type namespaces:
-    :param process:
-    :type process:
-    :return:
-    :rtype:
+    @param input_element:
+    @type input_element:
+    @param namespaces:
+    @type namespaces:
+    @param process:
+    @type process:
+    @return:
+    @rtype:
     """
     input_identifier = input_element.find('ows:Identifier', namespaces).text
     input_title = input_element.find('ows:Title', namespaces).text
@@ -335,14 +338,7 @@ def parse_input_info(input_element, namespaces, process):
 def parse_output_info(output_element, namespaces, process):
     """
 
-    :param output_element:
-    :type output_element:
-    :param namespaces:
-    :type namespaces:
-    :param process:
-    :type process:
-    :return:
-    :rtype:
+    
     @param output_element:
     @type output_element:
     @param namespaces:

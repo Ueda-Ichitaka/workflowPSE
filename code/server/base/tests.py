@@ -7,6 +7,9 @@ import xml.etree.ElementTree as ET
 
 # Create your tests here.
 class ParsingTestCase(TestCase):
+    """
+
+    """
     get_cap_url_from_scc_vm = 'base/testfiles/wpsGetCapabilities.xml'
     desc_proc_url_from_scc_vm = 'base/testfiles/wpsDescribeProcesses.xml'
     xml_namespaces = {
@@ -21,6 +24,11 @@ class ParsingTestCase(TestCase):
     describe_processes_root = ET.parse(desc_proc_url_from_scc_vm).getroot()
 
     def test_parse_service_provider_info(self):
+        """
+
+        @return:
+        @rtype:
+        """
 
         wps_provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
         self.assertEqual(wps_provider.provider_name, 'Organization Name')
@@ -29,6 +37,11 @@ class ParsingTestCase(TestCase):
         self.assertEqual(wps_provider.position_name, 'Position Title')
 
     def test_parse_wps_server_info(self):
+        """
+
+        @return:
+        @rtype:
+        """
         wps_provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
         wps_server = base.utils.parse_wps_server_info(self.capabilities_root, self.xml_namespaces, wps_provider)
         self.assertEqual(wps_server.title, 'PyWPS Processing Service')
@@ -39,6 +52,11 @@ class ParsingTestCase(TestCase):
         self.assertEqual(wps_server.execute_url, 'http://localhost/wps')
 
     def test_add_wps_server(self):
+        """
+
+        @return:
+        @rtype:
+        """
         test_url = ['http://pse.rudolphrichard.de:5000']
         #base.utils.add_wps_server(test_url)
         base.cron.update_wps_processes()
@@ -48,6 +66,11 @@ class ParsingTestCase(TestCase):
 
 
     def test_overwrite_server(self):
+        """
+
+        @return:
+        @rtype:
+        """
         provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
         provider.save()
         old_database_entry = WPS(service_provider=provider,
@@ -74,10 +97,18 @@ class ParsingTestCase(TestCase):
 
 
 class DatabaseSearcherTestCase(TestCase):
+    """
+
+    """
     wps_provider = None
     wps_server = None
 
     def create_and_save_wps_provider(self):
+        """
+
+        @return:
+        @rtype:
+        """
         self.wps_provider = WPSProvider(provider_name='Help Service - Remote Sensing',
                                         provider_site='http://bnhelp.cz',
                                         individual_name='Jachym Cepicky',
@@ -85,6 +116,11 @@ class DatabaseSearcherTestCase(TestCase):
         self.wps_provider.save()
 
     def create_and_save_wps_server(self):
+        """
+
+        @return:
+        @rtype:
+        """
         self.create_and_save_wps_provider()
         self.wps_server = WPS(service_provider=self.wps_provider,
                               title='PyWPS Example deploy server',
@@ -95,20 +131,40 @@ class DatabaseSearcherTestCase(TestCase):
         self.wps_server.save()
 
     def test_search_provider_in_database_1(self):
+        """
+
+        @return:
+        @rtype:
+        """
         self.create_and_save_wps_provider()
         provider_from_database = utils.search_provider_in_database(self.wps_provider)
         self.assertIsNotNone(provider_from_database)
 
     def test_search_provider_in_database_2(self):
+        """
+
+        @return:
+        @rtype:
+        """
         provider_from_database = utils.search_provider_in_database(self.wps_provider)
         self.assertIsNone(provider_from_database)
 
     def test_search_server_in_database_1(self):
+        """
+
+        @return:
+        @rtype:
+        """
         self.create_and_save_wps_server()
         server_from_database = utils.search_server_in_database(self.wps_server)
         self.assertIsNotNone(server_from_database)
 
     def test_search_server_in_database_2(self):
+        """
+
+        @return:
+        @rtype:
+        """
         server_from_database = utils.search_server_in_database(self.wps_server)
         self.assertIsNone(server_from_database)
 
