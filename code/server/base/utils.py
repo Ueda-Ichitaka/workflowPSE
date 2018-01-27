@@ -121,6 +121,24 @@ def search_process_in_database(parsed_process):
 
     return None
 
+
+def search_input_output_in_database(parsed_input_output):
+    """
+    The instances are equal, if their 'identifier' fields
+    are equal,they have the same role (Input or Output) and
+    they belong to the same process.
+    :param parsed_input_output:
+    :return:
+    """
+    for input_output_from_database in InputOutput.objects.all():
+        if input_output_from_database.identifier == parsed_input_output.identifier \
+                and input_output_from_database.process.identifier == parsed_input_output.process.identifier \
+                and input_output_from_database.role == parsed_input_output.role:
+            return input_output_from_database
+
+    return None
+
+
 # TODO: tests, documentation
 def overwrite_server(old_entry, new_entry):
     """
@@ -153,6 +171,25 @@ def overwrite_process(old_entry, new_entry):
 
     old_entry.save()
     return old_entry
+
+
+def overwrite_input_output(old_entry, new_entry):
+    """
+
+    :param old_entry:
+    :param new_entry:
+    :return:
+    """
+    old_entry.title = new_entry.title
+    old_entry.abstract = new_entry.abstract
+    old_entry.datatype = new_entry.datatype
+    old_entry.format = new_entry.format
+    old_entry.min_occurs = new_entry.min_occurs
+    old_entry.max_occurs = new_entry.max_occurs
+
+    old_entry.save()
+    return old_entry
+
 
 
 # TODO: tests, documentation

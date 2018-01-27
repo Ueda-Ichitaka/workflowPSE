@@ -518,7 +518,11 @@ def update_wps_processes():
 
                 for input_element in input_elements:
                     input = utils_module.parse_input_info(input_element, xml_namespaces, process)
-                    input.save()
+                    input_from_database = utils_module.search_input_output_in_database(input)
+                    if input_from_database is None:
+                        input.save()
+                    else:
+                        input = utils_module.overwrite_input_output(input_from_database, input)
 
 
     ###Save Outputs
@@ -528,4 +532,8 @@ def update_wps_processes():
 
                 for output_element in output_elements:
                     output = utils_module.parse_output_info(output_element, xml_namespaces, process)
-                    output.save()
+                    output_from_database = utils_module.search_input_output_in_database(output)
+                    if output_from_database is None:
+                        output.save()
+                    else:
+                        output = utils_module.overwrite_input_output(output_from_database, output)
