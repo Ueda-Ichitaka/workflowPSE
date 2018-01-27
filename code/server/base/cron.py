@@ -15,7 +15,7 @@ from lxml.builder import ElementMaker
 
 E = ElementMaker()
 # TODO: please rename it. It conflicts with WPS model!
-#WPS = ElementMaker(namespace = ns['wps'], nsmap = ns)
+WPS = ElementMaker(namespace = ns['wps'], nsmap = ns)
 
 OWS = ElementMaker(namespace = ns['ows'], nsmap = ns)
 XLINK = ElementMaker(namespace = ns['ows'], nsmap = ns)
@@ -485,8 +485,6 @@ def update_wps_processes():
     :return:
     :rtype:
     """
-
-    utils_module.add_wps_server(['http://pse.rudolphrichard.de:5000/'])
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
         'xlink': 'http://www.w3.org/1999/xlink',
