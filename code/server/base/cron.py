@@ -1,14 +1,65 @@
 import os, sys
 import random
 import xml.etree.ElementTree as ET
-from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, ROLE, DATATYPE
+from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, ROLE, DATATYPE, STATUS
 from django.http import response
 import requests
 import urllib.request
 from datetime import datetime
+from pywps import OGCTYPE, NAMESPACES as ns
+from lxml import etree
+from lxml.builder import ElementMaker
 
 # TODO: naming convention, code formatting
 
+E = ElementMaker()
+WPS = ElementMaker(namespace = ns['wps'], nsmap = ns)
+OWS = ElementMaker(namespace = ns['ows'], nsmap = ns)
+XLINK = ElementMaker(namespace = ns['ows'], nsmap = ns)
+
+ns_map = {
+    # wps namespaced tags
+    "Capabilities" : "{{{ns['wps']}}}Capabilities",
+    "ProcessDescriptions" :	"{{{ns['wps']}}}ProcessDescriptions",
+    "ExecuteResponse" : "{{{ns['wps']}}}ExecuteResponse",
+    "Process" : "{{{ns['wps']}}}Process",
+    "Status" : "{{{ns['wps']}}}Status",
+    "Data" : "{{{ns['wps']}}}Data",
+    "LiteralData" :	"{{{ns['wps']}}}LiteralData",
+    "ComplexData" :	"{{{ns['wps']}}}ComplexData",
+    "Output" : "{{{ns['wps']}}}Output",
+    "ProcessOutputs" : "{{{ns['wps']}}}ProcessOutputs",
+    "Input" : "{{{ns['wps']}}}Input",
+    "DataInput" : "{{{ns['wps']}}}DataInput",
+    "Default" :	"{{{ns['wps']}}}Default",
+    "Format" : "{{{ns['wps']}}}Format",
+    "MimeType" : "{{{ns['wps']}}}MimeType",
+    "Supported" : "{{{ns['wps']}}}Supported",
+    "CRS" :	"{{{ns['wps']}}}CRS",
+    "Reference" : "{{{ns['wps']}}}Reference",
+
+    # ows namespaced tags
+    "Identifier" : "{{{ns['ows']}}}Identifier",
+    "Title" : "{{{ns['ows']}}}Title",
+    "Abstract" : "{{{ns['ows']}}}Abstract",
+    "BoundingBox" :	"{{{ns['ows']}}}BoundingBox",
+    "DataType" : "{{{ns['ows']}}}DataType",
+    "AllowedValues" : "{{{ns['ows']}}}AllowedValues",
+    "Value" : "{{{ns['ows']}}}Value",
+    "Range" : "{{{ns['ows']}}}Range",
+    "MinimumValue" : "{{{ns['ows']}}}MinimumValue",
+    "MaximumValue" : "{{{ns['ows']}}}MaximumValue",
+    "LowerCorner" : "{{{ns['ows']}}}LowerCorner",
+    "UpperCorner" : "{{{ns['ows']}}}UpperCorner",
+    "Spacing" : "{{{ns['ows']}}}Spacing",
+    "AnyValue" : "{{{ns['ows']}}}AnyValue",
+    "Metadata" : "{{{ns['ows']}}}Metadata",
+
+    # xlink namespaced tags
+    "href" : "{{{ns['xlink']}}}href",
+}
+
+possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "ProcessSucceeded", "ProcessFailed"]
 
 # TODO: tests
 def scheduler():
@@ -18,22 +69,22 @@ def scheduler():
     :rtype:
     """
 
-    
+
     # TODO: set to changeable by settings & config file
     outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
     xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
-    
+
     # redirect stout to file, output logging
     orig_stdout  = sys.stdout
     f = open(outFile, 'w')
     sys.stdout = f
-    
+
     #generate execute xmls for all tasks with status ready
     xmlGenerator(xmlDir)
-    
+
     #send task
     sendTask(2, xmlDir)
-                      
+
     sys.stdout = orig_stdout
     f.close()
 
@@ -50,10 +101,10 @@ def xmlGenerator(xmlDir):
 
 
     task_list = list(Task.objects.filter(status='1').values())
-    for task in task_list:        
-        
+    for task in task_list:
+
         #print("")
-    
+
         root = ET.Element('wps:Execute')
         root.set('service', 'WPS')
         root.set('version', '1.0.0')
@@ -62,63 +113,63 @@ def xmlGenerator(xmlDir):
         root.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
         root.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
         root.set('xsi:schemaLocation', 'http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd')
- 
+
 
         process_list = list(Process.objects.filter(id=task["process_id"]).values())
-        for process in process_list:                    
-            
+        for process in process_list:
+
             identifier = ET.SubElement(root, 'ows:Identifier')
             identifier.text = process["identifier"]
-            
-        inputs = ET.SubElement(root, 'wps:DataInputs')    
-            
+
+        inputs = ET.SubElement(root, 'wps:DataInputs')
+
         input_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='0').values())
-        for input in input_list:            
-            
+        for input in input_list:
+
             inputElement = ET.SubElement(inputs, 'wps:Input')
             inputIdent = ET.SubElement(inputElement, 'ows:Identifier')
             inputTitle = ET.SubElement(inputElement, 'ows:Title')
             inputData = ET.SubElement(inputElement, 'wps:Data')
             inputIdent.text = input["identifier"]
             inputTitle.text = input["title"]
-                        
+
 
             artefact_list = list(Artefact.objects.filter(task_id=task["id"], parameter=input["id"]).values())
             for artefact in artefact_list:
-                
+
                 type = input["datatype"]
                 if type == '0':
                     type = "LiteralData"
                 elif type == '1':
-                    type = "ComplexData"   
+                    type = "ComplexData"
                 elif type == '2':
                     type = "BoundingBoxData"
-                         
+
                 data = ET.SubElement(inputData, 'wps:' + type)
                 data.text = artefact["data"]
                 data.set('datatype', artefact["format"])
-                
+
                 #print("datatype: ", input["datatype"], " ", dict(DATATYPE).get(input["datatype"]))
-        
+
         responseForm = ET.SubElement(root, 'wps:ResponseForm')
         responseDoc = ET.SubElement(responseForm, 'wps:ResponseDocument')
         responseDoc.set('storeExecuteResponse', 'true')
         responseDoc.set('lineage', 'true')
         responseDoc.set('status', 'true')
-        
+
         output_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='1').values())
-        for out in output_list:         
-        
+        for out in output_list:
+
             outputElement = ET.SubElement(responseDoc, 'wps:Output')
             outputElement.set('asReference', 'true')
             outIdent = ET.SubElement(outputElement, 'ows:Identifier')
             outTitle = ET.SubElement(outputElement, 'ows:Title')
             outIdent.text = out["identifier"]
             outTitle.text = out["title"]
-        
-                
+
+
         #print(xmlDir + 'task' + str(task["id"]) + '.xml')
-        
+
         tree = ET.ElementTree(root)
         tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
         #print(ET.tostring(root, 'unicode', 'xml'))
@@ -138,27 +189,27 @@ def sendTask(task_id, xmlDir):
     #should be changed to something without list
     task_list = list(Task.objects.filter(id=task_id).values())
     for task in task_list:
-                   
+
         execute_url = getExecuteUrl(task)
-                
+
         #send to url
         filepath = str(xmlDir) + 'task' + str(task_id) + '.xml'
-        file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read()) #'<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + 
+        file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read()) #'<?xml version="1.0" encoding="utf-8" standalone="yes"?>' +
         response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file) # TODO: replace with variable
-        
+
         #print("")
-        print("post response: ")        
+        print("post response: ")
         print(response.text)
         print("")
 
         #get response from send
         xml = ET.fromstring(response.text)
-        
+
         # TODO: check response for errors
         # response should be 
-        
+
         print(xml.get('statusLocation'))
-        
+
         #write status url from response to task
         #set status to running
         # update start time
@@ -168,7 +219,7 @@ def sendTask(task_id, xmlDir):
         p.started_at = datetime.now()
         p.save()
         # TODO: delete execute xml file
-        
+
 
 # TODO: tests, documentation
 def getExecuteUrl(task):
@@ -180,7 +231,7 @@ def getExecuteUrl(task):
     :rtype:
     """
     execute_url = ""
-        
+
     #traverse db tables task -> process -> wps -> url
     process_list = list(Process.objects.filter(id=task["process_id"]).values())
     for process in process_list:
@@ -291,6 +342,33 @@ def add_wps_server(server_urls):
     :rtype:
     """
 
+    #Parse the xml file
+    get_capabilities_tree = ET.parse(get_cap_url_from_scc_vm)
+    get_capabilities_root = get_capabilities_tree.getroot()
+
+    service_provider = parse_service_provider_info(get_capabilities_root, xml_namespaces)
+    service_provider_from_database = search_provider_in_database(service_provider)
+    if service_provider_from_database is None:
+        service_provider.save()
+    else:
+        service_provider = service_provider_from_database
+
+
+    # TODO: use? else remove
+    os.mkdir('/home/denis/Documents/prov' + str(random.randrange(1, 100)) + '/')
+
+    wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
+    wps_server_from_database = search_server_in_database(wps_server)
+    if wps_server_from_database is None:
+        wps_server.save()
+    else:
+        wps_server = overwrite_server(wps_server_from_database, wps_server)
+    # TODO: use? else remove
+    os.mkdir('/home/denis/Documents/serv' + str(random.randrange(1, 100)) + '/')
+
+    describe_processes_parsing(wps_server)
+    # TODO: use? else remove
+    os.mkdir('/home/denis/Documents/proc' + str(random.randrange(1, 100)) + '/')
     #server_urls = ['http://pse.rudolphrichard.de:5000/wps?request=GetCapabilities&service=WPS']
     for server_url in server_urls:
         if server_url[-1] != '/':
@@ -454,6 +532,149 @@ def parse_wps_server_info(root, namespaces, provider):
 
     return wps_server
 
+# TODO: tests, documentation
+def parse_execute_response(root):
+    """
+
+    :param root:
+    :type root:
+    :return:
+    :rtype:
+    """
+    if root.tag != ns_map["ExecuteResponse"]:
+        print(f"false document format - required: ExecuteResponse, found: {root.tag}")
+        return 1
+
+    process = root.find(ns_map["Process"])
+    process_status = root.find(ns_map["Status"])
+    outputs = root.find(ns_map["ProcessOutputs"])
+
+    # TODO get process from db as foreign key for outputs
+    try:
+        provider = WPSProvider.objects.get(provider_site=root.get('serviceInstance'))
+        wps_service = WPS.objects.get(service_provider=provider)
+    except WPS.DoesNotExist or WPSProvider.DoesNotExist:
+        provider = None
+        wps = None
+
+    if process is None:
+        print("no process found")
+        return 2
+
+    p_id = process.find(ns_map["Identifier"]).text
+
+    try:
+        proc = Process.objects.get(wps=wps_service, identifier=p_id)
+        task = Task.objects.get(process=proc)
+    except Process.DoesNotExist or Task.DoesNotExist as e:
+        print(f"{e}:\nobject does not exist in db - maybe false identifier")
+        return 2
+
+    if process_status is None:
+        print("no status found")
+        return 4
+
+    process_status = etree.QName(process_status[0].tag).localname
+
+    new_status = STATUS[3][1] if process_status in possible_stats[:2] else STATUS[4][1]\
+                                if process_status == possible_stats[3] else STATUS[5][1]
+    # print(new_status)
+    task.status = new_status
+    task.save()
+
+    if new_status != STATUS[4][1]:
+        print("task not finished yet")
+        return 4
+
+    outputs = outputs.findall(ns_map["Output"])
+
+    if outputs is None:
+        print("no outputs found")
+        return 3
+
+    for output in outputs:
+        out_id = output.find(ns_map["Identifier"])
+        out_title = output.find(ns_map["Title"])
+
+        try:
+            inout = InputOutput.objects.get(process=proc, identifier=out_id, title=out_title)
+            artefact = Artefact.objects.get(task=task, parameter=inout, role='1')
+        except InputOutput.DoesNotExist or Artefact.DoesNotExist as e:
+            print(f"{e}:\nobject does not exist in db - maybe false identifier")
+            # goto loop header
+            continue
+
+        # everything the same up to here for each output type
+
+        data_elem = output.find(ns_map["Data"])
+        reference = output.find(ns_map["Reference"])
+
+        if data_elem is not None:
+            # normal case, if status is finished
+
+            # as there is always only 1 child, just take the first
+            try:
+                data_elem = data_elem.getchildren()[0]
+            except:
+                print("data has no child")
+                # goto loop header
+                continue
+
+            if data_elem.tag == ns_map["LiteralData"]:
+                literal_format = ";".join(("dataType=" + data_elem.get("dataType"), "uom=" + data_elem.get("uom")))
+                literal_data = data_elem.text
+
+                if len(literal_data) < 490:
+                    artefact.format = literal_format
+                    artefact.data = literal_data
+                    artefact.save()
+                else:
+                    # TODO save data to file if length is >= 490, because db only takes 500 chars
+                    print()
+
+            if data_elem.tag == ns_map["BoundingBox"]:
+                lower_corner = data_elem.find(ns_map["LowerCorner"])
+                upper_corner = data_elem.find(ns_map["UpperCorner"])
+                lower_corner_info = ";".join(("LowerCorner", "crs:" + lower_corner.get("crs"),
+                                              "dimensions" + lower_corner.get("dimensions")))
+                upper_corner_info = ";".join(("UpperCorner", "crs:" + upper_corner.get("crs"),
+                                              "dimensions" + upper_corner.get("dimensions")))
+                bbox_format = "%".join((lower_corner_info, upper_corner_info))
+
+                bbox_data = ";".join(("LowerCorner:" + lower_corner.text, "UpperCorner:" + upper_corner.text))
+
+                artefact.format = bbox_format
+                artefact.data = bbox_data
+                artefact.save()
+
+            if data_elem.tag == ns_map["ComplexData"]:
+                # complex_format = "mimeType:{};encoding:{};schema:{}".format(data_elem.get("mimeType"),
+                #                                     data_elem.get("encoding"), data_elem.get("schema"))
+                complex_format = ";".join(("mimeType:" + data_elem.get("mimeType"), "encoding:" + data_elem.get("encoding"),
+                                              "schema:" + data_elem.get("schema")))
+                complex_data = None
+                complex_child = data_elem.getchildren()
+                if len(complex_child) == 0:
+                    complex_data = data_elem.text
+                elif data_elem.find(ns_map["CData"]) is not None:
+                    # cdata is base64 encoded
+                    complex_data = data_elem.find(ns_map["CData"]).text
+
+                if complex_data and len(complex_data) < 490:
+                    artefact.format = complex_format
+                    artefact.data = complex_data
+                    artefact.save()
+
+        if reference is not None:
+            # complexdata found, usually gets passed by url reference
+            # TODO test ?!
+            reference_format = "href:{};mimeType:{};encoding:{};schema:{}".format(reference.get(ns_map["href"]),
+                                        reference.get("mimeType"), reference.get("encoding"), reference.get("schema"))
+            reference_url = reference.text
+
+            artefact.format = reference_format
+            artefact.data = reference_url
+            artefact.save()
 
 
 
