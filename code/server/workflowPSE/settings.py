@@ -58,13 +58,6 @@ CRONJOBS = [
     ('*/5 * * * *', 'base.cron.update_wps_processes'),
 ]
 
-"""
-#For django cron
-CRON_CLASSES = [
-    'base.cron.FirstCronTask',
-]
-"""
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -135,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Berlin'
 
 USE_I18N = True
 
