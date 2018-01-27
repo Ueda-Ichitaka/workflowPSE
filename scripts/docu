@@ -1,0 +1,3 @@
+epydoc -v -o ../../docs/dokumentation/ --parse-only --html base/cron.py base/admin.py base/apps.py base/models.py base/tests.py base/urls.py base/utils.py base/views.py base/__init__.py workflowPSE/__init__.py workflowPSE/settings.py workflowPSE/urls.py workflowPSE/wsgi.py
+
+execute this inside server folder

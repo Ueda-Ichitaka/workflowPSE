@@ -298,14 +298,7 @@ def parse_input_info(input_element, namespaces, process):
 def parse_output_info(output_element, namespaces, process):
     """
 
-    :param output_element:
-    :type output_element:
-    :param namespaces:
-    :type namespaces:
-    :param process:
-    :type process:
-    :return:
-    :rtype:
+    
     @param output_element:
     @type output_element:
     @param namespaces:
