@@ -113,4 +113,9 @@ class DatabaseSearcherTestCase(TestCase):
         self.assertIsNone(server_from_database)
 
 
+class CronTestCase(TestCase):
 
+    def test_update_wps_processes_with_empty_database(self):
+        self.assertEqual(Process.objects.all().__len__(), 0)
+        base.cron.update_wps_processes()
+        self.assertEqual(Process.objects.all().__len__(), 0)
