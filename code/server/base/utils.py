@@ -3,6 +3,57 @@ from base.models import DATATYPE, ROLE
 import os
 import urllib.request
 import xml.etree.ElementTree as ET
+from pywps import OGCTYPE, NAMESPACES as ns
+from lxml.builder import ElementMaker
+
+E = ElementMaker()
+wps_em = ElementMaker(namespace = ns['wps'], nsmap = ns)
+ows_em = ElementMaker(namespace = ns['ows'], nsmap = ns)
+xlink_em = ElementMaker(namespace = ns['ows'], nsmap = ns)
+
+ns_map = {
+    # wps namespaced tags
+    f"Capabilities" : "{{{ns['wps']}}}Capabilities",
+    f"ProcessDescriptions" :	"{{{ns['wps']}}}ProcessDescriptions",
+    f"ExecuteResponse" : "{{{ns['wps']}}}ExecuteResponse",
+    f"Process" : "{{{ns['wps']}}}Process",
+    f"Status" : "{{{ns['wps']}}}Status",
+    f"Data" : "{{{ns['wps']}}}Data",
+    f"LiteralData" :	"{{{ns['wps']}}}LiteralData",
+    f"ComplexData" :	"{{{ns['wps']}}}ComplexData",
+    f"Output" : "{{{ns['wps']}}}Output",
+    f"ProcessOutputs" : "{{{ns['wps']}}}ProcessOutputs",
+    f"Input" : "{{{ns['wps']}}}Input",
+    f"DataInput" : "{{{ns['wps']}}}DataInput",
+    f"Default" :	"{{{ns['wps']}}}Default",
+    f"Format" : "{{{ns['wps']}}}Format",
+    f"MimeType" : "{{{ns['wps']}}}MimeType",
+    f"Supported" : "{{{ns['wps']}}}Supported",
+    f"CRS" :	"{{{ns['wps']}}}CRS",
+    f"Reference" : "{{{ns['wps']}}}Reference",
+
+    # ows namespaced tags
+    f"Identifier" : "{{{ns['ows']}}}Identifier",
+    f"Title" : "{{{ns['ows']}}}Title",
+    f"Abstract" : "{{{ns['ows']}}}Abstract",
+    f"BoundingBox" :	"{{{ns['ows']}}}BoundingBox",
+    f"DataType" : "{{{ns['ows']}}}DataType",
+    f"AllowedValues" : "{{{ns['ows']}}}AllowedValues",
+    f"Value" : "{{{ns['ows']}}}Value",
+    f"Range" : "{{{ns['ows']}}}Range",
+    f"MinimumValue" : "{{{ns['ows']}}}MinimumValue",
+    f"MaximumValue" : "{{{ns['ows']}}}MaximumValue",
+    f"LowerCorner" : "{{{ns['ows']}}}LowerCorner",
+    f"UpperCorner" : "{{{ns['ows']}}}UpperCorner",
+    f"Spacing" : "{{{ns['ows']}}}Spacing",
+    f"AnyValue" : "{{{ns['ows']}}}AnyValue",
+    f"Metadata" : "{{{ns['ows']}}}Metadata",
+
+    # xlink namespaced tags
+    f"href" : "{{{ns['xlink']}}}href",
+}
+
+possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "ProcessSucceeded", "ProcessFailed"]
 
 
 # TODO: tests, documentation

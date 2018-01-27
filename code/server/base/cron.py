@@ -7,61 +7,10 @@ from django.http import response
 import requests
 import urllib.request
 from datetime import datetime, timezone
-from pywps import OGCTYPE, NAMESPACES as ns
 from lxml import etree
-from lxml.builder import ElementMaker
+from base.utils import ns_map, possible_stats
 
 # TODO: naming convention, code formatting
-
-E = ElementMaker()
-wps_em = ElementMaker(namespace = ns['wps'], nsmap = ns)
-
-OWS = ElementMaker(namespace = ns['ows'], nsmap = ns)
-XLINK = ElementMaker(namespace = ns['ows'], nsmap = ns)
-
-ns_map = {
-    # wps namespaced tags
-    "Capabilities" : "{{{ns['wps']}}}Capabilities",
-    "ProcessDescriptions" :	"{{{ns['wps']}}}ProcessDescriptions",
-    "ExecuteResponse" : "{{{ns['wps']}}}ExecuteResponse",
-    "Process" : "{{{ns['wps']}}}Process",
-    "Status" : "{{{ns['wps']}}}Status",
-    "Data" : "{{{ns['wps']}}}Data",
-    "LiteralData" :	"{{{ns['wps']}}}LiteralData",
-    "ComplexData" :	"{{{ns['wps']}}}ComplexData",
-    "Output" : "{{{ns['wps']}}}Output",
-    "ProcessOutputs" : "{{{ns['wps']}}}ProcessOutputs",
-    "Input" : "{{{ns['wps']}}}Input",
-    "DataInput" : "{{{ns['wps']}}}DataInput",
-    "Default" :	"{{{ns['wps']}}}Default",
-    "Format" : "{{{ns['wps']}}}Format",
-    "MimeType" : "{{{ns['wps']}}}MimeType",
-    "Supported" : "{{{ns['wps']}}}Supported",
-    "CRS" :	"{{{ns['wps']}}}CRS",
-    "Reference" : "{{{ns['wps']}}}Reference",
-
-    # ows namespaced tags
-    "Identifier" : "{{{ns['ows']}}}Identifier",
-    "Title" : "{{{ns['ows']}}}Title",
-    "Abstract" : "{{{ns['ows']}}}Abstract",
-    "BoundingBox" :	"{{{ns['ows']}}}BoundingBox",
-    "DataType" : "{{{ns['ows']}}}DataType",
-    "AllowedValues" : "{{{ns['ows']}}}AllowedValues",
-    "Value" : "{{{ns['ows']}}}Value",
-    "Range" : "{{{ns['ows']}}}Range",
-    "MinimumValue" : "{{{ns['ows']}}}MinimumValue",
-    "MaximumValue" : "{{{ns['ows']}}}MaximumValue",
-    "LowerCorner" : "{{{ns['ows']}}}LowerCorner",
-    "UpperCorner" : "{{{ns['ows']}}}UpperCorner",
-    "Spacing" : "{{{ns['ows']}}}Spacing",
-    "AnyValue" : "{{{ns['ows']}}}AnyValue",
-    "Metadata" : "{{{ns['ows']}}}Metadata",
-
-    # xlink namespaced tags
-    "href" : "{{{ns['xlink']}}}href",
-}
-
-possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "ProcessSucceeded", "ProcessFailed"]
 
 # TODO: tests
 def scheduler():
