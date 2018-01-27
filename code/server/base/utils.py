@@ -1,11 +1,9 @@
-from base.models import WPSProvider, WPS, Process, InputOutput
-from base.models import DATATYPE, ROLE
-import base.cron
-import os
-import urllib.request
-import xml.etree.ElementTree as ET
+from base.models import WPSProvider, WPS, Process, InputOutput, DATATYPE, ROLE
 from pywps import OGCTYPE, NAMESPACES as ns
 from lxml.builder import ElementMaker
+import base.cron
+import urllib.request
+import xml.etree.ElementTree as ET
 
 E = ElementMaker()
 wps_em = ElementMaker(namespace = ns['wps'], nsmap = ns)

@@ -1,15 +1,11 @@
 import json
-
-#from django.shortcuts import render
-#from django.views import generic
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView, View
-# TODO: refactor to only used imports
-from base.models import *
+from base.models import InputOutput, WPSProvider, Process, Artefact, Edge, Task, Workflow, WPS
 
 
 # TODO: tests, documentation

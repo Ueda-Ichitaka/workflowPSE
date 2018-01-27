@@ -1,12 +1,10 @@
 import os, sys
-import random
 import base.utils as utils_module
 import xml.etree.ElementTree as ET
-from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, ROLE, DATATYPE, STATUS, Workflow, Edge
-from django.http import response
 import requests
 import urllib.request
-from datetime import datetime, timezone
+from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, STATUS, Workflow, Edge
+from datetime import datetime
 from lxml import etree
 from base.utils import ns_map, possible_stats
 from workflowPSE.settings import wpsLog
@@ -168,13 +166,13 @@ def sendTask(task_id, xmlDir):
         execute_url = getExecuteUrl(task)
 
         #send to url
-        file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read()) #'<?xml version="1.0" encoding="utf-8" standalone="yes"?>' +
+        file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read())
         response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file) # TODO: replace with variable
 
         #print("")
-        print("post response: ")
-        print(response.text)
-        print("")
+        #print("post response: ")
+        #print(response.text)
+        #print("")
 
         #get response from send
         xml = ET.fromstring(response.text)
@@ -185,9 +183,8 @@ def sendTask(task_id, xmlDir):
         if acceptedElement is None:
             print("An Error occured while sending Task ", task_id, " to the server, proccess not accepted")
             return
-        
-        
-        print(xml.get('statusLocation'))
+
+        #print(xml.get('statusLocation'))
 
         # write status url from response to task
         # set status to running
@@ -197,8 +194,7 @@ def sendTask(task_id, xmlDir):
         p.status = '3'
         p.started_at = datetime.now()
         p.save()
-        # TODO: delete execute xml file
-        
+
     if os.path.isfile(filepath):
         os.remove(filepath)
         

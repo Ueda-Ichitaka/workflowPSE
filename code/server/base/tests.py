@@ -1,5 +1,5 @@
 from django.test import TestCase
-from base.models import WPSProvider, WPS, Process, InputOutput
+from base.models import WPSProvider, WPS, Process
 import base.cron
 import base.utils as utils
 import xml.etree.ElementTree as ET
