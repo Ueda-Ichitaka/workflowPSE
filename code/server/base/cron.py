@@ -1,6 +1,6 @@
 import os, sys
 import random
-import base.utils as utils
+import base.utils as utils_module
 import xml.etree.ElementTree as ET
 from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, ROLE, DATATYPE, STATUS
 from django.http import response
@@ -14,7 +14,9 @@ from lxml.builder import ElementMaker
 # TODO: naming convention, code formatting
 
 E = ElementMaker()
-WPS = ElementMaker(namespace = ns['wps'], nsmap = ns)
+# TODO: please rename it. It conflicts with WPS model!
+#WPS = ElementMaker(namespace = ns['wps'], nsmap = ns)
+
 OWS = ElementMaker(namespace = ns['ows'], nsmap = ns)
 XLINK = ElementMaker(namespace = ns['ows'], nsmap = ns)
 
@@ -484,6 +486,7 @@ def update_wps_processes():
     :rtype:
     """
 
+    utils_module.add_wps_server(['http://pse.rudolphrichard.de:5000/'])
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
         'xlink': 'http://www.w3.org/1999/xlink',
@@ -503,8 +506,12 @@ def update_wps_processes():
         root = tree.getroot()
         process_elements = root.findall('ProcessDescription')
         for process_element in process_elements:
-            process = utils.parse_process_info(process_element, xml_namespaces, wps_server)
-            process.save()
+            process = utils_module.parse_process_info(process_element, xml_namespaces, wps_server)
+            process_from_database = utils_module.search_process_in_database(process)
+            if process_from_database is None:
+                process.save()
+            else:
+                process = utils_module.overwrite_process(process_from_database, process)
 
     ###Save Inputs
             inputs_container_element = process_element.find('DataInputs')
@@ -512,7 +519,7 @@ def update_wps_processes():
                 input_elements = inputs_container_element.findall('Input')
 
                 for input_element in input_elements:
-                    input = utils.parse_input_info(input_element, xml_namespaces, process)
+                    input = utils_module.parse_input_info(input_element, xml_namespaces, process)
                     input.save()
 
 
@@ -522,5 +529,5 @@ def update_wps_processes():
                 output_elements = outputs_container_element.findall('Output')
 
                 for output_element in output_elements:
-                    output = utils.parse_output_info(output_element, xml_namespaces, process)
+                    output = utils_module.parse_output_info(output_element, xml_namespaces, process)
                     output.save()

@@ -1,6 +1,6 @@
 from base.models import WPSProvider, WPS, Process, InputOutput
 from base.models import DATATYPE, ROLE
-import base.cron
+import os
 import urllib.request
 import xml.etree.ElementTree as ET
 
@@ -63,10 +63,10 @@ def search_provider_in_database(service_provider):
     """
     Check that the service_provider instance given in parameter
     is not already in database.
-    Assumption: the istances are equal, if their 'provider_name' and
-    'provider_site' attributes are equal
+    The istances are equal, if their 'provider_name' and
+    'provider_site' fields are equal
     If database has the same instance, it will be returned.
-    If database not contains instance, it will be saved.
+    If database not contains instance, None will be returned.
 
     :param service_provider: A instance of service_provider
     :type service_provider: WPSProvider
@@ -85,10 +85,10 @@ def search_server_in_database(wps_server):
     """
     Check that the wps_service instance given in parameter
     is not already in database.
-    Assumption: the instances are equal, if their 'title' attributes
+    The instances are equal, if their 'title' fields
     are equal.
     If database has the same instance, it will be returned.
-    If database not contains instance, it will be saved.
+    If database not contains instance, None will be returned.
 
     :param wps_server: An instance of wps_server
     :type wps_server: WPS
@@ -101,6 +101,25 @@ def search_server_in_database(wps_server):
 
     return None
 
+
+def search_process_in_database(parsed_process):
+    """
+    Check that the wps process instance given in parameter
+    is not already in database.
+    The instances are equal, if their 'identifier' fields
+    are equal
+    If database has the same instance, it will be returned.
+    If database not contains instance, None will be returned.
+    :param parsed_process: An instance od process
+    :type parsed_process: Process
+    :return: saved instance | None
+    :rtype: Process | None
+    """
+    for process_from_database in Process.objects.all():
+        if process_from_database.identifier == parsed_process.identifier:
+            return process_from_database
+
+    return None
 
 # TODO: tests, documentation
 def overwrite_server(old_entry, new_entry):
@@ -117,6 +136,20 @@ def overwrite_server(old_entry, new_entry):
     old_entry.capabilities_url = new_entry.capabilities_url
     old_entry.describe_url = new_entry.describe_url
     old_entry.execute_url = new_entry.execute_url
+
+    old_entry.save()
+    return old_entry
+
+
+def overwrite_process(old_entry, new_entry):
+    """
+
+    :param old_entry:
+    :param new_entry:
+    :return:
+    """
+    old_entry.title = new_entry.title
+    old_entry.abstract = new_entry.abstract
 
     old_entry.save()
     return old_entry

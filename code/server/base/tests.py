@@ -40,7 +40,8 @@ class ParsingTestCase(TestCase):
 
     def test_add_wps_server(self):
         test_url = ['http://pse.rudolphrichard.de:5000']
-        base.utils.add_wps_server(test_url)
+        #base.utils.add_wps_server(test_url)
+        base.cron.update_wps_processes()
         print(WPS.objects.all(), WPSProvider.objects.all())
 
         print(str(Process.objects.all().__len__()) + ' processes available')
