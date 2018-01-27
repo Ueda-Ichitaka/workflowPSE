@@ -9,6 +9,7 @@ from lxml import etree
 from base.utils import ns_map, possible_stats
 from workflowPSE.settings import wpsLog
 from pathlib import Path
+from io import StringIO
 
 # TODO: naming convention, code formatting
 
@@ -237,7 +238,30 @@ def receiver():
     #      check response url
     #        check for changes to db 
     #        update db data
-    pass
+
+    # loop all running tasks
+    # overwrite status if changed
+    # if task is finished, write data to db
+    running_tasks = list(Task.objects.filter(status='3').values())
+    # wpsLog.info(running_tasks)
+    wpsLog.info("receiver starting")
+    for task in running_tasks:
+        wpsLog.info("woop")
+        wpsLog.info(task['id'])
+        wpsLog.info(task["status_url"])
+
+        doc = None
+
+        try:
+            doc = etree.parse(StringIO(requests.get(task["status_url"]).text))
+        except:
+            wpsLog.info(f"request for task {task['id']} could not be parsed")
+            continue
+
+        wpsLog.info("parsing")
+        parse_execute_response(doc.getroot())
+        #wpsLog.info(etree.tostring(doc, pretty_print=True))
+
 
 
 # TODO: tests, documentation, implement
@@ -266,7 +290,7 @@ def xmlParser():
 
 
 # TODO: tests, documentation
-def parse_execute_response(xml_file):
+def parse_execute_response(root):
     """
 
     @param root:
@@ -274,12 +298,6 @@ def parse_execute_response(xml_file):
     @return:
     @rtype:
     """
-
-    root = etree.XML(xml_file.read())
-
-    if root.tag != ns_map["ExecuteResponse"]:
-        print(f"false document format - required: ExecuteResponse, found: {root.tag}")
-        return 1
 
     process = root.find(ns_map["Process"])
     process_status = root.find(ns_map["Status"])
