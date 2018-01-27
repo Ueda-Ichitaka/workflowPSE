@@ -329,7 +329,7 @@ def parse_execute_response(xml_file):
         wps = None
 
     if process is None:
-        print("no process found")
+        wpsLog.info("no process found")
         return 2
 
     p_id = process.find(ns_map["Identifier"]).text
@@ -338,11 +338,11 @@ def parse_execute_response(xml_file):
         proc = Process.objects.get(wps=wps_service, identifier=p_id)
         task = Task.objects.get(process=proc)
     except Process.DoesNotExist or Task.DoesNotExist as e:
-        print(f"{e}:\nobject does not exist in db - maybe false identifier")
+        wpsLog.info(f"{e}:\nobject does not exist in db - maybe false identifier")
         return 2
 
     if process_status is None:
-        print("no status found")
+        wpsLog.info("no status found")
         return 4
 
     process_status = etree.QName(process_status[0].tag).localname
@@ -354,13 +354,13 @@ def parse_execute_response(xml_file):
     task.save()
 
     if new_status != STATUS[4][1]:
-        print("task not finished yet")
+        wpsLog.info("task not finished yet")
         return 4
 
     outputs = outputs.findall(ns_map["Output"])
 
     if outputs is None:
-        print("no outputs found")
+        wpsLog.info("no outputs found")
         return 3
 
     for output in outputs:
@@ -371,7 +371,7 @@ def parse_execute_response(xml_file):
             inout = InputOutput.objects.get(process=proc, identifier=out_id, title=out_title)
             artefact = Artefact.objects.get(task=task, parameter=inout, role='1')
         except InputOutput.DoesNotExist or Artefact.DoesNotExist as e:
-            print(f"{e}:\nobject does not exist in db - maybe false identifier")
+            wpsLog.info(f"{e}:\nobject does not exist in db - maybe false identifier")
             # goto loop header
             continue
 
@@ -387,7 +387,7 @@ def parse_execute_response(xml_file):
             try:
                 data_elem = data_elem.getchildren()[0]
             except:
-                print("data has no child")
+                wpsLog.info("data has no child")
                 # goto loop header
                 continue
 
@@ -401,7 +401,7 @@ def parse_execute_response(xml_file):
                     artefact.save()
                 else:
                     # TODO save data to file if length is >= 490, because db only takes 500 chars
-                    print()
+                    wpsLog.info("")
 
             if data_elem.tag == ns_map["BoundingBox"]:
                 lower_corner = data_elem.find(ns_map["LowerCorner"])

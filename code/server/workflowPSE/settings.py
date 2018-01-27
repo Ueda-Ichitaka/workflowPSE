@@ -16,11 +16,11 @@ import os, logging
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')  #
-filehandler = logging.FileHandler(BASE_DIR + 'TMate.log', mode='a')
+filehandler = logging.FileHandler(BASE_DIR + '/wps.log', mode='a')
 filehandler.setFormatter(formatter)
 #streamHandler = logging.StreamHandler()
 #streamHandler.setFormatter(formatter)
-wpsLog = logging.getLogger('TMate')
+wpsLog = logging.getLogger('wps')
 
 wpsLog.setLevel(logging.INFO)
 wpsLog.addHandler(filehandler)
