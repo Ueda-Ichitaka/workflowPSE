@@ -14,12 +14,7 @@ from lxml.builder import ElementMaker
 # TODO: naming convention, code formatting
 
 E = ElementMaker()
-# TODO: please rename it. It conflicts with WPS model!
-<<<<<<< HEAD
-#WPS = ElementMaker(namespace = ns['wps'], nsmap = ns)
-=======
 wps_em = ElementMaker(namespace = ns['wps'], nsmap = ns)
->>>>>>> changed xml gen status to waiting; added check for valid process accepted;
 
 OWS = ElementMaker(namespace = ns['ows'], nsmap = ns)
 XLINK = ElementMaker(namespace = ns['ows'], nsmap = ns)
@@ -70,33 +65,26 @@ possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "Process
 
 # TODO: tests
 def scheduler():
-<<<<<<< HEAD
-   """
-
-   @return:
-   @rtype:
-   """
-
-   for x in Workflow.objects.all():
-       for y in Task.objects.filter(workflow = x, status = 1):
-           previous_tasks_finished = True
-           for z in Edge.objects.filter(to_task = y):
-               if z.from_task.status == '4':
-                   previous_tasks_finished = True
-               else:
-                   previous_tasks_finished = False
-                   break
-           if previous_tasks_finished:
-               y.status = '2'
-               y.save()
-
-=======
     """
  
     @return:
     @rtype:
     """
->>>>>>> changed xml gen status to waiting; added check for valid process accepted;
+
+    for x in Workflow.objects.all():
+        for y in Task.objects.filter(workflow = x, status = 1):
+            previous_tasks_finished = True
+            for z in Edge.objects.filter(to_task = y):
+                if z.from_task.status == '4':
+                    previous_tasks_finished = True
+                else:
+                    previous_tasks_finished = False
+                    break
+            if previous_tasks_finished:
+                y.status = '2'
+                y.save()
+
+    
     # TODO: set to changeable by settings & config file
     outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
     xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
