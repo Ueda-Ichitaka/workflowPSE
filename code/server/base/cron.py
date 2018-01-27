@@ -9,6 +9,7 @@ import urllib.request
 from datetime import datetime, timezone
 from lxml import etree
 from base.utils import ns_map, possible_stats
+from workflowPSE.settings import wpsLog
 
 # TODO: naming convention, code formatting
 
@@ -300,7 +301,7 @@ def deleteOldFiles():
 
 
 # TODO: tests, documentation
-def parse_execute_response(root):
+def parse_execute_response(xml_file):
     """
 
     @param root:
@@ -308,6 +309,9 @@ def parse_execute_response(root):
     @return:
     @rtype:
     """
+
+    root = etree.XML(xml_file.read())
+
     if root.tag != ns_map["ExecuteResponse"]:
         print(f"false document format - required: ExecuteResponse, found: {root.tag}")
         return 1
@@ -427,10 +431,11 @@ def parse_execute_response(root):
                     # cdata is base64 encoded
                     complex_data = data_elem.find(ns_map["CData"]).text
 
-                if complex_data and len(complex_data) < 490:
-                    artefact.format = complex_format
-                    artefact.data = complex_data
-                    artefact.save()
+                if complex_data:
+                    if len(complex_data) < 490:
+                        artefact.format = complex_format
+                        artefact.data = complex_data
+                        artefact.save()
 
         if reference is not None:
             # complexdata found, usually gets passed by url reference

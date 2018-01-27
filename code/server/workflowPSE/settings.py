@@ -10,11 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os
+import os, logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')  #
+filehandler = logging.FileHandler(BASE_DIR + 'TMate.log', mode='a')
+filehandler.setFormatter(formatter)
+#streamHandler = logging.StreamHandler()
+#streamHandler.setFormatter(formatter)
+wpsLog = logging.getLogger('TMate')
+
+wpsLog.setLevel(logging.INFO)
+wpsLog.addHandler(filehandler)
+#tmLog.addHandler(streamHandler) # stream handler is just used for output to console, so we might not need it here
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
