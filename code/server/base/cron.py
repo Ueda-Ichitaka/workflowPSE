@@ -6,7 +6,7 @@ from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, 
 from django.http import response
 import requests
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timezone
 from pywps import OGCTYPE, NAMESPACES as ns
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -15,7 +15,11 @@ from lxml.builder import ElementMaker
 
 E = ElementMaker()
 # TODO: please rename it. It conflicts with WPS model!
+<<<<<<< HEAD
 #WPS = ElementMaker(namespace = ns['wps'], nsmap = ns)
+=======
+wps_em = ElementMaker(namespace = ns['wps'], nsmap = ns)
+>>>>>>> changed xml gen status to waiting; added check for valid process accepted;
 
 OWS = ElementMaker(namespace = ns['ows'], nsmap = ns)
 XLINK = ElementMaker(namespace = ns['ows'], nsmap = ns)
@@ -66,6 +70,7 @@ possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "Process
 
 # TODO: tests
 def scheduler():
+<<<<<<< HEAD
    """
 
    @return:
@@ -85,6 +90,13 @@ def scheduler():
                y.status = '2'
                y.save()
 
+=======
+    """
+ 
+    @return:
+    @rtype:
+    """
+>>>>>>> changed xml gen status to waiting; added check for valid process accepted;
     # TODO: set to changeable by settings & config file
     outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
     xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
@@ -113,7 +125,7 @@ def xmlGenerator(xmlDir):
     @return:
     @rtype:
     """
-    task_list = list(Task.objects.filter(status='1').values())
+    task_list = list(Task.objects.filter(status='2').values())
     for task in task_list:
 
         #print("")
@@ -219,7 +231,13 @@ def sendTask(task_id, xmlDir):
         xml = ET.fromstring(response.text)
 
         # TODO: check response for errors
-        # response should be 
+        # response should be
+        acceptedElement = xml.find('wps:ProcessAccepted')
+        if acceptedElement is None:
+            print("An Error occured when sending Task ", task_id, " to the server")
+            return
+        
+        
 
         print(xml.get('statusLocation'))
 
@@ -229,7 +247,7 @@ def sendTask(task_id, xmlDir):
         p = Task.objects.get(id=task_id)
         p.status_url = xml.get('statusLocation')
         p.status = '3'
-        p.started_at = datetime.now()
+        p.started_at = timezone.now()
         p.save()
         # TODO: delete execute xml file
 
