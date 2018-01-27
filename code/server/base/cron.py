@@ -278,8 +278,16 @@ def deleteOldFiles():
 # TODO: tests, documentation
 def add_wps_server(server_urls):
     """
+    This method add new wps server to the database.
+    It receives a list of server urls as parameter from the admin page
+    and creates new wps server and service provider objects, which will saved
+    in the database.
+
+    After that the method update_wps_processes will called.
+
     :param server_urls: List of urls given by admin on admin page
-    :return:
+    :type server_urls: str list
+    :return: None
     :rtype:
     """
 
@@ -322,14 +330,19 @@ def add_wps_server(server_urls):
     update_wps_processes()
 
 
-# TODO: tests, documentation
 def search_provider_in_database(service_provider):
     """
+    Check that the service_provider instance given in parameter
+    is not already in database.
+    Assumption: the istances are equal, if their 'provider_name' and
+    'provider_site' attributs are equal
+    If database has the same instance, it will be returned.
+    If database not contains instance, it will be saved.
 
-    :param service_provider:
-    :type service_provider:
-    :return:
-    :rtype:
+    :param service_provider: A instance of service_provider
+    :type service_provider: WPSProvider
+    :return: saved instance | None
+    :rtype: WPSProvider | None
     """
     for provider in WPSProvider.objects.all():
         if service_provider.provider_name == provider.provider_name \
@@ -339,14 +352,18 @@ def search_provider_in_database(service_provider):
     return None
 
 
-# TODO: tests, documentation
 def search_server_in_database(wps_server):
     """
-
-    :param wps_server:
-    :type wps_server:
-    :return:
-    :rtype:
+    Check that the wps_service instance given in parameter
+    is not already in database.
+    Assumption: the instances are equal, if their 'title' attributs
+    are equal.
+    If database has the same instance, it will be returned.
+    If database not contains instance, it will be saved.
+    :param wps_server: An instance of wps_server
+    :type wps_server: WPS
+    :return: saved instance | None
+    :rtype: WPS | None
     """
     for server in WPS.objects.all():
         if server.title == wps_server.title:
@@ -450,11 +467,6 @@ def update_wps_processes():
     :return:
     :rtype:
     """
-    # Works only with absolute path.
-    # In future will work with url
-    # TODO: change to http request
-
-    #desc_proc_url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/wpsDescribeProcesses.xml'
 
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
