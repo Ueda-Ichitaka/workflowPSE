@@ -72,12 +72,12 @@
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">None</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#scheduler" class="summary-sig-name">scheduler</a>()</span><br />
-      Returns:</td>
+      Main scheduling function.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#scheduler">source&nbsp;code</a></span>
             
@@ -89,12 +89,13 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">None</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#xmlGenerator" class="summary-sig-name">xmlGenerator</a>(<span class="summary-sig-arg">xmlDir</span>)</span><br />
-      generates xml for every task set to ready</td>
+      Traverses Database and generates execution XMLL files for every Task 
+      set to status WAITING</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#xmlGenerator">source&nbsp;code</a></span>
             
@@ -106,13 +107,13 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">None</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#sendTask" class="summary-sig-name">sendTask</a>(<span class="summary-sig-arg">task_id</span>,
         <span class="summary-sig-arg">xmlDir</span>)</span><br />
-      Returns:</td>
+      Sends a Task identified by its Database ID to its WPS Server.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#sendTask">source&nbsp;code</a></span>
             
@@ -124,12 +125,12 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">string</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#getExecuteUrl" class="summary-sig-name">getExecuteUrl</a>(<span class="summary-sig-arg">task</span>)</span><br />
-      Returns:</td>
+      Extracts the Execute URL from the Database for a given task.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#getExecuteUrl">source&nbsp;code</a></span>
             
@@ -229,41 +230,7 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#listExistingFiles" class="summary-sig-name">listExistingFiles</a>()</span><br />
-      Returns:</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#listExistingFiles">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#deleteOldFiles" class="summary-sig-name">deleteOldFiles</a>()</span><br />
-      Returns:</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#deleteOldFiles">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#parse_execute_response" class="summary-sig-name">parse_execute_response</a>(<span class="summary-sig-arg">root</span>)</span><br />
+          <td><span class="summary-sig"><a href="base.cron-module.html#parse_execute_response" class="summary-sig-name">parse_execute_response</a>(<span class="summary-sig-arg">xml_file</span>)</span><br />
       Returns:</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#parse_execute_response">source&nbsp;code</a></span>
@@ -289,75 +256,6 @@
         </tr>
       </table>
       
-    </td>
-  </tr>
-</table>
-<!-- ==================== VARIABLES ==================== -->
-<a name="section-Variables"></a>
-<table class="summary" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Variables</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-Variables"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="E"></a><span class="summary-name">E</span> = <code title="ElementMaker()">ElementMaker()</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="WPS"></a><span class="summary-name">WPS</span> = <code title="ElementMaker(namespace= ns ['wps'], nsmap= ns)">ElementMaker(namespace= ns ['wps'], nsmap= ns)</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="OWS"></a><span class="summary-name">OWS</span> = <code title="ElementMaker(namespace= ns ['ows'], nsmap= ns)">ElementMaker(namespace= ns ['ows'], nsmap= ns)</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="XLINK"></a><span class="summary-name">XLINK</span> = <code title="ElementMaker(namespace= ns ['ows'], nsmap= ns)">ElementMaker(namespace= ns ['ows'], nsmap= ns)</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="base.cron-module.html#ns_map" class="summary-name">ns_map</a> = <code title="{&quot;Capabilities&quot;: &quot;{{{ns['wps']}}}Capabilities&quot;, &quot;ProcessDescriptions&quot;:\
- &quot;{{{ns['wps']}}}ProcessDescriptions&quot;, &quot;ExecuteResponse&quot;: &quot;{{{ns['wps'\
-]}}}ExecuteResponse&quot;, &quot;Process&quot;: &quot;{{{ns['wps']}}}Process&quot;, &quot;Status&quot;: &quot;\
-{{{ns['wps']}}}Status&quot;, &quot;Data&quot;: &quot;{{{ns['wps']}}}Data&quot;, &quot;LiteralData&quot;: \
-&quot;{{{ns['wps']}}}LiteralData&quot;, &quot;ComplexData&quot;: &quot;{{{ns['wps']}}}ComplexDa\
-ta&quot;, &quot;Output&quot;: &quot;{{{ns['wps']}}}Output&quot;, &quot;ProcessOutputs&quot;: &quot;{{{ns['wps'\
-]}}}ProcessOutputs&quot;, &quot;Input&quot;: &quot;{{{ns['wps']}}}Input&quot;, &quot;DataInput&quot;: &quot;{{\
-{ns['wps']}}}DataInput&quot;, &quot;Default&quot;: &quot;{{{ns['wps']}}}Default&quot;, &quot;Format&quot;\
-...">{&quot;Capabilities&quot;: &quot;{{{ns['wps']}}}Capabilities&quot;, &quot;Proc<code class="variable-ellipsis">...</code></code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="base.cron-module.html#possible_stats" class="summary-name">possible_stats</a> = <code title="[&quot;ProcessAccepted&quot;, &quot;ProcessStarted&quot;, &quot;ProcessPaused&quot;, &quot;ProcessSucceed\
-ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;ProcessStarted&quot;, &quot;Proces<code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
 </table>
@@ -393,8 +291,12 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  
+  <p>Main scheduling function. Schedules Tasks in Workflows according to 
+  their execution order, generates execution XML files and sends tasks to 
+  their server for execution</p>
   <dl class="fields">
+    <dt>Returns: None</dt>
+        <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -412,12 +314,15 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  <p>generates xml for every task set to ready</p>
+  <p>Traverses Database and generates execution XMLL files for every Task 
+  set to status WAITING</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>xmlDir</code></strong> ()</li>
+        <li><strong class="pname"><code>xmlDir</code></strong> (string) - Directory where XMLs are generated in</li>
     </ul></dd>
+    <dt>Returns: None</dt>
+        <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -436,13 +341,15 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  
+  <p>Sends a Task identified by its Database ID to its WPS Server.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>task_id</code></strong> ()</li>
-        <li><strong class="pname"><code>xmlDir</code></strong> ()</li>
+        <li><strong class="pname"><code>task_id</code></strong> (int) - ID of Task in Database</li>
+        <li><strong class="pname"><code>xmlDir</code></strong> (string) - Directory where XMLs are stored in</li>
     </ul></dd>
+    <dt>Returns: None</dt>
+        <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -460,12 +367,15 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  
+  <p>Extracts the Execute URL from the Database for a given task. Returns 
+  empty string on error.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>task</code></strong> ()</li>
+        <li><strong class="pname"><code>task</code></strong> (Task) - Task object from Database</li>
     </ul></dd>
+    <dt>Returns: string</dt>
+        <dd>Execute URL. Empty on error or empty DB field</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -545,44 +455,6 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
   </dl>
 </td></tr></table>
 </div>
-<a name="listExistingFiles"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">listExistingFiles</span>()</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#listExistingFiles">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  
-  <dl class="fields">
-  </dl>
-</td></tr></table>
-</div>
-<a name="deleteOldFiles"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">deleteOldFiles</span>()</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#deleteOldFiles">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  
-  <dl class="fields">
-  </dl>
-</td></tr></table>
-</div>
 <a name="parse_execute_response"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -590,7 +462,7 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_execute_response</span>(<span class="sig-arg">root</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_execute_response</span>(<span class="sig-arg">xml_file</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="base.cron-pysrc.html#parse_execute_response">source&nbsp;code</a></span>&nbsp;
@@ -626,70 +498,6 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
 </td></tr></table>
 </div>
 <br />
-<!-- ==================== VARIABLES DETAILS ==================== -->
-<a name="section-VariablesDetails"></a>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Variables Details</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-VariablesDetails"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
-</tr>
-</table>
-<a name="ns_map"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <h3 class="epydoc">ns_map</h3>
-  
-  <dl class="fields">
-  </dl>
-  <dl class="fields">
-    <dt>Value:</dt>
-      <dd><table><tr><td><pre class="variable">
-{&quot;Capabilities&quot;: &quot;{{{ns['wps']}}}Capabilities&quot;, &quot;ProcessDescriptions&quot;:<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
- &quot;{{{ns['wps']}}}ProcessDescriptions&quot;, &quot;ExecuteResponse&quot;: &quot;{{{ns['wps'<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-]}}}ExecuteResponse&quot;, &quot;Process&quot;: &quot;{{{ns['wps']}}}Process&quot;, &quot;Status&quot;: &quot;<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-{{{ns['wps']}}}Status&quot;, &quot;Data&quot;: &quot;{{{ns['wps']}}}Data&quot;, &quot;LiteralData&quot;: <span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-&quot;{{{ns['wps']}}}LiteralData&quot;, &quot;ComplexData&quot;: &quot;{{{ns['wps']}}}ComplexDa<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-ta&quot;, &quot;Output&quot;: &quot;{{{ns['wps']}}}Output&quot;, &quot;ProcessOutputs&quot;: &quot;{{{ns['wps'<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-]}}}ProcessOutputs&quot;, &quot;Input&quot;: &quot;{{{ns['wps']}}}Input&quot;, &quot;DataInput&quot;: &quot;{{<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-{ns['wps']}}}DataInput&quot;, &quot;Default&quot;: &quot;{{{ns['wps']}}}Default&quot;, &quot;Format&quot;<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-<code class="variable-ellipsis">...</code>
-</pre></td></tr></table>
-</dd>
-  </dl>
-</td></tr></table>
-</div>
-<a name="possible_stats"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <h3 class="epydoc">possible_stats</h3>
-  
-  <dl class="fields">
-  </dl>
-  <dl class="fields">
-    <dt>Value:</dt>
-      <dd><table><tr><td><pre class="variable">
-[&quot;ProcessAccepted&quot;, &quot;ProcessStarted&quot;, &quot;ProcessPaused&quot;, &quot;ProcessSucceed<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-ed&quot;, &quot;ProcessFailed&quot;]
-</pre></td></tr></table>
-</dd>
-  </dl>
-</td></tr></table>
-</div>
-<br />
 <!-- ==================== NAVIGATION BAR ==================== -->
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
@@ -713,7 +521,7 @@ ed&quot;, &quot;ProcessFailed&quot;]
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sat Jan 27 14:31:20 2018
+    Generated by Epydoc 3.0.1 on Sat Jan 27 21:52:21 2018
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

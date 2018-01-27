@@ -48,7 +48,7 @@ def scheduler():
     xmlGenerator(xmlDir)
 
     #send task
-    #sendTask(2, xmlDir)
+    sendTask(2, xmlDir)
 
     sys.stdout = orig_stdout
     f.close()
@@ -179,6 +179,7 @@ def sendTask(task_id, xmlDir):
     p.status_url = xml.get('statusLocation')
     p.status = '3'
     p.started_at = datetime.now()
+    print(p.started_at)
     p.save()
 
     # Delete execution XML

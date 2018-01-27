@@ -147,6 +147,25 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a href="base.utils-module.html#search_input_output_in_database" class="summary-sig-name">search_input_output_in_database</a>(<span class="summary-sig-arg">parsed_input_output</span>)</span><br />
+      The instances are equal, if their 'identifier' fields are equal,they 
+      have the same role (Input or Output) and they belong to the same 
+      process.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.utils-pysrc.html#search_input_output_in_database">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="base.utils-module.html#overwrite_server" class="summary-sig-name">overwrite_server</a>(<span class="summary-sig-arg">old_entry</span>,
         <span class="summary-sig-arg">new_entry</span>)</span><br />
       Returns:</td>
@@ -170,6 +189,24 @@
       Returns:</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#overwrite_process">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="overwrite_input_output"></a><span class="summary-sig-name">overwrite_input_output</span>(<span class="summary-sig-arg">old_entry</span>,
+        <span class="summary-sig-arg">new_entry</span>)</span><br />
+      :param old_entry: :param new_entry: :return:</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.utils-pysrc.html#overwrite_input_output">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -269,6 +306,75 @@
         </tr>
       </table>
       
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="E"></a><span class="summary-name">E</span> = <code title="ElementMaker()">ElementMaker()</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="wps_em"></a><span class="summary-name">wps_em</span> = <code title="ElementMaker(namespace= ns ['wps'], nsmap= ns)">ElementMaker(namespace= ns ['wps'], nsmap= ns)</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ows_em"></a><span class="summary-name">ows_em</span> = <code title="ElementMaker(namespace= ns ['ows'], nsmap= ns)">ElementMaker(namespace= ns ['ows'], nsmap= ns)</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="xlink_em"></a><span class="summary-name">xlink_em</span> = <code title="ElementMaker(namespace= ns ['ows'], nsmap= ns)">ElementMaker(namespace= ns ['ows'], nsmap= ns)</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="base.utils-module.html#ns_map" class="summary-name">ns_map</a> = <code title="{f &quot;Capabilities&quot;: &quot;{{{ns['wps']}}}Capabilities&quot;, f &quot;ProcessDescriptio\
+ns&quot;: &quot;{{{ns['wps']}}}ProcessDescriptions&quot;, f &quot;ExecuteResponse&quot;: &quot;{{{ns\
+['wps']}}}ExecuteResponse&quot;, f &quot;Process&quot;: &quot;{{{ns['wps']}}}Process&quot;, f &quot;\
+Status&quot;: &quot;{{{ns['wps']}}}Status&quot;, f &quot;Data&quot;: &quot;{{{ns['wps']}}}Data&quot;, f &quot;\
+LiteralData&quot;: &quot;{{{ns['wps']}}}LiteralData&quot;, f &quot;ComplexData&quot;: &quot;{{{ns['w\
+ps']}}}ComplexData&quot;, f &quot;Output&quot;: &quot;{{{ns['wps']}}}Output&quot;, f &quot;ProcessOu\
+tputs&quot;: &quot;{{{ns['wps']}}}ProcessOutputs&quot;, f &quot;Input&quot;: &quot;{{{ns['wps']}}}In\
+put&quot;, f &quot;DataInput&quot;: &quot;{{{ns['wps']}}}DataInput&quot;, f &quot;Default&quot;: &quot;{{{ns['\
+...">{f &quot;Capabilities&quot;: &quot;{{{ns['wps']}}}Capabilities&quot;, f &quot;<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="base.utils-module.html#possible_stats" class="summary-name">possible_stats</a> = <code title="[&quot;ProcessAccepted&quot;, &quot;ProcessStarted&quot;, &quot;ProcessPaused&quot;, &quot;ProcessSucceed\
+ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;ProcessStarted&quot;, &quot;Proces<code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
 </table>
@@ -400,6 +506,27 @@
     </ul></dd>
     <dt>Returns: Process | None</dt>
         <dd>saved instance | None</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="search_input_output_in_database"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">search_input_output_in_database</span>(<span class="sig-arg">parsed_input_output</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.utils-pysrc.html#search_input_output_in_database">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>The instances are equal, if their 'identifier' fields are equal,they 
+  have the same role (Input or Output) and they belong to the same process.
+  :param parsed_input_output: :return:</p>
+  <dl class="fields">
   </dl>
 </td></tr></table>
 </div>
@@ -587,6 +714,70 @@
 </td></tr></table>
 </div>
 <br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="ns_map"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ns_map</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+{f &quot;Capabilities&quot;: &quot;{{{ns['wps']}}}Capabilities&quot;, f &quot;ProcessDescriptio<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ns&quot;: &quot;{{{ns['wps']}}}ProcessDescriptions&quot;, f &quot;ExecuteResponse&quot;: &quot;{{{ns<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+['wps']}}}ExecuteResponse&quot;, f &quot;Process&quot;: &quot;{{{ns['wps']}}}Process&quot;, f &quot;<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+Status&quot;: &quot;{{{ns['wps']}}}Status&quot;, f &quot;Data&quot;: &quot;{{{ns['wps']}}}Data&quot;, f &quot;<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+LiteralData&quot;: &quot;{{{ns['wps']}}}LiteralData&quot;, f &quot;ComplexData&quot;: &quot;{{{ns['w<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ps']}}}ComplexData&quot;, f &quot;Output&quot;: &quot;{{{ns['wps']}}}Output&quot;, f &quot;ProcessOu<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+tputs&quot;: &quot;{{{ns['wps']}}}ProcessOutputs&quot;, f &quot;Input&quot;: &quot;{{{ns['wps']}}}In<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+put&quot;, f &quot;DataInput&quot;: &quot;{{{ns['wps']}}}DataInput&quot;, f &quot;Default&quot;: &quot;{{{ns['<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="possible_stats"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">possible_stats</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+[&quot;ProcessAccepted&quot;, &quot;ProcessStarted&quot;, &quot;ProcessPaused&quot;, &quot;ProcessSucceed<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ed&quot;, &quot;ProcessFailed&quot;]
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
 <!-- ==================== NAVIGATION BAR ==================== -->
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
@@ -610,7 +801,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sat Jan 27 14:31:20 2018
+    Generated by Epydoc 3.0.1 on Sat Jan 27 21:52:21 2018
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
