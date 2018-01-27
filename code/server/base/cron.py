@@ -15,9 +15,9 @@ from pathlib import Path
 # TODO: tests
 def scheduler():
     """
- 
-    @return:
-    @rtype:
+    Main scheduling function. Schedules Tasks in Workflows according to their execution order, generates execution XML files and sends tasks to their server for execution
+    @return: None
+    @rtype: None
     """
     
     # TODO: set to changeable by settings & config file
@@ -44,11 +44,6 @@ def scheduler():
                 current_task.status = '2'
                 current_task.save()
 
-    
-
-
-
-
     #generate execute xmls for all tasks with status waiting
     xmlGenerator(xmlDir)
 
@@ -59,20 +54,20 @@ def scheduler():
     f.close()
 
 
-# TODO: tests, documentation
+# TODO: tests
 def xmlGenerator(xmlDir):
     """
-    generates xml for every task set to ready
-    @param xmlDir:
-    @type xmlDir:
-    @return:
-    @rtype:
+    Traverses Database and generates execution XMLL files for every Task set to status WAITING
+    @param xmlDir: Directory where XMLs are generated in
+    @type xmlDir: string
+    @return: None
+    @rtype: None
     """
+    # Traverse Task table entries with status WAITING
     task_list = list(Task.objects.filter(status='2').values())
     for task in task_list:
 
-        #print("")
-
+        # Create root node
         root = ET.Element('wps:Execute')
         root.set('service', 'WPS')
         root.set('version', '1.0.0')
@@ -82,18 +77,22 @@ def xmlGenerator(xmlDir):
         root.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
         root.set('xsi:schemaLocation', 'http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd')
 
-
+        # Traverse Process table entries with id of task
         process_list = list(Process.objects.filter(id=task["process_id"]).values())
         for process in process_list:
 
+            # Create Identifier node
             identifier = ET.SubElement(root, 'ows:Identifier')
             identifier.text = process["identifier"]
 
+        # Create DataInputs node
         inputs = ET.SubElement(root, 'wps:DataInputs')
 
+        # Traverse InputOutput table entries linked to Process
         input_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='0').values())
         for input in input_list:
 
+            # Create Input node
             inputElement = ET.SubElement(inputs, 'wps:Input')
             inputIdent = ET.SubElement(inputElement, 'ows:Identifier')
             inputTitle = ET.SubElement(inputElement, 'ows:Title')
@@ -101,7 +100,7 @@ def xmlGenerator(xmlDir):
             inputIdent.text = input["identifier"]
             inputTitle.text = input["title"]
 
-
+            # Traverse Artefact table entries linked to Process
             artefact_list = list(Artefact.objects.filter(task_id=task["id"], parameter=input["id"]).values())
             for artefact in artefact_list:
 
@@ -113,12 +112,12 @@ def xmlGenerator(xmlDir):
                 elif type == '2':
                     type = "BoundingBoxData"
 
+                # Create Data node
                 data = ET.SubElement(inputData, 'wps:' + type)
                 data.text = artefact["data"]
                 data.set('datatype', artefact["format"])
 
-                #print("datatype: ", input["datatype"], " ", dict(DATATYPE).get(input["datatype"]))
-
+        # Create ResponseForm node for status url
         responseForm = ET.SubElement(root, 'wps:ResponseForm')
         responseDoc = ET.SubElement(responseForm, 'wps:ResponseDocument')
         responseDoc.set('storeExecuteResponse', 'true')
@@ -135,87 +134,72 @@ def xmlGenerator(xmlDir):
             outIdent.text = out["identifier"]
             outTitle.text = out["title"]
 
-
-        #print(xmlDir + 'task' + str(task["id"]) + '.xml')
-
+        # Write XML to file
         tree = ET.ElementTree(root)
         tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
-        #print(ET.tostring(root, 'unicode', 'xml'))
 
 
-# TODO: tests, documentation
+# TODO: tests
 def sendTask(task_id, xmlDir):
     """
-
-    @param task_id:
-    @type task_id:
-    @param xmlDir:
-    @type xmlDir:
-    @return:
-    @rtype:
+    Sends a Task identified by its Database ID to its WPS Server.
+    @param task_id: ID of Task in Database
+    @type task_id: int
+    @param xmlDir: Directory where XMLs are stored in
+    @type xmlDir: string
+    @return: None
+    @rtype: None
     """
     filepath = str(xmlDir) + 'task' + str(task_id) + '.xml'
     if Path(filepath).is_file() is False:
         print("file for task ", task_id, " does not exist, aborting...")
         return
-        
-    #should be changed to something without list
-    task_list = list(Task.objects.filter(id=task_id).values())
-    for task in task_list:
 
-        execute_url = getExecuteUrl(task)
+    # This only is outsourced to extra function for better readability
+    execute_url = getExecuteUrl(Task.objects.get(id=task_id))
+    if execute_url is "":
+        print("Error, execute url is empty, but is not allowed to. Aborting...")
+        return
+    # TODO: validate execution url
+    file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read())
 
-        #send to url
-        file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read())
-        response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file) # TODO: replace with variable
+    # send to url
+    response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file) # TODO: replace with variable
 
-        #print("")
-        #print("post response: ")
-        #print(response.text)
-        #print("")
+    #get response from send
+    xml = ET.fromstring(response.text)
 
-        #get response from send
-        xml = ET.fromstring(response.text)
+    acceptedElement = xml.findall('wps:ProcessAccepted')
+    if acceptedElement is None:
+        print("An Error occured while sending Task ", task_id, " to the server, proccess not accepted")
+        return
 
-        # TODO: check response for errors
-        # response should be
-        acceptedElement = xml.findall('wps:ProcessAccepted')
-        if acceptedElement is None:
-            print("An Error occured while sending Task ", task_id, " to the server, proccess not accepted")
-            return
+    # Update DB Entry
+    p = Task.objects.get(id=task_id)
+    p.status_url = xml.get('statusLocation')
+    p.status = '3'
+    p.started_at = datetime.now()
+    p.save()
 
-        #print(xml.get('statusLocation'))
-
-        # write status url from response to task
-        # set status to running
-        # update start time
-        p = Task.objects.get(id=task_id)
-        p.status_url = xml.get('statusLocation')
-        p.status = '3'
-        p.started_at = datetime.now()
-        p.save()
-
+    # Delete execution XML
     if os.path.isfile(filepath):
         os.remove(filepath)
         
 
-# TODO: tests, documentation
+# TODO: tests
 def getExecuteUrl(task):
     """
-
-    @param task:
-    @type task:
-    @return:
-    @rtype:
+    Extracts the Execute URL from the Database for a given task. Returns empty string on error.
+    @param task: Task object from Database
+    @type task: Task
+    @return: Execute URL. Empty on error or empty DB field
+    @rtype: string
     """
     execute_url = ""
 
-    #traverse db tables task -> process -> wps -> url
-    process_list = list(Process.objects.filter(id=task["process_id"]).values())
-    for process in process_list:
-        wps_list = list(WPS.objects.filter(id=process["wps_id"]).values())
-        for wps in wps_list:
-            execute_url = wps["execute_url"]
+    process = Process.objects.get(id=task.process_id)
+    wps = WPS.objects.get(id=process.wps_id)
+    execute_url = wps.execute_url
 
     return execute_url
 
@@ -277,30 +261,6 @@ def xmlParser():
     #parses input xml
     #checks data for changes
     #writes changes to db
-    pass
-
-
-# TODO: tests, documentation, implement
-def listExistingFiles():
-    """
-
-    @return:
-    @rtype:
-    """
-    #part of datenhaltung
-    #generates a list of all uploaded files, their upload date, last edit, editor, etc
-    pass
-
-
-# TODO: tests, documentation, implement
-def deleteOldFiles():
-    """
-
-    @return:
-    @rtype:
-    """
-    #part of datenhaltung
-    #deletes files with last edit date > limit or other defined rule
     pass
 
 
