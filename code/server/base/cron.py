@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from lxml import etree
 from base.utils import ns_map, possible_stats
 from workflowPSE.settings import wpsLog
+from pathlib import Path
 
 # TODO: naming convention, code formatting
 
@@ -20,12 +21,14 @@ def scheduler():
     @return:
     @rtype:
     """
-    # redirect stout to file, output logging
-
+    
     # TODO: set to changeable by settings & config file
-    outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
-    xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
+    
+    dir_path = os.path.dirname(os.path.abspath(__file__))
+    outFile = os.path.join(dir_path, 'outfile.txt')    
+    xmlDir = os.path.join(dir_path, 'testfiles/')
 
+    # redirect stout to file, output logging
     orig_stdout = sys.stdout
     f = open(outFile, 'w')
     sys.stdout = f
@@ -48,11 +51,11 @@ def scheduler():
 
 
 
-    #generate execute xmls for all tasks with status ready
+    #generate execute xmls for all tasks with status waiting
     xmlGenerator(xmlDir)
 
     #send task
-    sendTask(2, xmlDir)
+    #sendTask(2, xmlDir)
 
     sys.stdout = orig_stdout
     f.close()
@@ -153,6 +156,11 @@ def sendTask(task_id, xmlDir):
     @return:
     @rtype:
     """
+    filepath = str(xmlDir) + 'task' + str(task_id) + '.xml'
+    if Path(filepath).is_file() is False:
+        print("file for task ", task_id, " does not exist, aborting...")
+        return
+        
     #should be changed to something without list
     task_list = list(Task.objects.filter(id=task_id).values())
     for task in task_list:
@@ -160,7 +168,6 @@ def sendTask(task_id, xmlDir):
         execute_url = getExecuteUrl(task)
 
         #send to url
-        filepath = str(xmlDir) + 'task' + str(task_id) + '.xml'
         file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read()) #'<?xml version="1.0" encoding="utf-8" standalone="yes"?>' +
         response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file) # TODO: replace with variable
 
@@ -174,25 +181,27 @@ def sendTask(task_id, xmlDir):
 
         # TODO: check response for errors
         # response should be
-        acceptedElement = xml.find('wps:ProcessAccepted')
+        acceptedElement = xml.findall('wps:ProcessAccepted')
         if acceptedElement is None:
-            print("An Error occured when sending Task ", task_id, " to the server")
+            print("An Error occured while sending Task ", task_id, " to the server, proccess not accepted")
             return
         
         
-
         print(xml.get('statusLocation'))
 
-        #write status url from response to task
-        #set status to running
+        # write status url from response to task
+        # set status to running
         # update start time
         p = Task.objects.get(id=task_id)
         p.status_url = xml.get('statusLocation')
         p.status = '3'
-        p.started_at = timezone.now()
+        p.started_at = datetime.now()
         p.save()
         # TODO: delete execute xml file
-
+        
+    if os.path.isfile(filepath):
+        os.remove(filepath)
+        
 
 # TODO: tests, documentation
 def getExecuteUrl(task):
