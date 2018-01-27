@@ -66,13 +66,11 @@ possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "Process
 
 # TODO: tests
 def scheduler():
-    """
-    Scheduler main function
-    :return:
-    :rtype:
-    """
+   """
 
-
+   @return:
+   @rtype:
+   """
     # TODO: set to changeable by settings & config file
     outFile = '/home/ueda/workspace/PSE/code/server/outfile.txt'
     xmlDir = '/home/ueda/workspace/PSE/code/server/base/testfiles/'
@@ -96,13 +94,11 @@ def scheduler():
 def xmlGenerator(xmlDir):
     """
     generates xml for every task set to ready
-    :param xmlDir:
-    :type xmlDir:
-    :return:
-    :rtype:
+    @param xmlDir:
+    @type xmlDir:
+    @return:
+    @rtype:
     """
-
-
     task_list = list(Task.objects.filter(status='1').values())
     for task in task_list:
 
@@ -182,12 +178,12 @@ def xmlGenerator(xmlDir):
 def sendTask(task_id, xmlDir):
     """
 
-    :param task_id:
-    :type task_id:
-    :param xmlDir:
-    :type xmlDir:
-    :return:
-    :rtype:
+    @param task_id:
+    @type task_id:
+    @param xmlDir:
+    @type xmlDir:
+    @return:
+    @rtype:
     """
     #should be changed to something without list
     task_list = list(Task.objects.filter(id=task_id).values())
@@ -228,10 +224,10 @@ def sendTask(task_id, xmlDir):
 def getExecuteUrl(task):
     """
 
-    :param task:
-    :type task:
-    :return:
-    :rtype:
+    @param task:
+    @type task:
+    @return:
+    @rtype:
     """
     execute_url = ""
 
@@ -256,8 +252,8 @@ def scheduler_execute():
 def scheduler_check_execute():
     """
 
-    :return:
-    :rtype:
+    @return:
+    @rtype:
     """
     #execute policy
     pass
@@ -267,8 +263,8 @@ def scheduler_check_execute():
 def receiver():
     """
 
-    :return:
-    :rtype:
+    @return:
+    @rtype:
     """
     # Receiver main function
     # check output urls from servers
@@ -284,8 +280,8 @@ def receiver():
 def utils():
     """
 
-    :return:
-    :rtype:
+    @return:
+    @rtype:
     """
     # Main fuction for combined utility functions
     pass
@@ -296,8 +292,8 @@ def utils():
 def xmlParser():
     """
 
-    :return:
-    :rtype:
+    @return:
+    @rtype:
     """
     #parses input xml
     #checks data for changes
@@ -309,8 +305,8 @@ def xmlParser():
 def listExistingFiles():
     """
 
-    :return:
-    :rtype:
+    @return:
+    @rtype:
     """
     #part of datenhaltung
     #generates a list of all uploaded files, their upload date, last edit, editor, etc
@@ -321,8 +317,8 @@ def listExistingFiles():
 def deleteOldFiles():
     """
 
-    :return:
-    :rtype:
+    @return:
+    @rtype:
     """
     #part of datenhaltung
     #deletes files with last edit date > limit or other defined rule
@@ -333,10 +329,10 @@ def deleteOldFiles():
 def parse_execute_response(root):
     """
 
-    :param root:
-    :type root:
-    :return:
-    :rtype:
+    @param root:
+    @type root:
+    @return:
+    @rtype:
     """
     if root.tag != ns_map["ExecuteResponse"]:
         print(f"false document format - required: ExecuteResponse, found: {root.tag}")
@@ -480,10 +476,8 @@ def parse_execute_response(root):
 def update_wps_processes():
     """
 
-    :param wps_server:
-    :type wps_server:
-    :return:
-    :rtype:
+    @return:
+    @rtype:
     """
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',

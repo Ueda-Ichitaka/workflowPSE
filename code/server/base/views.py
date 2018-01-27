@@ -14,6 +14,13 @@ from base.models import *
 
 # TODO: tests, documentation
 def as_json_response(list):
+    """
+
+    @param list:
+    @type list:
+    @return:
+    @rtype:
+    """
     return JsonResponse(list, safe=False)
 
 
@@ -23,22 +30,53 @@ class IndexView(TemplateView):
 
 # TODO: tests, documentation
 class UserView(View):
+    """
+
+    """
     @staticmethod
     @require_GET
     def index(request):
+        """
+
+        @param request:
+        @type request:
+        @return:
+        @rtype:
+        """
         # TODO: Was not tested yet because of absence of user management in our project now
         return as_json_response(model_to_dict(request.user))
 
 
 # TODO: tests, documentation
 class WorkflowView(View):
+    """
+
+    """
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
+        """
+
+        @param args:
+        @type args:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         return super(WorkflowView, self).dispatch(*args, **kwargs)
 
     @staticmethod
     def get(request, **kwargs):
+        """
+
+        @param request:
+        @type request:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         if 'workflow_id' in kwargs:
             workflow = Workflow.objects.get(pk=kwargs['workflow_id'])
             returned = model_to_dict(workflow)
@@ -68,6 +106,13 @@ class WorkflowView(View):
 
     @staticmethod
     def post(request):
+        """
+
+        @param request:
+        @type request:
+        @return:
+        @rtype:
+        """
         new_data = json.loads(request.body)
 
         new_workflow = Workflow.objects.create(
@@ -106,6 +151,15 @@ class WorkflowView(View):
 
     @staticmethod
     def patch(request, **kwargs):
+        """
+
+        @param request:
+        @type request:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         new_data = json.loads(request.body)
         workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
 
@@ -184,6 +238,15 @@ class WorkflowView(View):
 
     @staticmethod
     def delete(request, **kwargs):
+        """
+
+        @param request:
+        @type request:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
         (deletedWorkflowCount, countOfDeletionsPerType) = workflow.delete()
         deleted = (deletedWorkflowCount > 0)
@@ -193,6 +256,15 @@ class WorkflowView(View):
     @staticmethod
     @require_GET
     def start(request, workflow_id):
+        """
+
+        @param request:
+        @type request:
+        @param workflow_id:
+        @type workflow_id:
+        @return:
+        @rtype:
+        """
         Task.objects.filter(workflow=workflow_id).update(status=1)
 
         return JsonResponse({})
@@ -200,6 +272,15 @@ class WorkflowView(View):
     @staticmethod
     @require_GET
     def stop(request, workflow_id):
+        """
+
+        @param request:
+        @type request:
+        @param workflow_id:
+        @type workflow_id:
+        @return:
+        @rtype:
+        """
         Task.objects.filter(workflow=workflow_id).update(status=0)
 
         return JsonResponse({})
@@ -207,13 +288,34 @@ class WorkflowView(View):
 
 # TODO: tests, documentation
 class ProcessView(View):
+    """
+
+    """
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
+        """
+
+        @param args:
+        @type args:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         return super(ProcessView, self).dispatch(*args, **kwargs)
 
     @staticmethod
     def get(request, **kwargs):
+        """
+
+        @param request:
+        @type request:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         if 'process_id' in kwargs:
             process = Process.objects.get(pk=kwargs['process_id'])
             returned = model_to_dict(process)
@@ -231,6 +333,13 @@ class ProcessView(View):
 
     @staticmethod
     def post(request):
+        """
+
+        @param request:
+        @type request:
+        @return:
+        @rtype:
+        """
         new_data = json.loads(request.body)
 
         new_process = Process.objects.create(
@@ -257,6 +366,15 @@ class ProcessView(View):
 
     @staticmethod
     def patch(request, **kwargs):
+        """
+
+        @param request:
+        @type request:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         new_data = json.loads(request.body)
         process = get_object_or_404(Process, pk=kwargs['process_id'])
 
@@ -297,6 +415,15 @@ class ProcessView(View):
 
     @staticmethod
     def delete(request, **kwargs):
+        """
+
+        @param request:
+        @type request:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         process = get_object_or_404(Process, pk=kwargs['process_id'])
         (deletedProcessCount, countOfDeletionsPerType) = process.delete()
         deleted = (deletedProcessCount > 0)
@@ -306,13 +433,34 @@ class ProcessView(View):
 
 # TODO: tests, documentation
 class WPSView(View):
+    """
+
+    """
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
+        """
+
+        @param args:
+        @type args:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         return super(WPSView, self).dispatch(*args, **kwargs)
 
     @staticmethod
     def get(request, **kwargs):
+        """
+
+        @param request:
+        @type request:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         if 'wps_id' in kwargs:
             wps = WPS.objects.get(pk=kwargs['wps_id'])
             returned = model_to_dict(wps)
@@ -328,6 +476,13 @@ class WPSView(View):
 
     @staticmethod
     def post(request):
+        """
+
+        @param request:
+        @type request:
+        @return:
+        @rtype:
+        """
         new_data = json.loads(request.body)
 
         new_wps_provider = WPSProvider.objects.create(
@@ -345,6 +500,15 @@ class WPSView(View):
 
     @staticmethod
     def patch(request, **kwargs):
+        """
+
+        @param request:
+        @type request:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         new_data = json.loads(request.body)
         wps = get_object_or_404(WPS, pk=kwargs['wps_id'])
 
@@ -375,6 +539,15 @@ class WPSView(View):
 
     @staticmethod
     def delete(request, **kwargs):
+        """
+
+        @param request:
+        @type request:
+        @param kwargs:
+        @type kwargs:
+        @return:
+        @rtype:
+        """
         wps = get_object_or_404(Process, pk=kwargs['wps_id'])
         (deletedWPSCount, countOfDeletionsPerType) = wps.delete()
         deleted = (deletedWPSCount > 0)
@@ -384,19 +557,35 @@ class WPSView(View):
     @staticmethod
     @require_GET
     def refresh(request):
+        """
+
+        @param request:
+        @type request:
+        @return:
+        @rtype:
+        """
         return JsonResponse({})
 
 
 # TODO: tests, documentation
 class WorkflowsView(TemplateView):
+    """
+
+    """
     template_name = "base/workflows.html"
 
 
 # TODO: tests, documentation
 class EditorView(TemplateView):
+    """
+
+    """
     template_name = "base/editor.html"
 
 
 # TODO: tests, documentation
 class SettingsView(TemplateView):
+    """
+
+    """
     template_name = "base/settings.html"
