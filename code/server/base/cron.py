@@ -242,24 +242,15 @@ def receiver():
     # loop all running tasks
     # overwrite status if changed
     # if task is finished, write data to db
-    running_tasks = list(Task.objects.filter(status='3').values())
+    #wpsLog.info(list(InputOutput.objects.filter(role='1').values()))
+    #wpsLog.info(list(Artefact.objects.all().values()))
+    running_tasks = list(Task.objects.filter(status='3'))
     # wpsLog.info(running_tasks)
     wpsLog.info("receiver starting")
     for task in running_tasks:
-        wpsLog.info("woop")
-        wpsLog.info(task['id'])
-        wpsLog.info(task["status_url"])
+        parse_execute_response(task)
 
-        doc = None
-
-        try:
-            doc = etree.parse(StringIO(requests.get(task["status_url"]).text))
-        except:
-            wpsLog.info(f"request for task {task['id']} could not be parsed")
-            continue
-
-        wpsLog.info("parsing")
-        parse_execute_response(doc.getroot())
+        #parse_execute_response(doc.getroot())
         #wpsLog.info(etree.tostring(doc, pretty_print=True))
 
 
@@ -290,72 +281,83 @@ def xmlParser():
 
 
 # TODO: tests, documentation
-def parse_execute_response(root):
+def parse_execute_response(task):
     """
 
-    @param root:
-    @type root:
+    @param task:
+    @type task:
     @return:
     @rtype:
     """
 
-    process = root.find(ns_map["Process"])
+    doc = None
+
+    wpsLog.info(task.status_url)
+
+    try:
+        root = etree.parse(StringIO(requests.get(task.status_url).text))
+    except:
+        wpsLog.info(f"request for task {task.id} could not be parsed")
+        return 1
+
+    #root = doc.getroot()
+    #wpsLog.info(etree.tostring(root))
+
+    process_info = root.find(ns_map["Process"])
     process_status = root.find(ns_map["Status"])
-    outputs = root.find(ns_map["ProcessOutputs"])
+    output_list = root.find(ns_map["ProcessOutputs"])
 
-    # TODO get process from db as foreign key for outputs
-    try:
-        provider = WPSProvider.objects.get(provider_site=root.get('serviceInstance'))
-        wps_service = WPS.objects.get(service_provider=provider)
-    except WPS.DoesNotExist or WPSProvider.DoesNotExist:
-        provider = None
-        wps = None
+    process = None
+    process = task.process
 
-    if process is None:
-        wpsLog.info("no process found")
+    if process_info is None:
+        wpsLog.info("Process information not found")
         return 2
 
-    p_id = process.find(ns_map["Identifier"]).text
+    p_id = process_info.find(ns_map["Identifier"]).text
 
-    try:
-        proc = Process.objects.get(wps=wps_service, identifier=p_id)
-        task = Task.objects.get(process=proc)
-    except Process.DoesNotExist or Task.DoesNotExist as e:
-        wpsLog.info(f"{e}:\nobject does not exist in db - maybe false identifier")
-        return 2
+    # try:
+    #     artefacts = list(InputOutput.objects.filter(task=task, role='1')) # TODO check if db returns valid outputs
+    #     wpsLog.info(artefacts)
+    # except BaseException as e:
+    #     wpsLog.info(f"{e}:\noutputs do not exist")
+    #     return 1
 
     if process_status is None:
         wpsLog.info("no status found")
-        return 4
+        return 3
 
     process_status = etree.QName(process_status[0].tag).localname
 
-    new_status = STATUS[3][1] if process_status in possible_stats[:2] else STATUS[4][1]\
-                                if process_status == possible_stats[3] else STATUS[5][1]
-    # print(new_status)
-    task.status = new_status
-    task.save()
+    new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0]\
+                                if process_status == possible_stats[3] else STATUS[5][0]
 
-    if new_status != STATUS[4][1]:
-        wpsLog.info("task not finished yet")
-        return 4
+    if task.status != new_status:
+        #wpsLog.info(f"replacing status {task.status} by {new_status}")
+        task.status = new_status
+        task.save()
 
-    outputs = outputs.findall(ns_map["Output"])
+    output_list = output_list.findall(ns_map["Output"])
 
-    if outputs is None:
+    if output_list is None:
         wpsLog.info("no outputs found")
         return 3
+    for output in output_list:
 
-    for output in outputs:
-        out_id = output.find(ns_map["Identifier"])
-        out_title = output.find(ns_map["Title"])
+        out_id = output.find(ns_map["Identifier"]).text
+        out_title = output.find(ns_map["Title"]).text
 
         try:
-            inout = InputOutput.objects.get(process=proc, identifier=out_id, title=out_title)
-            artefact = Artefact.objects.get(task=task, parameter=inout, role='1')
-        except InputOutput.DoesNotExist or Artefact.DoesNotExist as e:
-            wpsLog.info(f"{e}:\nobject does not exist in db - maybe false identifier")
-            # goto loop header
+            ioutput = InputOutput.objects.get(process=process, identifier=out_id, role='1')
+            #wpsLog.info(ioutput.values())
+            artefact = Artefact.objects.get(task=task, parameter=ioutput, role='1')
+            wpsLog.info("worked")
+        except BaseException as e:
+            wpsLog.info("artefact not found, creating new artefact")
+            artefact = Artefact.objects.create(task=task, parameter=ioutput, role='1', created_at=datetime.now(), updated_at=datetime.now())
+
+        if artefact is None:
+            wpsLog.info("artefact does not match")
             continue
 
         # everything the same up to here for each output type
@@ -367,6 +369,7 @@ def parse_execute_response(root):
             # normal case, if status is finished
 
             # as there is always only 1 child, just take the first
+
             try:
                 data_elem = data_elem.getchildren()[0]
             except:
@@ -375,16 +378,23 @@ def parse_execute_response(root):
                 continue
 
             if data_elem.tag == ns_map["LiteralData"]:
-                literal_format = ";".join(("dataType=" + data_elem.get("dataType"), "uom=" + data_elem.get("uom")))
+                dtype = "" if data_elem.get("dataType") is None else "dataType="+data_elem.get("dataType")
+                duom = "" if data_elem.get("uom") is None else "uom="+data_elem.get("uom")
+                literal_format = ";".join((dtype, duom)).strip(";")
                 literal_data = data_elem.text
 
                 if len(literal_data) < 490:
-                    artefact.format = literal_format
-                    artefact.data = literal_data
-                    artefact.save()
+                    try:
+                        wpsLog.info("saving data")
+                        artefact.format = literal_format
+                        artefact.data = literal_data
+                        artefact.save()
+                        wpsLog.info("saved data")
+                    except BaseException as e:
+                        wpsLog.info(e)
                 else:
                     # TODO save data to file if length is >= 490, because db only takes 500 chars
-                    wpsLog.info("")
+                    wpsLog.info("ouhouh")
 
             if data_elem.tag == ns_map["BoundingBox"]:
                 lower_corner = data_elem.find(ns_map["LowerCorner"])
