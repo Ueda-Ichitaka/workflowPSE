@@ -20,7 +20,8 @@ from workflowPSE.settings import wpsLog
 # TODO: tests
 def scheduler():
     """
-    Main scheduling function. Schedules Tasks in Workflows according to their execution order, generates execution XML files and sends tasks to their server for execution
+    Main scheduling function. Schedules Tasks in Workflows according to their execution order, generates execution XML files and sends tasks to
+    their server for execution
     @return: None
     @rtype: None
     """
@@ -238,7 +239,6 @@ def receiver():
     wpsLog.info("receiver starting")
     for task in running_tasks:
         parse_execute_response(task)
-
 
 
 # TODO: tests, documentation

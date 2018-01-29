@@ -1,6 +1,7 @@
-import xml.etree.ElementTree as ET
-
 import os
+import xml.etree.ElementTree as ET
+from datetime import datetime
+
 from django.test import TestCase
 
 import base.cron
@@ -24,15 +25,27 @@ class SchedulerTestCase(TestCase):
                            describe_url="http://pse.rudolphrichard.de:5000/wps", execute_url="http://pse.rudolphrichard.de:5000/wps")
         Process.objects.create(wps='1', identifier="say_hello", title="Process Say Hello", abstract="tl;dr")
         Task.objects.create(workflow='1', process='1', x='1', y='1', status='1', title="Say Hello Task", status_url="http://pse.rudolphrichard.de")
-        InputOutput.objects.create(process='1', role='0', identifier="name", title="Input name", abstract="tl;dr", datatype='0', format="string", min_occurs='1', max_occurs='1')
-        InputOutput.objects.create(process='1', role='1', identifier="response", title="Output name response", abstract="tl;dr", datatype='0', format="string",
+        InputOutput.objects.create(process='1', role='0', identifier="name", title="Input name", abstract="tl;dr", datatype='0', format="string",
+                                   min_occurs='1', max_occurs='1')
+        InputOutput.objects.create(process='1', role='1', identifier="response", title="Output name response", abstract="tl;dr", datatype='0',
+                                   format="string",
                                    min_occurs='1', max_occurs='1')
         Artefact.objects.create(task='1', parameter='1', role='0', format="string", data="Ueda")
 
-
     def test_generate_XML(self):
+        pass
 
     def test_send_task(self):
+        base.cron.scheduler()
+        task = Task.objects.get(title="Say Hello Task")
+        self.assertContains(task.status_url, "http://pse.rudolphrichard.de:5000/outputs/")
+
+    def test_execution(self):
+        base.cron.scheduler()
+        base.cron.receiver()
+        base.cron.receiver()
+        output = Artefact.objects.get(role='1', task='1', parameter='2')
+        self.assertEqual(output.data, 'Hello Ueda')
 
 
 # Create your tests here.
