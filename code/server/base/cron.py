@@ -242,18 +242,10 @@ def receiver():
     # loop all running tasks
     # overwrite status if changed
     # if task is finished, write data to db
-    #wpsLog.info(list(InputOutput.objects.filter(role='1').values()))
-    #wpsLog.info(list(Artefact.objects.all().values()))
     running_tasks = list(Task.objects.filter(status='3'))
-    # wpsLog.info(running_tasks)
     wpsLog.info("receiver starting")
     for task in running_tasks:
         parse_execute_response(task)
-
-        #parse_execute_response(doc.getroot())
-        #wpsLog.info(etree.tostring(doc, pretty_print=True))
-
-
 
 # TODO: tests, documentation, implement
 def utils():
@@ -283,16 +275,13 @@ def xmlParser():
 # TODO: tests, documentation
 def parse_execute_response(task):
     """
-
-    @param task:
-    @type task:
-    @return:
-    @rtype:
+    checks parameter tasks status by checking xml file found at status_url for change
+    if task has finished write data to db if there is any data
+    @param task: the task whose status is currently checked
+    @type task: subclass of models.Model
+    @return: 0 on success, error code otherwise
+    @rtype: int
     """
-
-    doc = None
-
-    wpsLog.info(task.status_url)
 
     try:
         root = etree.parse(StringIO(requests.get(task.status_url).text))
@@ -300,28 +289,15 @@ def parse_execute_response(task):
         wpsLog.info(f"request for task {task.id} could not be parsed")
         return 1
 
-    #root = doc.getroot()
-    #wpsLog.info(etree.tostring(root))
-
     process_info = root.find(ns_map["Process"])
     process_status = root.find(ns_map["Status"])
     output_list = root.find(ns_map["ProcessOutputs"])
 
-    process = None
     process = task.process
 
     if process_info is None:
         wpsLog.info("Process information not found")
         return 2
-
-    p_id = process_info.find(ns_map["Identifier"]).text
-
-    # try:
-    #     artefacts = list(InputOutput.objects.filter(task=task, role='1')) # TODO check if db returns valid outputs
-    #     wpsLog.info(artefacts)
-    # except BaseException as e:
-    #     wpsLog.info(f"{e}:\noutputs do not exist")
-    #     return 1
 
     if process_status is None:
         wpsLog.info("no status found")
@@ -333,7 +309,6 @@ def parse_execute_response(task):
                                 if process_status == possible_stats[3] else STATUS[5][0]
 
     if task.status != new_status:
-        #wpsLog.info(f"replacing status {task.status} by {new_status}")
         task.status = new_status
         task.save()
 
@@ -345,32 +320,24 @@ def parse_execute_response(task):
     for output in output_list:
 
         out_id = output.find(ns_map["Identifier"]).text
-        out_title = output.find(ns_map["Title"]).text
-
         try:
-            ioutput = InputOutput.objects.get(process=process, identifier=out_id, role='1')
-            #wpsLog.info(ioutput.values())
-            artefact = Artefact.objects.get(task=task, parameter=ioutput, role='1')
-            wpsLog.info("worked")
+            output_db = InputOutput.objects.get(process=process, identifier=out_id, role='1')
+            artefact = Artefact.objects.get(task=task, parameter=output_db, role='1')
         except BaseException as e:
             wpsLog.info("artefact not found, creating new artefact")
-            artefact = Artefact.objects.create(task=task, parameter=ioutput, role='1', created_at=datetime.now(), updated_at=datetime.now())
-
+            artefact = Artefact.objects.create(task=task, parameter=output_db, role='1',
+                                               created_at=datetime.now(), updated_at=datetime.now())
         if artefact is None:
             wpsLog.info("artefact does not match")
             continue
 
-        # everything the same up to here for each output type
-
+        # everything is the same up to here for each output type
         data_elem = output.find(ns_map["Data"])
         reference = output.find(ns_map["Reference"])
 
         if data_elem is not None:
-            # normal case, if status is finished
-
-            # as there is always only 1 child, just take the first
-
             try:
+                # as there is always only 1 child, just try to take the first
                 data_elem = data_elem.getchildren()[0]
             except:
                 wpsLog.info("data has no child")
@@ -380,7 +347,7 @@ def parse_execute_response(task):
             if data_elem.tag == ns_map["LiteralData"]:
                 dtype = "" if data_elem.get("dataType") is None else "dataType="+data_elem.get("dataType")
                 duom = "" if data_elem.get("uom") is None else "uom="+data_elem.get("uom")
-                literal_format = ";".join((dtype, duom)).strip(";")
+                literal_format = f"{dtype};{duom}".strip(";")
                 literal_data = data_elem.text
 
                 if len(literal_data) < 490:
@@ -391,44 +358,42 @@ def parse_execute_response(task):
                         artefact.save()
                         wpsLog.info("saved data")
                     except BaseException as e:
-                        wpsLog.info(e)
+                        wpsLog.exception("Error:")
                 else:
                     # TODO save data to file if length is >= 490, because db only takes 500 chars
-                    wpsLog.info("ouhouh")
+                    pass
 
             if data_elem.tag == ns_map["BoundingBox"]:
                 lower_corner = data_elem.find(ns_map["LowerCorner"])
                 upper_corner = data_elem.find(ns_map["UpperCorner"])
-                lower_corner_info = ";".join(("LowerCorner", "crs:" + lower_corner.get("crs"),
-                                              "dimensions" + lower_corner.get("dimensions")))
-                upper_corner_info = ";".join(("UpperCorner", "crs:" + upper_corner.get("crs"),
-                                              "dimensions" + upper_corner.get("dimensions")))
-                bbox_format = "%".join((lower_corner_info, upper_corner_info))
-
-                bbox_data = ";".join(("LowerCorner:" + lower_corner.text, "UpperCorner:" + upper_corner.text))
+                bbox_format = f"crs:{data_elem.get('crs')};dimensions:{data_elem.get('dimensions')}".strip(";")
+                bbox_data = f"LowerCorner:{lower_corner.text};UpperCorner:{upper_corner.text}"
 
                 artefact.format = bbox_format
                 artefact.data = bbox_data
                 artefact.save()
 
             if data_elem.tag == ns_map["ComplexData"]:
-                # complex_format = "mimeType:{};encoding:{};schema:{}".format(data_elem.get("mimeType"),
-                #                                     data_elem.get("encoding"), data_elem.get("schema"))
-                complex_format = ";".join(("mimeType:" + data_elem.get("mimeType"), "encoding:" + data_elem.get("encoding"),
-                                              "schema:" + data_elem.get("schema")))
-                complex_data = None
-                complex_child = data_elem.getchildren()
-                if len(complex_child) == 0:
-                    complex_data = data_elem.text
-                elif data_elem.find(ns_map["CData"]) is not None:
+                # TODO test!
+                mtype = "" if data_elem.get("mimeType") is None else f"mimeType:{data_elem.get('mimeType')}"
+                enc = "" if data_elem.get("encoding") is None else f"encoding:{data_elem.get('encoding')}"
+                schem = "" if data_elem.get("schema") is None else f"schema:{data_elem.get('schema')}"
+                complex_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
+                complex_data = data_elem.text
+                if complex_data is None:
                     # cdata is base64 encoded
                     complex_data = data_elem.find(ns_map["CData"]).text
 
-                if complex_data:
+                if complex_data is not None:
                     if len(complex_data) < 490:
                         artefact.format = complex_format
                         artefact.data = complex_data
                         artefact.save()
+                    else:
+                        # TODO save to file!
+                        pass
+                else:
+                    wpsLog.info("no complex data found in complexdata tree element")
 
         if reference is not None:
             # complexdata found, usually gets passed by url reference
