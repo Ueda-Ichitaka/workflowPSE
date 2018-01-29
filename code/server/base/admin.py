@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from base.models import *
 
 
@@ -9,8 +10,8 @@ class TaskInline(admin.StackedInline):
     """
     model = Task
     extra = 0
-    #For TabularInline
-    #fields = ['title', 'process', 'status', 'status_url']
+    # For TabularInline
+    # fields = ['title', 'process', 'status', 'status_url']
 
 
 class WorkflowAdmin(admin.ModelAdmin):

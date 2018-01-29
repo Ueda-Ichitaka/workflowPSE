@@ -1,55 +1,57 @@
-from base.models import WPSProvider, WPS, Process, InputOutput, DATATYPE, ROLE
-from pywps import OGCTYPE, NAMESPACES as ns
-from lxml.builder import ElementMaker
-import base.cron
 import urllib.request
 import xml.etree.ElementTree as ET
 
+from lxml.builder import ElementMaker
+from pywps import NAMESPACES as ns
+
+import base.cron
+from base.models import WPSProvider, WPS, Process, InputOutput, DATATYPE, ROLE
+
 E = ElementMaker()
-wps_em = ElementMaker(namespace = ns['wps'], nsmap = ns)
-ows_em = ElementMaker(namespace = ns['ows'], nsmap = ns)
-xlink_em = ElementMaker(namespace = ns['ows'], nsmap = ns)
+wps_em = ElementMaker(namespace=ns['wps'], nsmap=ns)
+ows_em = ElementMaker(namespace=ns['ows'], nsmap=ns)
+xlink_em = ElementMaker(namespace=ns['ows'], nsmap=ns)
 
 ns_map = {
     # wps namespaced tags
-    "Capabilities" : f"{{{ns['wps']}}}Capabilities",
-    "ProcessDescriptions" : f"{{{ns['wps']}}}ProcessDescriptions",
-    "ExecuteResponse" : f"{{{ns['wps']}}}ExecuteResponse",
-    "Process" : f"{{{ns['wps']}}}Process",
-    "Status" : f"{{{ns['wps']}}}Status",
-    "Data" : f"{{{ns['wps']}}}Data",
-    "LiteralData" : f"{{{ns['wps']}}}LiteralData",
-    "ComplexData" : f"{{{ns['wps']}}}ComplexData",
-    "Output" : f"{{{ns['wps']}}}Output",
-    "ProcessOutputs" : f"{{{ns['wps']}}}ProcessOutputs",
-    "Input" : f"{{{ns['wps']}}}Input",
-    "DataInput" : f"{{{ns['wps']}}}DataInput",
-    "Default" : f"{{{ns['wps']}}}Default",
-    "Format" : f"{{{ns['wps']}}}Format",
-    "MimeType" : f"{{{ns['wps']}}}MimeType",
-    "Supported" : f"{{{ns['wps']}}}Supported",
-    "CRS" : f"{{{ns['wps']}}}CRS",
-    "Reference" : f"{{{ns['wps']}}}Reference",
+    "Capabilities": f"{{{ns['wps']}}}Capabilities",
+    "ProcessDescriptions": f"{{{ns['wps']}}}ProcessDescriptions",
+    "ExecuteResponse": f"{{{ns['wps']}}}ExecuteResponse",
+    "Process": f"{{{ns['wps']}}}Process",
+    "Status": f"{{{ns['wps']}}}Status",
+    "Data": f"{{{ns['wps']}}}Data",
+    "LiteralData": f"{{{ns['wps']}}}LiteralData",
+    "ComplexData": f"{{{ns['wps']}}}ComplexData",
+    "Output": f"{{{ns['wps']}}}Output",
+    "ProcessOutputs": f"{{{ns['wps']}}}ProcessOutputs",
+    "Input": f"{{{ns['wps']}}}Input",
+    "DataInput": f"{{{ns['wps']}}}DataInput",
+    "Default": f"{{{ns['wps']}}}Default",
+    "Format": f"{{{ns['wps']}}}Format",
+    "MimeType": f"{{{ns['wps']}}}MimeType",
+    "Supported": f"{{{ns['wps']}}}Supported",
+    "CRS": f"{{{ns['wps']}}}CRS",
+    "Reference": f"{{{ns['wps']}}}Reference",
 
     # ows namespaced tags
-    "Identifier" : f"{{{ns['ows']}}}Identifier",
-    "Title" : f"{{{ns['ows']}}}Title",
-    "Abstract" : f"{{{ns['ows']}}}Abstract",
-    "BoundingBox" : f"{{{ns['ows']}}}BoundingBox",
-    "DataType" : f"{{{ns['ows']}}}DataType",
-    "AllowedValues" : f"{{{ns['ows']}}}AllowedValues",
-    "Value" : f"{{{ns['ows']}}}Value",
-    "Range" : f"{{{ns['ows']}}}Range",
-    "MinimumValue" : f"{{{ns['ows']}}}MinimumValue",
-    "MaximumValue" : f"{{{ns['ows']}}}MaximumValue",
-    "LowerCorner" : f"{{{ns['ows']}}}LowerCorner",
-    "UpperCorner" : f"{{{ns['ows']}}}UpperCorner",
-    "Spacing" : f"{{{ns['ows']}}}Spacing",
-    "AnyValue" : f"{{{ns['ows']}}}AnyValue",
-    "Metadata" : f"{{{ns['ows']}}}Metadata",
+    "Identifier": f"{{{ns['ows']}}}Identifier",
+    "Title": f"{{{ns['ows']}}}Title",
+    "Abstract": f"{{{ns['ows']}}}Abstract",
+    "BoundingBox": f"{{{ns['ows']}}}BoundingBox",
+    "DataType": f"{{{ns['ows']}}}DataType",
+    "AllowedValues": f"{{{ns['ows']}}}AllowedValues",
+    "Value": f"{{{ns['ows']}}}Value",
+    "Range": f"{{{ns['ows']}}}Range",
+    "MinimumValue": f"{{{ns['ows']}}}MinimumValue",
+    "MaximumValue": f"{{{ns['ows']}}}MaximumValue",
+    "LowerCorner": f"{{{ns['ows']}}}LowerCorner",
+    "UpperCorner": f"{{{ns['ows']}}}UpperCorner",
+    "Spacing": f"{{{ns['ows']}}}Spacing",
+    "AnyValue": f"{{{ns['ows']}}}AnyValue",
+    "Metadata": f"{{{ns['ows']}}}Metadata",
 
     # xlink namespaced tags
-    "href" : f"{{{ns['xlink']}}}href",
+    "href": f"{{{ns['xlink']}}}href",
 }
 
 possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "ProcessSucceeded", "ProcessFailed"]
@@ -87,18 +89,18 @@ def add_wps_server(server_urls):
             'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
         }
 
-    # Parse the xml file
+        # Parse the xml file
         get_capabilities_tree = ET.parse(temp_xml)
         get_capabilities_root = get_capabilities_tree.getroot()
 
-    # Parse and save information about server provider
+        # Parse and save information about server provider
         service_provider = parse_service_provider_info(get_capabilities_root, xml_namespaces)
         service_provider_from_database = search_provider_in_database(service_provider)
         if service_provider_from_database is None:
             service_provider.save()
         else:
             service_provider = service_provider_from_database
-    # Parse and save information about wps server
+            # Parse and save information about wps server
         wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
         wps_server_from_database = search_server_in_database(wps_server)
         if wps_server_from_database is None:
@@ -242,7 +244,6 @@ def overwrite_input_output(old_entry, new_entry):
 
     old_entry.save()
     return old_entry
-
 
 
 # TODO: tests, documentation

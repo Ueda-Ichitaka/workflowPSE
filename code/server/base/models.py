@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 # Create your models here.
 
@@ -35,7 +35,7 @@ class Workflow(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(User, editable=True, related_name='creator_user', on_delete=models.CASCADE)
-    #Hab absichtlich editable auf true gesetzt, weil sonst taucht ein Fehler auf. Django kann nicht den creator id finden...
+    # Hab absichtlich editable auf true gesetzt, weil sonst taucht ein Fehler auf. Django kann nicht den creator id finden...
 
     last_modifier = models.ForeignKey(User, editable=True, null=True, blank=True, on_delete=models.SET_NULL)
 
@@ -69,11 +69,11 @@ class WPS(models.Model):
         description comes here
     """
     service_provider = models.ForeignKey(WPSProvider, on_delete=models.CASCADE)
-    title = models.CharField(max_length = 200)
+    title = models.CharField(max_length=200)
     abstract = models.TextField('Descriptive text', default='Add your super descriptive text here...')
     capabilities_url = models.URLField(max_length=1000)
     describe_url = models.URLField(max_length=1000)
-    execute_url = models.URLField(max_length=1000)    
+    execute_url = models.URLField(max_length=1000)
 
     class Meta:
         verbose_name = "WPS"
@@ -126,7 +126,7 @@ class Session(models.Model):
     """
         description comes here
     """
-    user = models.ForeignKey(User, editable= False, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
     last_workflow = models.ForeignKey(Workflow, null=True, on_delete=models.SET_NULL)
 
     class Meta:
@@ -162,10 +162,10 @@ class Edge(models.Model):
         description comes here
     """
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
-    from_task = models.ForeignKey(Task, related_name='out_task', on_delete=models.CASCADE) #rename to out_task?
-    to_task = models.ForeignKey(Task, on_delete=models.CASCADE)  #rename to in_task?
+    from_task = models.ForeignKey(Task, related_name='out_task', on_delete=models.CASCADE)  # rename to out_task?
+    to_task = models.ForeignKey(Task, on_delete=models.CASCADE)  # rename to in_task?
     input = models.ForeignKey(InputOutput, related_name='input', null=True, on_delete=models.SET_NULL)
-    output =models.ForeignKey(InputOutput, null=True, on_delete=models.SET_NULL)
+    output = models.ForeignKey(InputOutput, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = "Edge"
@@ -174,7 +174,7 @@ class Edge(models.Model):
     def __str__(self):
         return self.from_task.title + " to " + self.to_task.title + " (" + self.workflow.name + ")"
 
-    
+
 class Artefact(models.Model):
     """
         description comes here

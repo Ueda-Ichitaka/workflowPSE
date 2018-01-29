@@ -1,8 +1,10 @@
+import xml.etree.ElementTree as ET
+
 from django.test import TestCase
-from base.models import WPSProvider, WPS, Process
+
 import base.cron
 import base.utils as utils
-import xml.etree.ElementTree as ET
+from base.models import WPSProvider, WPS, Process
 
 
 # Create your tests here.
@@ -58,12 +60,11 @@ class ParsingTestCase(TestCase):
         @rtype:
         """
         test_url = ['http://pse.rudolphrichard.de:5000']
-        #base.utils.add_wps_server(test_url)
+        # base.utils.add_wps_server(test_url)
         base.cron.update_wps_processes()
         print(WPS.objects.all(), WPSProvider.objects.all())
 
         print(str(Process.objects.all().__len__()) + ' processes available')
-
 
     def test_overwrite_server(self):
         """
@@ -170,7 +171,6 @@ class DatabaseSearcherTestCase(TestCase):
 
 
 class CronTestCase(TestCase):
-
     def test_update_wps_processes_with_empty_database(self):
         self.assertEqual(Process.objects.all().__len__(), 0)
         base.cron.update_wps_processes()

@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from django.urls import path
+
 from base import views
 
 app_name = 'base'

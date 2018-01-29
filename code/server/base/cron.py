@@ -1,15 +1,19 @@
-import os, sys
-import base.utils as utils_module
-import xml.etree.ElementTree as ET
-import requests
+import os
+import sys
 import urllib.request
-from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process, STATUS, Workflow, Edge
+import xml.etree.ElementTree as ET
 from datetime import datetime
+from io import StringIO
+from pathlib import Path
+
+import requests
 from lxml import etree
+
+import base.utils as utils_module
+from base.models import WPS, Task, InputOutput, Artefact, Process, STATUS, Workflow, Edge
 from base.utils import ns_map, possible_stats
 from workflowPSE.settings import wpsLog
-from pathlib import Path
-from io import StringIO
+
 
 # TODO: naming convention, code formatting
 
@@ -20,11 +24,11 @@ def scheduler():
     @return: None
     @rtype: None
     """
-    
+
     # TODO: set to changeable by settings & config file
-    
+
     dir_path = os.path.dirname(os.path.abspath(__file__))
-    outFile = os.path.join(dir_path, 'outfile.txt')    
+    outFile = os.path.join(dir_path, 'outfile.txt')
     xmlDir = os.path.join(dir_path, 'testfiles/')
 
     # redirect stout to file, output logging
@@ -35,9 +39,9 @@ def scheduler():
     exec_list = []
 
     for current_workflow in Workflow.objects.all():
-        for current_task in Task.objects.filter(workflow = current_workflow, status = '1'):
+        for current_task in Task.objects.filter(workflow=current_workflow, status='1'):
             previous_tasks_finished = True
-            for current_edge in Edge.objects.filter(to_task = current_task):
+            for current_edge in Edge.objects.filter(to_task=current_task):
                 if current_edge.from_task.status == '4':
                     previous_tasks_finished = True
                 else:
@@ -52,7 +56,7 @@ def scheduler():
     xmlGenerator(xmlDir)
 
     # send tasks
-    #sendTask(2, xmlDir)
+    # sendTask(2, xmlDir)
     for tid in exec_list:
         sendTask(tid, xmlDir)
 
@@ -89,7 +93,6 @@ def xmlGenerator(xmlDir):
         # Traverse Process table entries with id of task
         process_list = list(Process.objects.filter(id=task["process_id"]).values())
         for process in process_list:
-
             # Create Identifier node
             identifier = ET.SubElement(root, 'ows:Identifier')
             identifier.text = process["identifier"]
@@ -135,7 +138,6 @@ def xmlGenerator(xmlDir):
 
         output_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='1').values())
         for out in output_list:
-
             outputElement = ET.SubElement(responseDoc, 'wps:Output')
             outputElement.set('asReference', 'true')
             outIdent = ET.SubElement(outputElement, 'ows:Identifier')
@@ -173,9 +175,9 @@ def sendTask(task_id, xmlDir):
     file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read())
 
     # send to url
-    response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file) # TODO: replace with variable
+    response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file)  # TODO: replace with variable
 
-    #get response from send
+    # get response from send
     xml = ET.fromstring(response.text)
 
     acceptedElement = xml.findall('wps:ProcessAccepted')
@@ -194,7 +196,7 @@ def sendTask(task_id, xmlDir):
     # Delete execution XML
     if os.path.isfile(filepath):
         os.remove(filepath)
-        
+
 
 # TODO: tests
 def getExecuteUrl(task):
@@ -212,24 +214,6 @@ def getExecuteUrl(task):
     execute_url = wps.execute_url
 
     return execute_url
-
-
-# TODO: tests, documentation, implement
-def scheduler_execute():
-    #sends task to execution
-    #receives response url
-    pass
-
-
-# TODO: tests, documentation, implement
-def scheduler_check_execute():
-    """
-
-    @return:
-    @rtype:
-    """
-    #execute policy
-    pass
 
 
 # TODO: tests, documentation, implement
@@ -255,6 +239,7 @@ def receiver():
     for task in running_tasks:
         parse_execute_response(task)
 
+
 # TODO: tests, documentation, implement
 def utils():
     """
@@ -266,7 +251,6 @@ def utils():
     pass
 
 
-
 # TODO: remove, left here for compatibility because all other collaborators don't push their progress
 def xmlParser():
     """
@@ -274,9 +258,9 @@ def xmlParser():
     @return:
     @rtype:
     """
-    #parses input xml
-    #checks data for changes
-    #writes changes to db
+    # parses input xml
+    # checks data for changes
+    # writes changes to db
     pass
 
 
@@ -313,8 +297,8 @@ def parse_execute_response(task):
 
     process_status = etree.QName(process_status[0].tag).localname
 
-    new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0]\
-                                if process_status == possible_stats[3] else STATUS[5][0]
+    new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0] \
+        if process_status == possible_stats[3] else STATUS[5][0]
 
     if task.status != new_status:
         task.status = new_status
@@ -353,8 +337,8 @@ def parse_execute_response(task):
                 continue
 
             if data_elem.tag == ns_map["LiteralData"]:
-                dtype = "" if data_elem.get("dataType") is None else "dataType="+data_elem.get("dataType")
-                duom = "" if data_elem.get("uom") is None else "uom="+data_elem.get("uom")
+                dtype = "" if data_elem.get("dataType") is None else "dataType=" + data_elem.get("dataType")
+                duom = "" if data_elem.get("uom") is None else "uom=" + data_elem.get("uom")
                 literal_format = f"{dtype};{duom}".strip(";")
                 literal_data = data_elem.text
 
@@ -407,14 +391,14 @@ def parse_execute_response(task):
             # complexdata found, usually gets passed by url reference
             # TODO test ?!
             reference_format = "href:{};mimeType:{};encoding:{};schema:{}".format(reference.get(ns_map["href"]),
-                                        reference.get("mimeType"), reference.get("encoding"), reference.get("schema"))
+                                                                                  reference.get("mimeType"),
+                                                                                  reference.get("encoding"),
+                                                                                  reference.get("schema"))
             reference_url = reference.text
 
             artefact.format = reference_format
             artefact.data = reference_url
             artefact.save()
-
-
 
 
 # TODO: tests, documentation
@@ -450,7 +434,7 @@ def update_wps_processes():
             else:
                 process = utils_module.overwrite_process(process_from_database, process)
 
-    ###Save Inputs
+                ###Save Inputs
             inputs_container_element = process_element.find('DataInputs')
             if inputs_container_element is not None:
                 input_elements = inputs_container_element.findall('Input')
@@ -464,7 +448,7 @@ def update_wps_processes():
                         input = utils_module.overwrite_input_output(input_from_database, input)
 
 
-    ###Save Outputs
+                        ###Save Outputs
             outputs_container_element = process_element.find('ProcessOutputs')
             if outputs_container_element is not None:
                 output_elements = outputs_container_element.findall('Output')

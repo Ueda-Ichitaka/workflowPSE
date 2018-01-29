@@ -1,10 +1,12 @@
 import json
+
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView, View
+
 from base.models import InputOutput, WPSProvider, Process, Artefact, Edge, Task, Workflow, WPS
 
 
@@ -29,6 +31,7 @@ class UserView(View):
     """
 
     """
+
     @staticmethod
     @require_GET
     def index(request):
@@ -48,6 +51,7 @@ class WorkflowView(View):
     """
 
     """
+
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
@@ -93,7 +97,8 @@ class WorkflowView(View):
 
                 for (j, task) in enumerate(tasks):
                     tasks[j]['input_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
-                    tasks[j]['output_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
+                    tasks[j]['output_artefacts'] = list(
+                        Artefact.objects.filter(task=task['id']).filter(role=1).values())
 
                 returned[i]['tasks'] = tasks
                 returned[i]['edges'] = list(Edge.objects.filter(workflow=workflow['id']).values())
@@ -189,7 +194,7 @@ class WorkflowView(View):
                         artefact.role = artefact_data['role']
                         artefact.format = artefact_data['format']
                         artefact.data = artefact_data['data']
-                        
+
                         artefact.save()
                     else:
                         Artefact.objects.create(
@@ -287,6 +292,7 @@ class ProcessView(View):
     """
 
     """
+
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
@@ -432,6 +438,7 @@ class WPSView(View):
     """
 
     """
+
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
     def dispatch(self, *args, **kwargs):

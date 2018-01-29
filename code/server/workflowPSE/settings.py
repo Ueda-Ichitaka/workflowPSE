@@ -10,7 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os, logging
+import logging
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -18,13 +19,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')  #
 filehandler = logging.FileHandler(BASE_DIR + '/wps.log', mode='a')
 filehandler.setFormatter(formatter)
-#streamHandler = logging.StreamHandler()
-#streamHandler.setFormatter(formatter)
+# streamHandler = logging.StreamHandler()
+# streamHandler.setFormatter(formatter)
 wpsLog = logging.getLogger('wps')
 
 wpsLog.setLevel(logging.INFO)
 wpsLog.addHandler(filehandler)
-#tmLog.addHandler(streamHandler) # stream handler is just used for output to console, so we might not need it here
+# tmLog.addHandler(streamHandler) # stream handler is just used for output to console, so we might not need it here
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -36,7 +37,6 @@ SECRET_KEY = '&vuxg*g=w!!tw68ziv092p3ecc=*d68%8i10k--7^z*&50d#c0'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -52,12 +52,11 @@ INSTALLED_APPS = [
     'django.contrib.admindocs',
 ]
 
-#For django_crontab
+# For django_crontab
 CRONJOBS = [
     ('*/1 * * * *', 'base.cron.scheduler'),
     ('*/5 * * * *', 'base.cron.update_wps_processes'),
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -89,7 +88,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'workflowPSE.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -102,7 +100,6 @@ DATABASES = {
         }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -122,7 +119,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -135,7 +131,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
