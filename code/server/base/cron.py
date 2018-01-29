@@ -13,7 +13,13 @@ import base.utils as utils_module
 from base.models import WPS, Task, InputOutput, Artefact, Process, STATUS, Workflow, Edge
 from base.utils import ns_map, possible_stats
 from workflowPSE.settings import wpsLog
+<<<<<<< Updated upstream
 
+=======
+from pathlib import Path
+from io import StringIO
+import tempfile
+>>>>>>> Stashed changes
 
 # TODO: naming convention, code formatting
 
@@ -321,16 +327,22 @@ def parse_execute_response(task):
 
                 if len(literal_data) < 490:
                     try:
-                        wpsLog.info("saving data")
                         artefact.format = literal_format
                         artefact.data = literal_data
+                        artefact.updated_at = datetime.now()
                         artefact.save()
-                        wpsLog.info("saved data")
                     except BaseException as e:
                         wpsLog.exception("Error:")
                 else:
-                    # TODO save data to file if length is >= 490, because db only takes 500 chars
-                    pass
+                    # TODO set path to file properly so user can access via url - test !
+                    time_now = str(datetime.now())
+                    file_name = f"{tempfile.gettempdir()}/{time_now}{out_id}{task.id}.xml"
+                    with open(file_name) as tmpfile:
+                        tmpfile.write(literal_data)
+                    artefact.format = literal_format
+                    artefact.data = f"file://{file_name}"
+                    artefact.updated_at = time_now
+                    artefact.save()
 
             if data_elem.tag == ns_map["BoundingBox"]:
                 lower_corner = data_elem.find(ns_map["LowerCorner"])
@@ -340,6 +352,7 @@ def parse_execute_response(task):
 
                 artefact.format = bbox_format
                 artefact.data = bbox_data
+                artefact.updated_at = datetime.now()
                 artefact.save()
 
             if data_elem.tag == ns_map["ComplexData"]:
@@ -349,32 +362,83 @@ def parse_execute_response(task):
                 schem = "" if data_elem.get("schema") is None else f"schema:{data_elem.get('schema')}"
                 complex_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
                 complex_data = data_elem.text
-                if complex_data is None:
-                    # cdata is base64 encoded
-                    complex_data = data_elem.find(ns_map["CData"]).text
+
+                artefact.format = complex_format
 
                 if complex_data is not None:
                     if len(complex_data) < 490:
-                        artefact.format = complex_format
+                        # write to db
                         artefact.data = complex_data
+                        artefact.updated_at = datetime.now()
                         artefact.save()
                     else:
-                        # TODO save to file!
-                        pass
+                        # write to file
+                        time_now = str(datetime.now())
+                        file_name = f"{tempfile.gettempdir()}/{time_now}{out_id}{task.id}.xml"
+                        with open(file_name) as tmpfile:
+                            tmpfile.write(complex_data)
+                        artefact.data = f"file://{file_name}"
+                        artefact.updated_at = time_now
+                        artefact.save()
+                else:
+                    # cdata is base64 encoded
+                    c_data = data_elem.find(ns_map["CData"]).text
+
+                if c_data is not None:
+                    if len(c_data) < 490:
+                        # write to db
+                        artefact.data = c_data
+                        artefact.updated_at = datetime.now()
+                        artefact.save()
+                    else:
+                        # write to file
+                        time_now = str(datetime.now())
+                        file_name = f"{tempfile.gettempdir()}/{time_now}{out_id}{task.id}.xml"
+                        with open(file_name) as tmpfile:
+                            tmpfile.write(c_data)
+                        artefact.data = f"file://{file_name}"
+                        artefact.updated_at = time_now
+                        artefact.save()
+                elif len(complex_data.getchildren()) != 0:
+                    subtree_data = etree.tostring(complex_data)
+
+                    if len(subtree_data) < 490:
+                        # write to db
+                        artefact.data = subtree_data
+                        artefact.updated_at = datetime.now()
+                        artefact.save()
+                    else:
+                        # write to file
+                        time_now = datetime.now()
+                        file_name = f"{tempfile.gettempdir()}/{time_now}{out_id}{task.id}.xml"
+                        with open(file_name) as tmpfile:
+                            tmpfile.write(subtree_data)
+                        artefact.data = f"file://{file_name}"
+                        artefact.updated_at = time_now
+                        artefact.save()
+
                 else:
                     wpsLog.info("no complex data found in complexdata tree element")
 
         if reference is not None:
             # complexdata found, usually gets passed by url reference
             # TODO test ?!
+<<<<<<< Updated upstream
             reference_format = "href:{};mimeType:{};encoding:{};schema:{}".format(reference.get(ns_map["href"]),
                                                                                   reference.get("mimeType"),
                                                                                   reference.get("encoding"),
                                                                                   reference.get("schema"))
+=======
+            mtype = "" if reference.get("mimeType") is None else f"mimeType:{reference.get('mimeType')}"
+            enc = "" if reference.get("encoding") is None else f"encoding:{reference.get('encoding')}"
+            schem = "" if reference.get("schema") is None else f"schema:{reference.get('schema')}"
+            reference_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
+>>>>>>> Stashed changes
             reference_url = reference.text
 
             artefact.format = reference_format
             artefact.data = reference_url
+            artefact.updated_at = datetime.now()
             artefact.save()
 
 
