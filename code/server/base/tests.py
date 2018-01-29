@@ -1,10 +1,38 @@
 import xml.etree.ElementTree as ET
 
+import os
 from django.test import TestCase
 
 import base.cron
 import base.utils as utils
-from base.models import WPSProvider, WPS, Process
+from base.models import WPSProvider, WPS, Process, Workflow, Task, InputOutput, Artefact
+
+
+class SchedulerTestCase(TestCase):
+    """
+
+    """
+    dir_path = os.path.dirname(os.path.abspath(__file__))
+    xmlDir = os.path.join(dir_path, 'testfiles/')
+
+    def setUp(self):
+        # user
+        Workflow.objects.create(name="TestWF", description="tl;dr", percent_done='0', created_at=datetime.now(), creator='1')
+        WPSProvider.objects.create(provider_name="Test Provider", provider_site="pse.rudolphrichard.de", individual_name="Rudolph, Richard",
+                                   position_name="Software Engineer")
+        WPS.objects.create(service_provider='1', title="PyWPS Testserver", abstract="tl;dr", capabilities_url="http://pse.rudolphrichard.de:5000/wps",
+                           describe_url="http://pse.rudolphrichard.de:5000/wps", execute_url="http://pse.rudolphrichard.de:5000/wps")
+        Process.objects.create(wps='1', identifier="say_hello", title="Process Say Hello", abstract="tl;dr")
+        Task.objects.create(workflow='1', process='1', x='1', y='1', status='1', title="Say Hello Task", status_url="http://pse.rudolphrichard.de")
+        InputOutput.objects.create(process='1', role='0', identifier="name", title="Input name", abstract="tl;dr", datatype='0', format="string", min_occurs='1', max_occurs='1')
+        InputOutput.objects.create(process='1', role='1', identifier="response", title="Output name response", abstract="tl;dr", datatype='0', format="string",
+                                   min_occurs='1', max_occurs='1')
+        Artefact.objects.create(task='1', parameter='1', role='0', format="string", data="Ueda")
+
+
+    def test_generate_XML(self):
+
+    def test_send_task(self):
 
 
 # Create your tests here.

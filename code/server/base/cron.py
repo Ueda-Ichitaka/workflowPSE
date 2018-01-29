@@ -240,29 +240,6 @@ def receiver():
         parse_execute_response(task)
 
 
-# TODO: tests, documentation, implement
-def utils():
-    """
-
-    @return:
-    @rtype:
-    """
-    # Main fuction for combined utility functions
-    pass
-
-
-# TODO: remove, left here for compatibility because all other collaborators don't push their progress
-def xmlParser():
-    """
-
-    @return:
-    @rtype:
-    """
-    # parses input xml
-    # checks data for changes
-    # writes changes to db
-    pass
-
 
 # TODO: tests, documentation
 def parse_execute_response(task):
