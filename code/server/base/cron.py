@@ -13,13 +13,9 @@ import base.utils as utils_module
 from base.models import WPS, Task, InputOutput, Artefact, Process, STATUS, Workflow, Edge
 from base.utils import ns_map, possible_stats
 from workflowPSE.settings import wpsLog
-<<<<<<< Updated upstream
-
-=======
 from pathlib import Path
 from io import StringIO
 import tempfile
->>>>>>> Stashed changes
 
 # TODO: naming convention, code formatting
 
@@ -423,17 +419,10 @@ def parse_execute_response(task):
         if reference is not None:
             # complexdata found, usually gets passed by url reference
             # TODO test ?!
-<<<<<<< Updated upstream
-            reference_format = "href:{};mimeType:{};encoding:{};schema:{}".format(reference.get(ns_map["href"]),
-                                                                                  reference.get("mimeType"),
-                                                                                  reference.get("encoding"),
-                                                                                  reference.get("schema"))
-=======
             mtype = "" if reference.get("mimeType") is None else f"mimeType:{reference.get('mimeType')}"
             enc = "" if reference.get("encoding") is None else f"encoding:{reference.get('encoding')}"
             schem = "" if reference.get("schema") is None else f"schema:{reference.get('schema')}"
             reference_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
->>>>>>> Stashed changes
             reference_url = reference.text
 
             artefact.format = reference_format
