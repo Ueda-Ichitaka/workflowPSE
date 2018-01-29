@@ -128,6 +128,7 @@ class Session(models.Model):
     """
     user = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
     last_workflow = models.ForeignKey(Workflow, null=True, on_delete=models.SET_NULL)
+    language = models.CharField(max_length=3, default='de', null=False)
 
     class Meta:
         verbose_name = "Session"
