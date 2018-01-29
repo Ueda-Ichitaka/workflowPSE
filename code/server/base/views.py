@@ -83,9 +83,10 @@ class WorkflowView(View):
             returned['edges'] = list(workflow.edge_set.all().values())
             tasks = list(workflow.task_set.all().values())
 
-            for (j, task) in enumerate(tasks):
-                tasks[j]['input_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
-                tasks[j]['output_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
+            for (i, task) in enumerate(tasks):
+                tasks[i]['input_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
+                tasks[i]['output_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
+                tasks[i]['state'] = tasks[i]['status']
 
             returned['tasks'] = tasks
             return as_json_response(returned)
@@ -99,6 +100,7 @@ class WorkflowView(View):
                     tasks[j]['input_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
                     tasks[j]['output_artefacts'] = list(
                         Artefact.objects.filter(task=task['id']).filter(role=1).values())
+                    tasks[j]['state'] = tasks[j]['status']
 
                 returned[i]['tasks'] = tasks
                 returned[i]['edges'] = list(Edge.objects.filter(workflow=workflow['id']).values())
@@ -165,7 +167,7 @@ class WorkflowView(View):
         workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
 
         workflow.name = new_data['name']
-        workflow.last_modifier = 1  # TODO: request.user.id
+        workflow.last_modifier_id = 1  # TODO: request.user.id
 
         workflow.save()
 
@@ -175,10 +177,10 @@ class WorkflowView(View):
             if task_data['id'] > 0:
                 task = get_object_or_404(Task, pk=task_data['id'])
 
-                task.workflow_id = workflow.id,
-                task.process_id = task_data['process_id'],
-                task.x = task_data['x'],
-                task.y = task_data['y'],
+                task.workflow_id = workflow.id
+                task.process_id = task_data['process_id']
+                task.x = task_data['x']
+                task.y = task_data['y']
                 task.status = task_data['state']
 
                 task.save()
@@ -186,12 +188,12 @@ class WorkflowView(View):
                 artefacts_data = task_data['input_artefacts'] + task_data['output_artefacts']
 
                 for artefact_data in artefacts_data:
-                    if artefact_data['id'] > 0:
+                    if ('id' in artefact_data) and (artefact_data['id'] > 0):
                         artefact = get_object_or_404(Artefact, pk=artefact_data['id'])
 
                         artefact.task_id = task.id
                         artefact.parameter_id = artefact_data['parameter_id']
-                        artefact.role = artefact_data['role']
+                        artefact.role = (0 if artefact_data['role'] == 'input' else 1)
                         artefact.format = artefact_data['format']
                         artefact.data = artefact_data['data']
 
@@ -200,7 +202,7 @@ class WorkflowView(View):
                         Artefact.objects.create(
                             task_id=task.id,
                             parameter_id=artefact_data['parameter_id'],
-                            role=artefact_data['role'],
+                            role=(0 if artefact_data['role'] == 'input' else 1),
                             format=artefact_data['format'],
                             data=artefact_data['data']
                         )
@@ -219,10 +221,10 @@ class WorkflowView(View):
             if edge_data['id'] > 0:
                 edge = get_object_or_404(Edge, pk=edge_data['id'])
 
-                edge.workflow = workflow,
-                edge.from_task_id = temporary_to_new_task_ids[edge_data['a_id']],
-                edge.to_task_id = temporary_to_new_task_ids[edge_data['b_id']],
-                edge.input_id = edge_data['input_id'],
+                edge.workflow = workflow
+                edge.from_task_id = temporary_to_new_task_ids[edge_data['a_id']]
+                edge.to_task_id = temporary_to_new_task_ids[edge_data['b_id']]
+                edge.input_id = edge_data['input_id']
                 edge.output_id = edge_data['output_id']
 
                 edge.save()
@@ -380,9 +382,9 @@ class ProcessView(View):
         new_data = json.loads(request.body)
         process = get_object_or_404(Process, pk=kwargs['process_id'])
 
-        process.wps_id = new_data['wps_id'],
-        process.identifier = new_data['identifier'],
-        process.title = new_data['title'],
+        process.wps_id = new_data['wps_id']
+        process.identifier = new_data['identifier']
+        process.title = new_data['title']
         process.abstract = new_data['abstract']
 
         process.save()
@@ -393,19 +395,19 @@ class ProcessView(View):
             if inputoutput_data['id'] > 0:
                 inputoutput = get_object_or_404(InputOutput, inputoutput_data['id'])
 
-                inputoutput.process_id = process.id,
-                inputoutput.role = (0 if inputoutput_data['role'] == 'input' else 1),
-                inputoutput.title = inputoutput_data['title'],
-                inputoutput.abstract = inputoutput_data['abstract'],
-                inputoutput.datatype = inputoutput_data['type'],
-                inputoutput.min_occurs = inputoutput_data['min_occurs'],
+                inputoutput.process_id = process.id
+                inputoutput.role = (0 if inputoutput_data['role'] == 'input' else 1)
+                inputoutput.title = inputoutput_data['title']
+                inputoutput.abstract = inputoutput_data['abstract']
+                inputoutput.datatype = inputoutput_data['type']
+                inputoutput.min_occurs = inputoutput_data['min_occurs']
                 inputoutput.max_occurs = inputoutput_data['max_occurs']
 
                 inputoutput.save()
             else:
                 InputOutput.objects.create(
                     process_id=process.id,
-                    role=(0 if inputoutput_data['role'] == 'input' else 1),  # TODO: change it on client-side?
+                    role=(0 if inputoutput_data['role'] == 'input' else 1),
                     title=inputoutput_data['title'],
                     abstract=inputoutput_data['abstract'],
                     datatype=inputoutput_data['type'],
@@ -532,8 +534,8 @@ class WPSView(View):
 
             wps_provider_id = new_wps_provider.id
 
-        wps.service_provider_id = wps_provider_id,
-        wps.title = new_data['title'],
+        wps.service_provider_id = wps_provider_id
+        wps.title = new_data['title']
         wps.abstract = new_data['abstract']
 
         wps.save()
