@@ -32,8 +32,10 @@ def scheduler():
     f = open(outFile, 'w')
     sys.stdout = f
 
+    exec_list = []
+
     for current_workflow in Workflow.objects.all():
-        for current_task in Task.objects.filter(workflow = current_workflow, status = 1):
+        for current_task in Task.objects.filter(workflow = current_workflow, status = '1'):
             previous_tasks_finished = True
             for current_edge in Edge.objects.filter(to_task = current_task):
                 if current_edge.from_task.status == '4':
@@ -43,13 +45,19 @@ def scheduler():
                     break
             if previous_tasks_finished:
                 current_task.status = '2'
+                exec_list.append(current_task.id)
                 current_task.save()
 
-    #generate execute xmls for all tasks with status waiting
+    # generate execute xmls for all tasks with status waiting
     xmlGenerator(xmlDir)
 
-    #send task
-    sendTask(2, xmlDir)
+    # send tasks
+    #sendTask(2, xmlDir)
+    for tid in exec_list:
+        sendTask(tid, xmlDir)
+
+    # Reset exec list
+    exec_list = []
 
     sys.stdout = orig_stdout
     f.close()
