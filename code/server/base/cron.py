@@ -12,10 +12,9 @@ from lxml import etree
 import base.utils as utils_module
 from base.models import WPS, Task, InputOutput, Artefact, Process, STATUS, Workflow, Edge
 from base.utils import ns_map, possible_stats
-from workflowPSE.settings import wpsLog
+from workflowPSE.settings import wpsLog, BASE_DIR
 from pathlib import Path
 from io import StringIO
-import tempfile
 
 def scheduler():
     """
@@ -169,7 +168,6 @@ def xmlGenerator(xmlDir):
         tree = ET.ElementTree(root)
         tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
 
-
 def sendTask(task_id, xmlDir):
     """
     Sends a Task identified by its Database ID to its WPS Server.
@@ -295,14 +293,8 @@ def parse_execute_response(task):
         return 2
     if process_status is None:
         wpsLog.info("no status found")
+        task.status = STATUS[5][0]
         return 3
-    process_status = etree.QName(process_status[0].tag).localname
-    new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0] \
-        if process_status == possible_stats[3] else STATUS[5][0]
-
-    if task.status != new_status:
-        task.status = new_status
-        task.save()
 
     output_list = output_list.findall(ns_map["Output"])
     if output_list is None:
@@ -346,12 +338,12 @@ def parse_execute_response(task):
                     artefact.updated_at = time_now
                     artefact.save()
                 else:
-                    # TODO: set path to file properly so user can access via url - test !
-                    file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                    # TODO set path to file properly so user can access via url - test !
+                    file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
                     with open(file_name, 'w') as tmpfile:
                         tmpfile.write(db_data)
                     artefact.format = db_format
-                    artefact.data = f"file://{file_name}"
+                    artefact.data = f"{BASE_DIR}/{file_name}"
                     artefact.updated_at = time_now
                     artefact.save()
             elif data_elem.tag == ns_map["BoundingBox"]:
@@ -381,10 +373,10 @@ def parse_execute_response(task):
                         artefact.save()
                     else:
                         # write to file
-                        file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                        file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
                         with open(file_name, 'w') as tmpfile:
                             tmpfile.write(db_data)
-                        artefact.data = f"file://{file_name}"
+                        artefact.data = f"{BASE_DIR}/{file_name}"
                         artefact.updated_at = time_now
                         artefact.save()
                 else:
@@ -398,10 +390,10 @@ def parse_execute_response(task):
                         artefact.save()
                     else:
                         # write to file
-                        file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                        file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
                         with open(file_name, 'w') as tmpfile:
                             tmpfile.write(db_data)
-                        artefact.data = f"file://{file_name}"
+                        artefact.data = f"{BASE_DIR}/{file_name}"
                         artefact.updated_at = time_now
                         artefact.save()
                 elif len(data_elem.getchildren()) != 0:
@@ -413,10 +405,10 @@ def parse_execute_response(task):
                         artefact.save()
                     else:
                         # write to file
-                        file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                        file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
                         with open(file_name, 'w') as tmpfile:
                             tmpfile.write(db_data)
-                        artefact.data = f"file://{file_name}"
+                        artefact.data = f"{BASE_DIR}/{file_name}"
                         artefact.updated_at = time_now
                         artefact.save()
                 else:
@@ -445,6 +437,41 @@ def parse_execute_response(task):
                 wpsLog.info("input artefact not found, creating new artefact")
                 Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
                                                       data=db_data, created_at=time_now, updated_at=time_now)
+    try:
+        # TODO: calculate percent done for workflow, either here or on client
+        process_status = etree.QName(process_status[0].tag).localname
+        new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0] \
+            if process_status == possible_stats[3] else STATUS[5][0]
+
+        if task.status != new_status:
+            task.status = new_status
+            task.save()
+        else:
+            task.status = STATUS[5][0]
+            task.save()
+    except:
+        wpsLog.info("no status found")
+
+# TODO: tests
+def calculate_percent_done(task):
+    """
+    calculates the percentage of finished tasks in the workflow of task
+    @param task: task with recently changed status
+    @type task: Task
+    @return: percentage of finished tasks in the workflow of task
+    @rtype: int
+    """
+    err = list(Task.objects.filter(workflow=task.workflow, status='5'))
+    if len(err):
+        percent_done = -1
+        Task.objects.filter(workflow=task.workflow).update(status='5')
+    else:
+        finished = list(Task.objects.filter(workflow=task.workflow, status='4'))
+        all_wf_tasks = list(Task.objects.filter(workflow=task.workflow))
+        percent_done = int(len(finished) / len(all_wf_tasks))
+
+    return percent_done
+
 
 
 def update_wps_processes():

@@ -57,7 +57,6 @@ CRONJOBS = [
     ('*/1 * * * *', 'base.cron.scheduler'),
     ('*/1 * * * *', 'base.cron.receiver'),
     ('*/5 * * * *', 'base.cron.update_wps_processes'),
-    ('*/1 * * * *', 'base.cron.receiver'),
 ]
 
 MIDDLEWARE = [
