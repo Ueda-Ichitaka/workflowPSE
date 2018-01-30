@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView, View
 
+from base import cron
 from base.models import InputOutput, WPSProvider, Process, Artefact, Edge, Task, Workflow, WPS
 
 
@@ -569,6 +570,8 @@ class WPSView(View):
         @return:
         @rtype:
         """
+        cron.update_wps_processes()
+
         return JsonResponse({})
 
 
