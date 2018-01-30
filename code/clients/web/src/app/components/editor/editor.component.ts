@@ -130,6 +130,7 @@ export class EditorComponent implements OnInit {
     }
 
     this.workflow.edges = this.workflow.edges.filter(e => e.a_id !== task.id && e.b_id !== task.id);
+    this.workflowChanged.emit(this.workflow);
   }
 
   /**
@@ -217,8 +218,8 @@ export class EditorComponent implements OnInit {
 
     // add task to current workflow
     this.workflow.tasks.push(task);
-    this.cd.detectChanges();
     this.workflowChanged.emit(this.workflow);
+    this.cd.detectChanges();
   }
 
   /**
@@ -390,6 +391,7 @@ export class EditorComponent implements OnInit {
       const b_id = parameter.role === 'input' ? task.task.id : this.movement.task.id;
 
       this.workflow.edges.push({ id: -Math.round(Math.random() * 10000), a_id, b_id, input_id, output_id });
+      this.workflowChanged.emit(this.workflow);
     }
   }
 

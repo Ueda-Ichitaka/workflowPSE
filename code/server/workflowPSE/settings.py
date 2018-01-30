@@ -121,6 +121,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+if (DEBUG):
+    MIDDLEWARE += 'corsheaders.middleware.CorsMiddleware',
+    INSTALLED_APPS += 'corsheaders',
+    CORS_ORIGIN_ALLOW_ALL = True
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 

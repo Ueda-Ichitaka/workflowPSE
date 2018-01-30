@@ -15,4 +15,4 @@ rm Python-3.6.3.tar.xz
 /usr/local/bin/python3.6 -V
 /usr/local/bin/pip3.6 -V
 
-sudo /usr/local/bin/pip3.6 install Django psycopg2 django_crontab
+sudo /usr/local/bin/pip3.6 install Django psycopg2 django_crontab django-cors-headers

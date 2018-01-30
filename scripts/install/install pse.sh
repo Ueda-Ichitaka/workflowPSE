@@ -19,7 +19,7 @@ sudo make test
 sudo make install
 
 ## install django
-sudo pip3.6 install Django==2.0.1 psycopg2 django_crontab
+sudo pip3.6 install Django==2.0.1 psycopg2 django_crontab django-cors-headers
 
 
 

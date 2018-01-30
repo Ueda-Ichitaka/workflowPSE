@@ -3,9 +3,11 @@
     <mat-list class="list">
       <ng-container *ngFor="let w of wps">
         <h3 matSubheader>
-          <span>{{ w.title }}</span>
-          <small class="provider-title">({{ w.provider.title }})</small>
+          <div>{{ w.title }}</div>
         </h3>
+        <div class="provider-title">
+          {{ w.provider?.title }}
+        </div>
         <app-process *ngFor="let process of processByWPS(w.id)" [process]="process"></app-process>
         <mat-divider></mat-divider>
       </ng-container>

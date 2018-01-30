@@ -1,13 +1,13 @@
-import {Injectable} from '@angular/core';
-import {Workflow} from '../models/Workflow';
-import {Edge} from '../models/Edge';
-import {TaskState} from '../models/Task';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
-import {map, switchMap} from 'rxjs/operators';
-import {MatSnackBar} from '@angular/material';
-import {Process} from 'app/models/Process';
-import {ProcessService} from 'app/services/process.service';
+import { Injectable } from '@angular/core';
+import { Workflow } from '../models/Workflow';
+import { Edge } from '../models/Edge';
+import { TaskState } from '../models/Task';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import { map, switchMap } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material';
+import { Process } from 'app/models/Process';
+import { ProcessService } from 'app/services/process.service';
 
 /**
  * Different workflow validation results
@@ -73,26 +73,12 @@ export class WorkflowService {
     this.processService.all().subscribe(processes => this.processes = processes);
   }
 
-  private getKeyFromId(id: number): Observable<string> {
-    return this.http.get<{ [key: string]: Workflow }>(`https://wpsflow.firebaseio.com/workflow.json`).pipe(
-      map(obj => Object.entries(obj).find(([key, workflow]) => workflow.id === id)),
-      map(([key, workflow]) => key),
-    );
-  }
-
   /**
    * Returns Observable of all Workflows
    * @returns {Observable<Workflow[]>}
    */
   public all(): Observable<Workflow[]> {
-    return this.http.get<{ [key: string]: Workflow }>(`https://wpsflow.firebaseio.com/workflow.json`).pipe(
-      map(obj => Object.values(obj)),
-      map(obj => obj.map(workflow => {
-        workflow.edges = workflow.edges || [];
-        workflow.tasks = workflow.tasks || [];
-        return workflow;
-      }))
-    );
+    return this.http.get<Workflow[]>(`http://127.0.0.1:8000/workflow/`);
   }
 
   /**
@@ -101,9 +87,7 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public get(id: number): Observable<Workflow> {
-    return this.getKeyFromId(id).pipe(
-      switchMap(key => this.http.get<Workflow>(`https://wpsflow.firebaseio.com/workflow/${key}.json`))
-    );
+    return this.http.get<Workflow>(`http://127.0.0.1:8000/workflow/${id}`);
   }
 
   /**
@@ -112,10 +96,8 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public create(workflow: Partial<Workflow>): Observable<Workflow> {
-    this.bar.open(`Created Workflow`, 'CLOSE', {duration: 3000});
-    return this.http.post<Workflow>(`https://wpsflow.firebaseio.com/workflow.json`, workflow).pipe(
-      map(obj => <Workflow>workflow)
-    );
+    this.bar.open(`Created Workflow`, 'CLOSE', { duration: 3000 });
+    return this.http.post<Workflow>(`http://127.0.0.1:8000/workflow/`, workflow);
   }
 
   /**
@@ -125,10 +107,8 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public update(id: number, workflow: Partial<Workflow>): Observable<Workflow> {
-    this.bar.open(`Saved Workflow`, 'CLOSE', {duration: 3000});
-    return this.getKeyFromId(id).pipe(
-      switchMap(key => this.http.put<Workflow>(`https://wpsflow.firebaseio.com/workflow/${key}.json`, workflow))
-    );
+    this.bar.open(`Saved Workflow`, 'CLOSE', { duration: 3000 });
+    return this.http.put<Workflow>(`http://127.0.0.1:8000/workflow/${id}`, workflow);
   }
 
   /**
@@ -137,10 +117,8 @@ export class WorkflowService {
    * @returns {Promise<boolean>}
    */
   public async remove(id: number): Promise<boolean> {
-    this.bar.open(`Deleted Workflow`, 'CLOSE', {duration: 3000});
-    return this.getKeyFromId(id).pipe(
-      switchMap(key => this.http.delete<boolean>(`https://wpsflow.firebaseio.com/workflow/${key}.json`))
-    ).toPromise();
+    this.bar.open(`Deleted Workflow`, 'CLOSE', { duration: 3000 });
+    return this.http.delete<boolean>(`http://127.0.0.1:8000/workflow/${id}`).toPromise();
 
   }
 
@@ -179,7 +157,7 @@ export class WorkflowService {
     }
 
     // check name
-    if (workflow.title.length > 255) {
+    if (!workflow.title || workflow.title.length > 255) {
       return WorkflowValidationResult.TITLE_TOO_LONG;
     } else if (workflow.title.length < 1) {
       return WorkflowValidationResult.TITLE_TOO_SHORT;

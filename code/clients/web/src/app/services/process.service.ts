@@ -47,10 +47,18 @@ export class ProcessService {
    * @returns {Observable<Process[]>}
    */
   public all(): Observable<Process[]> {
-    return this.http.get<Process[]>(`https://wpsflow.firebaseio.com/process.json`).pipe(
+    return this.http.get<Process[]>(`http://127.0.0.1:8000/process/`).pipe(
       map(obj => obj.map(process => {
         process.inputs = process.inputs || [];
         process.outputs = process.outputs || [];
+        for (const i of process.inputs) {
+          i.type = +i['datatype'];
+          i.role = <any>(+i.role ? 'output' : 'input');
+        }
+        for (const o of process.outputs) {
+          o.type = +o['datatype'];
+          o.role = <any>(+o.role ? 'output' : 'input');
+        }
         return process;
       }))
     );
@@ -62,40 +70,12 @@ export class ProcessService {
    * @returns {Observable<Process>}
    */
   public get(id: number): Observable<Process> {
-    return this.http.get<Process>(`https://wpsflow.firebaseio.com/process/${id}.json`).pipe(
+    return this.http.get<Process>(`http://127.0.0.1:8000/process/${id}`).pipe(
       map(process => {
         process.inputs = process.inputs || [];
         process.outputs = process.outputs || [];
         return process;
       })
     );
-  }
-
-  /**
-   * Create an observable to a given partial process
-   * @param {Partial<Process>} process
-   * @returns {Observable<Process>}
-   */
-  public create(process: Partial<Process>): Observable<Process> {
-    return this.http.post<Process>(`https://wpsflow.firebaseio.com/process.json`, process);
-  }
-
-  /**
-   * Refreshes the observable of the given process
-   * @param {number} id
-   * @param {Partial<Process>} process
-   * @returns {Observable<Process>}
-   */
-  public update(id: number, process: Partial<Process>): Observable<Process> {
-    return this.http.post<Process>(`https://wpsflow.firebaseio.com/process/${id}.json`, process);
-  }
-
-  /**
-   * Removes the process with the given id
-   * @param {number} id
-   * @returns {Promise<boolean>}
-   */
-  public async remove(id: number): Promise<boolean> {
-    return this.http.delete<boolean>(`https://wpsflow.firebaseio.com/process/${id}.json`).toPromise();
   }
 }
