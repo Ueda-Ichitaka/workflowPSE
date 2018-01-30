@@ -189,6 +189,10 @@ export class TaskComponent implements OnInit {
     this.changeArtefact.emit([{ task: this.task, parameter }, data]);
   }
 
+  public removeArtefact(parameter: ProcessParameter<'input' | 'output'>) {
+    this.changeArtefact.emit([{ task: this.task, parameter }, null]);
+  }
+
   /**
    * returns if the task component has an artefact
    * @param parameter process parameter

@@ -90,7 +90,10 @@ export class ArtefactDialogComponent implements OnInit {
         ? `${this.data.tx}, ${this.data.ty}, ${this.data.bx}, ${this.data.by}`
         : this.data.value;
 
-      el.appendChild(document.createTextNode(data));
+      if (data) {
+        el.appendChild(document.createTextNode(data));
+      }
+
     }
 
     setTimeout(() => { hljs.highlightBlock(el); }, 20);
@@ -117,6 +120,11 @@ export class ArtefactDialogComponent implements OnInit {
       this.task.addArtefact(this.parameter, out);
     }
 
+    this.dialog.close();
+  }
+
+  public remove() {
+    this.task.removeArtefact(this.parameter);
     this.dialog.close();
   }
 }

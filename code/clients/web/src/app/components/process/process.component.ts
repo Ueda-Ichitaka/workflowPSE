@@ -77,7 +77,7 @@ export class ProcessComponent implements OnInit {
 
 
   public ngOnInit() {
-    console.log(this.process);
+
   }
 
 }

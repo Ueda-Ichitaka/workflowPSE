@@ -93,6 +93,7 @@ export class EditorComponent implements OnInit {
     if (index !== -1) {
       this.snapshot();
       this.workflow.edges.splice(index, 1);
+      this.workflowChanged.emit(this.workflow);
     }
   }
 
@@ -111,25 +112,35 @@ export class EditorComponent implements OnInit {
   public changeArtefact(event) {
     let task: Task = event[0].task;
     task = this.workflow.tasks.find(t => t.id === task.id);
-
     const parameter: ProcessParameter<'input' | 'output'> = event[0].parameter;
-    const data: any = event[1];
 
-    if (parameter.role === 'input') {
-      task.input_artefacts = task.input_artefacts || [];
-      task.input_artefacts.push({
-        parameter_id: parameter.id,
-        task_id: task.id,
-        workflow_id: this.workflow.id,
-        role: parameter.role,
-        format: data.format,
-        data: data.value,
-        created_at: (new Date).getTime(),
-        updated_at: (new Date).getTime(),
-      });
+    if (event[1] === null) {
+      // Remove Artefact
+      const index = task.input_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id);
+      if (index < 0) {
+        return;
+      }
+      task.input_artefacts.splice(index, 1);
+    } else {
+      // Add artefact
+      const data: any = event[1];
+      if (parameter.role === 'input') {
+        task.input_artefacts = task.input_artefacts || [];
+        task.input_artefacts.push({
+          parameter_id: parameter.id,
+          task_id: task.id,
+          workflow_id: this.workflow.id,
+          role: parameter.role,
+          format: data.format,
+          data: data.value,
+          created_at: (new Date).getTime(),
+          updated_at: (new Date).getTime(),
+        });
+      }
+      this.workflow.edges = this.workflow.edges.filter(e => e.a_id !== task.id || e.b_id !== task.id);
     }
 
-    this.workflow.edges = this.workflow.edges.filter(e => e.a_id !== task.id && e.b_id !== task.id);
+
     this.workflowChanged.emit(this.workflow);
   }
 

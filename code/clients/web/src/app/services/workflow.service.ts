@@ -108,7 +108,7 @@ export class WorkflowService {
    */
   public update(id: number, workflow: Partial<Workflow>): Observable<Workflow> {
     this.bar.open(`Saved Workflow`, 'CLOSE', { duration: 3000 });
-    return this.http.put<Workflow>(`http://127.0.0.1:8000/workflow/${id}`, workflow);
+    return this.http.patch<Workflow>(`http://127.0.0.1:8000/workflow/${id}`, workflow);
   }
 
   /**
@@ -213,6 +213,9 @@ export class WorkflowService {
             numberOfInputs++;
           }
         }
+
+        numberOfInputs += workflow.tasks[i].input_artefacts.length;
+
         for (let j = 0; j < this.processes.length; j++) {
           if (workflow.tasks[i].process_id === this.processes[j].id) {
             if (numberOfInputs < this.processes[j].inputs.length) {

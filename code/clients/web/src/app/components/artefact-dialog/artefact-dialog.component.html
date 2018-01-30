@@ -71,5 +71,6 @@
 <mat-divider></mat-divider>
 <mat-dialog-actions fxLayout="row" fxLayoutAlign="end">
   <button mat-button mat-dialog-close i18n="@@close">Close</button>
+  <button *ngIf="data.value" mat-button (click)="remove()" i18n="@@delete" color="warn">Delete</button>
   <button mat-raised-button (click)="save()" i18n="@@save" color="primary">Save</button>
 </mat-dialog-actions>

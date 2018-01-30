@@ -57,9 +57,9 @@ export class SettingsPageComponent implements OnInit {
 
   /**
    * changes language
-   * @param str 
+   * @param string
    */
-  public onLangSelect(lang: {value, displayed}) {
+  public onLangSelect(lang: { value, displayed }) {
     this.selected_language = lang;
   }
 
