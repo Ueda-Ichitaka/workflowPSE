@@ -111,7 +111,7 @@ class WorkflowView(View):
 
                 for (j, output_artefact) in enumerate(output_artefacts):
                     output_artefacts[j]['created_at'] = calendar.timegm(output_artefact['created_at'].timetuple())
-                    output_artefacts[j  ]['updated_at'] = calendar.timegm(output_artefact['updated_at'].timetuple())
+                    output_artefacts[j]['updated_at'] = calendar.timegm(output_artefact['updated_at'].timetuple())
 
                 tasks[i]['input_artefacts'] = input_artefacts
                 tasks[i]['output_artefacts'] = output_artefacts
@@ -192,8 +192,8 @@ class WorkflowView(View):
         for new_edge_data in new_data['edges']:
             Edge.objects.create(
                 workflow_id=new_workflow.id,
-                from_task_id=temporary_to_new_task_ids[new_edge_data['from_id']],
-                to_task_id=temporary_to_new_task_ids[new_edge_data['to_id']],
+                from_task_id=temporary_to_new_task_ids[new_edge_data['from_task_id']],
+                to_task_id=temporary_to_new_task_ids[new_edge_data['to_task_id']],
                 input_id=new_edge_data['input_id'],
                 output_id=new_edge_data['output_id']
             )
@@ -270,8 +270,8 @@ class WorkflowView(View):
                 edge = get_object_or_404(Edge, pk=edge_data['id'])
 
                 edge.workflow = workflow
-                edge.from_task_id = temporary_to_new_task_ids[edge_data['from_id']]
-                edge.to_task_id = temporary_to_new_task_ids[edge_data['to_id']]
+                edge.from_task_id = temporary_to_new_task_ids[edge_data['from_task_id']]
+                edge.to_task_id = temporary_to_new_task_ids[edge_data['to_task_id']]
                 edge.input_id = edge_data['input_id']
                 edge.output_id = edge_data['output_id']
 
@@ -279,8 +279,8 @@ class WorkflowView(View):
             else:
                 Edge.objects.create(
                     workflow_id=workflow.id,
-                    from_task_id=temporary_to_new_task_ids[edge_data['from_id']],
-                    to_task_id=temporary_to_new_task_ids[edge_data['to_id']],
+                    from_task_id=temporary_to_new_task_ids[edge_data['from_task_id']],
+                    to_task_id=temporary_to_new_task_ids[edge_data['to_task_id']],
                     input_id=edge_data['input_id'],
                     output_id=edge_data['output_id']
                 )
