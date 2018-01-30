@@ -21,7 +21,7 @@ def scheduler():
     Main scheduling function. Schedules Tasks in Workflows according to their execution order, generates execution XML files and sends tasks to
     their server for execution
     @return: None
-    @rtype: None
+    @rtype: NoneType
     """
 
     # TODO: set to changeable by settings & config file
@@ -79,7 +79,7 @@ def xmlGenerator(xmlDir):
     @param xmlDir: Directory where XMLs are generated in
     @type xmlDir: string
     @return: None
-    @rtype: None
+    @rtype: NoneType
     """
     try:
         # Traverse Task table entries with status WAITING
@@ -176,7 +176,7 @@ def sendTask(task_id, xmlDir):
     @param xmlDir: Directory where XMLs are stored in
     @type xmlDir: string
     @return: None
-    @rtype: None
+    @rtype: NoneType
     """
     filepath = str(xmlDir) + 'task' + str(task_id) + '.xml'
     if Path(filepath).is_file() is False:
@@ -256,7 +256,7 @@ def receiver():
     overwrites status if changed
     if task is finished, write data to db
     @return: None
-    @rtype: None
+    @rtype: NoneType
     """
     try:
         running_tasks = list(Task.objects.filter(status='3'))
@@ -285,173 +285,186 @@ def parse_execute_response(task):
         return 1
 
     process_info = root.find(ns_map["Process"])
-    process_status = root.find(ns_map["Status"])
-    output_list = root.find(ns_map["ProcessOutputs"])
+    try:
+        process_outputs = root.find(ns_map["ProcessOutputs"])
+        output_list = process_outputs.findall(ns_map["Output"])
+    except:
+        # no Processes in output
+        output_list = []
 
-    process = task.process
     if process_info is None:
         wpsLog.info("Process information not found")
         return 2
+
+    for output in output_list:
+        parse_output(output, task)
+    try:
+        process_status = root.find(ns_map["Status"])
+    except:
+        wpsLog.info("no status found")
+
+    process_status = etree.QName(process_status[0].tag).localname
+    new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0] \
+        if process_status == possible_stats[3] else STATUS[5][0]
+
+    if task.status != new_status:
+        task.status = new_status
+        task.save()
+    else:
+        task.status = STATUS[5][0]
+        task.save()
+    task.workflow.percent_done = calculate_percent_done(task)
     if process_status is None:
         wpsLog.info("no status found")
-        task.status = STATUS[5][0]
         return 3
 
-    output_list = output_list.findall(ns_map["Output"])
-    if output_list is None:
-        wpsLog.info("no outputs found")
-        return 3
-    for output in output_list:
-        out_id = output.find(ns_map["Identifier"]).text
-        try:
-            output_db = InputOutput.objects.get(process=process, identifier=out_id, role='1')
-            artefact = Artefact.objects.get(task=task, parameter=output_db, role='1')
-            edge = Edge.objects.get(from_task=task, output=output_db)
-        except BaseException as e:
-            time_now = datetime.now()
-            wpsLog.info("output artefact not found, creating new artefact")
-            artefact = Artefact.objects.create(task=task, parameter=output_db, role='1',
-                                               created_at=time_now, updated_at=time_now)
-        if artefact is None:
-            wpsLog.info("artefact does not match")
-            continue
+# TODO: tests
+def parse_output(output, task):
+    """
 
-        # everything is the same up to here for each output type
-        data_elem = output.find(ns_map["Data"])
-        reference = output.find(ns_map["Reference"])
+    @param output the output that has to be parsed
+    @type output lxmls.etree._Element
+    @param task: the task that belongs to the output
+    @type task: subclass of models.Model
+    @return: None
+    @rtype: NoneType
+    """
+    out_id = output.find(ns_map["Identifier"]).text
+    try:
+        output_db = InputOutput.objects.get(process=task.process, identifier=out_id, role='1')
+        artefact = Artefact.objects.get(task=task, parameter=output_db, role='1')
+        edge = Edge.objects.get(from_task=task, output=output_db)
+    except BaseException as e:
         time_now = datetime.now()
-        if data_elem is not None:
-            try:
-                # as there is always only 1 child, just try to take the first
-                data_elem = data_elem.getchildren()[0]
-            except:
-                wpsLog.info("data has no child")
-                # goto loop header
-                continue
-            if data_elem.tag == ns_map["LiteralData"]:
-                dtype = "" if data_elem.get("dataType") is None else "dataType=" + data_elem.get("dataType")
-                duom = "" if data_elem.get("uom") is None else "uom=" + data_elem.get("uom")
-                db_format = f"{dtype};{duom}".strip(";")
-                db_data = data_elem.text
-                if len(db_data) < 490:
-                    artefact.format = db_format
-                    artefact.data = db_data
-                    artefact.updated_at = time_now
-                    artefact.save()
-                else:
-                    # TODO set path to file properly so user can access via url - test !
-                    file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
-                    with open(file_name, 'w') as tmpfile:
-                        tmpfile.write(db_data)
-                    artefact.format = db_format
-                    artefact.data = f"{BASE_DIR}/{file_name}"
-                    artefact.updated_at = time_now
-                    artefact.save()
-            elif data_elem.tag == ns_map["BoundingBox"]:
-                lower_corner = data_elem.find(ns_map["LowerCorner"])
-                upper_corner = data_elem.find(ns_map["UpperCorner"])
-                db_format = f"crs:{data_elem.get('crs')};dimensions:{data_elem.get('dimensions')}".strip(";")
-                db_data = f"LowerCorner:{lower_corner.text};UpperCorner:{upper_corner.text}"
+        wpsLog.info("output artefact not found, creating new artefact")
+        artefact = Artefact.objects.create(task=task, parameter=output_db, role='1',
+                                           created_at=time_now, updated_at=time_now)
+    if artefact is None:
+        wpsLog.info("artefact does not match")
+        return
 
+    # everything is the same up to here for each output type
+    data_elem = output.find(ns_map["Data"])
+    reference = output.find(ns_map["Reference"])
+    time_now = datetime.now()
+    if data_elem is not None:
+        try:
+            # as there is always only 1 child, just try to take the first
+            data_elem = data_elem.getchildren()[0]
+        except:
+            wpsLog.info("data has no child")
+            # goto loop header
+            return
+        if data_elem.tag == ns_map["LiteralData"]:
+            dtype = "" if data_elem.get("dataType") is None else "dataType=" + data_elem.get("dataType")
+            duom = "" if data_elem.get("uom") is None else "uom=" + data_elem.get("uom")
+            db_format = f"{dtype};{duom}".strip(";")
+            db_data = data_elem.text
+            if len(db_data) < 490:
                 artefact.format = db_format
                 artefact.data = db_data
                 artefact.updated_at = time_now
                 artefact.save()
-            elif data_elem.tag == ns_map["ComplexData"]:
-                # TODO: test!
-                mtype = "" if data_elem.get("mimeType") is None else f"mimeType:{data_elem.get('mimeType')}"
-                enc = "" if data_elem.get("encoding") is None else f"encoding:{data_elem.get('encoding')}"
-                schem = "" if data_elem.get("schema") is None else f"schema:{data_elem.get('schema')}"
-                db_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
-                db_data = data_elem.text
-
+            else:
+                # TODO set path to file properly so user can access via url - test !
+                file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
+                with open(file_name, 'w') as tmpfile:
+                    tmpfile.write(db_data)
                 artefact.format = db_format
-                if db_data is not None:
-                    if len(db_data) < 490:
-                        # write to db
-                        artefact.data = db_data
-                        artefact.updated_at = time_now
-                        artefact.save()
-                    else:
-                        # write to file
-                        file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
-                        with open(file_name, 'w') as tmpfile:
-                            tmpfile.write(db_data)
-                        artefact.data = f"{BASE_DIR}/{file_name}"
-                        artefact.updated_at = time_now
-                        artefact.save()
-                else:
-                    # cdata is base64 encoded
-                    db_data = data_elem.find(ns_map["CData"]).text
-                if db_data is not None:
-                    if len(db_data) < 490:
-                        # write to db
-                        artefact.data = db_data
-                        artefact.updated_at = time_now
-                        artefact.save()
-                    else:
-                        # write to file
-                        file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
-                        with open(file_name, 'w') as tmpfile:
-                            tmpfile.write(db_data)
-                        artefact.data = f"{BASE_DIR}/{file_name}"
-                        artefact.updated_at = time_now
-                        artefact.save()
-                elif len(data_elem.getchildren()) != 0:
-                    db_data = etree.tostring(data_elem)
-                    if len(db_data) < 490:
-                        # write to db
-                        artefact.data = db_data
-                        artefact.updated_at = time_now
-                        artefact.save()
-                    else:
-                        # write to file
-                        file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
-                        with open(file_name, 'w') as tmpfile:
-                            tmpfile.write(db_data)
-                        artefact.data = f"{BASE_DIR}/{file_name}"
-                        artefact.updated_at = time_now
-                        artefact.save()
-                else:
-                    wpsLog.info("no complex data found in complexdata tree element")
-        elif reference is not None:
-            # complexdata found, usually gets passed by url reference
-            # TODO: test ?!
-            mtype = "" if reference.get("mimeType") is None else f"mimeType:{reference.get('mimeType')}"
-            enc = "" if reference.get("encoding") is None else f"encoding:{reference.get('encoding')}"
-            schem = "" if reference.get("schema") is None else f"schema:{reference.get('schema')}"
-            db_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
-            db_data = reference.text # should be a url
+                artefact.data = f"{BASE_DIR}/{file_name}"
+                artefact.updated_at = time_now
+                artefact.save()
+        elif data_elem.tag == ns_map["BoundingBox"]:
+            lower_corner = data_elem.find(ns_map["LowerCorner"])
+            upper_corner = data_elem.find(ns_map["UpperCorner"])
+            db_format = f"crs:{data_elem.get('crs')};dimensions:{data_elem.get('dimensions')}".strip(";")
+            db_data = f"LowerCorner:{lower_corner.text};UpperCorner:{upper_corner.text}"
 
             artefact.format = db_format
             artefact.data = db_data
             artefact.updated_at = time_now
             artefact.save()
-        if db_data is not None:
-            try:
-                to_artefact = Artefact.objects.get(task=edge.to_task, parameter=edge.input, role='0')
-                to_artefact.format = db_format
-                to_artefact.data = db_data
-                to_artefact.updated_at = time_now
-                to_artefact.save()
-            except Artefact.DoesNotExist:
-                wpsLog.info("input artefact not found, creating new artefact")
-                Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
-                                                      data=db_data, created_at=time_now, updated_at=time_now)
-    try:
-        # TODO: calculate percent done for workflow, either here or on client
-        process_status = etree.QName(process_status[0].tag).localname
-        new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0] \
-            if process_status == possible_stats[3] else STATUS[5][0]
+        elif data_elem.tag == ns_map["ComplexData"]:
+            # TODO: test!
+            mtype = "" if data_elem.get("mimeType") is None else f"mimeType:{data_elem.get('mimeType')}"
+            enc = "" if data_elem.get("encoding") is None else f"encoding:{data_elem.get('encoding')}"
+            schem = "" if data_elem.get("schema") is None else f"schema:{data_elem.get('schema')}"
+            db_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
+            db_data = data_elem.text
 
-        if task.status != new_status:
-            task.status = new_status
-            task.save()
-        else:
-            task.status = STATUS[5][0]
-            task.save()
-    except:
-        wpsLog.info("no status found")
+            artefact.format = db_format
+            if db_data is not None:
+                if len(db_data) < 490:
+                    # write to db
+                    artefact.data = db_data
+                    artefact.updated_at = time_now
+                    artefact.save()
+                else:
+                    # write to file
+                    file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
+                    with open(file_name, 'w') as tmpfile:
+                        tmpfile.write(db_data)
+                    artefact.data = f"{BASE_DIR}/{file_name}"
+                    artefact.updated_at = time_now
+                    artefact.save()
+            else:
+                # cdata is base64 encoded
+                db_data = data_elem.find(ns_map["CData"]).text
+            if db_data is not None:
+                if len(db_data) < 490:
+                    # write to db
+                    artefact.data = db_data
+                    artefact.updated_at = time_now
+                    artefact.save()
+                else:
+                    # write to file
+                    file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
+                    with open(file_name, 'w') as tmpfile:
+                        tmpfile.write(db_data)
+                    artefact.data = f"{BASE_DIR}/{file_name}"
+                    artefact.updated_at = time_now
+                    artefact.save()
+            elif len(data_elem.getchildren()) != 0:
+                db_data = etree.tostring(data_elem)
+                if len(db_data) < 490:
+                    # write to db
+                    artefact.data = db_data
+                    artefact.updated_at = time_now
+                    artefact.save()
+                else:
+                    # write to file
+                    file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
+                    with open(file_name, 'w') as tmpfile:
+                        tmpfile.write(db_data)
+                    artefact.data = f"{BASE_DIR}/{file_name}"
+                    artefact.updated_at = time_now
+                    artefact.save()
+            else:
+                wpsLog.info("no complex data found in complexdata tree element")
+    elif reference is not None:
+        # complexdata found, usually gets passed by url reference
+        # TODO: test ?!
+        mtype = "" if reference.get("mimeType") is None else f"mimeType:{reference.get('mimeType')}"
+        enc = "" if reference.get("encoding") is None else f"encoding:{reference.get('encoding')}"
+        schem = "" if reference.get("schema") is None else f"schema:{reference.get('schema')}"
+        db_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
+        db_data = reference.text  # should be a url
+
+        artefact.format = db_format
+        artefact.data = db_data
+        artefact.updated_at = time_now
+        artefact.save()
+    if db_data is not None:
+        try:
+            to_artefact = Artefact.objects.get(task=edge.to_task, parameter=edge.input, role='0')
+            to_artefact.format = db_format
+            to_artefact.data = db_data
+            to_artefact.updated_at = time_now
+            to_artefact.save()
+        except Artefact.DoesNotExist:
+            wpsLog.info("input artefact not found, creating new artefact")
+            Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
+                                    data=db_data, created_at=time_now, updated_at=time_now)
 
 # TODO: tests
 def calculate_percent_done(task):
