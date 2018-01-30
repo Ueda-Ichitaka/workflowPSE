@@ -187,7 +187,16 @@ class WorkflowView(View):
 
             temporary_to_new_task_ids[new_task_data['id']] = new_task.id
 
-            # TODO: hier auch Artefakte speichern
+            artefacts_data = new_task_data['input_artefacts'] + new_task_data['output_artefacts']
+
+            for artefact_data in artefacts_data:
+                Artefact.objects.create(
+                    task_id=new_task.id,
+                    parameter_id=artefact_data['parameter_id'],
+                    role=(0 if artefact_data['role'] == 'input' else 1),
+                    format=artefact_data['format'],
+                    data=artefact_data['data']
+                )
 
         for new_edge_data in new_data['edges']:
             Edge.objects.create(
