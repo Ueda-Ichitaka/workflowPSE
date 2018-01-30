@@ -117,6 +117,7 @@ class WorkflowView(View):
                 tasks[i]['output_artefacts'] = output_artefacts
 
             returned['tasks'] = tasks
+
             return as_json_response(returned)
         else:
             returned = list(Workflow.objects.all().values())
@@ -191,8 +192,8 @@ class WorkflowView(View):
         for new_edge_data in new_data['edges']:
             Edge.objects.create(
                 workflow_id=new_workflow.id,
-                from_task_id=temporary_to_new_task_ids[new_edge_data['a_id']],
-                to_task_id=temporary_to_new_task_ids[new_edge_data['b_id']],
+                from_task_id=temporary_to_new_task_ids[new_edge_data['from_id']],
+                to_task_id=temporary_to_new_task_ids[new_edge_data['to_id']],
                 input_id=new_edge_data['input_id'],
                 output_id=new_edge_data['output_id']
             )
@@ -269,8 +270,8 @@ class WorkflowView(View):
                 edge = get_object_or_404(Edge, pk=edge_data['id'])
 
                 edge.workflow = workflow
-                edge.from_task_id = temporary_to_new_task_ids[edge_data['a_id']]
-                edge.to_task_id = temporary_to_new_task_ids[edge_data['b_id']]
+                edge.from_task_id = temporary_to_new_task_ids[edge_data['from_id']]
+                edge.to_task_id = temporary_to_new_task_ids[edge_data['to_id']]
                 edge.input_id = edge_data['input_id']
                 edge.output_id = edge_data['output_id']
 
@@ -278,8 +279,8 @@ class WorkflowView(View):
             else:
                 Edge.objects.create(
                     workflow_id=workflow.id,
-                    from_task_id=temporary_to_new_task_ids[edge_data['a_id']],
-                    to_task_id=temporary_to_new_task_ids[edge_data['b_id']],
+                    from_task_id=temporary_to_new_task_ids[edge_data['from_id']],
+                    to_task_id=temporary_to_new_task_ids[edge_data['to_id']],
                     input_id=edge_data['input_id'],
                     output_id=edge_data['output_id']
                 )
