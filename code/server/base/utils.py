@@ -181,8 +181,8 @@ def search_input_output_in_database(parsed_input_output):
     The instances are equal, if their 'identifier' fields
     are equal,they have the same role (Input or Output) and
     they belong to the same process.
-    :param parsed_input_output:
-    :return:
+    @param parsed_input_output:
+    @return:
     """
     try:
         ioput = InputOutput.objects.get(identifier=parsed_input_output.identifier,
