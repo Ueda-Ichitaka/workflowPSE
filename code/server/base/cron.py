@@ -17,7 +17,6 @@ from pathlib import Path
 from io import StringIO
 import tempfile
 
-# TODO: tests
 def scheduler():
     """
     Main scheduling function. Schedules Tasks in Workflows according to their execution order, generates execution XML files and sends tasks to
@@ -75,7 +74,6 @@ def scheduler():
     f.close()
 
 
-# TODO: tests
 def xmlGenerator(xmlDir):
     """
     Traverses Database and generates execution XMLL files for every Task set to status WAITING
@@ -172,7 +170,6 @@ def xmlGenerator(xmlDir):
         tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
 
 
-# TODO: tests
 def sendTask(task_id, xmlDir):
     """
     Sends a Task identified by its Database ID to its WPS Server.
@@ -252,7 +249,7 @@ def getExecuteUrl(task):
     return execute_url
 
 
-# TODO: tests, documentation
+# TODO: tests
 def receiver():
     """
     loops all running tasks
