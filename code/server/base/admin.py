@@ -1,16 +1,23 @@
 from django.contrib import admin
+
 from base.models import *
 
 
 # Register your models here.
 class TaskInline(admin.StackedInline):
+    """
+
+    """
     model = Task
     extra = 0
-    #For TabularInline
-    #fields = ['title', 'process', 'status', 'status_url']
+    # For TabularInline
+    # fields = ['title', 'process', 'status', 'status_url']
 
 
 class WorkflowAdmin(admin.ModelAdmin):
+    """
+
+    """
     list_display = ['name', 'percent_done', 'creator']
     inlines = [TaskInline]
 
@@ -19,6 +26,9 @@ class WorkflowAdmin(admin.ModelAdmin):
 
 
 class TaskAdmin(admin.ModelAdmin):
+    """
+
+    """
     list_display = ['title', 'workflow', 'status', 'status_url']
     list_filter = ['workflow']
 
@@ -27,6 +37,9 @@ class TaskAdmin(admin.ModelAdmin):
 
 
 class EdgeAdmin(admin.ModelAdmin):
+    """
+
+    """
     list_filter = ['workflow']
 
     class Meta:

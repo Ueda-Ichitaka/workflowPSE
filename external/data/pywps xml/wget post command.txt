@@ -1,1 +1,7 @@
 wget --post-file=say_hello_execute.xml "pse.rudolphrichard.de:5000/wps" -O - -nv -q
+
+flag explanation:
+-O - : output file, document written to std output
+-nv : no verbose, only error messages printed
+-q : quiet turn off wget output
+

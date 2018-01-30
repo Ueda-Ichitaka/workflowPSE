@@ -1,158 +1,466 @@
 import os
-import random
+import sys
+import urllib.request
 import xml.etree.ElementTree as ET
-from base.models import WPSProvider, WPS, Task, InputOutput, Artefact, Process
-from email import policy
+from datetime import datetime
+from io import StringIO
+from pathlib import Path
 
-#from django_cron import Schedule, CronJobBase
+import requests
+from lxml import etree
 
+import base.utils as utils_module
+from base.models import WPS, Task, InputOutput, Artefact, Process, STATUS, Workflow, Edge
+from base.utils import ns_map, possible_stats
+from workflowPSE.settings import wpsLog
+from pathlib import Path
+from io import StringIO
+import tempfile
 
-"""
-Django crontab. Version, die bei mir sicher funktioniert hat
-"""
+# TODO: naming convention, code formatting
 
-
-def first_crontab_task():
-    #os.mkdir('/home/paradigmen/C/' + str(random.randrange(1, 100)) + '/')
-    #Testzeile
-    pass
-
-
+# TODO: tests
 def scheduler():
-    # Scheduler main function
-    # check workflow list for execute flag
-    # for all tasks in db do
-    #    check status for execute status
-    
-    os.mkdir('/home/ueda/Desktop/test/')
-    
-    
-    with open('outfile.txt', 'a') as the_file:
-        the_file.write('Hello\n')
-    
-    task_list = list(Task.objects.filter(status='0').values())
-    for task in task_list:        
-        print(task["id"], task["process_id"], task["title"], task["status"], sep=" ")
-        task_id = task["id"]   # id of task
-        wf_id=task["workflow_id"]  # id of workflow of task
-        proc_id=task["process_id"]  # id of pywps process, evaluate to identifier
+    """
+    Main scheduling function. Schedules Tasks in Workflows according to their execution order, generates execution XML files and sends tasks to
+    their server for execution
+    @return: None
+    @rtype: None
+    """
 
-        process_list = list(Process.objects.filter(id=task["process_id"]).values())
+    # TODO: set to changeable by settings & config file
+
+    dir_path = os.path.dirname(os.path.abspath(__file__))
+    outFile = os.path.join(dir_path, 'outfile.txt')
+    xmlDir = os.path.join(dir_path, 'testfiles/')
+
+    # redirect stout to file, output logging
+    orig_stdout = sys.stdout
+    f = open(outFile, 'w')
+    sys.stdout = f
+
+    exec_list = []
+
+    for current_workflow in Workflow.objects.all():
+        try:
+            all_tasks = Task.objects.filter(workflow=current_workflow, status='1')
+        except Task.DoesNotExist:
+            all_tasks = []
+        for current_task in all_tasks:
+            previous_tasks_finished = True
+            try:
+                edges_to_current_task = Edge.objects.filter(to_task=current_task)
+            except Edge.DoesNotExist:
+                edges_to_current_task = []
+            for current_edge in edges_to_current_task:
+                if current_edge.from_task.status == '4':
+                    previous_tasks_finished = True
+                else:
+                    previous_tasks_finished = False
+                    break
+            if previous_tasks_finished:
+                current_task.status = '2'
+                exec_list.append(current_task.id)
+                current_task.save()
+
+    # generate execute xmls for all tasks with status waiting
+    xmlGenerator(xmlDir)
+
+    # send tasks
+    # sendTask(2, xmlDir)
+    for tid in exec_list:
+        sendTask(tid, xmlDir)
+
+    # Reset exec list
+    exec_list = []
+
+    sys.stdout = orig_stdout
+    f.close()
+
+
+# TODO: tests
+def xmlGenerator(xmlDir):
+    """
+    Traverses Database and generates execution XMLL files for every Task set to status WAITING
+    @param xmlDir: Directory where XMLs are generated in
+    @type xmlDir: string
+    @return: None
+    @rtype: None
+    """
+    try:
+        # Traverse Task table entries with status WAITING
+        task_list = list(Task.objects.filter(status='2').values())
+    except Task.DoesNotExist:
+        task_list = []
+
+    for task in task_list:
+
+        # Create root node
+        root = ET.Element('wps:Execute')
+        root.set('service', 'WPS')
+        root.set('version', '1.0.0')
+        root.set('xmlns:wps', 'http://www.opengis.net/wps/1.0.0')
+        root.set('xmlns:ows', 'http://www.opengis.net/ows/1.1')
+        root.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+        root.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
+        root.set('xsi:schemaLocation', 'http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd')
+
+        try:
+            # Traverse Process table entries with id of task
+            process_list = list(Process.objects.filter(id=task["process_id"]).values())
+        except Process.DoesNotExist:
+            process_list = []
         for process in process_list:
-            print(process["id"], process["identifier"], sep=" ")
+            # Create Identifier node
+            identifier = ET.SubElement(root, 'ows:Identifier')
+            identifier.text = process["identifier"]
 
+        # Create DataInputs node
+        inputs = ET.SubElement(root, 'wps:DataInputs')
 
-        input_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='0').values())
+        try:
+            # Traverse InputOutput table entries linked to Process
+            input_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='0').values())
+        except InputOutput.DoesNotExist:
+            input_list = []
         for input in input_list:
-            print(input["id"], input["identifier"], input["title"], input["datatype"], input["format"], sep=" ")
-            input_identifier=input["identifier"]
-            input_title=input["title"]
-            input_datatype=input["datatype"]
-            input_data_format=input["format"]
 
+            # Create Input node
+            inputElement = ET.SubElement(inputs, 'wps:Input')
+            inputIdent = ET.SubElement(inputElement, 'ows:Identifier')
+            inputTitle = ET.SubElement(inputElement, 'ows:Title')
+            inputData = ET.SubElement(inputElement, 'wps:Data')
+            inputIdent.text = input["identifier"]
+            inputTitle.text = input["title"]
 
-            artefact_list = list(Artefact.objects.filter(task_id=task["id"], parameter=input["id"]).values())
+            try:
+                # Traverse Artefact table entries linked to Process
+                artefact_list = list(Artefact.objects.filter(task_id=task["id"], parameter=input["id"]).values())
+            except Artefact.DoesNotExist:
+                artefact_list = []
+
             for artefact in artefact_list:
-                print(artefact["id"], artefact["data"], sep=" ")
-                artefact_data=artefact["data"]
+
+                type = input["datatype"]
+                if type == '0':
+                    type = "LiteralData"
+                elif type == '1':
+                    type = "ComplexData"
+                elif type == '2':
+                    type = "BoundingBoxData"
+
+                # Create Data node
+                data = ET.SubElement(inputData, 'wps:' + type)
+                data.text = artefact["data"]
+                data.set('datatype', artefact["format"])
+
+        # Create ResponseForm node for status url
+        responseForm = ET.SubElement(root, 'wps:ResponseForm')
+        responseDoc = ET.SubElement(responseForm, 'wps:ResponseDocument')
+        responseDoc.set('storeExecuteResponse', 'true')
+        responseDoc.set('lineage', 'true')
+        responseDoc.set('status', 'true')
+
+        output_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='1').values())
+        for out in output_list:
+            outputElement = ET.SubElement(responseDoc, 'wps:Output')
+            outputElement.set('asReference', 'true')
+            outIdent = ET.SubElement(outputElement, 'ows:Identifier')
+            outTitle = ET.SubElement(outputElement, 'ows:Title')
+            outIdent.text = out["identifier"]
+            outTitle.text = out["title"]
+
+        # Write XML to file
+        tree = ET.ElementTree(root)
+        tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
 
 
-    #    for all tasks to execute do
-    #       traverse InputOutput table
-    #           if InputOutput.process_id == Task.id
-    #               select
-    #       generate process xml
-    #       send xml to wps server
-    #
-    #todo: max parallel tasks schedule policy
+# TODO: tests
+def sendTask(task_id, xmlDir):
+    """
+    Sends a Task identified by its Database ID to its WPS Server.
+    @param task_id: ID of Task in Database
+    @type task_id: int
+    @param xmlDir: Directory where XMLs are stored in
+    @type xmlDir: string
+    @return: None
+    @rtype: None
+    """
+    filepath = str(xmlDir) + 'task' + str(task_id) + '.xml'
+    if Path(filepath).is_file() is False:
+        print("file for task ", task_id, " does not exist, aborting...")
+        return
+
+    try:
+        # This only is outsourced to extra function for better readability
+        execute_url = getExecuteUrl(Task.objects.get(id=task_id))
+    except Task.DoesNotExist:
+        execute_url = ""
+
+    if execute_url is "":
+        print("Error, execute url is empty, but is not allowed to. Aborting...")
+        return
+    # TODO: validate execution url
+    file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read())
+
+    # send to url
+    response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file)  # TODO: replace with variable
+
+    # if the response is not in xml format
+    try:
+        # get response from send
+        xml = ET.fromstring(response.text)
+    except:
+        print("xml could not be parsed")
+
+    acceptedElement = xml.findall('wps:ProcessAccepted')
+    if acceptedElement is None:
+        print("An Error occured while sending Task ", task_id, " to the server, proccess not accepted")
+        return
+
+    try:
+        # Update DB Entry
+        p = Task.objects.get(id=task_id)
+    except Task.DoesNotExist:
+        print("task not found")
+        return
+    p.status_url = xml.get('statusLocation')
+    p.status = '3'
+    p.started_at = datetime.now()
+    print(p.started_at)
+    p.save()
+
+    # Delete execution XML
+    if os.path.isfile(filepath):
+        os.remove(filepath)
 
 
-def scheduler_execute():
-    #sends task to execution
-    #receives response url
-    pass
+# TODO: tests
+def getExecuteUrl(task):
+    """
+    Extracts the Execute URL from the Database for a given task. Returns empty string on error.
+    @param task: Task object from Database
+    @type task: Task
+    @return: Execute URL. Empty on error or empty DB field
+    @rtype: string
+    """
+    execute_url = ""
+
+    try:
+        process = Process.objects.get(id=task.process_id)
+        wps = WPS.objects.get(id=process.wps_id)
+        execute_url = wps.execute_url
+    except Process.DoesNotExist or WPS.DoesNotExist:
+        execute_url = ""
+
+    return execute_url
 
 
-def scheduler_check_execute():
-    #execute policy
-    pass
-
-
-def generateExecuteXML():
-    pass
-
-
+# TODO: tests, documentation, implement
 def receiver():
-    # Receiver main function
-    # check output urls from servers
-    # for workflow in executing list do
-    #   for task in workflow do
-    #      check response url
-    #        check for changes to db 
-    #        update db data
-    pass
+    """
+    loops all running tasks
+    parses xml on server and checks for status
+    overwrites status if changed
+    if task is finished, write data to db
+    @return:
+    @rtype:
+    """
+    try:
+        running_tasks = list(Task.objects.filter(status='3'))
+        wpsLog.info("receiver starting")
+    except Task.DoesNotExist:
+        running_tasks = []
+        wpsLog.info("no running tasks found")
+    for task in running_tasks:
+        parse_execute_response(task)
 
 
-def utils():
-    # Main fuction for combined utility functions
-    pass
+# TODO: tests
+def parse_execute_response(task):
+    """
+    checks parameter tasks status by checking xml file found at status_url for change
+    if task has finished write data to db if there is any data
+    @param task: the task whose status is currently checked
+    @type task: subclass of models.Model
+    @return: 0 on success, error code otherwise
+    @rtype: int
+    """
+    # TODO insert data to input of next task
+    try:
+        root = etree.parse(StringIO(requests.get(task.status_url).text))
+    except:
+        wpsLog.info(f"request for task {task.id} could not be parsed")
+        return 1
 
+    process_info = root.find(ns_map["Process"])
+    process_status = root.find(ns_map["Status"])
+    output_list = root.find(ns_map["ProcessOutputs"])
 
-def xmlGenerator():
-    #generates xml from input data
-    pass
+    process = task.process
+    if process_info is None:
+        wpsLog.info("Process information not found")
+        return 2
+    if process_status is None:
+        wpsLog.info("no status found")
+        return 3
+    process_status = etree.QName(process_status[0].tag).localname
+    new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0] \
+        if process_status == possible_stats[3] else STATUS[5][0]
 
+    if task.status != new_status:
+        task.status = new_status
+        task.save()
 
-def xmlParser():
-    #parses input xml
-    #checks data for changes
-    #writes changes to db
-    pass
+    output_list = output_list.findall(ns_map["Output"])
+    if output_list is None:
+        wpsLog.info("no outputs found")
+        return 3
+    for output in output_list:
+        out_id = output.find(ns_map["Identifier"]).text
+        try:
+            output_db = InputOutput.objects.get(process=process, identifier=out_id, role='1')
+            artefact = Artefact.objects.get(task=task, parameter=output_db, role='1')
+            edge = Edge.objects.get(from_task=task, output=output_db)
+        except BaseException as e:
+            time_now = datetime.now()
+            wpsLog.info("output artefact not found, creating new artefact")
+            artefact = Artefact.objects.create(task=task, parameter=output_db, role='1',
+                                               created_at=time_now, updated_at=time_now)
+        if artefact is None:
+            wpsLog.info("artefact does not match")
+            continue
 
+        # everything is the same up to here for each output type
+        data_elem = output.find(ns_map["Data"])
+        reference = output.find(ns_map["Reference"])
+        time_now = datetime.now()
+        if data_elem is not None:
+            try:
+                # as there is always only 1 child, just try to take the first
+                data_elem = data_elem.getchildren()[0]
+            except:
+                wpsLog.info("data has no child")
+                # goto loop header
+                continue
+            if data_elem.tag == ns_map["LiteralData"]:
+                dtype = "" if data_elem.get("dataType") is None else "dataType=" + data_elem.get("dataType")
+                duom = "" if data_elem.get("uom") is None else "uom=" + data_elem.get("uom")
+                db_format = f"{dtype};{duom}".strip(";")
+                db_data = data_elem.text
+                if len(db_data) < 490:
+                    artefact.format = db_format
+                    artefact.data = db_data
+                    artefact.updated_at = time_now
+                    artefact.save()
+                else:
+                    # TODO set path to file properly so user can access via url - test !
+                    file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                    with open(file_name, 'w') as tmpfile:
+                        tmpfile.write(db_data)
+                    artefact.format = db_format
+                    artefact.data = f"file://{file_name}"
+                    artefact.updated_at = time_now
+                    artefact.save()
+            elif data_elem.tag == ns_map["BoundingBox"]:
+                lower_corner = data_elem.find(ns_map["LowerCorner"])
+                upper_corner = data_elem.find(ns_map["UpperCorner"])
+                db_format = f"crs:{data_elem.get('crs')};dimensions:{data_elem.get('dimensions')}".strip(";")
+                db_data = f"LowerCorner:{lower_corner.text};UpperCorner:{upper_corner.text}"
 
-def readyCollector():
-    #gets a list of all workflows ready to execute from db
-    #returns list
-    pass
+                artefact.format = db_format
+                artefact.data = db_data
+                artefact.updated_at = time_now
+                artefact.save()
+            elif data_elem.tag == ns_map["ComplexData"]:
+                # TODO test!
+                mtype = "" if data_elem.get("mimeType") is None else f"mimeType:{data_elem.get('mimeType')}"
+                enc = "" if data_elem.get("encoding") is None else f"encoding:{data_elem.get('encoding')}"
+                schem = "" if data_elem.get("schema") is None else f"schema:{data_elem.get('schema')}"
+                db_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
+                db_data = data_elem.text
 
+                artefact.format = db_format
+                if db_data is not None:
+                    if len(db_data) < 490:
+                        # write to db
+                        artefact.data = db_data
+                        artefact.updated_at = time_now
+                        artefact.save()
+                    else:
+                        # write to file
+                        file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                        with open(file_name, 'w') as tmpfile:
+                            tmpfile.write(db_data)
+                        artefact.data = f"file://{file_name}"
+                        artefact.updated_at = time_now
+                        artefact.save()
+                else:
+                    # cdata is base64 encoded
+                    db_data = data_elem.find(ns_map["CData"]).text
+                if db_data is not None:
+                    if len(db_data) < 490:
+                        # write to db
+                        artefact.data = db_data
+                        artefact.updated_at = time_now
+                        artefact.save()
+                    else:
+                        # write to file
+                        file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                        with open(file_name, 'w') as tmpfile:
+                            tmpfile.write(db_data)
+                        artefact.data = f"file://{file_name}"
+                        artefact.updated_at = time_now
+                        artefact.save()
+                elif len(data_elem.getchildren()) != 0:
+                    db_data = etree.tostring(data_elem)
+                    if len(db_data) < 490:
+                        # write to db
+                        artefact.data = db_data
+                        artefact.updated_at = time_now
+                        artefact.save()
+                    else:
+                        # write to file
+                        file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                        with open(file_name, 'w') as tmpfile:
+                            tmpfile.write(db_data)
+                        artefact.data = f"file://{file_name}"
+                        artefact.updated_at = time_now
+                        artefact.save()
+                else:
+                    wpsLog.info("no complex data found in complexdata tree element")
+        elif reference is not None:
+            # complexdata found, usually gets passed by url reference
+            # TODO test ?!
+            mtype = "" if reference.get("mimeType") is None else f"mimeType:{reference.get('mimeType')}"
+            enc = "" if reference.get("encoding") is None else f"encoding:{reference.get('encoding')}"
+            schem = "" if reference.get("schema") is None else f"schema:{reference.get('schema')}"
+            db_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
+            db_data = reference.text # should be a url
 
-def readyDataCollector():
-    #gets all data for xml generation from ready workflow from ready list
-    pass
+            artefact.format = db_format
+            artefact.data = db_data
+            artefact.updated_at = time_now
+            artefact.save()
+        if db_data is not None:
+            try:
+                to_artefact = Artefact.objects.get(task=edge.to_task, parameter=edge.input, role='0')
+                to_artefact.format = db_format
+                to_artefact.data = db_data
+                to_artefact.updated_at = time_now
+                to_artefact.save()
+            except Artefact.DoesNotExist:
+                wpsLog.info("input artefact not found, creating new artefact")
+                Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
+                                                      data=db_data, created_at=time_now, updated_at=time_now)
 
+# TODO: tests, documentation
+def update_wps_processes():
+    """
 
-def workflowSender():
-    #sends generated xml to pywps server for execution
-    pass
-
-
-def listExistingFiles():
-    #part of datenhaltung
-    #generates a list of all uploaded files, their upload date, last edit, editor, etc
-    pass
-
-
-def deleteOldFiles():
-    #part of datenhaltung
-    #deletes files with last edit date > limit or other defined rule
-    pass
-
-
-def checkDB():
-    #checks database for correct data/data corruption
-    pass
-
-
-def checkFiles():
-    #checks uploaded files for corruption
-    pass
-
-
-def get_capabilities_parsing():
-    #Works only with absolute path.
-    #In future will work with url
-    url_from_scc_vm = '/home/denis/Projects/Python/Django/workflowPSE/code/server/base/testfiles/getCapabilitiesFromPyWPS.xml'
-
+    @return:
+    @rtype:
+    """
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
         'xlink': 'http://www.w3.org/1999/xlink',
@@ -161,78 +469,47 @@ def get_capabilities_parsing():
         'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
     }
 
-    #Parse the xml file
-    tree = ET.parse(url_from_scc_vm)
-    root = tree.getroot()
+    wps_servers = WPS.objects.all()
+    for wps_server in wps_servers:
+        # TODO: repair hardcode
+        describe_processes_url = wps_server.describe_url + '?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
 
-    service_provider = parse_service_provider_info(root, xml_namespaces)
-    service_provider.save()
+        temp_xml, headers = urllib.request.urlretrieve(describe_processes_url)
 
-    #wps_server = parse_wps_server_info(root, xml_namespaces, service_provider)
-    #wps_server.save()
+        tree = ET.parse(temp_xml)
+        root = tree.getroot()
+        process_elements = root.findall('ProcessDescription')
+        for process_element in process_elements:
+            process = utils_module.parse_process_info(process_element, xml_namespaces, wps_server)
+            process_from_database = utils_module.search_process_in_database(process)
+            if process_from_database is None:
+                process.save()
+            else:
+                process = utils_module.overwrite_process(process_from_database, process)
 
+                ###Save Inputs
+            inputs_container_element = process_element.find('DataInputs')
+            if inputs_container_element is not None:
+                input_elements = inputs_container_element.findall('Input')
 
-
-def parse_service_provider_info(root, namespaces):
-    service_provider_element = root.find('ows:ServiceProvider', namespaces)
-    os.mkdir('/home/denis/Documents/' + str(random.randrange(1, 100)) + '/')
-    provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
-    #provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
-    #    '{' + namespaces.get('xlink') + '}href')
-    provider_site = 'www.example.com' #Repair
-
-    service_contact_element = service_provider_element.find('ows:ServiceContact', namespaces)
-
-    individual_name = service_contact_element.find('ows:IndividualName', namespaces).text
-    position_name = service_contact_element.find('ows:PositionName', namespaces).text
-
-    service_provider = WPSProvider(provider_name=provider_name,
-                           provider_site=provider_site,
-                           individual_name=individual_name,
-                           position_name=position_name)
-
-    return service_provider
-
-
-def parse_wps_server_info(root, namespaces, provider):
-    service_identification_element = root.find('ows:ServiceIdentification', namespaces)
-
-    server_title = service_identification_element.find('ows:Title', namespaces).text
-    server_abstract = service_identification_element.find('ows:Abstract', namespaces).text
-
-    operations_metadata_element = root.find('ows:OperationsMetadata', namespaces)
-
-    urls = operations_metadata_element.findall('ows:Operation/ows:DCP/ows:HTTP/ows:Get', namespaces)
-
-    wps_server = WPS(service_provider=provider,
-                     title=server_title,
-                     abstract=server_abstract,
-                     capabilities_url=urls[0],
-                     describe_url=urls[1],
-                     execute_url=urls[2])
-
-    return wps_server
+                for input_element in input_elements:
+                    input = utils_module.parse_input_info(input_element, xml_namespaces, process)
+                    input_from_database = utils_module.search_input_output_in_database(input)
+                    if input_from_database is None:
+                        input.save()
+                    else:
+                        input = utils_module.overwrite_input_output(input_from_database, input)
 
 
+                        ###Save Outputs
+            outputs_container_element = process_element.find('ProcessOutputs')
+            if outputs_container_element is not None:
+                output_elements = outputs_container_element.findall('Output')
 
-
-
-
-
-"""
-Django cron. Das geht bei mir immer noch nicht :(
-Wenn ich richtig verstanden habe, dann muss man den Manage Befehl (also python3 manage.py runcrons) selbst in Cron eintragen.
-"""
-
-"""
-class FirstCronTask(CronJobBase):
-    RUN_EVERY_MINS = 1
-
-    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-    code = 'testCron.firstCronTask'
-
-    def do(self):
-        #os.mkdir('/home/paradigmen/C/' + str(random.randrange(1, 100)) + '/')
-        #Testzeile
-        pass
-"""
+                for output_element in output_elements:
+                    output = utils_module.parse_output_info(output_element, xml_namespaces, process)
+                    output_from_database = utils_module.search_input_output_in_database(output)
+                    if output_from_database is None:
+                        output.save()
+                    else:
+                        output = utils_module.overwrite_input_output(output_from_database, output)

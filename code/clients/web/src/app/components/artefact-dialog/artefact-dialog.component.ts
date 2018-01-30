@@ -29,6 +29,11 @@ export class ArtefactDialogComponent implements OnInit {
   public task: TaskComponent;
   public parameter: ProcessParameter<'input' | 'output'>;
 
+  /**
+   * creates an artefact object
+   * @param data the artefact data
+   * @param dialog the artefact dialog
+   */
   constructor( @Inject(MAT_DIALOG_DATA) data: ArtefactDialogData, public dialog: MatDialogRef<ArtefactDialogComponent>) {
     this.task = data.task;
     this.parameter = data.parameter;
@@ -55,10 +60,19 @@ export class ArtefactDialogComponent implements OnInit {
   public ngOnInit() {
   }
 
+  /**
+   * @param type the type of the parameter
+   * @returns the type as a string and the color of the artefact
+   */
   public getTypeInfo(type: number): [string, string] {
     return [ProcessService.getTypeName(type), ProcessService.getTypeColor(type)];
   }
 
+  /**
+   * is used to change input of the different input types
+   * as every input type requires different fields,
+   * we have to differ between them
+   */
   public clickEditButton() {
     const el: HTMLElement = this.codeComponent.nativeElement;
 
@@ -83,6 +97,9 @@ export class ArtefactDialogComponent implements OnInit {
     this.editMode = !this.editMode;
   }
 
+  /**
+   * saves the artefacts modified input
+   */
   public save() {
     if (!this.data) {
       return;

@@ -9,12 +9,10 @@
     <button *ngIf="wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>-->
     <button [disabled]="!wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)" i18n="@@add">Add</button>
 
-    <div>
-        <div *ngFor="let wps of wps_list | async">
-            <span class="wps_info">{{wps.title}}</span>
-            <span class="wps_info">{{wps.provider.url}}</span>
-            <a mat-button (click)="remove(wps.id)" i18n="@@delete">Delete</a>
-        </div>
+    <div *ngFor="let wps of wps_list | async">
+        <span class="wps_info">{{wps.title}}</span>
+        <span class="wps_info">{{wps.provider.url}}</span>
+        <a mat-button (click)="remove(wps.id)" i18n="@@delete">Delete</a>
     </div>
 
     <h3 i18n="@@settings_reload_wps">Reload WPS server</h3>
