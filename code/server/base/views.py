@@ -367,11 +367,11 @@ class ProcessView(View):
             inputs = list(process.inputoutput_set.all().filter(role=0).values())
             outputs = list(process.inputoutput_set.all().filter(role=1).values())
 
-            for (j, input) in inputs:
+            for (j, input) in enumerate(inputs):
                 inputs[j]['type'] = input['datatype']
                 inputs[j]['role'] = ('input' if input['role'] == 0 else 'output')
 
-            for (j, output) in outputs:
+            for (j, output) in enumerate(outputs):
                 outputs[j]['type'] = output['datatype']
                 outputs[j]['role'] = ('input' if output['role'] == 0 else 'output')
 
@@ -385,11 +385,11 @@ class ProcessView(View):
                 inputs = list(InputOutput.objects.filter(process=process['id']).filter(role=0).values())
                 outputs = list(InputOutput.objects.filter(process=process['id']).filter(role=1).values())
 
-                for (j, input) in inputs:
+                for (j, input) in enumerate(inputs):
                     inputs[j]['type'] = input['datatype']
                     inputs[j]['role'] = ('input' if input['role'] == 0 else 'output')
 
-                for (j, output) in outputs:
+                for (j, output) in enumerate(outputs):
                     outputs[j]['type'] = output['datatype']
                     outputs[j]['role'] = ('input' if output['role'] == 0 else 'output')
 
