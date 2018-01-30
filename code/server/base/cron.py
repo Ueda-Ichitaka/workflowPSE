@@ -168,11 +168,6 @@ def xmlGenerator(xmlDir):
         tree = ET.ElementTree(root)
         tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
 
-<<<<<<< Updated upstream
-
-=======
-# TODO: tests
->>>>>>> Stashed changes
 def sendTask(task_id, xmlDir):
     """
     Sends a Task identified by its Database ID to its WPS Server.
@@ -343,13 +338,8 @@ def parse_execute_response(task):
                     artefact.updated_at = time_now
                     artefact.save()
                 else:
-<<<<<<< Updated upstream
-                    # TODO: set path to file properly so user can access via url - test !
-                    file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
-=======
                     # TODO set path to file properly so user can access via url - test !
                     file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
->>>>>>> Stashed changes
                     with open(file_name, 'w') as tmpfile:
                         tmpfile.write(db_data)
                     artefact.format = db_format
