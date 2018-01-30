@@ -82,4 +82,9 @@
 
 .artefact {
     border-radius: 0 !important;
+    transform: rotate(45deg);
+
+    &:hover {
+        transform: rotate(45deg);
+    }
 }

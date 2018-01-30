@@ -142,6 +142,9 @@ export class TaskComponent implements OnInit {
   }
 
   public hasArtefact(parameter: ProcessParameter<'input' | 'output'>) {
+    if (!this.task.input_artefacts) {
+      return;
+    }
     const index = this.task.input_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id);
     return index !== -1;
   }

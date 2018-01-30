@@ -112,7 +112,6 @@ export class EditorPageComponent implements OnInit {
    */
   public undo() {
     this.editorComponent.undo();
-    console.log(this.workflow);
   }
 
   /**
