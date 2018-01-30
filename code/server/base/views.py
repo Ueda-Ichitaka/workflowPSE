@@ -96,7 +96,11 @@ class WorkflowView(View):
 
             for (i, task) in enumerate(tasks):
                 tasks[i]['state'] = tasks[i]['status']
-                tasks[i]['started_at'] = calendar.timegm(task['started_at'].timetuple())
+                tasks[i]['x'] = float(task['x'])
+                tasks[i]['y'] = float(task['y'])
+
+                if task['started_at'] is not None:
+                    tasks[i]['started_at'] = calendar.timegm(task['started_at'].timetuple())
 
                 input_artefacts = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
                 output_artefacts = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
