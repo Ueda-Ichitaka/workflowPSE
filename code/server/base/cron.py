@@ -11,10 +11,10 @@ from lxml import etree
 
 import base.utils as utils_module
 from base.models import WPS, Task, InputOutput, Artefact, Process, STATUS, Workflow, Edge
-from base.utils import ns_map, possible_stats
+from base.utils import ns_map, possible_stats, wps_em, ows_em, xlink_em
 from workflowPSE.settings import wpsLog, BASE_DIR
 from pathlib import Path
-from io import StringIO
+from io import StringIO, BytesIO
 
 def scheduler():
     """
@@ -82,12 +82,91 @@ def scheduler():
 
 def xmlGenerator(xmlDir):
     """
-    Traverses Database and generates execution XMLL files for every Task set to status WAITING
+    Traverses Database and generates execution XML files for every Task set to status WAITING
     @param xmlDir: Directory where XMLs are generated in
     @type xmlDir: string
     @return: None
     @rtype: NoneType
     """
+
+    try:
+        task_list = list(Task.objects.filter(status='2'))
+    except Task.DoesNotExist:
+        task_list = []
+
+    for task in task_list:
+        try:
+            process = task.process
+        except Process.DoesNotExist:
+            # process not found
+            return
+
+        root = wps_em.Execute(ows_em.Identifier(process.identifier))
+        inputs_tree = createDataDoc(task)
+
+        if inputs_tree == 1:
+            # error code, something wrong with task formatting TODO: check for better handling
+            continue
+
+        root.append(inputs_tree)
+        # TODO: complete
+
+        response_form = wps_em.ResponseForm()
+        response_doc = wps_em.ResponseDocument()
+
+        output_list = list(InputOutput.objects.filter(process_id=task.process, role='1'))
+        for output in output_list:
+            output_element = wps_em.Output(ows_em.Identifier(output.identifier), ows_em.Title(output.title))
+
+
+
+def createDataDoc(task):
+    inputs = list(InputOutput.objects.filter(process_id=task.process, role='0'))
+    data_inputs = wps_em.DataInputs()
+
+    for input in inputs:
+        # literal data case, there is either a url or real data in the LiteralData element
+        # in this case just send the data
+        if input.datatype == '0':
+            try:
+                artefact = Artefact.objects.get(task=task, parameter=input, role='0')
+            except:
+                # something is wrong here if artefact has not been created yet
+                return 1
+            data_inputs.append(wps_em.Input(ows_em.Identifier(input.identifier), ows_em.Title(input.title),
+                                            wps_em.Data(wps_em.LiteralData(artefact.data))))
+        # complex data case, first try to parse xml, if successfully append to ComplexData element
+        #                    second check if there is CDATA ??
+        if input.datatype == '1':
+            try:
+                # try to parse as xml
+                data = etree.parse(artefact.data)
+            except:
+                # if it is no xml, check if it is a file path, if so insert file path in Reference node
+                if artefact.data == utils_module.getFilePath(artefact):
+                    data_inputs.append(wps_em.Input(ows_em.Identifier(input.identifier), ows_em.Title(input.title),
+                                                    wps_em.Reference({"method": "GET"},
+                                                                     {ns_map["href"]:utils_module.getFilePath(artefact)})))
+                    return data_inputs
+                # else check if there is cdata
+                #elif len(artefact.data.split("CDATA")) != 1:
+                    # when to use cdata for requests?
+                    #data = artefact.data.lstrip("<![CDATA[").rstrip("]]>")
+                else:
+                    try:
+                        data = artefact.data
+                    except:
+                        return 1
+            data_inputs.append(wps_em.Input(ows_em.Identifier(input.identifier), ows_em.Title(input.title),
+                                            wps_em.Data(data)))
+        # bounding box case there should just be lowercorner and uppercorner data
+        if input.datatype == '2':
+            # TODO: complete
+            pass
+
+    return data_inputs
+
+'''
     try:
         # Traverse Task table entries with status WAITING
         task_list = list(Task.objects.filter(status='2').values())
@@ -174,6 +253,8 @@ def xmlGenerator(xmlDir):
         # Write XML to file
         tree = ET.ElementTree(root)
         tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
+'''
+
 
 def sendTask(task_id, xmlDir):
     """
@@ -272,11 +353,11 @@ def receiver():
         running_tasks = []
         wpsLog.info("no running tasks found")
     for task in running_tasks:
-        parse_execute_response(task)
+        parseExecuteResponse(task)
 
 
 # TODO: tests
-def parse_execute_response(task):
+def parseExecuteResponse(task):
     """
     checks parameter tasks status by checking xml file found at status_url for change
     if task has finished write data to db if there is any data
@@ -285,9 +366,19 @@ def parse_execute_response(task):
     @return: 0 on success, error code otherwise
     @rtype: int
     """
+
+    # try to parse document which should be returned by request
     try:
         root = etree.parse(StringIO(requests.get(task.status_url).text))
+    except ValueError:
+        '''
+        might throw ValueError if CDATA is placed within document:
+        ValueError: Unicode strings with encoding declaration are not supported. Please use bytes input or XML fragments without declaration.
+        in this case try to parse document by encoding and reading in BytesIO buffer bevore parsing
+        '''
+        root = etree.parse(BytesIO(requests.get(task.status_url).text.encode()))
     except:
+        # otherwise just exit and return error code
         wpsLog.info(f"request for task {task.id} could not be parsed")
         return 1
 
@@ -304,7 +395,7 @@ def parse_execute_response(task):
         return 2
 
     for output in output_list:
-        parse_output(output, task)
+        parseOutput(output, task)
     try:
         process_status = root.find(ns_map["Status"])
     except:
@@ -326,9 +417,10 @@ def parse_execute_response(task):
         return 3
 
 # TODO: tests
-def parse_output(output, task):
+def parseOutput(output, task):
     """
-
+    parses output node of xml and inserts respective data if found
+    also updates status of task if there are any changes
     @param output the output that has to be parsed
     @type output lxmls.etree._Element
     @param task: the task that belongs to the output
@@ -336,7 +428,9 @@ def parse_output(output, task):
     @return: None
     @rtype: NoneType
     """
+
     out_id = output.find(ns_map["Identifier"]).text
+
     try:
         output_db = InputOutput.objects.get(process=task.process, identifier=out_id, role='1')
         artefact = Artefact.objects.get(task=task, parameter=output_db, role='1')
@@ -354,24 +448,32 @@ def parse_output(output, task):
     data_elem = output.find(ns_map["Data"])
     reference = output.find(ns_map["Reference"])
     time_now = datetime.now()
+
     if data_elem is not None:
         try:
-            # as there is always only 1 child, just try to take the first
+            # there should always be just one status!
             data_elem = data_elem.getchildren()[0]
         except:
             wpsLog.info("data has no child")
             # goto loop header
             return
+
         if data_elem.tag == ns_map["LiteralData"]:
-            dtype = "" if data_elem.get("dataType") is None else "dataType=" + data_elem.get("dataType")
-            duom = "" if data_elem.get("uom") is None else "uom=" + data_elem.get("uom")
-            db_format = f"{dtype};{duom}".strip(";")
+            d_attribs = data_elem.attrib
+            db_format = ""
+            for attrib in d_attribs:
+                db_format += f";{attrib}={d_attribs[attrib]}"
+            db_format.strip(";")
             db_data = data_elem.text
+
+            # if the string is less than 490 chars long write to db
+            # otherwise write to file and write url to db
             if len(db_data) < 490:
                 artefact.format = db_format
                 artefact.data = db_data
                 artefact.updated_at = time_now
                 artefact.save()
+
             else:
                 # TODO set path to file properly so user can access via url - test !
                 file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
@@ -381,65 +483,78 @@ def parse_output(output, task):
                 artefact.data = f"{BASE_DIR}/{file_name}"
                 artefact.updated_at = time_now
                 artefact.save()
+
         elif data_elem.tag == ns_map["BoundingBox"]:
             lower_corner = data_elem.find(ns_map["LowerCorner"])
             upper_corner = data_elem.find(ns_map["UpperCorner"])
-            db_format = f"crs:{data_elem.get('crs')};dimensions:{data_elem.get('dimensions')}".strip(";")
+            d_attribs = data_elem.attrib
+            db_format = ""
+            for attrib in d_attribs:
+                db_format += f";{attrib}={d_attribs[attrib]}"
+            db_format.strip(";")
             db_data = f"LowerCorner:{lower_corner.text};UpperCorner:{upper_corner.text}"
 
             artefact.format = db_format
             artefact.data = db_data
             artefact.updated_at = time_now
             artefact.save()
+
         elif data_elem.tag == ns_map["ComplexData"]:
             # TODO: test!
-            mtype = "" if data_elem.get("mimeType") is None else f"mimeType:{data_elem.get('mimeType')}"
-            enc = "" if data_elem.get("encoding") is None else f"encoding:{data_elem.get('encoding')}"
-            schem = "" if data_elem.get("schema") is None else f"schema:{data_elem.get('schema')}"
-            db_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
+            d_attribs = data_elem.attrib
+            db_format = ""
+            for attrib in d_attribs:
+                db_format += f";{attrib}={d_attribs[attrib]}"
+            db_format.strip(";")
             db_data = data_elem.text
-
             artefact.format = db_format
+
             if db_data is not None:
+                # if the string is less than 490 chars long write to db
+                # otherwise write to file and write url to db
                 if len(db_data) < 490:
-                    # write to db
                     artefact.data = db_data
                     artefact.updated_at = time_now
                     artefact.save()
+
                 else:
-                    # write to file
                     file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
                     with open(file_name, 'w') as tmpfile:
                         tmpfile.write(db_data)
                     artefact.data = f"{BASE_DIR}/{file_name}"
                     artefact.updated_at = time_now
                     artefact.save()
-            else:
-                # cdata is base64 encoded
-                db_data = data_elem.find(ns_map["CData"]).text
-            if db_data is not None:
+
+            elif "CDATA" in data_elem.text:
+                # if the string is less than 490 chars long write to db
+                # otherwise write to file and write url to db
+                db_data = data_elem.text
                 if len(db_data) < 490:
-                    # write to db
                     artefact.data = db_data
                     artefact.updated_at = time_now
                     artefact.save()
+
                 else:
-                    # write to file
                     file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
                     with open(file_name, 'w') as tmpfile:
                         tmpfile.write(db_data)
                     artefact.data = f"{BASE_DIR}/{file_name}"
                     artefact.updated_at = time_now
                     artefact.save()
+
+            # if there is at least one other child, there seems to be a subtree
             elif len(data_elem.getchildren()) != 0:
-                db_data = etree.tostring(data_elem)
+
+                # read the subtree to string with pretty_print syntax
+                db_data = etree.tostring(data_elem, pretty_print=True)
+
+                # if the string is less than 490 chars long write to db
+                # otherwise write to file and write url to db
                 if len(db_data) < 490:
-                    # write to db
                     artefact.data = db_data
                     artefact.updated_at = time_now
                     artefact.save()
                 else:
-                    # write to file
                     file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
                     with open(file_name, 'w') as tmpfile:
                         tmpfile.write(db_data)
@@ -449,12 +564,13 @@ def parse_output(output, task):
             else:
                 wpsLog.info("no complex data found in complexdata tree element")
     elif reference is not None:
-        # complexdata found, usually gets passed by url reference
+        # complexdata found, usually gets passed by url reference which won't be 500 chars long
         # TODO: test ?!
-        mtype = "" if reference.get("mimeType") is None else f"mimeType:{reference.get('mimeType')}"
-        enc = "" if reference.get("encoding") is None else f"encoding:{reference.get('encoding')}"
-        schem = "" if reference.get("schema") is None else f"schema:{reference.get('schema')}"
-        db_format = f"{mtype};{schem}".strip(";") if enc == "" else f"{mtype};{enc};{schem}".strip(";")
+        d_attribs = data_elem.attrib
+        db_format = ""
+        for attrib in d_attribs:
+            db_format += f";{attrib}={d_attribs[attrib]}"
+        db_format.strip(";")
         db_data = reference.text  # should be a url
 
         artefact.format = db_format

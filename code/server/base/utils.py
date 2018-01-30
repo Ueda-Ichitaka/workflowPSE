@@ -3,15 +3,20 @@ import xml.etree.ElementTree as ET
 
 from lxml.builder import ElementMaker
 from pywps import NAMESPACES as ns
+import os
 
 import base.cron
 from base.models import WPSProvider, WPS, Process, InputOutput, DATATYPE, ROLE
+from workflowPSE.settings import BASE_DIR
 
 E = ElementMaker()
 wps_em = ElementMaker(namespace=ns['wps'], nsmap=ns)
 ows_em = ElementMaker(namespace=ns['ows'], nsmap=ns)
 xlink_em = ElementMaker(namespace=ns['ows'], nsmap=ns)
 
+'''
+maps the xml namespaces of pywps 
+'''
 ns_map = {
     # wps namespaced tags
     "Capabilities": f"{{{ns['wps']}}}Capabilities",
@@ -56,6 +61,18 @@ ns_map = {
 
 possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "ProcessSucceeded", "ProcessFailed"]
 
+def getFilePath(artefact):
+    '''
+    returns path to file for artefact or None if there is no such file
+    @param artefact: artefact for which path is returned
+    @type artefact: models.Artefact
+    @return: path to data
+    @rtype: string
+    '''
+    possible_path = f"{BASE_DIR}/outputs/artefactID{artefact.id}.xml"
+    if os.path.isfile(possible_path):
+        return possible_path
+    return None
 
 def add_wps_server(server_urls):
     """
