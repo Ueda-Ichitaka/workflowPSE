@@ -95,7 +95,7 @@ class WorkflowView(View):
             tasks = list(workflow.task_set.all().values())
 
             for (i, task) in enumerate(tasks):
-                tasks[i]['state'] = tasks[i]['status']
+                tasks[i]['state'] = int(tasks[i]['status'])
                 tasks[i]['x'] = float(task['x'])
                 tasks[i]['y'] = float(task['y'])
 
@@ -131,7 +131,7 @@ class WorkflowView(View):
                 tasks = list(Task.objects.filter(workflow=workflow['id']).values())
 
                 for (j, task) in enumerate(tasks):
-                    tasks[j]['state'] = task['status']
+                    tasks[j]['state'] = int(task['status'])
                     tasks[j]['x'] = float(task['x'])
                     tasks[j]['y'] = float(task['y'])
 
@@ -318,6 +318,7 @@ class WorkflowView(View):
         """
         Task.objects.filter(workflow=workflow_id).update(status=1)
 
+        # TODO: return {"error": "..."} for some errors
         return JsonResponse({})
 
     @staticmethod
