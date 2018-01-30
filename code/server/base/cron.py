@@ -449,12 +449,19 @@ def parse_execute_response(task):
                 Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
                                                       data=db_data, created_at=time_now, updated_at=time_now)
 
-# TODO: tests, documentation
+
 def update_wps_processes():
     """
+    This method update the list of WPS processes provided by the WPS Server.
+    It takes a describe_processes_url of each wps server saved in database,
+    open it, and parses the xml file, that comes in request message.
 
-    @return:
-    @rtype:
+    It will be checked if any object present in database.
+    If no, it will be saved, else it will be overwritten with the actual
+    information provided by the WPS server.
+
+    @return: None
+    @rtype: None
     """
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
