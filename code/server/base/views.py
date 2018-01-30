@@ -374,15 +374,16 @@ class ProcessView(View):
             outputs = list(process.inputoutput_set.all().filter(role=1).values())
 
             for (j, input) in enumerate(inputs):
-                inputs[j]['type'] = input['datatype']
-                inputs[j]['role'] = ('input' if input['role'] == 0 else 'output')
+                inputs[j]['type'] = int(input['datatype'])
+                inputs[j]['role'] = ('input' if input['role'] == '0' else 'output')
 
             for (j, output) in enumerate(outputs):
-                outputs[j]['type'] = output['datatype']
-                outputs[j]['role'] = ('input' if output['role'] == 0 else 'output')
+                outputs[j]['type'] = int(output['datatype'])
+                outputs[j]['role'] = ('input' if output['role'] == '0' else 'output')
 
             returned['inputs'] = inputs
             returned['outputs'] = outputs
+
             return as_json_response(returned)
         else:
             returned = list(Process.objects.all().values())
@@ -392,12 +393,12 @@ class ProcessView(View):
                 outputs = list(InputOutput.objects.filter(process=process['id']).filter(role=1).values())
 
                 for (j, input) in enumerate(inputs):
-                    inputs[j]['type'] = input['datatype']
-                    inputs[j]['role'] = ('input' if input['role'] == 0 else 'output')
+                    inputs[j]['type'] = int(input['datatype'])
+                    inputs[j]['role'] = ('input' if input['role'] == '0' else 'output')
 
                 for (j, output) in enumerate(outputs):
-                    outputs[j]['type'] = output['datatype']
-                    outputs[j]['role'] = ('input' if output['role'] == 0 else 'output')
+                    outputs[j]['type'] = int(output['datatype'])
+                    outputs[j]['role'] = ('input' if output['role'] == '0' else 'output')
 
                 returned[i]['inputs'] = inputs
                 returned[i]['outputs'] = outputs
