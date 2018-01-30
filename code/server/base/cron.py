@@ -17,9 +17,6 @@ from pathlib import Path
 from io import StringIO
 import tempfile
 
-# TODO: naming convention, code formatting
-
-# TODO: tests
 def scheduler():
     """
     Main scheduling function. Schedules Tasks in Workflows according to their execution order, generates execution XML files and sends tasks to
@@ -67,7 +64,6 @@ def scheduler():
     xmlGenerator(xmlDir)
 
     # send tasks
-    # sendTask(2, xmlDir)
     for tid in exec_list:
         sendTask(tid, xmlDir)
 
@@ -78,7 +74,6 @@ def scheduler():
     f.close()
 
 
-# TODO: tests
 def xmlGenerator(xmlDir):
     """
     Traverses Database and generates execution XMLL files for every Task set to status WAITING
@@ -175,7 +170,6 @@ def xmlGenerator(xmlDir):
         tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
 
 
-# TODO: tests
 def sendTask(task_id, xmlDir):
     """
     Sends a Task identified by its Database ID to its WPS Server.
@@ -235,7 +229,6 @@ def sendTask(task_id, xmlDir):
         os.remove(filepath)
 
 
-# TODO: tests
 def getExecuteUrl(task):
     """
     Extracts the Execute URL from the Database for a given task. Returns empty string on error.
@@ -256,15 +249,15 @@ def getExecuteUrl(task):
     return execute_url
 
 
-# TODO: tests, documentation, implement
+# TODO: tests
 def receiver():
     """
     loops all running tasks
     parses xml on server and checks for status
     overwrites status if changed
     if task is finished, write data to db
-    @return:
-    @rtype:
+    @return: None
+    @rtype: None
     """
     try:
         running_tasks = list(Task.objects.filter(status='3'))
@@ -286,7 +279,6 @@ def parse_execute_response(task):
     @return: 0 on success, error code otherwise
     @rtype: int
     """
-    # TODO insert data to input of next task
     try:
         root = etree.parse(StringIO(requests.get(task.status_url).text))
     except:
@@ -354,7 +346,7 @@ def parse_execute_response(task):
                     artefact.updated_at = time_now
                     artefact.save()
                 else:
-                    # TODO set path to file properly so user can access via url - test !
+                    # TODO: set path to file properly so user can access via url - test !
                     file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
                     with open(file_name, 'w') as tmpfile:
                         tmpfile.write(db_data)
@@ -373,7 +365,7 @@ def parse_execute_response(task):
                 artefact.updated_at = time_now
                 artefact.save()
             elif data_elem.tag == ns_map["ComplexData"]:
-                # TODO test!
+                # TODO: test!
                 mtype = "" if data_elem.get("mimeType") is None else f"mimeType:{data_elem.get('mimeType')}"
                 enc = "" if data_elem.get("encoding") is None else f"encoding:{data_elem.get('encoding')}"
                 schem = "" if data_elem.get("schema") is None else f"schema:{data_elem.get('schema')}"
@@ -431,7 +423,7 @@ def parse_execute_response(task):
                     wpsLog.info("no complex data found in complexdata tree element")
         elif reference is not None:
             # complexdata found, usually gets passed by url reference
-            # TODO test ?!
+            # TODO: test ?!
             mtype = "" if reference.get("mimeType") is None else f"mimeType:{reference.get('mimeType')}"
             enc = "" if reference.get("encoding") is None else f"encoding:{reference.get('encoding')}"
             schem = "" if reference.get("schema") is None else f"schema:{reference.get('schema')}"
@@ -454,12 +446,19 @@ def parse_execute_response(task):
                 Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
                                                       data=db_data, created_at=time_now, updated_at=time_now)
 
-# TODO: tests, documentation
+
 def update_wps_processes():
     """
+    This method update the list of WPS processes provided by the WPS Server.
+    It takes a describe_processes_url of each wps server saved in database,
+    open it, and parses the xml file, that comes in request message.
 
-    @return:
-    @rtype:
+    It will be checked if any object present in database.
+    If no, it will be saved, else it will be overwritten with the actual
+    information provided by the WPS server.
+
+    @return: None
+    @rtype: None
     """
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',

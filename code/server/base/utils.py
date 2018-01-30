@@ -57,22 +57,25 @@ ns_map = {
 possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "ProcessSucceeded", "ProcessFailed"]
 
 
-# TODO: tests, documentation
 def add_wps_server(server_urls):
     """
-    This method add new wps server to the database.
+    This method adds new wps server to the database.
     It receives a list of server urls as parameter from the admin page
     and creates new wps server and service provider objects, which will saved
     in the database.
+
+    It calls methods, which check if the objects are already in database.
+    In case, when object already exists, his fields will be overwritten
+    with actual information from the WPS server.
 
     After that the method update_wps_processes will called.
 
     @param server_urls: List of urls given by admin on admin page
     @type server_urls: str list
     @return: None
-    @rtype:
+    @rtype: None
     """
-    # server_urls = ['http://pse.rudolphrichard.de:5000/wps?request=GetCapabilities&service=WPS']
+    # server_urls = ['http://pse.rudolphrichard.de:5000']
     for server_url in server_urls:
         if server_url[-1] != '/':
             server_url = server_url + '/'
@@ -115,7 +118,7 @@ def search_provider_in_database(service_provider):
     """
     Check that the service_provider instance given in parameter
     is not already in database.
-    The istances are equal, if their 'provider_name' and
+    The instances are equal, if their 'provider_name' and
     'provider_site' fields are equal
     If database has the same instance, it will be returned.
     If database not contains instance, None will be returned.
@@ -178,11 +181,16 @@ def search_process_in_database(parsed_process):
 
 def search_input_output_in_database(parsed_input_output):
     """
+    Check that the input or output instance given in parameter
+    is not already in database.
     The instances are equal, if their 'identifier' fields
     are equal,they have the same role (Input or Output) and
     they belong to the same process.
-    :param parsed_input_output:
-    :return:
+
+    @param parsed_input_output:
+    @type parsed_input_output
+    @param parsed_input_output:
+    @return:
     """
     try:
         ioput = InputOutput.objects.get(identifier=parsed_input_output.identifier,
@@ -196,13 +204,14 @@ def search_input_output_in_database(parsed_input_output):
 # TODO: tests, documentation
 def overwrite_server(old_entry, new_entry):
     """
+    Overwrites the fields of WPS server object in database
 
-    @param old_entry:
-    @type old_entry:
-    @param new_entry:
-    @type new_entry:
-    @return:
-    @rtype:
+    @param old_entry: Object from database
+    @type old_entry: WPS
+    @param new_entry: Object with actual parsed information
+    @type new_entry: WPS
+    @return: wps server
+    @rtype: WPS
     """
     old_entry.abstract = new_entry.abstract
     old_entry.capabilities_url = new_entry.capabilities_url
@@ -215,13 +224,14 @@ def overwrite_server(old_entry, new_entry):
 
 def overwrite_process(old_entry, new_entry):
     """
+    Overwrites the fields of WPS process object in database
 
-    @param old_entry:
-    @type old_entry:
-    @param new_entry:
-    @type new_entry:
-    @return:
-    @rtype:
+    @param old_entry: Object from database
+    @type old_entry: Process
+    @param new_entry: Object with actual parsed information
+    @type new_entry: Process
+    @return: wps process
+    @rtype: Process
     """
     old_entry.title = new_entry.title
     old_entry.abstract = new_entry.abstract
@@ -232,10 +242,14 @@ def overwrite_process(old_entry, new_entry):
 
 def overwrite_input_output(old_entry, new_entry):
     """
+    Overwrites the fields of WPS input or output object in database
 
-    :param old_entry:
-    :param new_entry:
-    :return:
+    @param old_entry: Object from database
+    @type old_entry: InputOutput
+    @param new_entry: Object with actual parsed information
+    @type new_entry: InputOutput
+    @return: input or output
+    @rtype: InputOutput
     """
     old_entry.title = new_entry.title
     old_entry.abstract = new_entry.abstract
@@ -248,16 +262,18 @@ def overwrite_input_output(old_entry, new_entry):
     return old_entry
 
 
-# TODO: tests, documentation
 def parse_service_provider_info(root, namespaces):
     """
+    Parses the xml file provided by the wps server.
+    Searches for the information about the WPS server provider.
+    Returns a new object of the class WPSProvider
 
-    @param root:
-    @type root:
-    @param namespaces:
-    @type namespaces:
-    @return:
-    @rtype:
+    @param root: root Element of the Element tree
+    @type root: ElementTree.Element
+    @param namespaces: dictionary of xml namespaces (xmlns)
+    @type namespaces: dict
+    @return: WPS server provider
+    @rtype: WPSProvider
     """
     service_provider_element = root.find('ows:ServiceProvider', namespaces)
     provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
@@ -281,18 +297,20 @@ def parse_service_provider_info(root, namespaces):
     return service_provider
 
 
-# TODO: tests, documentation
 def parse_wps_server_info(root, namespaces, provider):
     """
+    Parses the xml file provided by the wps server.
+    Searches for the information about the WPS server.
+    Returns a new object of the class WPS
 
-    @param root:
-    @type root:
-    @param namespaces:
-    @type namespaces:
-    @param provider:
-    @type provider:
-    @return:
-    @rtype:
+    @param root: root Element of the Element tree
+    @type root: ElementTree.Element
+    @param namespaces: dictionary of xml namespaces (xmlns)
+    @type namespaces: dict
+    @param provider: wps server provider
+    @type provider: WPSProvider
+    @return: wps server
+    @rtype: WPS
     """
     service_identification_element = root.find('ows:ServiceIdentification', namespaces)
 
@@ -319,18 +337,20 @@ def parse_wps_server_info(root, namespaces, provider):
     return wps_server
 
 
-# TODO: tests, documentation
 def parse_process_info(process_element, namespaces, wps_server):
     """
+    Parses the xml file provided by the wps server.
+    Searches for the information about the WPS Process.
+    Returns a new object of the class Process
 
-    @param process_element:
-    @type process_element:
-    @param namespaces:
-    @type namespaces:
-    @param wps_server:
-    @type wps_server:
-    @return:
-    @rtype:
+    @param process_element: Element with process information
+    @type process_element: Elementtree.Element
+    @param namespaces: dictionary of xml namespaces (xmlns)
+    @type namespaces: dict
+    @param wps_server: WPS server that provides wps processes
+    @type wps_server: WPS
+    @return: wps Process
+    @rtype: Process
     """
     process_identifier = process_element.find('ows:Identifier', namespaces).text
     process_title = process_element.find('ows:Title', namespaces).text
@@ -351,18 +371,21 @@ def parse_process_info(process_element, namespaces, wps_server):
     return process
 
 
-# TODO: tests, documentation
 def parse_input_info(input_element, namespaces, process):
     """
+    Parses the xml file provided by the wps server.
+    Searches for the information about the WPS process input.
+    Returns a new object of the class InputOutput with ROLE Input
 
-    @param input_element:
-    @type input_element:
-    @param namespaces:
-    @type namespaces:
-    @param process:
-    @type process:
-    @return:
-    @rtype:
+
+    @param input_element: Element with process input information
+    @type input_element: ElementTree.Element
+    @param namespaces: dictionary of xml namespaces (xmlns)
+    @type namespaces: dict
+    @param process: Process that required input
+    @type process: Process
+    @return: input of the WPS process
+    @rtype: InputOutput
     """
     input_identifier = input_element.find('ows:Identifier', namespaces).text
     input_title = input_element.find('ows:Title', namespaces).text
@@ -406,19 +429,20 @@ def parse_input_info(input_element, namespaces, process):
     return input
 
 
-# TODO: tests, documentation
 def parse_output_info(output_element, namespaces, process):
     """
-
+    Parses the xml file provided by the wps server.
+    Searches for the information about the WPS process output.
+    Returns a new object of the class InputOutput with ROLE Output
     
-    @param output_element:
-    @type output_element:
-    @param namespaces:
-    @type namespaces:
-    @param process:
-    @type process:
-    @return:
-    @rtype:
+    @param output_element: Element with process input information
+    @type output_element: ElementTree.Element
+    @param namespaces: dictionary of xml namespaces (xmlns)
+    @type namespaces: dict
+    @param process: Process that required output
+    @type process: Process
+    @return: output of the WPS process
+    @rtype: InputOutput
     """
     output_identifier = output_element.find('ows:Identifier', namespaces).text
     output_title = output_element.find('ows:Title', namespaces).text

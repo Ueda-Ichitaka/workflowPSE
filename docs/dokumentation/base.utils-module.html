@@ -72,12 +72,12 @@
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">None</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.utils-module.html#add_wps_server" class="summary-sig-name">add_wps_server</a>(<span class="summary-sig-arg">server_urls</span>)</span><br />
-      This method add new wps server to the database.</td>
+      This method adds new wps server to the database.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#add_wps_server">source&nbsp;code</a></span>
             
@@ -148,9 +148,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.utils-module.html#search_input_output_in_database" class="summary-sig-name">search_input_output_in_database</a>(<span class="summary-sig-arg">parsed_input_output</span>)</span><br />
-      The instances are equal, if their 'identifier' fields are equal,they 
-      have the same role (Input or Output) and they belong to the same 
-      process.</td>
+      Check that the input or output instance given in parameter is not 
+      already in database.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#search_input_output_in_database">source&nbsp;code</a></span>
             
@@ -162,13 +161,13 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">WPS</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.utils-module.html#overwrite_server" class="summary-sig-name">overwrite_server</a>(<span class="summary-sig-arg">old_entry</span>,
         <span class="summary-sig-arg">new_entry</span>)</span><br />
-      Returns:</td>
+      Overwrites the fields of WPS server object in database</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#overwrite_server">source&nbsp;code</a></span>
             
@@ -180,13 +179,13 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">Process</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.utils-module.html#overwrite_process" class="summary-sig-name">overwrite_process</a>(<span class="summary-sig-arg">old_entry</span>,
         <span class="summary-sig-arg">new_entry</span>)</span><br />
-      Returns:</td>
+      Overwrites the fields of WPS process object in database</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#overwrite_process">source&nbsp;code</a></span>
             
@@ -198,13 +197,13 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">InputOutput</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="overwrite_input_output"></a><span class="summary-sig-name">overwrite_input_output</span>(<span class="summary-sig-arg">old_entry</span>,
+          <td><span class="summary-sig"><a href="base.utils-module.html#overwrite_input_output" class="summary-sig-name">overwrite_input_output</a>(<span class="summary-sig-arg">old_entry</span>,
         <span class="summary-sig-arg">new_entry</span>)</span><br />
-      :param old_entry: :param new_entry: :return:</td>
+      Overwrites the fields of WPS input or output object in database</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#overwrite_input_output">source&nbsp;code</a></span>
             
@@ -216,13 +215,13 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">WPSProvider</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.utils-module.html#parse_service_provider_info" class="summary-sig-name">parse_service_provider_info</a>(<span class="summary-sig-arg">root</span>,
         <span class="summary-sig-arg">namespaces</span>)</span><br />
-      Returns:</td>
+      Parses the xml file provided by the wps server.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#parse_service_provider_info">source&nbsp;code</a></span>
             
@@ -234,14 +233,14 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">WPS</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.utils-module.html#parse_wps_server_info" class="summary-sig-name">parse_wps_server_info</a>(<span class="summary-sig-arg">root</span>,
         <span class="summary-sig-arg">namespaces</span>,
         <span class="summary-sig-arg">provider</span>)</span><br />
-      Returns:</td>
+      Parses the xml file provided by the wps server.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#parse_wps_server_info">source&nbsp;code</a></span>
             
@@ -253,14 +252,14 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">Process</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.utils-module.html#parse_process_info" class="summary-sig-name">parse_process_info</a>(<span class="summary-sig-arg">process_element</span>,
         <span class="summary-sig-arg">namespaces</span>,
         <span class="summary-sig-arg">wps_server</span>)</span><br />
-      Returns:</td>
+      Parses the xml file provided by the wps server.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#parse_process_info">source&nbsp;code</a></span>
             
@@ -272,14 +271,14 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">InputOutput</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.utils-module.html#parse_input_info" class="summary-sig-name">parse_input_info</a>(<span class="summary-sig-arg">input_element</span>,
         <span class="summary-sig-arg">namespaces</span>,
         <span class="summary-sig-arg">process</span>)</span><br />
-      Returns:</td>
+      Parses the xml file provided by the wps server.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#parse_input_info">source&nbsp;code</a></span>
             
@@ -291,14 +290,14 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">InputOutput</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.utils-module.html#parse_output_info" class="summary-sig-name">parse_output_info</a>(<span class="summary-sig-arg">output_element</span>,
         <span class="summary-sig-arg">namespaces</span>,
         <span class="summary-sig-arg">process</span>)</span><br />
-      Returns:</td>
+      Parses the xml file provided by the wps server.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.utils-pysrc.html#parse_output_info">source&nbsp;code</a></span>
             
@@ -358,15 +357,15 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a href="base.utils-module.html#ns_map" class="summary-name">ns_map</a> = <code title="{f &quot;Capabilities&quot;: &quot;{{{ns['wps']}}}Capabilities&quot;, f &quot;ProcessDescriptio\
-ns&quot;: &quot;{{{ns['wps']}}}ProcessDescriptions&quot;, f &quot;ExecuteResponse&quot;: &quot;{{{ns\
-['wps']}}}ExecuteResponse&quot;, f &quot;Process&quot;: &quot;{{{ns['wps']}}}Process&quot;, f &quot;\
-Status&quot;: &quot;{{{ns['wps']}}}Status&quot;, f &quot;Data&quot;: &quot;{{{ns['wps']}}}Data&quot;, f &quot;\
-LiteralData&quot;: &quot;{{{ns['wps']}}}LiteralData&quot;, f &quot;ComplexData&quot;: &quot;{{{ns['w\
-ps']}}}ComplexData&quot;, f &quot;Output&quot;: &quot;{{{ns['wps']}}}Output&quot;, f &quot;ProcessOu\
-tputs&quot;: &quot;{{{ns['wps']}}}ProcessOutputs&quot;, f &quot;Input&quot;: &quot;{{{ns['wps']}}}In\
-put&quot;, f &quot;DataInput&quot;: &quot;{{{ns['wps']}}}DataInput&quot;, f &quot;Default&quot;: &quot;{{{ns['\
-...">{f &quot;Capabilities&quot;: &quot;{{{ns['wps']}}}Capabilities&quot;, f &quot;<code class="variable-ellipsis">...</code></code>
+        <a href="base.utils-module.html#ns_map" class="summary-name">ns_map</a> = <code title="{&quot;Capabilities&quot;: f &quot;{{{ns['wps']}}}Capabilities&quot;, &quot;ProcessDescriptions\
+&quot;: f &quot;{{{ns['wps']}}}ProcessDescriptions&quot;, &quot;ExecuteResponse&quot;: f &quot;{{{ns\
+['wps']}}}ExecuteResponse&quot;, &quot;Process&quot;: f &quot;{{{ns['wps']}}}Process&quot;, &quot;St\
+atus&quot;: f &quot;{{{ns['wps']}}}Status&quot;, &quot;Data&quot;: f &quot;{{{ns['wps']}}}Data&quot;, &quot;Li\
+teralData&quot;: f &quot;{{{ns['wps']}}}LiteralData&quot;, &quot;ComplexData&quot;: f &quot;{{{ns['w\
+ps']}}}ComplexData&quot;, &quot;Output&quot;: f &quot;{{{ns['wps']}}}Output&quot;, &quot;ProcessOutp\
+uts&quot;: f &quot;{{{ns['wps']}}}ProcessOutputs&quot;, &quot;Input&quot;: f &quot;{{{ns['wps']}}}In\
+put&quot;, &quot;DataInput&quot;: f &quot;{{{ns['wps']}}}DataInput&quot;, &quot;Default&quot;: f &quot;{{{ns['\
+...">{&quot;Capabilities&quot;: f &quot;{{{ns['wps']}}}Capabilities&quot;, &quot;Pr<code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
 <tr>
@@ -410,16 +409,19 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  <p>This method add new wps server to the database. It receives a list of 
+  <p>This method adds new wps server to the database. It receives a list of
   server urls as parameter from the admin page and creates new wps server 
   and service provider objects, which will saved in the database.</p>
+  <p>It calls methods, which check if the objects are already in database. 
+  In case, when object already exists, his fields will be overwritten with 
+  actual information from the WPS server.</p>
   <p>After that the method update_wps_processes will called.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>server_urls</code></strong> (str list) - List of urls given by admin on admin page</li>
     </ul></dd>
-    <dt>Returns:</dt>
+    <dt>Returns: None</dt>
         <dd>None</dd>
   </dl>
 </td></tr></table>
@@ -439,9 +441,9 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
   </tr></table>
   
   <p>Check that the service_provider instance given in parameter is not 
-  already in database. The istances are equal, if their 'provider_name' and
-  'provider_site' fields are equal If database has the same instance, it 
-  will be returned. If database not contains instance, None will be 
+  already in database. The instances are equal, if their 'provider_name' 
+  and 'provider_site' fields are equal If database has the same instance, 
+  it will be returned. If database not contains instance, None will be 
   returned.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
@@ -523,10 +525,16 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  <p>The instances are equal, if their 'identifier' fields are equal,they 
-  have the same role (Input or Output) and they belong to the same process.
-  :param parsed_input_output: :return:</p>
+  <p>Check that the input or output instance given in parameter is not 
+  already in database. The instances are equal, if their 'identifier' 
+  fields are equal,they have the same role (Input or Output) and they 
+  belong to the same process.</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parsed_input_output</code></strong> - @type parsed_input_output</li>
+        <li><strong class="pname"><code>parsed_input_output</code></strong></li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -545,13 +553,15 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  
+  <p>Overwrites the fields of WPS server object in database</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>old_entry</code></strong> ()</li>
-        <li><strong class="pname"><code>new_entry</code></strong> ()</li>
+        <li><strong class="pname"><code>old_entry</code></strong> (WPS) - Object from database</li>
+        <li><strong class="pname"><code>new_entry</code></strong> (WPS) - Object with actual parsed information</li>
     </ul></dd>
+    <dt>Returns: WPS</dt>
+        <dd>wps server</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -570,13 +580,42 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  
+  <p>Overwrites the fields of WPS process object in database</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>old_entry</code></strong> ()</li>
-        <li><strong class="pname"><code>new_entry</code></strong> ()</li>
+        <li><strong class="pname"><code>old_entry</code></strong> (Process) - Object from database</li>
+        <li><strong class="pname"><code>new_entry</code></strong> (Process) - Object with actual parsed information</li>
     </ul></dd>
+    <dt>Returns: Process</dt>
+        <dd>wps process</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="overwrite_input_output"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">overwrite_input_output</span>(<span class="sig-arg">old_entry</span>,
+        <span class="sig-arg">new_entry</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.utils-pysrc.html#overwrite_input_output">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Overwrites the fields of WPS input or output object in database</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>old_entry</code></strong> (InputOutput) - Object from database</li>
+        <li><strong class="pname"><code>new_entry</code></strong> (InputOutput) - Object with actual parsed information</li>
+    </ul></dd>
+    <dt>Returns: InputOutput</dt>
+        <dd>input or output</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -595,13 +634,17 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  
+  <p>Parses the xml file provided by the wps server. Searches for the 
+  information about the WPS server provider. Returns a new object of the 
+  class WPSProvider</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>root</code></strong> ()</li>
-        <li><strong class="pname"><code>namespaces</code></strong> ()</li>
+        <li><strong class="pname"><code>root</code></strong> (ElementTree.Element) - root Element of the Element tree</li>
+        <li><strong class="pname"><code>namespaces</code></strong> (dict) - dictionary of xml namespaces (xmlns)</li>
     </ul></dd>
+    <dt>Returns: WPSProvider</dt>
+        <dd>WPS server provider</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -621,14 +664,18 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  
+  <p>Parses the xml file provided by the wps server. Searches for the 
+  information about the WPS server. Returns a new object of the class 
+  WPS</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>root</code></strong> ()</li>
-        <li><strong class="pname"><code>namespaces</code></strong> ()</li>
-        <li><strong class="pname"><code>provider</code></strong> ()</li>
+        <li><strong class="pname"><code>root</code></strong> (ElementTree.Element) - root Element of the Element tree</li>
+        <li><strong class="pname"><code>namespaces</code></strong> (dict) - dictionary of xml namespaces (xmlns)</li>
+        <li><strong class="pname"><code>provider</code></strong> (WPSProvider) - wps server provider</li>
     </ul></dd>
+    <dt>Returns: WPS</dt>
+        <dd>wps server</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -648,14 +695,18 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  
+  <p>Parses the xml file provided by the wps server. Searches for the 
+  information about the WPS Process. Returns a new object of the class 
+  Process</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>process_element</code></strong> ()</li>
-        <li><strong class="pname"><code>namespaces</code></strong> ()</li>
-        <li><strong class="pname"><code>wps_server</code></strong> ()</li>
+        <li><strong class="pname"><code>process_element</code></strong> (Elementtree.Element) - Element with process information</li>
+        <li><strong class="pname"><code>namespaces</code></strong> (dict) - dictionary of xml namespaces (xmlns)</li>
+        <li><strong class="pname"><code>wps_server</code></strong> (WPS) - WPS server that provides wps processes</li>
     </ul></dd>
+    <dt>Returns: Process</dt>
+        <dd>wps Process</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -675,14 +726,18 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  
+  <p>Parses the xml file provided by the wps server. Searches for the 
+  information about the WPS process input. Returns a new object of the 
+  class InputOutput with ROLE Input</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>input_element</code></strong> ()</li>
-        <li><strong class="pname"><code>namespaces</code></strong> ()</li>
-        <li><strong class="pname"><code>process</code></strong> ()</li>
+        <li><strong class="pname"><code>input_element</code></strong> (ElementTree.Element) - Element with process input information</li>
+        <li><strong class="pname"><code>namespaces</code></strong> (dict) - dictionary of xml namespaces (xmlns)</li>
+        <li><strong class="pname"><code>process</code></strong> (Process) - Process that required input</li>
     </ul></dd>
+    <dt>Returns: InputOutput</dt>
+        <dd>input of the WPS process</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -702,14 +757,18 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
     </td>
   </tr></table>
   
-  
+  <p>Parses the xml file provided by the wps server. Searches for the 
+  information about the WPS process output. Returns a new object of the 
+  class InputOutput with ROLE Output</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>output_element</code></strong> ()</li>
-        <li><strong class="pname"><code>namespaces</code></strong> ()</li>
-        <li><strong class="pname"><code>process</code></strong> ()</li>
+        <li><strong class="pname"><code>output_element</code></strong> (ElementTree.Element) - Element with process input information</li>
+        <li><strong class="pname"><code>namespaces</code></strong> (dict) - dictionary of xml namespaces (xmlns)</li>
+        <li><strong class="pname"><code>process</code></strong> (Process) - Process that required output</li>
     </ul></dd>
+    <dt>Returns: InputOutput</dt>
+        <dd>output of the WPS process</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -744,14 +803,14 @@ ed&quot;, &quot;ProcessFailed&quot;]">[&quot;ProcessAccepted&quot;, &quot;Proces
   <dl class="fields">
     <dt>Value:</dt>
       <dd><table><tr><td><pre class="variable">
-{f &quot;Capabilities&quot;: &quot;{{{ns['wps']}}}Capabilities&quot;, f &quot;ProcessDescriptio<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-ns&quot;: &quot;{{{ns['wps']}}}ProcessDescriptions&quot;, f &quot;ExecuteResponse&quot;: &quot;{{{ns<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-['wps']}}}ExecuteResponse&quot;, f &quot;Process&quot;: &quot;{{{ns['wps']}}}Process&quot;, f &quot;<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-Status&quot;: &quot;{{{ns['wps']}}}Status&quot;, f &quot;Data&quot;: &quot;{{{ns['wps']}}}Data&quot;, f &quot;<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-LiteralData&quot;: &quot;{{{ns['wps']}}}LiteralData&quot;, f &quot;ComplexData&quot;: &quot;{{{ns['w<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-ps']}}}ComplexData&quot;, f &quot;Output&quot;: &quot;{{{ns['wps']}}}Output&quot;, f &quot;ProcessOu<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-tputs&quot;: &quot;{{{ns['wps']}}}ProcessOutputs&quot;, f &quot;Input&quot;: &quot;{{{ns['wps']}}}In<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-put&quot;, f &quot;DataInput&quot;: &quot;{{{ns['wps']}}}DataInput&quot;, f &quot;Default&quot;: &quot;{{{ns['<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+{&quot;Capabilities&quot;: f &quot;{{{ns['wps']}}}Capabilities&quot;, &quot;ProcessDescriptions<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+&quot;: f &quot;{{{ns['wps']}}}ProcessDescriptions&quot;, &quot;ExecuteResponse&quot;: f &quot;{{{ns<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+['wps']}}}ExecuteResponse&quot;, &quot;Process&quot;: f &quot;{{{ns['wps']}}}Process&quot;, &quot;St<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+atus&quot;: f &quot;{{{ns['wps']}}}Status&quot;, &quot;Data&quot;: f &quot;{{{ns['wps']}}}Data&quot;, &quot;Li<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+teralData&quot;: f &quot;{{{ns['wps']}}}LiteralData&quot;, &quot;ComplexData&quot;: f &quot;{{{ns['w<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ps']}}}ComplexData&quot;, &quot;Output&quot;: f &quot;{{{ns['wps']}}}Output&quot;, &quot;ProcessOutp<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+uts&quot;: f &quot;{{{ns['wps']}}}ProcessOutputs&quot;, &quot;Input&quot;: f &quot;{{{ns['wps']}}}In<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+put&quot;, &quot;DataInput&quot;: f &quot;{{{ns['wps']}}}DataInput&quot;, &quot;Default&quot;: f &quot;{{{ns['<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
 <code class="variable-ellipsis">...</code>
 </pre></td></tr></table>
 </dd>
@@ -801,7 +860,7 @@ ed&quot;, &quot;ProcessFailed&quot;]
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sat Jan 27 21:52:21 2018
+    Generated by Epydoc 3.0.1 on Tue Jan 30 12:32:06 2018
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
