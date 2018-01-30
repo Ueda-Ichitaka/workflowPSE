@@ -196,7 +196,7 @@ def sendTask(task_id, xmlDir):
     file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + str(open(filepath, 'r').read())
 
     # send to url
-    response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file)  # TODO: replace with variable
+    response = requests.post(execute_url, data=file)  # 'http://pse.rudolphrichard.de:5000/wps'
 
     # if the response is not in xml format
     try:
@@ -213,14 +213,15 @@ def sendTask(task_id, xmlDir):
     try:
         # Update DB Entry
         p = Task.objects.get(id=task_id)
+        p.status_url = xml.get('statusLocation')
+        p.status = '3'
+        p.started_at = datetime.now()
+        print(p.started_at)
+        p.save()
     except Task.DoesNotExist:
         print("task not found")
         return
-    p.status_url = xml.get('statusLocation')
-    p.status = '3'
-    p.started_at = datetime.now()
-    print(p.started_at)
-    p.save()
+    
 
     # Delete execution XML
     if os.path.isfile(filepath):

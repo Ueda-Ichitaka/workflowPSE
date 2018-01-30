@@ -22,7 +22,7 @@ sudo make install
 sudo pip3.6 install Django==2.0.1 psycopg2 django_crontab docutils pywps django-cors-headers
 
 ## install pywps
-#sudo pip3.6 install -e git+https://github.com/geopython/pywps.git@master#egg=pywps-dev
+sudo pip3.6 install -e git+https://github.com/geopython/pywps.git@master#egg=pywps-dev
 
 
 
