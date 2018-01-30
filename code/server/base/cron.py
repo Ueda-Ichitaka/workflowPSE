@@ -50,7 +50,14 @@ def scheduler():
                 edges_to_current_task = []
             for current_edge in edges_to_current_task:
                 if current_edge.from_task.status == '4':
-                    previous_tasks_finished = True
+                    if not Artefact.objects.filter(taks=current_task, role='0'):
+                        previous_tasks_finished = False
+                        break
+                    else:
+                        for current_artefact in Artefact.objects.filter(taks=current_task, role='0'):
+                            if not current_artefact.data:
+                                previous_tasks_finished = False
+                                break
                 else:
                     previous_tasks_finished = False
                     break

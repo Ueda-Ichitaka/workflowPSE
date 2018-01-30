@@ -95,7 +95,7 @@ class WorkflowView(View):
             tasks = list(workflow.task_set.all().values())
 
             for (i, task) in enumerate(tasks):
-                tasks[i]['state'] = tasks[i]['status']
+                tasks[i]['state'] = int(tasks[i]['status'])
                 tasks[i]['x'] = float(task['x'])
                 tasks[i]['y'] = float(task['y'])
 
@@ -111,12 +111,13 @@ class WorkflowView(View):
 
                 for (j, output_artefact) in enumerate(output_artefacts):
                     output_artefacts[j]['created_at'] = calendar.timegm(output_artefact['created_at'].timetuple())
-                    output_artefacts[j  ]['updated_at'] = calendar.timegm(output_artefact['updated_at'].timetuple())
+                    output_artefacts[j]['updated_at'] = calendar.timegm(output_artefact['updated_at'].timetuple())
 
                 tasks[i]['input_artefacts'] = input_artefacts
                 tasks[i]['output_artefacts'] = output_artefacts
 
             returned['tasks'] = tasks
+
             return as_json_response(returned)
         else:
             returned = list(Workflow.objects.all().values())
@@ -130,7 +131,7 @@ class WorkflowView(View):
                 tasks = list(Task.objects.filter(workflow=workflow['id']).values())
 
                 for (j, task) in enumerate(tasks):
-                    tasks[j]['state'] = task['status']
+                    tasks[j]['state'] = int(task['status'])
                     tasks[j]['x'] = float(task['x'])
                     tasks[j]['y'] = float(task['y'])
 
@@ -191,8 +192,8 @@ class WorkflowView(View):
         for new_edge_data in new_data['edges']:
             Edge.objects.create(
                 workflow_id=new_workflow.id,
-                from_task_id=temporary_to_new_task_ids[new_edge_data['a_id']],
-                to_task_id=temporary_to_new_task_ids[new_edge_data['b_id']],
+                from_task_id=temporary_to_new_task_ids[new_edge_data['from_task_id']],
+                to_task_id=temporary_to_new_task_ids[new_edge_data['to_task_id']],
                 input_id=new_edge_data['input_id'],
                 output_id=new_edge_data['output_id']
             )
@@ -213,7 +214,7 @@ class WorkflowView(View):
         new_data = json.loads(request.body)
         workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
 
-        workflow.name = new_data['name']
+        workflow.name = new_data['title']
         workflow.last_modifier_id = 1  # TODO: request.user.id
 
         workflow.save()
@@ -269,8 +270,8 @@ class WorkflowView(View):
                 edge = get_object_or_404(Edge, pk=edge_data['id'])
 
                 edge.workflow = workflow
-                edge.from_task_id = temporary_to_new_task_ids[edge_data['a_id']]
-                edge.to_task_id = temporary_to_new_task_ids[edge_data['b_id']]
+                edge.from_task_id = temporary_to_new_task_ids[edge_data['from_task_id']]
+                edge.to_task_id = temporary_to_new_task_ids[edge_data['to_task_id']]
                 edge.input_id = edge_data['input_id']
                 edge.output_id = edge_data['output_id']
 
@@ -278,8 +279,8 @@ class WorkflowView(View):
             else:
                 Edge.objects.create(
                     workflow_id=workflow.id,
-                    from_task_id=temporary_to_new_task_ids[edge_data['a_id']],
-                    to_task_id=temporary_to_new_task_ids[edge_data['b_id']],
+                    from_task_id=temporary_to_new_task_ids[edge_data['from_task_id']],
+                    to_task_id=temporary_to_new_task_ids[edge_data['to_task_id']],
                     input_id=edge_data['input_id'],
                     output_id=edge_data['output_id']
                 )
@@ -317,6 +318,7 @@ class WorkflowView(View):
         """
         Task.objects.filter(workflow=workflow_id).update(status=1)
 
+        # TODO: return {"error": "..."} for some errors
         return JsonResponse({})
 
     @staticmethod
