@@ -214,7 +214,7 @@ class WorkflowView(View):
         new_data = json.loads(request.body)
         workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
 
-        workflow.name = new_data['name']
+        workflow.name = new_data['title']
         workflow.last_modifier_id = 1  # TODO: request.user.id
 
         workflow.save()
