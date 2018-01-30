@@ -1,3 +1,5 @@
+import calendar
+import datetime
 import json
 
 from django.forms.models import model_to_dict
@@ -79,15 +81,36 @@ class WorkflowView(View):
         @rtype:
         """
         if 'workflow_id' in kwargs:
-            workflow = Workflow.objects.get(pk=kwargs['workflow_id'])
-            returned = model_to_dict(workflow)
+            workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
+
+            # get_object_or_404() ist not used here because for some reason
+            # it does not include created_at and updated_at fields
+            returned = list(Workflow.objects.filter(pk=kwargs['workflow_id']).values())[0]
+
+            returned['title'] = returned['name']
+            returned['created_at'] = calendar.timegm(returned['created_at'].timetuple())
+            returned['updated_at'] = calendar.timegm(returned['updated_at'].timetuple())
+
             returned['edges'] = list(workflow.edge_set.all().values())
             tasks = list(workflow.task_set.all().values())
 
             for (i, task) in enumerate(tasks):
-                tasks[i]['input_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
-                tasks[i]['output_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
                 tasks[i]['state'] = tasks[i]['status']
+                tasks[i]['started_at'] = calendar.timegm(task['started_at'].timetuple())
+
+                input_artefacts = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
+                output_artefacts = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
+
+                for (j, input_artefact) in enumerate(input_artefacts):
+                    input_artefacts[j]['created_at'] = calendar.timegm(input_artefact['created_at'].timetuple())
+                    input_artefacts[j]['updated_at'] = calendar.timegm(input_artefact['updated_at'].timetuple())
+
+                for (j, output_artefact) in enumerate(output_artefacts):
+                    output_artefacts[j]['created_at'] = calendar.timegm(output_artefact['created_at'].timetuple())
+                    output_artefacts[j  ]['updated_at'] = calendar.timegm(output_artefact['updated_at'].timetuple())
+
+                tasks[i]['input_artefacts'] = input_artefacts
+                tasks[i]['output_artefacts'] = output_artefacts
 
             returned['tasks'] = tasks
             return as_json_response(returned)
@@ -95,16 +118,34 @@ class WorkflowView(View):
             returned = list(Workflow.objects.all().values())
 
             for (i, workflow) in enumerate(returned):
+                returned[i]['title'] = workflow['name']
+                returned[i]['created_at'] = calendar.timegm(workflow['created_at'].timetuple())
+                returned[i]['updated_at'] = calendar.timegm(workflow['updated_at'].timetuple())
+
+                returned[i]['edges'] = list(Edge.objects.filter(workflow=workflow['id']).values())
                 tasks = list(Task.objects.filter(workflow=workflow['id']).values())
 
                 for (j, task) in enumerate(tasks):
-                    tasks[j]['input_artefacts'] = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
-                    tasks[j]['output_artefacts'] = list(
-                        Artefact.objects.filter(task=task['id']).filter(role=1).values())
-                    tasks[j]['state'] = tasks[j]['status']
+                    tasks[j]['state'] = task['status']
+                    tasks[j]['started_at'] = calendar.timegm(task['started_at'].timetuple())
+                    tasks[j]['x'] = float(task['x'])
+                    tasks[j]['y'] = float(task['y'])
+
+                    input_artefacts = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
+                    output_artefacts = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
+
+                    for (k, input_artefact) in enumerate(input_artefacts):
+                        input_artefacts[k]['created_at'] = calendar.timegm(input_artefact['created_at'].timetuple())
+                        input_artefacts[k]['updated_at'] = calendar.timegm(input_artefact['updated_at'].timetuple())
+
+                    for (k, output_artefact) in enumerate(output_artefacts):
+                        output_artefacts[k]['created_at'] = calendar.timegm(output_artefact['created_at'].timetuple())
+                        output_artefacts[k]['updated_at'] = calendar.timegm(output_artefact['updated_at'].timetuple())
+
+                    tasks[j]['input_artefacts'] = input_artefacts
+                    tasks[j]['output_artefacts'] = output_artefacts
 
                 returned[i]['tasks'] = tasks
-                returned[i]['edges'] = list(Edge.objects.filter(workflow=workflow['id']).values())
 
             return as_json_response(returned)
 
@@ -139,8 +180,7 @@ class WorkflowView(View):
 
             temporary_to_new_task_ids[new_task_data['id']] = new_task.id
 
-            # TODO: kann man davon ausgehen, dass bei Erstellen auf jeden Fall keine Artefakte mitgeliefert werden?
-            # TODO: ist es sinnvoll, Artefakte durch Workflow zu speichern? Vllt das in einen getrennten View packen?
+            # TODO: hier auch Artefakte speichern
 
         for new_edge_data in new_data['edges']:
             Edge.objects.create(
@@ -324,15 +364,37 @@ class ProcessView(View):
         if 'process_id' in kwargs:
             process = Process.objects.get(pk=kwargs['process_id'])
             returned = model_to_dict(process)
-            returned['inputs'] = list(process.inputoutput_set.all().filter(role=0).values())
-            returned['outputs'] = list(process.inputoutput_set.all().filter(role=1).values())
+            inputs = list(process.inputoutput_set.all().filter(role=0).values())
+            outputs = list(process.inputoutput_set.all().filter(role=1).values())
+
+            for (j, input) in inputs:
+                inputs[j]['type'] = input['datatype']
+                inputs[j]['role'] = ('input' if input['role'] == 0 else 'output')
+
+            for (j, output) in outputs:
+                outputs[j]['type'] = output['datatype']
+                outputs[j]['role'] = ('input' if output['role'] == 0 else 'output')
+
+            returned['inputs'] = inputs
+            returned['outputs'] = outputs
             return as_json_response(returned)
         else:
             returned = list(Process.objects.all().values())
 
             for (i, process) in enumerate(returned):
-                returned[i]['inputs'] = list(InputOutput.objects.filter(process=process['id']).filter(role=0).values())
-                returned[i]['outputs'] = list(InputOutput.objects.filter(process=process['id']).filter(role=1).values())
+                inputs = list(InputOutput.objects.filter(process=process['id']).filter(role=0).values())
+                outputs = list(InputOutput.objects.filter(process=process['id']).filter(role=1).values())
+
+                for (j, input) in inputs:
+                    inputs[j]['type'] = input['datatype']
+                    inputs[j]['role'] = ('input' if input['role'] == 0 else 'output')
+
+                for (j, output) in outputs:
+                    outputs[j]['type'] = output['datatype']
+                    outputs[j]['role'] = ('input' if output['role'] == 0 else 'output')
+
+                returned[i]['inputs'] = inputs
+                returned[i]['outputs'] = outputs
 
             return as_json_response(returned)
 
@@ -345,29 +407,7 @@ class ProcessView(View):
         @return:
         @rtype:
         """
-        new_data = json.loads(request.body)
-
-        new_process = Process.objects.create(
-            wps_id=new_data['wps_id'],
-            identifier=new_data['identifier'],
-            title=new_data['title'],
-            abstract=new_data['abstract']
-        )
-
-        inputoutputs_data = new_data['inputs'] + new_data['outputs']
-
-        for inputoutput_data in inputoutputs_data:
-            InputOutput.objects.create(
-                process_id=new_process.id,
-                role=(0 if inputoutput_data['role'] == 'input' else 1),
-                title=inputoutput_data['title'],
-                abstract=inputoutput_data['abstract'],
-                datatype=inputoutput_data['type'],
-                min_occurs=inputoutput_data['min_occurs'],
-                max_occurs=inputoutput_data['max_occurs']
-            )
-
-        return ProcessView.get(request, process_id=new_process.id)
+        return JsonResponse({'error': 'this REST interface is not supported'})
 
     @staticmethod
     def patch(request, **kwargs):
@@ -380,43 +420,7 @@ class ProcessView(View):
         @return:
         @rtype:
         """
-        new_data = json.loads(request.body)
-        process = get_object_or_404(Process, pk=kwargs['process_id'])
-
-        process.wps_id = new_data['wps_id']
-        process.identifier = new_data['identifier']
-        process.title = new_data['title']
-        process.abstract = new_data['abstract']
-
-        process.save()
-
-        inputoutputs_data = new_data['inputs'] + new_data['outputs']
-
-        for inputoutput_data in inputoutputs_data:
-            if inputoutput_data['id'] > 0:
-                inputoutput = get_object_or_404(InputOutput, inputoutput_data['id'])
-
-                inputoutput.process_id = process.id
-                inputoutput.role = (0 if inputoutput_data['role'] == 'input' else 1)
-                inputoutput.title = inputoutput_data['title']
-                inputoutput.abstract = inputoutput_data['abstract']
-                inputoutput.datatype = inputoutput_data['type']
-                inputoutput.min_occurs = inputoutput_data['min_occurs']
-                inputoutput.max_occurs = inputoutput_data['max_occurs']
-
-                inputoutput.save()
-            else:
-                InputOutput.objects.create(
-                    process_id=process.id,
-                    role=(0 if inputoutput_data['role'] == 'input' else 1),
-                    title=inputoutput_data['title'],
-                    abstract=inputoutput_data['abstract'],
-                    datatype=inputoutput_data['type'],
-                    min_occurs=inputoutput_data['min_occurs'],
-                    max_occurs=inputoutput_data['max_occurs']
-                )
-
-        return ProcessView.get(request, process_id=kwargs['process_id'])
+        return JsonResponse({'error': 'this REST interface is not supported'})
 
     @staticmethod
     def delete(request, **kwargs):
@@ -429,11 +433,7 @@ class ProcessView(View):
         @return:
         @rtype:
         """
-        process = get_object_or_404(Process, pk=kwargs['process_id'])
-        (deletedProcessCount, countOfDeletionsPerType) = process.delete()
-        deleted = (deletedProcessCount > 0)
-
-        return JsonResponse({'deleted': deleted})
+        return JsonResponse({'error': 'this REST interface is not supported'})
 
 
 # TODO: tests, documentation
@@ -471,12 +471,16 @@ class WPSView(View):
             wps = WPS.objects.get(pk=kwargs['wps_id'])
             returned = model_to_dict(wps)
             returned['provider'] = model_to_dict(wps.service_provider)
+            returned['provider']['title'] = returned['provider']['provider_name']
+            returned['provider']['site'] = returned['provider']['provider_site']
             return as_json_response(returned)
         else:
             returned = list(WPS.objects.all().values())
 
             for (i, wps) in enumerate(returned):
                 returned[i]['provider'] = model_to_dict(WPSProvider.objects.get(pk=wps['service_provider_id']))
+                returned[i]['provider']['title'] = returned[i]['provider']['provider_name']
+                returned[i]['provider']['site'] = returned[i]['provider']['provider_site']
 
             return as_json_response(returned)
 
@@ -493,7 +497,7 @@ class WPSView(View):
 
         new_wps_provider = WPSProvider.objects.create(
             provider_name=new_data['provider']['title'],
-            provider_site=new_data['provider']['url']
+            provider_site=new_data['provider']['site']
         )
 
         new_wps = WPS.objects.create(
@@ -522,7 +526,7 @@ class WPSView(View):
             wps_provider = get_object_or_404(WPSProvider, pk=new_data['provider']['id'])
 
             wps_provider.provider_name = new_data['provider']['title']
-            wps_provider.provider_site = new_data['provider']['url']
+            wps_provider.provider_site = new_data['provider']['site']
 
             wps_provider.save()
 
