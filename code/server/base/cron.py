@@ -42,9 +42,17 @@ def scheduler():
     exec_list = []
 
     for current_workflow in Workflow.objects.all():
-        for current_task in Task.objects.filter(workflow=current_workflow, status='1'):
+        try:
+            all_tasks = Task.objects.filter(workflow=current_workflow, status='1')
+        except Task.DoesNotExist:
+            all_tasks = []
+        for current_task in all_tasks:
             previous_tasks_finished = True
-            for current_edge in Edge.objects.filter(to_task=current_task):
+            try:
+                edges_to_current_task = Edge.objects.filter(to_task=current_task)
+            except Edge.DoesNotExist:
+                edges_to_current_task = []
+            for current_edge in edges_to_current_task:
                 if current_edge.from_task.status == '4':
                     previous_tasks_finished = True
                 else:
@@ -79,8 +87,12 @@ def xmlGenerator(xmlDir):
     @return: None
     @rtype: None
     """
-    # Traverse Task table entries with status WAITING
-    task_list = list(Task.objects.filter(status='2').values())
+    try:
+        # Traverse Task table entries with status WAITING
+        task_list = list(Task.objects.filter(status='2').values())
+    except Task.DoesNotExist:
+        task_list = []
+
     for task in task_list:
 
         # Create root node
@@ -93,8 +105,11 @@ def xmlGenerator(xmlDir):
         root.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
         root.set('xsi:schemaLocation', 'http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd')
 
-        # Traverse Process table entries with id of task
-        process_list = list(Process.objects.filter(id=task["process_id"]).values())
+        try:
+            # Traverse Process table entries with id of task
+            process_list = list(Process.objects.filter(id=task["process_id"]).values())
+        except Process.DoesNotExist:
+            process_list = []
         for process in process_list:
             # Create Identifier node
             identifier = ET.SubElement(root, 'ows:Identifier')
@@ -103,8 +118,11 @@ def xmlGenerator(xmlDir):
         # Create DataInputs node
         inputs = ET.SubElement(root, 'wps:DataInputs')
 
-        # Traverse InputOutput table entries linked to Process
-        input_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='0').values())
+        try:
+            # Traverse InputOutput table entries linked to Process
+            input_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='0').values())
+        except InputOutput.DoesNotExist:
+            input_list = []
         for input in input_list:
 
             # Create Input node
@@ -115,8 +133,12 @@ def xmlGenerator(xmlDir):
             inputIdent.text = input["identifier"]
             inputTitle.text = input["title"]
 
-            # Traverse Artefact table entries linked to Process
-            artefact_list = list(Artefact.objects.filter(task_id=task["id"], parameter=input["id"]).values())
+            try:
+                # Traverse Artefact table entries linked to Process
+                artefact_list = list(Artefact.objects.filter(task_id=task["id"], parameter=input["id"]).values())
+            except Artefact.DoesNotExist:
+                artefact_list = []
+
             for artefact in artefact_list:
 
                 type = input["datatype"]
@@ -169,8 +191,12 @@ def sendTask(task_id, xmlDir):
         print("file for task ", task_id, " does not exist, aborting...")
         return
 
-    # This only is outsourced to extra function for better readability
-    execute_url = getExecuteUrl(Task.objects.get(id=task_id))
+    try:
+        # This only is outsourced to extra function for better readability
+        execute_url = getExecuteUrl(Task.objects.get(id=task_id))
+    except Task.DoesNotExist:
+        execute_url = ""
+
     if execute_url is "":
         print("Error, execute url is empty, but is not allowed to. Aborting...")
         return
@@ -180,16 +206,24 @@ def sendTask(task_id, xmlDir):
     # send to url
     response = requests.post('http://pse.rudolphrichard.de:5000/wps', data=file)  # TODO: replace with variable
 
-    # get response from send
-    xml = ET.fromstring(response.text)
+    # if the response is not in xml format
+    try:
+        # get response from send
+        xml = ET.fromstring(response.text)
+    except:
+        print("xml could not be parsed")
 
     acceptedElement = xml.findall('wps:ProcessAccepted')
     if acceptedElement is None:
         print("An Error occured while sending Task ", task_id, " to the server, proccess not accepted")
         return
 
-    # Update DB Entry
-    p = Task.objects.get(id=task_id)
+    try:
+        # Update DB Entry
+        p = Task.objects.get(id=task_id)
+    except Task.DoesNotExist:
+        print("task not found")
+        return
     p.status_url = xml.get('statusLocation')
     p.status = '3'
     p.started_at = datetime.now()
@@ -212,9 +246,12 @@ def getExecuteUrl(task):
     """
     execute_url = ""
 
-    process = Process.objects.get(id=task.process_id)
-    wps = WPS.objects.get(id=process.wps_id)
-    execute_url = wps.execute_url
+    try:
+        process = Process.objects.get(id=task.process_id)
+        wps = WPS.objects.get(id=process.wps_id)
+        execute_url = wps.execute_url
+    except Process.DoesNotExist or WPS.DoesNotExist:
+        execute_url = ""
 
     return execute_url
 
@@ -222,23 +259,19 @@ def getExecuteUrl(task):
 # TODO: tests, documentation, implement
 def receiver():
     """
-
+    loops all running tasks
+    parses xml on server and checks for status
+    overwrites status if changed
+    if task is finished, write data to db
     @return:
     @rtype:
     """
-    # Receiver main function
-    # check output urls from servers
-    # for workflow in executing list do
-    #   for task in workflow do
-    #      check response url
-    #        check for changes to db 
-    #        update db data
-
-    # loop all running tasks
-    # overwrite status if changed
-    # if task is finished, write data to db
-    running_tasks = list(Task.objects.filter(status='3'))
-    wpsLog.info("receiver starting")
+    try:
+        running_tasks = list(Task.objects.filter(status='3'))
+        wpsLog.info("receiver starting")
+    except Task.DoesNotExist:
+        running_tasks = []
+        wpsLog.info("no running tasks found")
     for task in running_tasks:
         parse_execute_response(task)
 
@@ -301,6 +334,7 @@ def parse_execute_response(task):
         # everything is the same up to here for each output type
         data_elem = output.find(ns_map["Data"])
         reference = output.find(ns_map["Reference"])
+        time_now = datetime.now()
         if data_elem is not None:
             try:
                 # as there is always only 1 child, just try to take the first
@@ -315,18 +349,14 @@ def parse_execute_response(task):
                 db_format = f"{dtype};{duom}".strip(";")
                 db_data = data_elem.text
                 if len(db_data) < 490:
-                    try:
-                        artefact.format = db_format
-                        artefact.data = db_data
-                        artefact.updated_at = datetime.now()
-                        artefact.save()
-                    except BaseException as e:
-                        wpsLog.exception("Error:")
+                    artefact.format = db_format
+                    artefact.data = db_data
+                    artefact.updated_at = time_now
+                    artefact.save()
                 else:
                     # TODO set path to file properly so user can access via url - test !
-                    time_now = str(datetime.now())
-                    file_name = f"{tempfile.gettempdir()}/{time_now}{out_id}{task.id}.xml"
-                    with open(file_name) as tmpfile:
+                    file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                    with open(file_name, 'w') as tmpfile:
                         tmpfile.write(db_data)
                     artefact.format = db_format
                     artefact.data = f"file://{file_name}"
@@ -340,7 +370,7 @@ def parse_execute_response(task):
 
                 artefact.format = db_format
                 artefact.data = db_data
-                artefact.updated_at = datetime.now()
+                artefact.updated_at = time_now
                 artefact.save()
             elif data_elem.tag == ns_map["ComplexData"]:
                 # TODO test!
@@ -355,13 +385,12 @@ def parse_execute_response(task):
                     if len(db_data) < 490:
                         # write to db
                         artefact.data = db_data
-                        artefact.updated_at = datetime.now()
+                        artefact.updated_at = time_now
                         artefact.save()
                     else:
                         # write to file
-                        time_now = datetime.now()
-                        file_name = f"{tempfile.gettempdir()}/{str(time_now)}{out_id}{task.id}.xml"
-                        with open(file_name) as tmpfile:
+                        file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                        with open(file_name, 'w') as tmpfile:
                             tmpfile.write(db_data)
                         artefact.data = f"file://{file_name}"
                         artefact.updated_at = time_now
@@ -373,13 +402,12 @@ def parse_execute_response(task):
                     if len(db_data) < 490:
                         # write to db
                         artefact.data = db_data
-                        artefact.updated_at = datetime.now()
+                        artefact.updated_at = time_now
                         artefact.save()
                     else:
                         # write to file
-                        time_now = datetime.now()
-                        file_name = f"{tempfile.gettempdir()}/{str(time_now)}{out_id}{task.id}.xml"
-                        with open(file_name) as tmpfile:
+                        file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                        with open(file_name, 'w') as tmpfile:
                             tmpfile.write(db_data)
                         artefact.data = f"file://{file_name}"
                         artefact.updated_at = time_now
@@ -389,13 +417,12 @@ def parse_execute_response(task):
                     if len(db_data) < 490:
                         # write to db
                         artefact.data = db_data
-                        artefact.updated_at = datetime.now()
+                        artefact.updated_at = time_now
                         artefact.save()
                     else:
                         # write to file
-                        time_now = datetime.now()
-                        file_name = f"{tempfile.gettempdir()}/{str(time_now)}{out_id}{task.id}.xml"
-                        with open(file_name) as tmpfile:
+                        file_name = f"{tempfile.gettempdir()}/wfID{task.workflow.id}_taskID{task.id}.xml"
+                        with open(file_name, 'w') as tmpfile:
                             tmpfile.write(db_data)
                         artefact.data = f"file://{file_name}"
                         artefact.updated_at = time_now
@@ -413,18 +440,17 @@ def parse_execute_response(task):
 
             artefact.format = db_format
             artefact.data = db_data
-            artefact.updated_at = datetime.now()
+            artefact.updated_at = time_now
             artefact.save()
         if db_data is not None:
             try:
                 to_artefact = Artefact.objects.get(task=edge.to_task, parameter=edge.input, role='0')
                 to_artefact.format = db_format
                 to_artefact.data = db_data
-                to_artefact.updated_at = datetime.now()
+                to_artefact.updated_at = time_now
                 to_artefact.save()
             except Artefact.DoesNotExist:
                 wpsLog.info("input artefact not found, creating new artefact")
-                time_now = datetime.now()
                 Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
                                                       data=db_data, created_at=time_now, updated_at=time_now)
 

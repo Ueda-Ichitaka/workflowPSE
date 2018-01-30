@@ -125,12 +125,12 @@ def search_provider_in_database(service_provider):
     @return: saved instance | None
     @rtype: WPSProvider | None
     """
-    for provider in WPSProvider.objects.all():
-        if service_provider.provider_name == provider.provider_name \
-                and service_provider.provider_site == provider.provider_site:
-            return provider
+    try:
+        provider = WPSProvider.objects.get(provider_name=service_provider.provider_name, provider_site=service_provider.provider_site)
+    except WPSProvider.DoesNotExist:
+        provider = None
 
-    return None
+    return provider
 
 
 def search_server_in_database(wps_server):
@@ -147,11 +147,12 @@ def search_server_in_database(wps_server):
     @return: saved instance | None
     @rtype: WPS | None
     """
-    for server in WPS.objects.all():
-        if server.title == wps_server.title:
-            return server
+    try:
+        server = WPS.objects.get(title=wps_server.title)
+    except WPS.DoesNotExist:
+        server = None
 
-    return None
+    return server
 
 
 def search_process_in_database(parsed_process):
@@ -167,11 +168,12 @@ def search_process_in_database(parsed_process):
     @return: saved instance | None
     @rtype: Process | None
     """
-    for process_from_database in Process.objects.all():
-        if process_from_database.identifier == parsed_process.identifier:
-            return process_from_database
+    try:
+        process_from_database = Process.objects.get(identifier=parsed_process.identifier)
+    except Process.DoesNotExist:
+        process_from_database = None
 
-    return None
+    return process_from_database
 
 
 def search_input_output_in_database(parsed_input_output):
@@ -182,13 +184,13 @@ def search_input_output_in_database(parsed_input_output):
     :param parsed_input_output:
     :return:
     """
-    for input_output_from_database in InputOutput.objects.all():
-        if input_output_from_database.identifier == parsed_input_output.identifier \
-                and input_output_from_database.process.identifier == parsed_input_output.process.identifier \
-                and input_output_from_database.role == parsed_input_output.role:
-            return input_output_from_database
+    try:
+        ioput = InputOutput.objects.get(identifier=parsed_input_output.identifier,
+                                        process=parsed_input_output.process, role=parsed_input_output.role)
+    except InputOutput.DoesNotExist:
+        ioput = None
 
-    return None
+    return ioput
 
 
 # TODO: tests, documentation
@@ -267,10 +269,15 @@ def parse_service_provider_info(root, namespaces):
     individual_name = service_contact_element.find('ows:IndividualName', namespaces).text
     position_name = service_contact_element.find('ows:PositionName', namespaces).text
 
-    service_provider = WPSProvider(provider_name=provider_name,
-                                   provider_site=provider_site,
-                                   individual_name=individual_name,
-                                   position_name=position_name)
+    try:
+        service_provider = WPSProvider.objects.get(provider_name=provider_name,
+                                                   provider_site=provider_site,
+                                                   individual_name=individual_name)
+    except WPSProvider.DoesNotExist:
+        service_provider = WPSProvider(provider_name=provider_name,
+                                       provider_site=provider_site,
+                                       individual_name=individual_name,
+                                       position_name=position_name)
     return service_provider
 
 
@@ -299,13 +306,16 @@ def parse_wps_server_info(root, namespaces, provider):
     for item in urls_elements:
         urls.append(item.attrib.get('{' + namespaces.get('xlink') + '}href'))
 
-    wps_server = WPS(service_provider=provider,
-                     title=server_title,
-                     abstract=server_abstract,
-                     capabilities_url=urls[0],
-                     describe_url=urls[1],
-                     execute_url=urls[2])
-
+    try:
+        wps_server = WPS.objects.get(service_provider=provider,
+                                     title=server_title)
+    except WPS.DoesNotExist:
+        wps_server = WPS(service_provider=provider,
+                         title=server_title,
+                         abstract=server_abstract,
+                         capabilities_url=urls[0],
+                         describe_url=urls[1],
+                         execute_url=urls[2])
     return wps_server
 
 
@@ -329,10 +339,15 @@ def parse_process_info(process_element, namespaces, wps_server):
     process_abstract = process_abstract_element.text if process_abstract_element is not None \
         else 'No process description available'
 
-    process = Process(wps=wps_server,
-                      identifier=process_identifier,
-                      title=process_title,
-                      abstract=process_abstract)
+    try:
+        process = Process.objects.get(wps=wps_server,
+                                      identifier=process_identifier,
+                                      title=process_title)
+    except Process.DoesNotExist:
+        process = Process(wps=wps_server,
+                          identifier=process_identifier,
+                          title=process_title,
+                          abstract=process_abstract)
     return process
 
 
@@ -373,15 +388,21 @@ def parse_input_info(input_element, namespaces, process):
     input_min_occurs = input_element.attrib.get('minOccurs')
     input_max_occurs = input_element.attrib.get('maxOccurs')
 
-    input = InputOutput(process=process,
-                        role=ROLE[0][0],
-                        identifier=input_identifier,
-                        title=input_title,
-                        abstract=input_abstract,
-                        datatype=input_datatype,
-                        format=input_format,
-                        min_occurs=input_min_occurs,
-                        max_occurs=input_max_occurs)
+    try:
+        input = InputOutput.objects.get(process=process,
+                                        role=ROLE[0][0],
+                                        identifier=input_identifier,
+                                        title=input_title)
+    except InputOutput.DoesNotExist:
+        input = InputOutput(process=process,
+                            role=ROLE[0][0],
+                            identifier=input_identifier,
+                            title=input_title,
+                            abstract=input_abstract,
+                            datatype=input_datatype,
+                            format=input_format,
+                            min_occurs=input_min_occurs,
+                            max_occurs=input_max_occurs)
     return input
 
 
@@ -423,13 +444,19 @@ def parse_output_info(output_element, namespaces, process):
     output_min_occurs = 1
     output_max_occurs = 1
 
-    output = InputOutput(process=process,
-                         role=ROLE[1][0],
-                         identifier=output_identifier,
-                         title=output_title,
-                         abstract=output_abstract,
-                         datatype=output_datatype,
-                         format=output_format,
-                         min_occurs=output_min_occurs,
-                         max_occurs=output_max_occurs)
+    try:
+        output = InputOutput.objects.get(process=process,
+                                         role=ROLE[1][0],
+                                         identifier=output_identifier,
+                                         title=output_title)
+    except InputOutput.DoesNotExist:
+        output = InputOutput(process=process,
+                             role=ROLE[1][0],
+                             identifier=output_identifier,
+                             title=output_title,
+                             abstract=output_abstract,
+                             datatype=output_datatype,
+                             format=output_format,
+                             min_occurs=output_min_occurs,
+                             max_occurs=output_max_occurs)
     return output
