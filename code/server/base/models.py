@@ -26,7 +26,7 @@ DATATYPE = (
 
 class Workflow(models.Model):
     """
-    description comes here
+    Workflow Database Model 
     """
     name = models.CharField(max_length=200)
     description = models.TextField('Descriptive text', default='Add your super descriptive text here...')
@@ -34,8 +34,6 @@ class Workflow(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(User, editable=True, related_name='creator_user', on_delete=models.CASCADE)
-    # Hab absichtlich editable auf true gesetzt, weil sonst taucht ein Fehler auf. Django kann nicht den creator id finden...
-
     last_modifier = models.ForeignKey(User, editable=True, null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
@@ -48,7 +46,7 @@ class Workflow(models.Model):
 
 class WPSProvider(models.Model):
     """
-        description comes here
+    Provider of WPS Server
     """
     provider_name = models.CharField(max_length=200)
     provider_site = models.URLField(max_length=1000)
@@ -65,7 +63,7 @@ class WPSProvider(models.Model):
 
 class WPS(models.Model):
     """
-        description comes here
+    PyWPS Server provided by WPSProvider
     """
     service_provider = models.ForeignKey(WPSProvider, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
@@ -84,7 +82,7 @@ class WPS(models.Model):
 
 class Process(models.Model):
     """
-        description comes here
+    PyWPS Process available on given PyWPS Server
     """
     wps = models.ForeignKey(WPS, on_delete=models.CASCADE)
     identifier = models.CharField(max_length=200)
@@ -101,7 +99,7 @@ class Process(models.Model):
 
 class Task(models.Model):
     """
-        description comes here
+    PyWPS Task created in Editor and Member of a Workflow
     """
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
     process = models.ForeignKey(Process, on_delete=models.CASCADE)
@@ -123,7 +121,7 @@ class Task(models.Model):
 
 class Session(models.Model):
     """
-        description comes here
+    Settings, Session Restore and user specific Data
     """
     user = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
     last_workflow = models.ForeignKey(Workflow, null=True, on_delete=models.SET_NULL)
@@ -136,7 +134,7 @@ class Session(models.Model):
 
 class InputOutput(models.Model):
     """
-        description comes here
+    Scheme Definition data for Inputs and Outputs, see PyWPS XML Definition as Reference
     """
     process = models.ForeignKey(Process, on_delete=models.CASCADE)
     role = models.CharField(max_length=1, choices=ROLE)
@@ -159,7 +157,7 @@ class InputOutput(models.Model):
 
 class Edge(models.Model):
     """
-        description comes here
+    Egdes between Tasks in Workflow Graph 
     """
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
     from_task = models.ForeignKey(Task, related_name='out_task', on_delete=models.CASCADE)  # rename to out_task?
@@ -177,7 +175,7 @@ class Edge(models.Model):
 
 class Artefact(models.Model):
     """
-        description comes here
+    Data of Input or Output element
     """
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     parameter = models.ForeignKey(InputOutput, null=True, on_delete=models.SET_NULL)
