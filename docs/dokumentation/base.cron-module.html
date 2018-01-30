@@ -142,45 +142,13 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="scheduler_execute"></a><span class="summary-sig-name">scheduler_execute</span>()</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#scheduler_execute">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#scheduler_check_execute" class="summary-sig-name">scheduler_check_execute</a>()</span><br />
-      Returns:</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#scheduler_check_execute">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">None</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#receiver" class="summary-sig-name">receiver</a>()</span><br />
-      Returns:</td>
+      loops all running tasks parses xml on server and checks for status 
+      overwrites status if changed if task is finished, write data to db</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#receiver">source&nbsp;code</a></span>
             
@@ -192,46 +160,14 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">int</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#utils" class="summary-sig-name">utils</a>()</span><br />
-      Returns:</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#utils">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#xmlParser" class="summary-sig-name">xmlParser</a>()</span><br />
-      Returns:</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#xmlParser">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#parse_execute_response" class="summary-sig-name">parse_execute_response</a>(<span class="summary-sig-arg">xml_file</span>)</span><br />
-      Returns:</td>
+          <td><span class="summary-sig"><a href="base.cron-module.html#parse_execute_response" class="summary-sig-name">parse_execute_response</a>(<span class="summary-sig-arg">task</span>)</span><br />
+      checks parameter tasks status by checking xml file found at 
+      status_url for change if task has finished write data to db if there 
+      is any data</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#parse_execute_response">source&nbsp;code</a></span>
             
@@ -379,25 +315,6 @@
   </dl>
 </td></tr></table>
 </div>
-<a name="scheduler_check_execute"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">scheduler_check_execute</span>()</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#scheduler_check_execute">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  
-  <dl class="fields">
-  </dl>
-</td></tr></table>
-</div>
 <a name="receiver"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -412,46 +329,11 @@
     </td>
   </tr></table>
   
-  
+  <p>loops all running tasks parses xml on server and checks for status 
+  overwrites status if changed if task is finished, write data to db</p>
   <dl class="fields">
-  </dl>
-</td></tr></table>
-</div>
-<a name="utils"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">utils</span>()</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#utils">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  
-  <dl class="fields">
-  </dl>
-</td></tr></table>
-</div>
-<a name="xmlParser"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">xmlParser</span>()</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#xmlParser">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  
-  <dl class="fields">
+    <dt>Returns: None</dt>
+        <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -462,19 +344,22 @@
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_execute_response</span>(<span class="sig-arg">xml_file</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_execute_response</span>(<span class="sig-arg">task</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="base.cron-pysrc.html#parse_execute_response">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  
+  <p>checks parameter tasks status by checking xml file found at status_url
+  for change if task has finished write data to db if there is any data</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>root</code></strong> ()</li>
+        <li><strong class="pname"><code>task</code></strong> (subclass of models.Model) - the task whose status is currently checked</li>
     </ul></dd>
+    <dt>Returns: int</dt>
+        <dd>0 on success, error code otherwise</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -521,7 +406,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sat Jan 27 21:52:21 2018
+    Generated by Epydoc 3.0.1 on Tue Jan 30 12:32:06 2018
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

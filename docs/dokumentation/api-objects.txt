@@ -3,13 +3,9 @@ base.admin	base.admin-module.html
 base.apps	base.apps-module.html
 base.cron	base.cron-module.html
 base.cron.xmlGenerator	base.cron-module.html#xmlGenerator
-base.cron.utils	base.cron-module.html#utils
-base.cron.scheduler_execute	base.cron-module.html#scheduler_execute
 base.cron.getExecuteUrl	base.cron-module.html#getExecuteUrl
 base.cron.update_wps_processes	base.cron-module.html#update_wps_processes
 base.cron.sendTask	base.cron-module.html#sendTask
-base.cron.scheduler_check_execute	base.cron-module.html#scheduler_check_execute
-base.cron.xmlParser	base.cron-module.html#xmlParser
 base.cron.scheduler	base.cron-module.html#scheduler
 base.cron.parse_execute_response	base.cron-module.html#parse_execute_response
 base.cron.receiver	base.cron-module.html#receiver
@@ -23,8 +19,8 @@ base.urls.app_name	base.urls-module.html#app_name
 base.urls.urlpatterns	base.urls-module.html#urlpatterns
 base.utils	base.utils-module.html
 base.utils.parse_process_info	base.utils-module.html#parse_process_info
-base.utils.overwrite_server	base.utils-module.html#overwrite_server
 base.utils.search_process_in_database	base.utils-module.html#search_process_in_database
+base.utils.overwrite_server	base.utils-module.html#overwrite_server
 base.utils.xlink_em	base.utils-module.html#xlink_em
 base.utils.ows_em	base.utils-module.html#ows_em
 base.utils.ns_map	base.utils-module.html#ns_map
@@ -143,6 +139,7 @@ base.models.Process.Meta.verbose_name_plural	base.models.Process.Meta-class.html
 base.models.Session	base.models.Session-class.html
 base.models.Session.Meta	base.models.Session.Meta-class.html
 base.models.Session.user	base.models.Session-class.html#user
+base.models.Session.language	base.models.Session-class.html#language
 base.models.Session.last_workflow	base.models.Session-class.html#last_workflow
 base.models.Session.Meta	base.models.Session.Meta-class.html
 base.models.Session.Meta.verbose_name	base.models.Session.Meta-class.html#verbose_name
@@ -218,6 +215,13 @@ base.tests.ParsingTestCase.test_overwrite_server	base.tests.ParsingTestCase-clas
 base.tests.ParsingTestCase.desc_proc_url_from_scc_vm	base.tests.ParsingTestCase-class.html#desc_proc_url_from_scc_vm
 base.tests.ParsingTestCase.test_parse_wps_server_info	base.tests.ParsingTestCase-class.html#test_parse_wps_server_info
 base.tests.ParsingTestCase.test_parse_service_provider_info	base.tests.ParsingTestCase-class.html#test_parse_service_provider_info
+base.tests.SchedulerTestCase	base.tests.SchedulerTestCase-class.html
+base.tests.SchedulerTestCase.test_generate_XML	base.tests.SchedulerTestCase-class.html#test_generate_XML
+base.tests.SchedulerTestCase.setUp	base.tests.SchedulerTestCase-class.html#setUp
+base.tests.SchedulerTestCase.dir_path	base.tests.SchedulerTestCase-class.html#dir_path
+base.tests.SchedulerTestCase.test_send_task	base.tests.SchedulerTestCase-class.html#test_send_task
+base.tests.SchedulerTestCase.test_execution	base.tests.SchedulerTestCase-class.html#test_execution
+base.tests.SchedulerTestCase.xmlDir	base.tests.SchedulerTestCase-class.html#xmlDir
 base.views.EditorView	base.views.EditorView-class.html
 base.views.EditorView.template_name	base.views.EditorView-class.html#template_name
 base.views.IndexView	base.views.IndexView-class.html
