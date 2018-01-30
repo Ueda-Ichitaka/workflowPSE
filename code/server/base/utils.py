@@ -73,7 +73,7 @@ def add_wps_server(server_urls):
     @param server_urls: List of urls given by admin on admin page
     @type server_urls: str list
     @return: None
-    @rtype: None
+    @rtype: NoneType
     """
     # server_urls = ['http://pse.rudolphrichard.de:5000']
     for server_url in server_urls:
@@ -126,7 +126,7 @@ def search_provider_in_database(service_provider):
     @param service_provider: A instance of service_provider
     @type service_provider: WPSProvider
     @return: saved instance | None
-    @rtype: WPSProvider | None
+    @rtype: WPSProvider | NoneType
     """
     try:
         provider = WPSProvider.objects.get(provider_name=service_provider.provider_name, provider_site=service_provider.provider_site)
@@ -148,7 +148,7 @@ def search_server_in_database(wps_server):
     @param wps_server: An instance of wps_server
     @type wps_server: WPS
     @return: saved instance | None
-    @rtype: WPS | None
+    @rtype: WPS | NoneType
     """
     try:
         server = WPS.objects.get(title=wps_server.title)
@@ -169,7 +169,7 @@ def search_process_in_database(parsed_process):
     @param parsed_process: An instance od process
     @type parsed_process: Process
     @return: saved instance | None
-    @rtype: Process | None
+    @rtype: Process | NoneType
     """
     try:
         process_from_database = Process.objects.get(identifier=parsed_process.identifier)
