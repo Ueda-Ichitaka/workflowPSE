@@ -558,7 +558,7 @@ class WPSView(View):
         @return:
         @rtype:
         """
-        wps = get_object_or_404(Process, pk=kwargs['wps_id'])
+        wps = get_object_or_404(WPS, pk=kwargs['wps_id'])
         (deletedWPSCount, countOfDeletionsPerType) = wps.delete()
         deleted = (deletedWPSCount > 0)
 
