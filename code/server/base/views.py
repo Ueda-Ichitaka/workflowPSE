@@ -120,7 +120,7 @@ class WorkflowView(View):
 
             return as_json_response(returned)
         else:
-            returned = list(Workflow.objects.all().values())
+            returned = list(Workflow.objects.all().order_by('-updated_at').values())
 
             for (i, workflow) in enumerate(returned):
                 returned[i]['title'] = workflow['name']
