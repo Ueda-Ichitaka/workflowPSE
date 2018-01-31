@@ -29,12 +29,15 @@ class Workflow(models.Model):
     Workflow Database Model 
     """
     name = models.CharField(max_length=200)
-    description = models.TextField('Descriptive text', default='Add your super descriptive text here...')
+    description = models.TextField(
+        'Descriptive text', default='Add your super descriptive text here...')
     percent_done = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    creator = models.ForeignKey(User, editable=True, related_name='creator_user', on_delete=models.CASCADE)
-    last_modifier = models.ForeignKey(User, editable=True, null=True, blank=True, on_delete=models.SET_NULL)
+    creator = models.ForeignKey(
+        User, editable=True, related_name='creator_user', on_delete=models.CASCADE)
+    last_modifier = models.ForeignKey(
+        User, editable=True, null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = "Workflow"
@@ -67,7 +70,8 @@ class WPS(models.Model):
     """
     service_provider = models.ForeignKey(WPSProvider, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    abstract = models.TextField('Descriptive text', default='Add your super descriptive text here...')
+    abstract = models.TextField(
+        'Descriptive text', default='Add your super descriptive text here...')
     capabilities_url = models.URLField(max_length=1000)
     describe_url = models.URLField(max_length=1000)
     execute_url = models.URLField(max_length=1000)
@@ -87,7 +91,8 @@ class Process(models.Model):
     wps = models.ForeignKey(WPS, on_delete=models.CASCADE)
     identifier = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
-    abstract = models.TextField('Descriptive text', default='Add your super descriptive text here...')
+    abstract = models.TextField(
+        'Descriptive text', default='Add your super descriptive text here...')
 
     class Meta:
         verbose_name = "Process"
@@ -107,7 +112,8 @@ class Task(models.Model):
     y = models.DecimalField(max_digits=5, decimal_places=0)
     status = models.CharField(max_length=1, choices=STATUS)
     title = models.CharField(max_length=200)
-    abstract = models.TextField('Descriptive text', default='Add your super descriptive text here...')
+    abstract = models.TextField(
+        'Descriptive text', default='Add your super descriptive text here...')
     status_url = models.URLField(max_length=1000)
     started_at = models.DateTimeField(null=True)
 
@@ -124,7 +130,8 @@ class Session(models.Model):
     Settings, Session Restore and user specific Data
     """
     user = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
-    last_workflow = models.ForeignKey(Workflow, null=True, on_delete=models.SET_NULL)
+    last_workflow = models.ForeignKey(
+        Workflow, null=True, on_delete=models.SET_NULL)
     language = models.CharField(max_length=3, default='de', null=False)
 
     class Meta:
@@ -140,7 +147,8 @@ class InputOutput(models.Model):
     role = models.CharField(max_length=1, choices=ROLE)
     identifier = models.CharField(max_length=200, null=True)
     title = models.CharField(max_length=200)
-    abstract = models.TextField('Descriptive text', default='Add your super descriptive text here...')
+    abstract = models.TextField(
+        'Descriptive text', default='Add your super descriptive text here...')
     datatype = models.CharField(max_length=1, choices=DATATYPE, null=True)
     format = models.CharField(max_length=200, null=True)
     min_occurs = models.IntegerField()
@@ -160,10 +168,14 @@ class Edge(models.Model):
     Egdes between Tasks in Workflow Graph 
     """
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
-    from_task = models.ForeignKey(Task, related_name='out_task', on_delete=models.CASCADE)  # rename to out_task?
-    to_task = models.ForeignKey(Task, on_delete=models.CASCADE)  # rename to in_task?
-    input = models.ForeignKey(InputOutput, related_name='input', null=True, on_delete=models.SET_NULL)
-    output = models.ForeignKey(InputOutput, null=True, on_delete=models.SET_NULL)
+    from_task = models.ForeignKey(
+        Task, related_name='out_task', on_delete=models.CASCADE)  # rename to out_task?
+    to_task = models.ForeignKey(
+        Task, on_delete=models.CASCADE)  # rename to in_task?
+    input = models.ForeignKey(
+        InputOutput, related_name='input', null=True, on_delete=models.SET_NULL)
+    output = models.ForeignKey(
+        InputOutput, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = "Edge"
@@ -178,7 +190,8 @@ class Artefact(models.Model):
     Data of Input or Output element
     """
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    parameter = models.ForeignKey(InputOutput, null=True, on_delete=models.SET_NULL)
+    parameter = models.ForeignKey(
+        InputOutput, null=True, on_delete=models.SET_NULL)
     role = models.CharField(max_length=1, choices=ROLE)
     format = models.CharField(max_length=200)
     data = models.CharField(max_length=500)

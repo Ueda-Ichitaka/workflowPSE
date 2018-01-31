@@ -124,6 +124,7 @@ export class EditorComponent implements OnInit {
     } else {
       // Add artefact
       const data: any = event[1];
+
       if (parameter.role === 'input') {
         task.input_artefacts = task.input_artefacts || [];
         task.input_artefacts.push({
@@ -137,6 +138,7 @@ export class EditorComponent implements OnInit {
           updated_at: (new Date).getTime(),
         });
       }
+
       this.workflow.edges = this.workflow.edges.filter(e => e.from_task_id !== task.id || e.to_task_id !== task.id);
     }
 

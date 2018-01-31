@@ -294,6 +294,16 @@ export class WorkflowService {
     }
   }
 
+  public async refresh(id: number): Promise<boolean> {
+    const result = await this.http.get<any>(`http://127.0.0.1:8000/workflow_refresh/${id}`).toPromise();
+    if (result['error']) {
+      this.bar.open(result['error'], 'CLOSE', { duration: 5000 });
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   public async stop(id: number): Promise<boolean> {
     const result = await this.http.get<any>(`http://127.0.0.1:8000/workflow_stop/${id}`).toPromise();
     if (result['error']) {

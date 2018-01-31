@@ -75,7 +75,6 @@ export class EditorPageComponent implements OnInit {
     this.wps = this.wpsService.all();
 
     this.route.params.subscribe(params => {
-      console.log(params);
       if (params['id'] !== undefined) {
         this.fresh = false;
         this.workflowService.get(+params['id']).subscribe(w => {
@@ -96,6 +95,17 @@ export class EditorPageComponent implements OnInit {
         };
       }
     });
+
+    setInterval(async () => {
+      await this.updateWorkflowStatus();
+    }, 2500);
+  }
+
+  public async updateWorkflowStatus() {
+    if (!this.runs()) { return; }
+    this.workflow = await this.workflowService.get(this.workflow.id).toPromise();
+    await this.workflowService.refresh(this.workflow.id);
+    console.log('-- Refreshed Workflow Execution Status --');
   }
 
   /**
@@ -131,21 +141,19 @@ export class EditorPageComponent implements OnInit {
     }
 
     await this.save();
-
-
     this.workflowService.start(this.workflow.id);
-    this.workflowService.get(this.workflow.id).subscribe(w => {
-
-      this.workflow = w;
+    this.workflowService.get(this.workflow.id).subscribe(workflow => {
+      this.workflow = workflow;
     });
+    this.updateWorkflowStatus();
   }
 
   public stop() {
     this.workflowService.stop(this.workflow.id);
-    this.workflowService.get(this.workflow.id).subscribe(w => {
-
-      this.workflow = w;
+    this.workflowService.get(this.workflow.id).subscribe(workflow => {
+      this.workflow = workflow;
     });
+    this.updateWorkflowStatus();
   }
 
   /**
@@ -199,7 +207,6 @@ export class EditorPageComponent implements OnInit {
     if (!this.workflow) {
       return null;
     }
-
     return this.workflowService.isRunning(this.workflow);
   }
 

@@ -13,6 +13,7 @@ urlpatterns = [
     path('workflow/<int:workflow_id>', views.WorkflowView.as_view()),
     path('workflow_start/<int:workflow_id>', views.WorkflowView.start),
     path('workflow_stop/<int:workflow_id>', views.WorkflowView.stop),
+    path('workflow_refresh/<int:workflow_id>', views.WorkflowView.refresh),
 
     path('process/', views.ProcessView.as_view()),
     path('process/<int:process_id>', views.ProcessView.as_view()),

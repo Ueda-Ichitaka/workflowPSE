@@ -85,11 +85,14 @@ class WorkflowView(View):
 
             # get_object_or_404() ist not used here because for some reason
             # it does not include created_at and updated_at fields
-            returned = list(Workflow.objects.filter(pk=kwargs['workflow_id']).values())[0]
+            returned = list(Workflow.objects.filter(
+                pk=kwargs['workflow_id']).values())[0]
 
             returned['title'] = returned['name']
-            returned['created_at'] = calendar.timegm(returned['created_at'].timetuple())
-            returned['updated_at'] = calendar.timegm(returned['updated_at'].timetuple())
+            returned['created_at'] = calendar.timegm(
+                returned['created_at'].timetuple())
+            returned['updated_at'] = calendar.timegm(
+                returned['updated_at'].timetuple())
 
             returned['edges'] = list(workflow.edge_set.all().values())
             tasks = list(workflow.task_set.all().values())
@@ -100,18 +103,29 @@ class WorkflowView(View):
                 tasks[i]['y'] = float(task['y'])
 
                 if task['started_at'] is not None:
-                    tasks[i]['started_at'] = calendar.timegm(task['started_at'].timetuple())
+                    tasks[i]['started_at'] = calendar.timegm(
+                        task['started_at'].timetuple())
 
-                input_artefacts = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
-                output_artefacts = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
+                input_artefacts = list(Artefact.objects.filter(
+                    task=task['id']).filter(role=0).values())
+                output_artefacts = list(Artefact.objects.filter(
+                    task=task['id']).filter(role=1).values())
 
                 for (j, input_artefact) in enumerate(input_artefacts):
-                    input_artefacts[j]['created_at'] = calendar.timegm(input_artefact['created_at'].timetuple())
-                    input_artefacts[j]['updated_at'] = calendar.timegm(input_artefact['updated_at'].timetuple())
+                    input_artefacts[j]['role'] = (
+                        'input' if input_artefact['role'] == '0' else 'output')
+                    input_artefacts[j]['created_at'] = calendar.timegm(
+                        input_artefact['created_at'].timetuple())
+                    input_artefacts[j]['updated_at'] = calendar.timegm(
+                        input_artefact['updated_at'].timetuple())
 
                 for (j, output_artefact) in enumerate(output_artefacts):
-                    output_artefacts[j]['created_at'] = calendar.timegm(output_artefact['created_at'].timetuple())
-                    output_artefacts[j]['updated_at'] = calendar.timegm(output_artefact['updated_at'].timetuple())
+                    output_artefacts[j]['role'] = (
+                        'input' if output_artefact['role'] == '0' else 'output')
+                    output_artefacts[j]['created_at'] = calendar.timegm(
+                        output_artefact['created_at'].timetuple())
+                    output_artefacts[j]['updated_at'] = calendar.timegm(
+                        output_artefact['updated_at'].timetuple())
 
                 tasks[i]['input_artefacts'] = input_artefacts
                 tasks[i]['output_artefacts'] = output_artefacts
@@ -120,15 +134,20 @@ class WorkflowView(View):
 
             return as_json_response(returned)
         else:
-            returned = list(Workflow.objects.all().order_by('-updated_at').values())
+            returned = list(Workflow.objects.all().order_by(
+                '-updated_at').values())
 
             for (i, workflow) in enumerate(returned):
                 returned[i]['title'] = workflow['name']
-                returned[i]['created_at'] = calendar.timegm(workflow['created_at'].timetuple())
-                returned[i]['updated_at'] = calendar.timegm(workflow['updated_at'].timetuple())
+                returned[i]['created_at'] = calendar.timegm(
+                    workflow['created_at'].timetuple())
+                returned[i]['updated_at'] = calendar.timegm(
+                    workflow['updated_at'].timetuple())
 
-                returned[i]['edges'] = list(Edge.objects.filter(workflow=workflow['id']).values())
-                tasks = list(Task.objects.filter(workflow=workflow['id']).values())
+                returned[i]['edges'] = list(
+                    Edge.objects.filter(workflow=workflow['id']).values())
+                tasks = list(Task.objects.filter(
+                    workflow=workflow['id']).values())
 
                 for (j, task) in enumerate(tasks):
                     tasks[j]['state'] = int(task['status'])
@@ -136,18 +155,29 @@ class WorkflowView(View):
                     tasks[j]['y'] = float(task['y'])
 
                     if task['started_at'] is not None:
-                        tasks[j]['started_at'] = calendar.timegm(task['started_at'].timetuple())
+                        tasks[j]['started_at'] = calendar.timegm(
+                            task['started_at'].timetuple())
 
-                    input_artefacts = list(Artefact.objects.filter(task=task['id']).filter(role=0).values())
-                    output_artefacts = list(Artefact.objects.filter(task=task['id']).filter(role=1).values())
+                    input_artefacts = list(Artefact.objects.filter(
+                        task=task['id']).filter(role=0).values())
+                    output_artefacts = list(Artefact.objects.filter(
+                        task=task['id']).filter(role=1).values())
 
                     for (k, input_artefact) in enumerate(input_artefacts):
-                        input_artefacts[k]['created_at'] = calendar.timegm(input_artefact['created_at'].timetuple())
-                        input_artefacts[k]['updated_at'] = calendar.timegm(input_artefact['updated_at'].timetuple())
+                        input_artefacts[k]['role'] = (
+                            'input' if input_artefact['role'] == '0' else 'output')
+                        input_artefacts[k]['created_at'] = calendar.timegm(
+                            input_artefact['created_at'].timetuple())
+                        input_artefacts[k]['updated_at'] = calendar.timegm(
+                            input_artefact['updated_at'].timetuple())
 
                     for (k, output_artefact) in enumerate(output_artefacts):
-                        output_artefacts[k]['created_at'] = calendar.timegm(output_artefact['created_at'].timetuple())
-                        output_artefacts[k]['updated_at'] = calendar.timegm(output_artefact['updated_at'].timetuple())
+                        output_artefacts[k]['role'] = (
+                            'input' if output_artefact['role'] == '0' else 'output')
+                        output_artefacts[k]['created_at'] = calendar.timegm(
+                            output_artefact['created_at'].timetuple())
+                        output_artefacts[k]['updated_at'] = calendar.timegm(
+                            output_artefact['updated_at'].timetuple())
 
                     tasks[j]['input_artefacts'] = input_artefacts
                     tasks[j]['output_artefacts'] = output_artefacts
@@ -187,7 +217,8 @@ class WorkflowView(View):
 
             temporary_to_new_task_ids[new_task_data['id']] = new_task.id
 
-            artefacts_data = new_task_data['input_artefacts'] + new_task_data['output_artefacts']
+            artefacts_data = new_task_data['input_artefacts'] + \
+                new_task_data['output_artefacts']
 
             for artefact_data in artefacts_data:
                 Artefact.objects.create(
@@ -242,15 +273,18 @@ class WorkflowView(View):
 
                 task.save()
 
-                artefacts_data = task_data['input_artefacts'] + task_data['output_artefacts']
+                artefacts_data = task_data['input_artefacts'] + \
+                    task_data['output_artefacts']
 
                 for artefact_data in artefacts_data:
                     if ('id' in artefact_data) and (artefact_data['id'] > 0):
-                        artefact = get_object_or_404(Artefact, pk=artefact_data['id'])
+                        artefact = get_object_or_404(
+                            Artefact, pk=artefact_data['id'])
 
                         artefact.task_id = task.id
                         artefact.parameter_id = artefact_data['parameter_id']
-                        artefact.role = (0 if artefact_data['role'] == 'input' else 1)
+                        artefact.role = (
+                            0 if artefact_data['role'] == 'input' else 1)
                         artefact.format = artefact_data['format']
                         artefact.data = artefact_data['data']
 
@@ -259,7 +293,8 @@ class WorkflowView(View):
                         Artefact.objects.create(
                             task_id=task.id,
                             parameter_id=artefact_data['parameter_id'],
-                            role=(0 if artefact_data['role'] == 'input' else 1),
+                            role=(
+                                0 if artefact_data['role'] == 'input' else 1),
                             format=artefact_data['format'],
                             data=artefact_data['data']
                         )
@@ -346,6 +381,25 @@ class WorkflowView(View):
 
         return JsonResponse({})
 
+    @staticmethod
+    @require_GET
+    def refresh(request, workflow_id):
+        """
+
+        @param request:
+        @type request:
+        @param workflow_id:
+        @type workflow_id:
+        @return:
+        @rtype:
+        """
+
+        # TODO: This needs some kind of throttling
+        cron.scheduler()
+        cron.receiver()
+
+        return JsonResponse({})
+
 
 # TODO: tests, documentation
 class ProcessView(View):
@@ -381,16 +435,20 @@ class ProcessView(View):
         if 'process_id' in kwargs:
             process = Process.objects.get(pk=kwargs['process_id'])
             returned = model_to_dict(process)
-            inputs = list(process.inputoutput_set.all().filter(role=0).values())
-            outputs = list(process.inputoutput_set.all().filter(role=1).values())
+            inputs = list(
+                process.inputoutput_set.all().filter(role=0).values())
+            outputs = list(
+                process.inputoutput_set.all().filter(role=1).values())
 
             for (j, input) in enumerate(inputs):
                 inputs[j]['type'] = int(input['datatype'])
-                inputs[j]['role'] = ('input' if input['role'] == '0' else 'output')
+                inputs[j]['role'] = (
+                    'input' if input['role'] == '0' else 'output')
 
             for (j, output) in enumerate(outputs):
                 outputs[j]['type'] = int(output['datatype'])
-                outputs[j]['role'] = ('input' if output['role'] == '0' else 'output')
+                outputs[j]['role'] = (
+                    'input' if output['role'] == '0' else 'output')
 
             returned['inputs'] = inputs
             returned['outputs'] = outputs
@@ -400,16 +458,20 @@ class ProcessView(View):
             returned = list(Process.objects.all().values())
 
             for (i, process) in enumerate(returned):
-                inputs = list(InputOutput.objects.filter(process=process['id']).filter(role=0).values())
-                outputs = list(InputOutput.objects.filter(process=process['id']).filter(role=1).values())
+                inputs = list(InputOutput.objects.filter(
+                    process=process['id']).filter(role=0).values())
+                outputs = list(InputOutput.objects.filter(
+                    process=process['id']).filter(role=1).values())
 
                 for (j, input) in enumerate(inputs):
                     inputs[j]['type'] = int(input['datatype'])
-                    inputs[j]['role'] = ('input' if input['role'] == '0' else 'output')
+                    inputs[j]['role'] = (
+                        'input' if input['role'] == '0' else 'output')
 
                 for (j, output) in enumerate(outputs):
                     outputs[j]['type'] = int(output['datatype'])
-                    outputs[j]['role'] = ('input' if output['role'] == '0' else 'output')
+                    outputs[j]['role'] = (
+                        'input' if output['role'] == '0' else 'output')
 
                 returned[i]['inputs'] = inputs
                 returned[i]['outputs'] = outputs
@@ -496,7 +558,8 @@ class WPSView(View):
             returned = list(WPS.objects.all().values())
 
             for (i, wps) in enumerate(returned):
-                returned[i]['provider'] = model_to_dict(WPSProvider.objects.get(pk=wps['service_provider_id']))
+                returned[i]['provider'] = model_to_dict(
+                    WPSProvider.objects.get(pk=wps['service_provider_id']))
                 returned[i]['provider']['title'] = returned[i]['provider']['provider_name']
                 returned[i]['provider']['site'] = returned[i]['provider']['provider_site']
 
@@ -530,7 +593,8 @@ class WPSView(View):
         wps = get_object_or_404(WPS, pk=kwargs['wps_id'])
 
         if new_data['provider']['id'] > 0:
-            wps_provider = get_object_or_404(WPSProvider, pk=new_data['provider']['id'])
+            wps_provider = get_object_or_404(
+                WPSProvider, pk=new_data['provider']['id'])
 
             wps_provider.provider_name = new_data['provider']['title']
             wps_provider.provider_site = new_data['provider']['site']
