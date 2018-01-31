@@ -11,7 +11,7 @@ from lxml import etree
 
 import base.utils as utils_module
 from base.models import WPS, Task, InputOutput, Artefact, Process, STATUS, Workflow, Edge
-from base.utils import ns_map, possible_stats, wps_em, ows_em, xlink_em
+from base.utils import ns_map, possible_stats, wps_em, ows_em
 from workflowPSE.settings import wpsLog, BASE_DIR
 from pathlib import Path
 from io import StringIO, BytesIO
@@ -81,6 +81,7 @@ def scheduler():
 
     print("test 16")
     # send tasks
+    print(exec_list)
     for tid in exec_list:
         print(tid)
         sendTask(tid, xmlDir)
@@ -103,37 +104,33 @@ def xmlGenerator(xmlDir):
     try:
         task_list = list(Task.objects.filter(status='2'))
     except Task.DoesNotExist:
-        wpsLog.info("no running tasks found")
+        wpsLog.debug("no running tasks found")
         task_list = []
-
+    wpsLog.debug(f"task list: {task_list}")
     for task in task_list:
         try:
             process = task.process
         except Process.DoesNotExist:
             # process not found
-            wpsLog.info(f"process of task{task.id} not found")
+            wpsLog.debug(f"process of task{task.id} not found")
             return
-
         root = wps_em.Execute(ows_em.Identifier(process.identifier))
         root.set('service', 'WPS')
         root.set('version', '1.0.0')
-
         inputs_tree = createDataDoc(task)
         if inputs_tree == 1:
             # error code, something wrong with task TODO: check for better handling?
             continue
-
         root.append(inputs_tree)
 
-        # TODO: ask tutors if we need rawdataoutput instead of responsedocument in any case?
         response_doc = wps_em.ResponseDocument()
         response_doc.set('storeExecuteResponse', 'true')
         response_doc.set('lineage', 'true')
         response_doc.set('status', 'true')
 
 
-        output_list = list(InputOutput.objects.filter(process_id=task.process, role='1'))
-
+        output_list = list(InputOutput.objects.filter(process=task.process, role='1'))
+        wpsLog.debug(output_list)
         for output in output_list:
             response_doc.append(wps_em.Output(ows_em.Identifier(output.identifier), ows_em.Title(output.title),
                                               {'asReference':'true'}))
@@ -146,7 +143,7 @@ def xmlGenerator(xmlDir):
             with open(f"{xmlDir}/task{task.id}.xml", 'w') as xml_file:
                 xml_file.write(etree.tostring(root, pretty_print=True).decode())
         except:
-            wpsLog.exception("writing failed")
+            wpsLog.debug("writing failed")
 
 
 def createDataDoc(task):
@@ -156,7 +153,7 @@ def createDataDoc(task):
     @rtype: lxml.etree._Element/int
     """
     # returns [] if no match found
-    inputs = list(InputOutput.objects.filter(process_id=task.process, role='0'))
+    inputs = list(InputOutput.objects.filter(process=task.process, role='0'))
     data_inputs = wps_em.DataInputs()
     for input in inputs:
         # try to get artefact from db
@@ -175,7 +172,6 @@ def createDataDoc(task):
         # first check if it is a file path, as data with length over 490 chars will be stored in a file
         # if so insert file path in Reference node
         if artefact.data == utils_module.getFilePath(task):
-            # TODO: ask tutors when to request a reference as output for executeresponse
             data_inputs.append(wps_em.Input(identifier, title, wps_em.Reference({"method": "GET"},
                                             {ns_map["href"]: utils_module.getFilePath(artefact)})))
             # go to loop header and continue
@@ -183,6 +179,7 @@ def createDataDoc(task):
         # literal data case, there is either a url or real data in the LiteralData element
         # in this case just send the data
         if input.datatype == '0':
+            wpsLog.debug("test7")
             literal_data = wps_em.LiteralData(artefact.data)
             # check for attributes
             for attribute in artefact.format.split(";"):
@@ -202,13 +199,11 @@ def createDataDoc(task):
                 # check if there is cdata in format
                 if artefact.format.split(";")[0] == "CDATA":
                     complex_data.append(f"<![CDATA[{artefact.data}]]")
-                    # TODO: ask tutors when to use cdata for requests? otherwise could just use LiteralData after decoding data?!?!
                     # put data nested in cdata tag in complex data element
                     data_inputs.append(wps_em.Input(identifier, title, wps_em.Data(complex_data)))
                 else:
                     # just append it as if it is in xml format, it can also be inserted as text, will then not be in
                     # pretty_print format, but wps server doesn't care about that
-                    # TODO: ask tutors if in this case it is appended to Data or to ComplexData element
                     data_inputs.append(wps_em.Input(identifier, title, wps_em.Data(artefact.data)))
         # bounding box case there should just be lowercorner and uppercorner data
         elif input.datatype == '2':
@@ -228,7 +223,6 @@ def createDataDoc(task):
             # finally create subtree
             data_inputs.append(wps_em.Input(identifier, title, bbox_elem))
     # TODO: check if something is missing
-
     return data_inputs
 
 '''
@@ -332,16 +326,16 @@ def sendTask(task_id, xmlDir):
     @rtype: NoneType
     """
     filepath = str(xmlDir) + 'task' + str(task_id) + '.xml'
+    print(filepath)
+    print(os.path.isfile(filepath))
     if Path(filepath).is_file() is False:
         print("file for task ", task_id, " does not exist, aborting...")
         return
-
     try:
         # This only is outsourced to extra function for better readability
         execute_url = getExecuteUrl(Task.objects.get(id=task_id))
     except Task.DoesNotExist:
         execute_url = ""
-
     if execute_url is "":
         print("Error, execute url is empty, but is not allowed to. Aborting...")
         return
@@ -350,14 +344,12 @@ def sendTask(task_id, xmlDir):
 
     # send to url
     response = requests.post(execute_url, data=file)  # 'http://pse.rudolphrichard.de:5000/wps'
-
     # if the response is not in xml format
     try:
         # get response from send
         xml = ET.fromstring(response.text)
     except:
         print("xml could not be parsed")
-
     acceptedElement = xml.findall('wps:ProcessAccepted')
     if acceptedElement is None:
         print("An Error occured while sending Task ", task_id, " to the server, proccess not accepted")
@@ -411,9 +403,9 @@ def receiver():
     @return: None
     @rtype: NoneType
     """
+    wpsLog.debug("starting receiver")
     running_tasks = list(Task.objects.filter(status='3'))
     for task in running_tasks:
-        wpsLog.info("start parse execute")
         parseExecuteResponse(task)
 
 
@@ -440,7 +432,7 @@ def parseExecuteResponse(task):
         root = etree.parse(BytesIO(requests.get(task.status_url).text.encode()))
     except:
         # otherwise just exit and return error code
-        wpsLog.exception(f"request for task {task.id} could not be parsed\n{task.status_url}\n{StringIO(requests.get(task.status_url).text)}")
+        wpsLog.debug(f"request for task {task.id} could not be parsed\n{task.status_url}\n{StringIO(requests.get(task.status_url).text)}")
         return 1
 
     process_info = root.find(ns_map["Process"])
@@ -452,36 +444,31 @@ def parseExecuteResponse(task):
         output_list = []
 
     if process_info is None:
-        wpsLog.info("Process information not found")
+        wpsLog.debug("Process information not found")
         return 2
 
     for output in output_list:
-        wpsLog.info("prepare to parse task ")
         parseOutput(output, task)
-        wpsLog.info("parsed task output")
-        
+
     try:
-        wpsLog.info("try to find status")
         process_status = root.find(ns_map["Status"])
     except:
-        wpsLog.info("no status found")
+        wpsLog.debug("no status found")
 
     process_status = etree.QName(process_status[0].tag).localname
-    wpsLog.info(process_status)
+
     new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0] \
         if process_status == possible_stats[3] else STATUS[5][0] # TODO: maybe check for ProcessFailed exception? (optional)
 
     if task.status != new_status:
-        wpsLog.info(task.status)
-        wpsLog.info(new_status)
-        task.status = new_status
+        wpsLog.debug(f"old status: {task.status}, new status: {new_status}")
         task.save()
     #else:
      #   task.status = '5'
       #  task.save()
     task.workflow.percent_done = calculate_percent_done(task)
     if process_status is None:
-        wpsLog.info("no status found")
+        wpsLog.debug("no status found")
         return 3
 
 # TODO: tests
@@ -499,59 +486,51 @@ def parseOutput(output, task):
     out_id = output.find(ns_map["Identifier"]).text
     
     try:
-        output_db = InputOutput.objects.get(process_id=task.process_id, identifier=out_id, role='1')
-        artefact = Artefact.objects.get(task_id=task.id, parameter_id=output_db.id, role='1')
-        #edge = Edge.objects.get(from_task_id=task.id, output_id=output_db.id)
-        edge = None
-        # TODO: handling for no edge exists
+        output_db = InputOutput.objects.get(process=task.process, identifier=out_id, role='1')
+        artefact = Artefact.objects.get(task=task, parameter=output_db, role='1')
     except BaseException as e:
         time_now = datetime.now()
-        wpsLog.exception("output artefact not found, creating new artefact")
+        wpsLog.debug(f"output artefact for task {task.id} not found, creating new artefact")
         artefact = Artefact.objects.create(task=task, parameter=output_db, role='1',
                                            created_at=time_now, updated_at=time_now)
     if artefact is None:
-        wpsLog.info("artefact does not match")
+        wpsLog.debug("artefact does not match")
         return
 
-    wpsLog.info("test 1")
     # everything is the same up to here for each output type
     data_elem = output.find(ns_map["Data"])
     reference = output.find(ns_map["Reference"])
     time_now = datetime.now()
-    
-    wpsLog.info("test 2")
-    
+
     if data_elem is not None:
         try:
             # there should always be just one status!
             data_elem = data_elem.getchildren()[0]
         except:
-            wpsLog.info("data has no child")
+            wpsLog.debug("data has no child")
             # goto loop header
             return
 
         if data_elem.tag == ns_map["LiteralData"]:
-            wpsLog.info("test 3")
             d_attribs = data_elem.attrib
             db_format = ""
             for attrib in d_attribs:
-                db_format += f";{attrib}={d_attribs[attrib]}"
+                if attrib == "dataType":
+                    db_format += f"{attrib}={d_attribs[attrib].split(':')[-1]}"
+                else:
+                    db_format += f";{attrib}={d_attribs[attrib]}"
             db_format.strip(";")
             db_data = data_elem.text
-            wpsLog.info("test 4")
-            
+
             # if the string is less than 490 chars long write to db
             # otherwise write to file and write url to db
             if len(db_data) < 490:
-                wpsLog.info("test 5.1")
                 artefact.format = db_format
                 artefact.data = db_data
                 artefact.updated_at = time_now
                 artefact.save()
-                wpsLog.info("test 5.8")
 
             else:
-                wpsLog.info("test 5.9")
                 # TODO: rework if file path problem is solved!
                 file_name = f"outputs/task{task.id}.xml"
                 with open(file_name, 'w') as tmpfile:
@@ -567,7 +546,10 @@ def parseOutput(output, task):
             d_attribs = data_elem.attrib
             db_format = ""
             for attrib in d_attribs:
-                db_format += f";{attrib}={d_attribs[attrib]}"
+                if attrib == "dataType":
+                    db_format += f"{attrib}={d_attribs[attrib].split(':')[-1]}"
+                else:
+                    db_format += f";{attrib}={d_attribs[attrib]}"
             db_format.strip(";")
             db_data = f"LowerCorner={lower_corner.text};UpperCorner={upper_corner.text}"
 
@@ -581,7 +563,10 @@ def parseOutput(output, task):
             d_attribs = data_elem.attrib
             db_format = ""
             for attrib in d_attribs:
-                db_format += f";{attrib}={d_attribs[attrib]}"
+                if attrib == "dataType":
+                    db_format += f"{attrib}={d_attribs[attrib].split(':')[-1]}"
+                else:
+                    db_format += f";{attrib}={d_attribs[attrib]}"
             db_format.strip(";")
             db_data = data_elem.text
             artefact.format = db_format
@@ -641,42 +626,40 @@ def parseOutput(output, task):
                     artefact.updated_at = time_now
                     artefact.save()
             else:
-                wpsLog.info("no complex data found in complexdata tree element")
+                wpsLog.debug("no complex data found in complexdata tree element")
     elif reference is not None:
-        wpsLog.info("test 6")
         # complexdata found, usually gets passed by url reference which won't be 500 chars long
         # TODO: test ?!
         d_attribs = data_elem.attrib
         db_format = ""
         for attrib in d_attribs:
-            db_format += f";{attrib}={d_attribs[attrib]}"
+            if attrib == "dataType":
+                db_format += f"{attrib}={d_attribs[attrib].split(':')[-1]}"
+            else:
+                db_format += f";{attrib}={d_attribs[attrib]}"
         db_format.strip(";")
         db_data = reference.text  # should be a url
-        wpsLog.info("test 7")
         artefact.format = db_format
         artefact.data = db_data
         artefact.updated_at = time_now
         artefact.save()
-        wpsLog.info("test 8")
-    if db_data is not None:
-        wpsLog.info("test 9")
+
+    try:
+        edge = Edge.objects.get(from_task=task, output=output_db)
+    except Edge.DoesNotExist:
+        edge = None
+    if db_data is not None and edge is not None:
         try:
-            wpsLog.info("test 9.1")
-            wpsLog.info(db_data)
-            # TODO: no edge exist handling
-            #to_artefact = Artefact.objects.get(task=task.id, parameter=edge.input, role='1')
-            #wpsLog.exception("test 9.2")
-            #to_artefact.format = db_format
-            #to_artefact.data = db_data
-            #to_artefact.updated_at = time_now
-            #to_artefact.save()
-            wpsLog.info("test 10")
+            to_artefact = Artefact.objects.get(task=task, parameter=edge.input, role='1')
+            to_artefact.format = db_format
+            to_artefact.data = db_data
+            to_artefact.updated_at = time_now
+            to_artefact.save()
         except Artefact.DoesNotExist:
-            wpsLog.info("input artefact not found, creating new artefact")
+            wpsLog.debug("input artefact not found, creating new artefact")
             Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
                                     data=db_data, created_at=time_now, updated_at=time_now)
-        wpsLog.info("test 11")
-        
+
             
 # TODO: tests
 def calculate_percent_done(task):
