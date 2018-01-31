@@ -51,13 +51,13 @@ def scheduler():
                 print("test 5")
                 if current_edge.from_task.status == '4':
                     print("test 6")
-                    if not Artefact.objects.filter(taks=current_task, role='0'):
+                    if not Artefact.objects.filter(task=current_task, role='0'):
                         print("test 7")
                         previous_tasks_finished = False
                         break
                     else:
                         print("test 8")
-                        for current_artefact in Artefact.objects.filter(taks=current_task, role='0'):
+                        for current_artefact in Artefact.objects.filter(task=current_task, role='0'):
                             print("test 9")
                             if not current_artefact.data:
                                 print("test 10")
