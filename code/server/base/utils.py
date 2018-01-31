@@ -485,14 +485,14 @@ def parse_output_info(output_element, namespaces, process):
     output_datatype = None
     output_format = None
 
-    if output_element.find('LiteralData') is not None:
+    if output_element.find('LiteralOutput') is not None:
         output_datatype = DATATYPE[0][0]
-        literal_data_element = output_element.find('LiteralData')
+        literal_data_element = output_element.find('LiteralOutput')
         output_format = literal_data_element.find('ows:DataType', namespaces).text
-    elif output_element.find('ComplexData') is not None:
+    elif output_element.find('ComplexOutput') is not None:
         output_datatype = DATATYPE[1][0]
         output_format = None
-    elif output_element.find('BoundingBoxData') is not None:
+    elif output_element.find('BoundingBoxOutput') is not None:
         output_datatype = DATATYPE[2][0]
         output_format = None
 
