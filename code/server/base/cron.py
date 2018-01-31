@@ -36,34 +36,50 @@ def scheduler():
     sys.stdout = f
 
     exec_list = []
-
+    
+    print("before schedule")
     for current_workflow in Workflow.objects.all():
+        print("test 1")
         all_tasks = Task.objects.filter(workflow=current_workflow, status='1')
+        print("test 2")
         for current_task in all_tasks:
+            print("test 3")
             previous_tasks_finished = True
             edges_to_current_task = Edge.objects.filter(to_task=current_task)
+            print("test 4")
             for current_edge in edges_to_current_task:
+                print("test 5")
                 if current_edge.from_task.status == '4':
+                    print("test 6")
                     if not Artefact.objects.filter(taks=current_task, role='0'):
+                        print("test 7")
                         previous_tasks_finished = False
                         break
                     else:
+                        print("test 8")
                         for current_artefact in Artefact.objects.filter(taks=current_task, role='0'):
+                            print("test 9")
                             if not current_artefact.data:
+                                print("test 10")
                                 previous_tasks_finished = False
                                 break
                 else:
+                    print("test 11")
                     previous_tasks_finished = False
                     break
             if previous_tasks_finished:
+                print("test 12")
                 current_task.status = '2'
                 exec_list.append(current_task.id)
+                print("test 13")
                 current_task.save()
+                print("test 14")
 
-    print("test")
+    print("test 15")
     # generate execute xmls for all tasks with status waiting
     xmlGenerator(xmlDir)
 
+    print("test 16")
     # send tasks
     for tid in exec_list:
         print(tid)
@@ -99,6 +115,9 @@ def xmlGenerator(xmlDir):
             return
 
         root = wps_em.Execute(ows_em.Identifier(process.identifier))
+        root.set('service', 'WPS')
+        root.set('version', '1.0.0')
+
         inputs_tree = createDataDoc(task)
         if inputs_tree == 1:
             # error code, something wrong with task TODO: check for better handling?
@@ -394,6 +413,7 @@ def receiver():
     """
     running_tasks = list(Task.objects.filter(status='3'))
     for task in running_tasks:
+        wpsLog.info("start parse execute")
         parseExecuteResponse(task)
 
 
@@ -436,22 +456,29 @@ def parseExecuteResponse(task):
         return 2
 
     for output in output_list:
+        wpsLog.info("prepare to parse task ")
         parseOutput(output, task)
+        wpsLog.info("parsed task output")
+        
     try:
+        wpsLog.info("try to find status")
         process_status = root.find(ns_map["Status"])
     except:
         wpsLog.info("no status found")
 
     process_status = etree.QName(process_status[0].tag).localname
+    wpsLog.info(process_status)
     new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0] \
         if process_status == possible_stats[3] else STATUS[5][0] # TODO: maybe check for ProcessFailed exception? (optional)
 
     if task.status != new_status:
+        wpsLog.info(task.status)
+        wpsLog.info(new_status)
         task.status = new_status
         task.save()
-    else:
-        task.status = STATUS[5][0]
-        task.save()
+    #else:
+     #   task.status = '5'
+      #  task.save()
     task.workflow.percent_done = calculate_percent_done(task)
     if process_status is None:
         wpsLog.info("no status found")
@@ -470,25 +497,30 @@ def parseOutput(output, task):
     @rtype: NoneType
     """
     out_id = output.find(ns_map["Identifier"]).text
-
+    
     try:
-        output_db = InputOutput.objects.get(process=task.process, identifier=out_id, role='1')
-        artefact = Artefact.objects.get(task=task, parameter=output_db, role='1')
-        edge = Edge.objects.get(from_task=task, output=output_db)
+        output_db = InputOutput.objects.get(process_id=task.process_id, identifier=out_id, role='1')
+        artefact = Artefact.objects.get(task_id=task.id, parameter_id=output_db.id, role='1')
+        #edge = Edge.objects.get(from_task_id=task.id, output_id=output_db.id)
+        edge = None
+        # TODO: handling for no edge exists
     except BaseException as e:
         time_now = datetime.now()
-        wpsLog.info("output artefact not found, creating new artefact")
+        wpsLog.exception("output artefact not found, creating new artefact")
         artefact = Artefact.objects.create(task=task, parameter=output_db, role='1',
                                            created_at=time_now, updated_at=time_now)
     if artefact is None:
         wpsLog.info("artefact does not match")
         return
 
+    wpsLog.info("test 1")
     # everything is the same up to here for each output type
     data_elem = output.find(ns_map["Data"])
     reference = output.find(ns_map["Reference"])
     time_now = datetime.now()
-
+    
+    wpsLog.info("test 2")
+    
     if data_elem is not None:
         try:
             # there should always be just one status!
@@ -499,22 +531,27 @@ def parseOutput(output, task):
             return
 
         if data_elem.tag == ns_map["LiteralData"]:
+            wpsLog.info("test 3")
             d_attribs = data_elem.attrib
             db_format = ""
             for attrib in d_attribs:
                 db_format += f";{attrib}={d_attribs[attrib]}"
             db_format.strip(";")
             db_data = data_elem.text
-
+            wpsLog.info("test 4")
+            
             # if the string is less than 490 chars long write to db
             # otherwise write to file and write url to db
             if len(db_data) < 490:
+                wpsLog.info("test 5.1")
                 artefact.format = db_format
                 artefact.data = db_data
                 artefact.updated_at = time_now
                 artefact.save()
+                wpsLog.info("test 5.8")
 
             else:
+                wpsLog.info("test 5.9")
                 # TODO: rework if file path problem is solved!
                 file_name = f"outputs/task{task.id}.xml"
                 with open(file_name, 'w') as tmpfile:
@@ -606,6 +643,7 @@ def parseOutput(output, task):
             else:
                 wpsLog.info("no complex data found in complexdata tree element")
     elif reference is not None:
+        wpsLog.info("test 6")
         # complexdata found, usually gets passed by url reference which won't be 500 chars long
         # TODO: test ?!
         d_attribs = data_elem.attrib
@@ -614,23 +652,32 @@ def parseOutput(output, task):
             db_format += f";{attrib}={d_attribs[attrib]}"
         db_format.strip(";")
         db_data = reference.text  # should be a url
-
+        wpsLog.info("test 7")
         artefact.format = db_format
         artefact.data = db_data
         artefact.updated_at = time_now
         artefact.save()
+        wpsLog.info("test 8")
     if db_data is not None:
+        wpsLog.info("test 9")
         try:
-            to_artefact = Artefact.objects.get(task=edge.to_task, parameter=edge.input, role='0')
-            to_artefact.format = db_format
-            to_artefact.data = db_data
-            to_artefact.updated_at = time_now
-            to_artefact.save()
+            wpsLog.info("test 9.1")
+            wpsLog.info(db_data)
+            # TODO: no edge exist handling
+            #to_artefact = Artefact.objects.get(task=task.id, parameter=edge.input, role='1')
+            #wpsLog.exception("test 9.2")
+            #to_artefact.format = db_format
+            #to_artefact.data = db_data
+            #to_artefact.updated_at = time_now
+            #to_artefact.save()
+            wpsLog.info("test 10")
         except Artefact.DoesNotExist:
             wpsLog.info("input artefact not found, creating new artefact")
             Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
                                     data=db_data, created_at=time_now, updated_at=time_now)
-
+        wpsLog.info("test 11")
+        
+            
 # TODO: tests
 def calculate_percent_done(task):
     """
