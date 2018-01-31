@@ -74,10 +74,10 @@ def getFilePath(artefact):
         return possible_path
     return None
 
-def add_wps_server(server_urls):
+def add_wps_server(server_url):
     """
     This method adds new wps server to the database.
-    It receives a list of server urls as parameter from the admin page
+    It receives a server url as parameter from the admin page
     and creates new wps server and service provider objects, which will saved
     in the database.
 
@@ -92,41 +92,40 @@ def add_wps_server(server_urls):
     @return: None
     @rtype: NoneType
     """
-    # server_urls = ['http://pse.rudolphrichard.de:5000']
-    for server_url in server_urls:
-        if server_url[-1] != '/':
-            server_url = server_url + '/'
+    # server_url = 'http://pse.rudolphrichard.de:5000'
+    if server_url[-1] != '/':
+        server_url = server_url + '/'
 
-        server_url = server_url + 'wps?request=GetCapabilities&service=WPS'
-        temp_xml, headers = urllib.request.urlretrieve(server_url)
+    server_url = server_url + 'wps?request=GetCapabilities&service=WPS'
+    temp_xml, headers = urllib.request.urlretrieve(server_url)
 
-        # TODO: method, that parse xml namespaces
-        xml_namespaces = {
-            'gml': 'http://www.opengis.net/gml',
-            'xlink': 'http://www.w3.org/1999/xlink',
-            'wps': 'http://www.opengis.net/wps/1.0.0',
-            'ows': 'http://www.opengis.net/ows/1.1',
-            'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
-        }
+    # TODO: method, that parse xml namespaces
+    xml_namespaces = {
+        'gml': 'http://www.opengis.net/gml',
+        'xlink': 'http://www.w3.org/1999/xlink',
+        'wps': 'http://www.opengis.net/wps/1.0.0',
+        'ows': 'http://www.opengis.net/ows/1.1',
+        'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
+    }
 
-        # Parse the xml file
-        get_capabilities_tree = ET.parse(temp_xml)
-        get_capabilities_root = get_capabilities_tree.getroot()
+    # Parse the xml file
+    get_capabilities_tree = ET.parse(temp_xml)
+    get_capabilities_root = get_capabilities_tree.getroot()
 
-        # Parse and save information about server provider
-        service_provider = parse_service_provider_info(get_capabilities_root, xml_namespaces)
-        service_provider_from_database = search_provider_in_database(service_provider)
-        if service_provider_from_database is None:
-            service_provider.save()
-        else:
-            service_provider = service_provider_from_database
-            # Parse and save information about wps server
-        wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
-        wps_server_from_database = search_server_in_database(wps_server)
-        if wps_server_from_database is None:
-            wps_server.save()
-        else:
-            wps_server = overwrite_server(wps_server_from_database, wps_server)
+    # Parse and save information about server provider
+    service_provider = parse_service_provider_info(get_capabilities_root, xml_namespaces)
+    service_provider_from_database = search_provider_in_database(service_provider)
+    if service_provider_from_database is None:
+        service_provider.save()
+    else:
+        service_provider = service_provider_from_database
+        # Parse and save information about wps server
+    wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
+    wps_server_from_database = search_server_in_database(wps_server)
+    if wps_server_from_database is None:
+        wps_server.save()
+    else:
+        wps_server = overwrite_server(wps_server_from_database, wps_server)
 
     base.cron.update_wps_processes()
 
