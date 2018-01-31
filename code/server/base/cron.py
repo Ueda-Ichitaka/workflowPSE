@@ -38,16 +38,10 @@ def scheduler():
     exec_list = []
 
     for current_workflow in Workflow.objects.all():
-        try:
-            all_tasks = Task.objects.filter(workflow=current_workflow, status='1')
-        except Task.DoesNotExist:
-            all_tasks = []
+        all_tasks = Task.objects.filter(workflow=current_workflow, status='1')
         for current_task in all_tasks:
             previous_tasks_finished = True
-            try:
-                edges_to_current_task = Edge.objects.filter(to_task=current_task)
-            except Edge.DoesNotExist:
-                edges_to_current_task = []
+            edges_to_current_task = Edge.objects.filter(to_task=current_task)
             for current_edge in edges_to_current_task:
                 if current_edge.from_task.status == '4':
                     if not Artefact.objects.filter(taks=current_task, role='0'):
@@ -66,11 +60,13 @@ def scheduler():
                 exec_list.append(current_task.id)
                 current_task.save()
 
+    print("test")
     # generate execute xmls for all tasks with status waiting
     xmlGenerator(xmlDir)
 
     # send tasks
     for tid in exec_list:
+        print(tid)
         sendTask(tid, xmlDir)
 
     # Reset exec list
@@ -88,10 +84,10 @@ def xmlGenerator(xmlDir):
     @return: None
     @rtype: NoneType
     """
-
     try:
         task_list = list(Task.objects.filter(status='2'))
     except Task.DoesNotExist:
+        wpsLog.info("no running tasks found")
         task_list = []
 
     for task in task_list:
@@ -99,70 +95,120 @@ def xmlGenerator(xmlDir):
             process = task.process
         except Process.DoesNotExist:
             # process not found
+            wpsLog.info(f"process of task{task.id} not found")
             return
 
         root = wps_em.Execute(ows_em.Identifier(process.identifier))
         inputs_tree = createDataDoc(task)
-
         if inputs_tree == 1:
-            # error code, something wrong with task formatting TODO: check for better handling
+            # error code, something wrong with task TODO: check for better handling?
             continue
 
         root.append(inputs_tree)
-        # TODO: complete
 
-        response_form = wps_em.ResponseForm()
+        # TODO: ask tutors if we need rawdataoutput instead of responsedocument in any case?
         response_doc = wps_em.ResponseDocument()
+        response_doc.set('storeExecuteResponse', 'true')
+        response_doc.set('lineage', 'true')
+        response_doc.set('status', 'true')
+
 
         output_list = list(InputOutput.objects.filter(process_id=task.process, role='1'))
-        for output in output_list:
-            output_element = wps_em.Output(ows_em.Identifier(output.identifier), ows_em.Title(output.title))
 
+        for output in output_list:
+            response_doc.append(wps_em.Output(ows_em.Identifier(output.identifier), ows_em.Title(output.title),
+                                              {'asReference':'true'}))
+
+        root.append(wps_em.ResponseForm(response_doc))
+
+        # write to file, for testing let pretty_print=True for better readability
+        # TODO: rework if file path problem is solved
+        try:
+            with open(f"{xmlDir}/task{task.id}.xml", 'w') as xml_file:
+                xml_file.write(etree.tostring(root, pretty_print=True).decode())
+        except:
+            wpsLog.exception("writing failed")
 
 
 def createDataDoc(task):
+    """
+    creates subtree for execute request for model.Task task
+    @return: subtree on success, error code 1 otherwise
+    @rtype: lxml.etree._Element/int
+    """
+    # returns [] if no match found
     inputs = list(InputOutput.objects.filter(process_id=task.process, role='0'))
     data_inputs = wps_em.DataInputs()
-
     for input in inputs:
+        # try to get artefact from db
+        try:
+            artefact = Artefact.objects.get(task=task, parameter=input)
+        except:
+            # something is wrong here if artefact has not been created yet
+            # as execute documents for next execution are only started if previous task has finished
+            # and when previous task has finished, the output data is automatically passed to next tasks input
+            return 1
+
+        # create identifier and title as they are used in any case
+        identifier = ows_em.Identifier(input.identifier)
+        title = ows_em.Title(input.title)
+
+        # first check if it is a file path, as data with length over 490 chars will be stored in a file
+        # if so insert file path in Reference node
+        if artefact.data == utils_module.getFilePath(task):
+            # TODO: ask tutors when to request a reference as output for executeresponse
+            data_inputs.append(wps_em.Input(identifier, title, wps_em.Reference({"method": "GET"},
+                                            {ns_map["href"]: utils_module.getFilePath(artefact)})))
+            # go to loop header and continue
+            continue
         # literal data case, there is either a url or real data in the LiteralData element
         # in this case just send the data
         if input.datatype == '0':
-            try:
-                artefact = Artefact.objects.get(task=task, parameter=input, role='0')
-            except:
-                # something is wrong here if artefact has not been created yet
-                return 1
-            data_inputs.append(wps_em.Input(ows_em.Identifier(input.identifier), ows_em.Title(input.title),
-                                            wps_em.Data(wps_em.LiteralData(artefact.data))))
+            literal_data = wps_em.LiteralData(artefact.data)
+            # check for attributes
+            for attribute in artefact.format.split(";"):
+                if "uom" in attribute:
+                    literal_data.set("uom", attribute.split("=")[1])
+                if "dataType" in attribute:
+                    literal_data.set("dataType", attribute.split("=")[1])
+            # just create subtree with identifier, title and data with nested literaldata containing the artefacts data
+            data_inputs.append(wps_em.Input(identifier, title, wps_em.Data(literal_data)))
         # complex data case, first try to parse xml, if successfully append to ComplexData element
         #                    second check if there is CDATA ??
-        if input.datatype == '1':
-            try:
-                # try to parse as xml
-                data = etree.parse(artefact.data)
-            except:
-                # if it is no xml, check if it is a file path, if so insert file path in Reference node
-                if artefact.data == utils_module.getFilePath(artefact):
-                    data_inputs.append(wps_em.Input(ows_em.Identifier(input.identifier), ows_em.Title(input.title),
-                                                    wps_em.Reference({"method": "GET"},
-                                                                     {ns_map["href"]:utils_module.getFilePath(artefact)})))
-                    return data_inputs
-                # else check if there is cdata
-                #elif len(artefact.data.split("CDATA")) != 1:
-                    # when to use cdata for requests?
-                    #data = artefact.data.lstrip("<![CDATA[").rstrip("]]>")
+        elif input.datatype == '1':
+                # append format data as attributes to complex data element
+                complex_data = wps_em.ComplexData()
+                for attribute in artefact.format.strip("CDATA;").split(";"):
+                    complex_data.set(attribute.split("=")[0], attribute.split("=")[1])
+                # check if there is cdata in format
+                if artefact.format.split(";")[0] == "CDATA":
+                    complex_data.append(f"<![CDATA[{artefact.data}]]")
+                    # TODO: ask tutors when to use cdata for requests? otherwise could just use LiteralData after decoding data?!?!
+                    # put data nested in cdata tag in complex data element
+                    data_inputs.append(wps_em.Input(identifier, title, wps_em.Data(complex_data)))
                 else:
-                    try:
-                        data = artefact.data
-                    except:
-                        return 1
-            data_inputs.append(wps_em.Input(ows_em.Identifier(input.identifier), ows_em.Title(input.title),
-                                            wps_em.Data(data)))
+                    # just append it as if it is in xml format, it can also be inserted as text, will then not be in
+                    # pretty_print format, but wps server doesn't care about that
+                    # TODO: ask tutors if in this case it is appended to Data or to ComplexData element
+                    data_inputs.append(wps_em.Input(identifier, title, wps_em.Data(artefact.data)))
         # bounding box case there should just be lowercorner and uppercorner data
-        if input.datatype == '2':
-            # TODO: complete
-            pass
+        elif input.datatype == '2':
+            lower_corner = ows_em.LowerCorner()
+            upper_corner = ows_em.UpperCorner()
+            for data in artefact.data.split(";"):
+                if data.split("=")[0] == "LowerCorner":
+                    lower_corner.append(data.split("=")[1])
+                elif data.split("=")[0] == "UpperCorner":
+                    upper_corner.append(data.split("=")[1])
+            # quite strange, but this node is called BoundingBoxData for inputs, for outputs it's just BoundingBox
+            # also for inputs it is used with wps namespace, for outputs the ows namespace is used
+            bbox_elem = wps_em.BoundingBoxData(lower_corner, upper_corner)
+            # set attributes of boundingboxdata if there were any
+            for attribute in artefact.format.split(";"):
+                bbox_elem.set(attribute.split("=")[0], attribute.split("=")[1])
+            # finally create subtree
+            data_inputs.append(wps_em.Input(identifier, title, bbox_elem))
+    # TODO: check if something is missing
 
     return data_inputs
 
@@ -346,12 +392,7 @@ def receiver():
     @return: None
     @rtype: NoneType
     """
-    try:
-        running_tasks = list(Task.objects.filter(status='3'))
-        wpsLog.info("receiver starting")
-    except Task.DoesNotExist:
-        running_tasks = []
-        wpsLog.info("no running tasks found")
+    running_tasks = list(Task.objects.filter(status='3'))
     for task in running_tasks:
         parseExecuteResponse(task)
 
@@ -379,7 +420,7 @@ def parseExecuteResponse(task):
         root = etree.parse(BytesIO(requests.get(task.status_url).text.encode()))
     except:
         # otherwise just exit and return error code
-        wpsLog.info(f"request for task {task.id} could not be parsed")
+        wpsLog.exception(f"request for task {task.id} could not be parsed\n{task.status_url}\n{StringIO(requests.get(task.status_url).text)}")
         return 1
 
     process_info = root.find(ns_map["Process"])
@@ -403,7 +444,7 @@ def parseExecuteResponse(task):
 
     process_status = etree.QName(process_status[0].tag).localname
     new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0] \
-        if process_status == possible_stats[3] else STATUS[5][0]
+        if process_status == possible_stats[3] else STATUS[5][0] # TODO: maybe check for ProcessFailed exception? (optional)
 
     if task.status != new_status:
         task.status = new_status
@@ -428,7 +469,6 @@ def parseOutput(output, task):
     @return: None
     @rtype: NoneType
     """
-
     out_id = output.find(ns_map["Identifier"]).text
 
     try:
@@ -475,8 +515,8 @@ def parseOutput(output, task):
                 artefact.save()
 
             else:
-                # TODO set path to file properly so user can access via url - test !
-                file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
+                # TODO: rework if file path problem is solved!
+                file_name = f"outputs/task{task.id}.xml"
                 with open(file_name, 'w') as tmpfile:
                     tmpfile.write(db_data)
                 artefact.format = db_format
@@ -492,7 +532,7 @@ def parseOutput(output, task):
             for attrib in d_attribs:
                 db_format += f";{attrib}={d_attribs[attrib]}"
             db_format.strip(";")
-            db_data = f"LowerCorner:{lower_corner.text};UpperCorner:{upper_corner.text}"
+            db_data = f"LowerCorner={lower_corner.text};UpperCorner={upper_corner.text}"
 
             artefact.format = db_format
             artefact.data = db_data
@@ -518,7 +558,7 @@ def parseOutput(output, task):
                     artefact.save()
 
                 else:
-                    file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
+                    file_name = f"outputs/task{task.id}.xml"
                     with open(file_name, 'w') as tmpfile:
                         tmpfile.write(db_data)
                     artefact.data = f"{BASE_DIR}/{file_name}"
@@ -526,6 +566,8 @@ def parseOutput(output, task):
                     artefact.save()
 
             elif "CDATA" in data_elem.text:
+                db_format = "CDATA;" + db_format
+
                 # if the string is less than 490 chars long write to db
                 # otherwise write to file and write url to db
                 db_data = data_elem.text
@@ -535,7 +577,7 @@ def parseOutput(output, task):
                     artefact.save()
 
                 else:
-                    file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
+                    file_name = f"outputs/task{task.id}.xml"
                     with open(file_name, 'w') as tmpfile:
                         tmpfile.write(db_data)
                     artefact.data = f"{BASE_DIR}/{file_name}"
@@ -555,7 +597,7 @@ def parseOutput(output, task):
                     artefact.updated_at = time_now
                     artefact.save()
                 else:
-                    file_name = f"outputs/wfID{task.workflow.id}_taskID{task.id}.xml"
+                    file_name = f"outputs/task{task.id}.xml"
                     with open(file_name, 'w') as tmpfile:
                         tmpfile.write(db_data)
                     artefact.data = f"{BASE_DIR}/{file_name}"

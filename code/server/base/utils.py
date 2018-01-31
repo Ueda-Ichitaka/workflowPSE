@@ -61,7 +61,8 @@ ns_map = {
 
 possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "ProcessSucceeded", "ProcessFailed"]
 
-def getFilePath(artefact):
+# TODO: rework if path problem is solved
+def getFilePath(task):
     '''
     returns path to file for artefact or None if there is no such file
     @param artefact: artefact for which path is returned
@@ -69,7 +70,7 @@ def getFilePath(artefact):
     @return: path to data
     @rtype: string
     '''
-    possible_path = f"{BASE_DIR}/outputs/artefactID{artefact.id}.xml"
+    possible_path = f"{BASE_DIR}/outputs/task{task.id}.xml"
     if os.path.isfile(possible_path):
         return possible_path
     return None
@@ -293,8 +294,13 @@ def parse_service_provider_info(root, namespaces):
     """
     service_provider_element = root.find('ows:ServiceProvider', namespaces)
     provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
-    provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
-        '{' + namespaces.get('xlink') + '}href')
+    try:
+        # note: .get for xml parsing also raises error if no matching element is found
+        provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
+            '{' + namespaces.get('xlink') + '}href')
+    except:
+        # TODO: return error code or not?
+        provider_site = ""
 
     service_contact_element = service_provider_element.find('ows:ServiceContact', namespaces)
 
@@ -338,7 +344,11 @@ def parse_wps_server_info(root, namespaces, provider):
     urls_elements = operations_metadata_element.findall('ows:Operation/ows:DCP/ows:HTTP/ows:Get', namespaces)
     urls = []
     for item in urls_elements:
-        urls.append(item.attrib.get('{' + namespaces.get('xlink') + '}href'))
+        try:
+            urls.append(item.attrib.get('{' + namespaces.get('xlink') + '}href'))
+        except:
+            # TODO: is there something to do here? at least if something goes wrong here, the except below also crashes! fix please
+            pass
 
     try:
         wps_server = WPS.objects.get(service_provider=provider,
@@ -424,8 +434,13 @@ def parse_input_info(input_element, namespaces, process):
         input_datatype = DATATYPE[2][0]
         input_format = None
 
-    input_min_occurs = input_element.attrib.get('minOccurs')
-    input_max_occurs = input_element.attrib.get('maxOccurs')
+    try:
+        input_min_occurs = input_element.attrib.get('minOccurs')
+        input_max_occurs = input_element.attrib.get('maxOccurs')
+    except:
+        # TODO: is this ok?
+        input_min_occurs = '0'
+        input_max_occurs = '0'
 
     try:
         input = InputOutput.objects.get(process=process,
