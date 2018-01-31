@@ -511,8 +511,8 @@ class WPSView(View):
         @return:
         @rtype:
         """
-        utils.add_wps_server(request.body.decode('utf-8'))
 
+        utils.add_wps_server(request.body.decode('utf-8'))
         return JsonResponse({})
 
     @staticmethod

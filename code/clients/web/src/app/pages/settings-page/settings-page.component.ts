@@ -64,7 +64,7 @@ export class SettingsPageComponent implements OnInit {
   }
 
   public addWPS(url: string) {
-    this.wpsService.create(url);
+    this.wpsService.create(url).subscribe();
 
   }
 
@@ -72,7 +72,7 @@ export class SettingsPageComponent implements OnInit {
    * removes the wps server with the given id
    * @param id the id of the wps
    */
-  public remove(id: number) {
-    this.wpsService.remove(id);
+  public async remove(id: number) {
+    await this.wpsService.remove(id);
   }
 }
