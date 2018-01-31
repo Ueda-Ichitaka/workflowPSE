@@ -75,12 +75,12 @@ export class EditorPageComponent implements OnInit {
     this.wps = this.wpsService.all();
 
     this.route.params.subscribe(params => {
+      console.log(params);
       if (params['id'] !== undefined) {
         this.fresh = false;
         this.workflowService.get(+params['id']).subscribe(w => {
-          w.edges = w.edges || [];
-          w.tasks = w.tasks || [];
           this.workflow = w;
+
         });
       } else {
         this.fresh = true;
@@ -125,12 +125,27 @@ export class EditorPageComponent implements OnInit {
    * executes workflow if not empty
    * @param id the id of the workflow
    */
-  public run(id: number) {
+  public async run() {
     if (!this.workflow) {
       return;
     }
 
-    this.workflowService.execute(this.workflow.id);
+    await this.save();
+
+
+    this.workflowService.start(this.workflow.id);
+    this.workflowService.get(this.workflow.id).subscribe(w => {
+
+      this.workflow = w;
+    });
+  }
+
+  public stop() {
+    this.workflowService.stop(this.workflow.id);
+    this.workflowService.get(this.workflow.id).subscribe(w => {
+
+      this.workflow = w;
+    });
   }
 
   /**
@@ -142,7 +157,7 @@ export class EditorPageComponent implements OnInit {
 
     if (this.fresh) {
       this.workflowService.create(this.editorComponent.workflow).subscribe(obj => {
-        this.router.navigate(['/editor', { id: obj.id }]);
+        this.router.navigate([`/editor/${obj.id}`]);
       });
     } else {
       this.workflowService.update(this.workflow.id, this.workflow).toPromise();
@@ -167,13 +182,13 @@ export class EditorPageComponent implements OnInit {
    * saves the workflow, if not existing
    * yet, a new workflow is created
    */
-  public save() {
+  public async save() {
     if (this.fresh) {
       this.workflowService.create(this.editorComponent.workflow).subscribe(obj => {
-        this.router.navigate(['/editor', { id: obj.id }]);
+        this.router.navigate([`/editor/${obj.id}`]);
       });
     } else {
-      this.workflowService.update(this.workflow.id, this.workflow).toPromise();
+      return this.workflowService.update(this.workflow.id, this.workflow).toPromise();
     }
   }
 

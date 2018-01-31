@@ -5,7 +5,7 @@ from base import views
 
 app_name = 'base'
 urlpatterns = [
-    url(r'^$', views.IndexView.as_view(), name='index'),
+    url(r'^$', views.EditorView.as_view(), name='index'),
 
     path('user/index/', views.UserView.index),
 

@@ -14,7 +14,7 @@
   </div>
 
   <div>
-    <button mat-button (click)="undo()" [disabled]="!canUndo()" i18n="@@undo">Undo</button>
+    <button mat-button (click)="undo()" [disabled]="!canUndo() | async" i18n="@@undo">Undo</button>
     <button mat-raised-button (click)="save()" color="primary" i18n="@@save">Save</button>
   </div>
 </div>
@@ -31,6 +31,10 @@
   </button>
 
   <ng-template #runningTemplate>
-    <mat-spinner class="run" diameter="56"></mat-spinner>
+    <mat-spinner class="run" class="spinner" diameter="89"></mat-spinner>
+    <button mat-fab color="primary" class="run" (click)="stop()">
+      <mat-icon matTooltip="Stop" aria-label="Stop">stop</mat-icon>
+    </button>
+
   </ng-template>
 </ng-container>

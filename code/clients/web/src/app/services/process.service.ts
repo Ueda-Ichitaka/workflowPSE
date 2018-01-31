@@ -47,21 +47,7 @@ export class ProcessService {
    * @returns {Observable<Process[]>}
    */
   public all(): Observable<Process[]> {
-    return this.http.get<Process[]>(`http://127.0.0.1:8000/process/`).pipe(
-      map(obj => obj.map(process => {
-        process.inputs = process.inputs || [];
-        process.outputs = process.outputs || [];
-        for (const i of process.inputs) {
-          i.type = +i['datatype'];
-          i.role = <any>(+i.role ? 'output' : 'input');
-        }
-        for (const o of process.outputs) {
-          o.type = +o['datatype'];
-          o.role = <any>(+o.role ? 'output' : 'input');
-        }
-        return process;
-      }))
-    );
+    return this.http.get<Process[]>(`http://127.0.0.1:8000/process/`);
   }
 
   /**
@@ -70,12 +56,6 @@ export class ProcessService {
    * @returns {Observable<Process>}
    */
   public get(id: number): Observable<Process> {
-    return this.http.get<Process>(`http://127.0.0.1:8000/process/${id}`).pipe(
-      map(process => {
-        process.inputs = process.inputs || [];
-        process.outputs = process.outputs || [];
-        return process;
-      })
-    );
+    return this.http.get<Process>(`http://127.0.0.1:8000/process/${id}`);
   }
 }

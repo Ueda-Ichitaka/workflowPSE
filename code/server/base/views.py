@@ -602,7 +602,7 @@ class WorkflowsView(TemplateView):
     """
 
     """
-    template_name = "base/workflows.html"
+    template_name = "index.html"
 
 
 # TODO: tests, documentation
@@ -610,7 +610,7 @@ class EditorView(TemplateView):
     """
 
     """
-    template_name = "base/editor.html"
+    template_name = "index.html"
 
 
 # TODO: tests, documentation
@@ -618,4 +618,4 @@ class SettingsView(TemplateView):
     """
 
     """
-    template_name = "base/settings.html"
+    template_name = "index.html"

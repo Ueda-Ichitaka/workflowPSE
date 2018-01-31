@@ -4,8 +4,8 @@
  */
 export interface Edge {
     id: number;
-    a_id: number;
-    b_id: number;
+    from_task_id: number;
+    to_task_id: number;
     input_id: number;
     output_id: number;
 }

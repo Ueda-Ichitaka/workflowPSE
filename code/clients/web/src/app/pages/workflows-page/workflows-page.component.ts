@@ -76,7 +76,7 @@ export class WorkflowsPageComponent implements OnInit {
    * @param id the id of the workflow which is opened
    */
   public edit(id: number) {
-    this.router.navigate(['/editor', { id }]);
+    this.router.navigate([`/editor/${id}`]);
   }
 
   /**
@@ -92,7 +92,7 @@ export class WorkflowsPageComponent implements OnInit {
    * @param id the id of the workflow which is executed
    */
   public run(id: number) {
-    this.workflowService.execute(id);
+    this.workflowService.start(id);
   }
 
   /**

@@ -137,7 +137,7 @@ export class EditorComponent implements OnInit {
           updated_at: (new Date).getTime(),
         });
       }
-      this.workflow.edges = this.workflow.edges.filter(e => e.a_id !== task.id || e.b_id !== task.id);
+      this.workflow.edges = this.workflow.edges.filter(e => e.from_task_id !== task.id || e.to_task_id !== task.id);
     }
 
 
@@ -177,10 +177,10 @@ export class EditorComponent implements OnInit {
 
     for (const edge of this.workflow.edges) {
       const aComponent = this.taskComponents
-        .find(component => component.task.id === edge.a_id);
+        .find(component => component.task.id === edge.from_task_id);
 
       const bComponent = this.taskComponents
-        .find(component => component.task.id === edge.b_id);
+        .find(component => component.task.id === edge.to_task_id);
 
       if (!aComponent || !bComponent) {
         return;
@@ -219,7 +219,7 @@ export class EditorComponent implements OnInit {
       id: -Math.round(Math.random() * 10000),
       x,
       y,
-      state: TaskState.READY,
+      state: TaskState.NONE,
       process_id: process.id,
       input_artefacts: [],
       output_artefacts: [],
@@ -245,7 +245,7 @@ export class EditorComponent implements OnInit {
     this.snapshot();
     const index = this.workflow.tasks.findIndex(task => task.id === task_id);
     this.workflow.tasks.splice(index, 1);
-    this.workflow.edges = this.workflow.edges.filter(edge => edge.a_id !== task_id && edge.b_id !== task_id);
+    this.workflow.edges = this.workflow.edges.filter(edge => edge.from_task_id !== task_id && edge.to_task_id !== task_id);
 
     this.cd.detectChanges();
     this.workflowChanged.emit(this.workflow);
@@ -367,7 +367,10 @@ export class EditorComponent implements OnInit {
     if (this.running) {
       return;
     }
+
+
     const [x, y] = task.getParameterPosition(parameter.role, parameter.id);
+
     this.movement = {
       edge: [0, 0, 0, 0],
       task: task.task,
@@ -398,10 +401,10 @@ export class EditorComponent implements OnInit {
       this.snapshot();
       const input_id = parameter.role === 'input' ? parameter.id : this.movement.parameter.id;
       const output_id = parameter.role === 'output' ? parameter.id : this.movement.parameter.id;
-      const a_id = parameter.role === 'output' ? task.task.id : this.movement.task.id;
-      const b_id = parameter.role === 'input' ? task.task.id : this.movement.task.id;
+      const from_task_id = parameter.role === 'output' ? task.task.id : this.movement.task.id;
+      const to_task_id = parameter.role === 'input' ? task.task.id : this.movement.task.id;
 
-      this.workflow.edges.push({ id: -Math.round(Math.random() * 10000), a_id, b_id, input_id, output_id });
+      this.workflow.edges.push({ id: -Math.round(Math.random() * 10000), from_task_id, to_task_id, input_id, output_id });
       this.workflowChanged.emit(this.workflow);
     }
   }
@@ -433,7 +436,11 @@ export class EditorComponent implements OnInit {
     this.workflowChanged.emit(this.workflow);
   }
 
-  public canUndo(): boolean {
-    return this.snapshots.length > 0 && !this.running;
+  public async canUndo(): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      setTimeout(() => {
+        resolve(this.snapshots.length > 0 && !this.running);
+      }, 10);
+    });
   }
 }

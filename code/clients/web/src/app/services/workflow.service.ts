@@ -107,7 +107,7 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public update(id: number, workflow: Partial<Workflow>): Observable<Workflow> {
-    this.bar.open(`Saved Workflow`, 'CLOSE', { duration: 3000 });
+    this.bar.open(`Updated Workflow`, 'CLOSE', { duration: 3000 });
     return this.http.patch<Workflow>(`http://127.0.0.1:8000/workflow/${id}`, workflow);
   }
 
@@ -128,20 +128,11 @@ export class WorkflowService {
    * @returns {boolean}
    */
   public isRunning(workflow: Partial<Workflow>): boolean {
-    if (!workflow.tasks) {
+    if (!workflow || !workflow.tasks) {
       return false;
     }
-    for (let i = 0; i < workflow.tasks.length; i++) {
-      if (workflow.tasks[i].state === TaskState.NONE) {
-        return false;
-      }
-    }
-    for (let i = 0; i < workflow.tasks.length; i++) {
-      if (workflow.tasks[i].state === TaskState.RUNNING) {
-        return true;
-      }
-    }
-    return false;
+
+    return workflow.tasks.findIndex(task => task.state !== TaskState.NONE) >= 0;
   }
 
   /**
@@ -166,17 +157,17 @@ export class WorkflowService {
     } else if (workflow.edges) {
       for (let i = 0; i < workflow.edges.length; i++) {
         // check for loop to same task
-        if (workflow.edges[i].a_id === workflow.edges[i].b_id) {
+        if (workflow.edges[i].from_task_id === workflow.edges[i].to_task_id) {
           return WorkflowValidationResult.LOOP_TO_SAME_TASK;
         }
         // check for wrong input types
         let inputTaskNumber: number = null;
         let outputTaskNumber: number = null;
         for (let j = 0; j < workflow.tasks.length; j++) {
-          if (workflow.tasks[j].id === workflow.edges[i].b_id) {
+          if (workflow.tasks[j].id === workflow.edges[i].to_task_id) {
             inputTaskNumber = workflow.tasks[j].process_id;
           }
-          if (workflow.tasks[j].id === workflow.edges[i].a_id) {
+          if (workflow.tasks[j].id === workflow.edges[i].from_task_id) {
             outputTaskNumber = workflow.tasks[j].process_id;
           }
         }
@@ -209,7 +200,7 @@ export class WorkflowService {
       for (let i = 0; i < workflow.tasks.length; i++) {
         let numberOfInputs = 0;
         for (let k = 0; k < workflow.edges.length; k++) {
-          if (workflow.edges[k].b_id === workflow.tasks[i].id) {
+          if (workflow.edges[k].to_task_id === workflow.tasks[i].id) {
             numberOfInputs++;
           }
         }
@@ -230,7 +221,7 @@ export class WorkflowService {
       let checkedTasks: number[] = [];
       for (let i = 0; i < workflow.edges.length; i++) {
         const visitedTasks: number[] = [];
-        if (!this.contains(checkedTasks, workflow.edges[i].a_id)) {
+        if (!this.contains(checkedTasks, workflow.edges[i].from_task_id)) {
           if (this.checkCycle(workflow.edges[i], workflow, visitedTasks)) {
             return WorkflowValidationResult.CYCLE_IN_WORKFLOW;
           }
@@ -264,18 +255,18 @@ export class WorkflowService {
    * @returns {boolean}
    */
   private checkCycle(currentWorkflowEdge: Edge, workflow: Partial<Workflow>, visitedTasks: number[]): boolean {
-    visitedTasks.push(currentWorkflowEdge.a_id);
+    visitedTasks.push(currentWorkflowEdge.from_task_id);
     // check task at end of edge
     for (let i = 0; i < workflow.tasks.length; i++) {
-      if (this.contains(visitedTasks, currentWorkflowEdge.b_id)) {
+      if (this.contains(visitedTasks, currentWorkflowEdge.to_task_id)) {
         return true;
       }
-      if (workflow.tasks[i].id === currentWorkflowEdge.b_id) {
+      if (workflow.tasks[i].id === currentWorkflowEdge.to_task_id) {
         // check for new edges at task
         let cycle = false;
         for (let j = 0; j < workflow.edges.length; j++) {
-          if (workflow.edges[j].a_id === workflow.tasks[i].id) {
-            if (this.contains(visitedTasks, workflow.edges[j].b_id)) {
+          if (workflow.edges[j].from_task_id === workflow.tasks[i].id) {
+            if (this.contains(visitedTasks, workflow.edges[j].to_task_id)) {
               return true;
             }
             cycle = cycle || this.checkCycle(workflow.edges[j], workflow, visitedTasks);
@@ -292,17 +283,24 @@ export class WorkflowService {
    * @param {number} id
    * @returns {Promise<boolean>}
    */
-  public async execute(id: number): Promise<boolean> {
+  public async start(id: number): Promise<boolean> {
+    const result = await this.http.get<any>(`http://127.0.0.1:8000/workflow_start/${id}`).toPromise();
 
-    // if (w.tasks.length > 0) {
-    //   w.tasks[0].state = TaskState.WAITING;
-    // }
+    if (result['error']) {
+      this.bar.open(result['error'], 'CLOSE', { duration: 5000 });
+      return false;
+    } else {
+      return true;
+    }
+  }
 
-
-    // TODO execute workflow
-
-    // this.bar.open(`${w.title} Executed`, 'CLOSE', { duration: 3000 });
-
-    return true;
+  public async stop(id: number): Promise<boolean> {
+    const result = await this.http.get<any>(`http://127.0.0.1:8000/workflow_stop/${id}`).toPromise();
+    if (result['error']) {
+      this.bar.open(result['error'], 'CLOSE', { duration: 5000 });
+      return false;
+    } else {
+      return true;
+    }
   }
 }
