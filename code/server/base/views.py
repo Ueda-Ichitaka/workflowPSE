@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView, View
 
-from base import cron
+from base import cron, utils
 from base.models import InputOutput, WPSProvider, Process, Artefact, Edge, Task, Workflow, WPS
 
 
@@ -511,20 +511,9 @@ class WPSView(View):
         @return:
         @rtype:
         """
-        new_data = json.loads(request.body)
+        utils.add_wps_server(request.body.decode('utf-8'))
 
-        new_wps_provider = WPSProvider.objects.create(
-            provider_name=new_data['provider']['title'],
-            provider_site=new_data['provider']['site']
-        )
-
-        new_wps = WPS.objects.create(
-            service_provider_id=new_wps_provider.id,
-            title=new_data['title'],
-            abstract=new_data['abstract']
-        )
-
-        return WPSView.get(request, wps_id=new_wps.id)
+        return JsonResponse({})
 
     @staticmethod
     def patch(request, **kwargs):
