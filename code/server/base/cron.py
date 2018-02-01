@@ -38,18 +38,12 @@ def scheduler():
     exec_list = []
 
     for current_workflow in Workflow.objects.all():
-<<<<<<< Updated upstream
-        print("test 1")
-        all_tasks = Task.objects.filter(workflow_id=current_workflow.id, status='1')
-        print("test 2")
-=======
         all_tasks = Task.objects.filter(workflow=current_workflow, status='1')
         wpsLog.debug(f"found {len(all_tasks)} tasks in workflow{current_workflow.id}")
->>>>>>> Stashed changes
         for current_task in all_tasks:
             previous_tasks_finished = True
             edges_to_current_task = Edge.objects.filter(to_task=current_task)
-            wpsLog.debug(f"found {len(edges_to_current_task)} edges to task{task.id} in workflow{current_workflow.id}")
+            wpsLog.debug(f"found {len(edges_to_current_task)} edges to task{current_task.id} in workflow{current_workflow.id}")
             for current_edge in edges_to_current_task:
                 if current_edge.from_task.status == '4':
                     wpsLog.debug(f"task{current_task.id}'s prior task{current_edge.from_task.id} is finished")
@@ -70,7 +64,7 @@ def scheduler():
                     previous_tasks_finished = False
                     break
             if previous_tasks_finished:
-                wpsLog.debug(f"task{current_edge.from_task.id} is finished, scheduling now following task{current_task.id}")
+                wpsLog.debug(f"previous task is finished, scheduling now following task{current_task.id}")
                 current_task.status = '2'
                 exec_list.append(current_task.id)
                 current_task.save()
@@ -78,7 +72,7 @@ def scheduler():
     # generate execute xmls for all tasks with status waiting
     xmlGenerator(xmlDir)
 
-    wpsLog.debug(f"xmls generated for tasks: f{exec_list}")
+    wpsLog.debug(f"xmls generated for tasks: {exec_list}")
 
     # send tasks
     for tid in exec_list:
@@ -486,6 +480,7 @@ def parseExecuteResponse(task):
 
     if task.status != new_status:
         wpsLog.debug(f"old status of task{task.id}: {task.status}, new status: {new_status}")
+        task.status = new_status
         task.save()
     #else:
      #   task.status = '5'
@@ -694,8 +689,9 @@ def parseOutput(output, task):
             to_artefact.save()
         except Artefact.DoesNotExist:
             wpsLog.debug("input artefact not found, creating new artefact")
-            Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
+            to_artefact = Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
                                     data=db_data, created_at=time_now, updated_at=time_now)
+            wpsLog.debug(f"artefact{to_artefact.id} has been created")
 
             
 # TODO: tests
