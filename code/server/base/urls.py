@@ -20,7 +20,7 @@ urlpatterns = [
 
     path('wps/', views.WPSView.as_view()),
     path('wps/<int:wps_id>', views.WPSView.as_view()),
-    path('wps_refresh/<int:wps_id>', views.WPSView.refresh),
+    path('wps_refresh/', views.WPSView.refresh),
 
     url(r'^workflows/', views.WorkflowsView.as_view(), name='workflows'),
     url(r'^editor/', views.EditorView.as_view(), name='editor'),

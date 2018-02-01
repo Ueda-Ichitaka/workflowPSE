@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="add" datatype="html">
         <source>Add</source>
-        <target>Hinzufügen</target>
+        <target>HINZUFÜGEN</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/pages/settings-page/settings-page.component.ts</context>
           <context context-type="linenumber">9</context>
@@ -28,7 +28,7 @@
       </trans-unit>
       <trans-unit id="delete" datatype="html">
         <source>Delete</source>
-        <target>Löschen</target>
+        <target>LÖSCHEN</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/pages/settings-page/settings-page.component.ts</context>
           <context context-type="linenumber">15</context>
@@ -44,7 +44,7 @@
       </trans-unit>
       <trans-unit id="reload" datatype="html">
         <source>Reload</source>
-        <target>Neu laden</target>
+        <target>NEU LADEN</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/pages/settings-page/settings-page.component.ts</context>
           <context context-type="linenumber">20</context>
@@ -76,7 +76,7 @@
       </trans-unit>
       <trans-unit id="close" datatype="html">
         <source>Close</source>
-        <target>Schließen</target>
+        <target>SCHLIESSEN</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/process-dialog/process-dialog.component.ts</context>
           <context context-type="linenumber">59</context>
@@ -96,7 +96,7 @@
       </trans-unit>
       <trans-unit id="edit" datatype="html">
         <source>Edit</source>
-        <target>Bearbeiten</target>
+        <target>BEARBEITEN</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/pages/editor-page/editor-page.component.ts</context>
           <context context-type="linenumber">6</context>
@@ -108,7 +108,7 @@
       </trans-unit>
       <trans-unit id="undo" datatype="html">
         <source>Undo</source>
-        <target>Rückgängig</target>
+        <target>RÜCKGÄNGING</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/pages/editor-page/editor-page.component.ts</context>
           <context context-type="linenumber">17</context>
@@ -116,7 +116,7 @@
       </trans-unit>
       <trans-unit id="save" datatype="html">
         <source>Save</source>
-        <target>Speichern</target>
+        <target>SPEICHERN</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/pages/editor-page/editor-page.component.ts</context>
           <context context-type="linenumber">18</context>

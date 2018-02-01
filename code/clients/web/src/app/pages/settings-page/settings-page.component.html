@@ -1,32 +1,45 @@
-<div class="container">
+<div class="container settings-page">
     <h1 i18n="@@settings_header">Settings</h1>
 
-    <h3 i18n="@@settings_wps_header">Add WPS server</h3>
-    <mat-form-field>
-        <input placeholder="url" (keyup.enter)="addWPS(wps_url_input.value)" #wps_url_input autocomplete="url" matInput>
-    </mat-form-field>
-    <!--<mat-label *ngIf="!wps_url_input.value" style="color:red">Please insert a valid URL</mat-label>
-    <button *ngIf="wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)">hinzufügen</button>-->
-    <button [disabled]="!wps_url_input.value" mat-button (click)="addWPS(wps_url_input.value)" i18n="@@add">Add</button>
+    <h3>WPS Server List</h3>
+    <ng-container *ngIf="(wpsList | async)?.length > 0; else noWpsTemplate">
+        <div *ngFor="let wps of wpsList | async">
+            <mat-card @slide fxLayout="row" fxLayoutAlign="space-between">
+                <div>
+                    <div class="wps-title">{{wps.title}}</div>
+                    <div class="wps-site">{{wps.provider.site}}</div>
+                </div>
+                <button mat-button (click)="remove(wps.id)" i18n="@@delete" color="warn">DELETE</button>
+            </mat-card>
+        </div>
+    </ng-container>
+    <ng-template #noWpsTemplate>
+        <mat-card fxLayout="row" fxLayoutAlign="center">
+            <span class="wps-site">There are currently no WPS server available</span>
+        </mat-card>
+    </ng-template>
 
-    <div *ngFor="let wps of wps_list | async">
-        <span class="wps_info">{{wps.title}}</span>
-        <span class="wps_info">{{wps.provider.url}}</span>
-        <a mat-button (click)="remove(wps.id)" i18n="@@delete">Delete</a>
+    <br>
+    <br>
+
+    <div fxLayout="row">
+        <div class="box-left" fxFlex="70">
+            <h3 i18n="@@settings_wps_header">Add WPS server</h3>
+
+            <mat-card>
+                <mat-form-field>
+                    <input #url type="url" placeholder="WPS Server URL" (keyup.enter)="add(url.value)" autocomplete="url" matInput>
+                </mat-form-field>
+                <button class="add" [disabled]="!url.value" mat-button (click)="add(url.value)" i18n="@@add" color="primary">ADD</button>
+                <div class="wps-site">Add WPS server URL. Note that the URL must not end with a /wps. For example http://localhost:5000</div>
+            </mat-card>
+        </div>
+        <div fxFlex="30">
+            <h3 i18n="@@settings_reload_wps">Reload WPS server</h3>
+            <mat-card>
+                <button class="refresh" (click)="refresh()" mat-raised-button i18n="@@reload">RELOAD</button>
+                <div class="wps-site">Refreshes Process information for the entie WPS Server list.</div>
+            </mat-card>
+        </div>
     </div>
-
-    <h3 i18n="@@settings_reload_wps">Reload WPS server</h3>
-    <button (click)="refresh()" mat-button i18n="@@reload">Reload</button>
-    <!-- TODO set some kind of timeout for refreshing -->
-
-    <h3 i18n="@@language">Language</h3>
-    <div>
-        <mat-form-field>
-            <mat-select placeholder="{{ selected_language.displayed }}" [(value)]="selected_language.value">
-                <!-- TODO make selectedOption in ts file and add ngIf here to set placeholder if no option was selected -->
-                <mat-option (click)="onLangSelect(option)" *ngFor="let option of language_options" [value]="option.value">{{option.displayed}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
-
 </div>

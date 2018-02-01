@@ -1,28 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ProcessService } from 'app/services/process.service';
 import { WpsService } from 'app/services/wps.service';
 import { WPS } from '../../models/WPS';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 
 @Component({
   selector: 'app-settings-page',
   templateUrl: './settings-page.component.html',
-  styleUrls: ['./settings-page.component.scss']
+  styleUrls: ['./settings-page.component.scss'],
+  animations: [
+    trigger('slide', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('233ms ease-in-out')
+      ]),
+      transition(':leave', [
+        animate('233ms ease-in-out', style({ transform: 'translateX(100%)' }))
+      ]),
+    ])
+  ]
 })
 export class SettingsPageComponent implements OnInit {
 
-  wps_list: Observable<WPS[]>;
+  wpsList: Observable<WPS[]>;
 
-  /**
-   * supported language options
-   */
-  language_options = [
-    { value: 'de', displayed: 'Deutsch' },
-    { value: 'en', displayed: 'English' }
-  ];
-
-  selected_language = { value: 'de', displayed: 'Deutsch' };
+  @ViewChild('url')
+  public urlComponent: ElementRef;
 
   /**
    * TODO check if processService is needed
@@ -43,29 +48,22 @@ export class SettingsPageComponent implements OnInit {
    * to display to user
    */
   public ngOnInit() {
-    this.wps_list = this.wpsService.all();
+    this.wpsList = this.wpsService.all();
   }
 
   /**
    * refreshes wps servers to check for
    * new processes
    */
-  public refresh() {
-    // TODO signal server to refresh wps services
-    console.log('services refreshed');
+  public async refresh() {
+    await this.wpsService.refresh();
+    this.wpsList = this.wpsService.all();
   }
 
-  /**
-   * changes language
-   * @param string
-   */
-  public onLangSelect(lang: { value, displayed }) {
-    this.selected_language = lang;
-  }
-
-  public addWPS(url: string) {
-    this.wpsService.create(url).subscribe();
-
+  public async add(url: string) {
+    await this.wpsService.create(url).toPromise();
+    this.wpsList = this.wpsService.all();
+    (<HTMLInputElement>this.urlComponent.nativeElement).value = '';
   }
 
   /**
@@ -74,5 +72,6 @@ export class SettingsPageComponent implements OnInit {
    */
   public async remove(id: number) {
     await this.wpsService.remove(id);
+    this.wpsList = this.wpsService.all();
   }
 }

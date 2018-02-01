@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { WPS } from '../models/WPS';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, catchError } from 'rxjs/operators';
+import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { MatSnackBar } from '@angular/material';
 
 @Injectable()
@@ -32,7 +33,12 @@ export class WpsService {
    */
   public create(url: string): Observable<WPS> {
     this.bar.open(`Created WPS`, 'CLOSE', { duration: 3000 });
-    return this.http.post<WPS>(`http://127.0.0.1:8000/wps/`, url);
+    return this.http.post<WPS>(`http://127.0.0.1:8000/wps/`, url).pipe(
+      catchError((error) => {
+        this.bar.open(`ERROR. Can not add WPS Server. Wrong URL?`, 'CLOSE', { duration: 5000 });
+        return new ErrorObservable(`can't create wps`);
+      })
+    );
   }
 
   /**
@@ -43,5 +49,11 @@ export class WpsService {
   public async remove(id: number): Promise<boolean> {
     this.bar.open(`Deleted WPS`, 'CLOSE', { duration: 3000 });
     return this.http.delete<boolean>(`http://127.0.0.1:8000/wps/${id}`).toPromise();
+  }
+
+  public async refresh(): Promise<boolean> {
+    this.bar.open(`Refreshed WPS Processes`, 'CLOSE', { duration: 3000 });
+    const result = this.http.get<boolean>(`http://127.0.0.1:8000/wps_refresh/`).toPromise();
+    return result['error'] === undefined;
   }
 }
