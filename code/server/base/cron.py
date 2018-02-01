@@ -677,21 +677,25 @@ def parseOutput(output, task):
         artefact.save()
 
     try:
-        edge = Edge.objects.get(from_task=task, output=output_db)
+        wpsLog.debug(f"trying to get edge from task{task.id}, output{output_db.id}")
+        edges = Edge.objects.filter(from_task=task, output=output_db)
     except Edge.DoesNotExist:
-        edge = None
-    if db_data is not None and edge is not None:
-        try:
-            to_artefact = Artefact.objects.get(task=task, parameter=edge.input, role='1')
-            to_artefact.format = db_format
-            to_artefact.data = db_data
-            to_artefact.updated_at = time_now
-            to_artefact.save()
-        except Artefact.DoesNotExist:
-            wpsLog.debug("input artefact not found, creating new artefact")
-            to_artefact = Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
-                                    data=db_data, created_at=time_now, updated_at=time_now)
-            wpsLog.debug(f"artefact{to_artefact.id} has been created")
+        wpsLog.debug(f"edge does not exist")
+        edges = []
+
+    for edge in edges:
+        if db_data is not None:
+            try:
+                to_artefact = Artefact.objects.get(task=task, parameter=edge.input, role='1')
+                to_artefact.format = db_format
+                to_artefact.data = db_data
+                to_artefact.updated_at = time_now
+                to_artefact.save()
+            except Artefact.DoesNotExist:
+                wpsLog.debug("input artefact not found, creating new artefact")
+                to_artefact = Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=db_format,
+                                        data=db_data, created_at=time_now, updated_at=time_now)
+                wpsLog.debug(f"artefact{to_artefact.id} has been created")
 
             
 # TODO: tests
