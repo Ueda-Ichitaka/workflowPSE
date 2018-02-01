@@ -28,3 +28,12 @@ $app-process-list-padding: 5px;
     margin-top: -13px;
     color: #909090;
 }
+
+.no-processes {
+    font-size: 13px;
+    line-height: 21px;
+    color: rgba(0,0,0,0.34);
+    padding: 21px 3px;
+    width: 100%;
+    text-align: center;
+}
