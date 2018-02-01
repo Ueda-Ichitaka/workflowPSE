@@ -40,7 +40,7 @@ def scheduler():
     print("before schedule")
     for current_workflow in Workflow.objects.all():
         print("test 1")
-        all_tasks = Task.objects.filter(workflow=current_workflow, status='1')
+        all_tasks = Task.objects.filter(workflow_id=current_workflow.id, status='1')
         print("test 2")
         for current_task in all_tasks:
             print("test 3")
@@ -356,9 +356,15 @@ def sendTask(task_id, xmlDir):
         return
 
     try:
+        # TODO refactor dirty fix
+        status_url = xml.get('statusLocation')
+        status_url = status_url.replace("http:/","")
+        status_url = status_url.replace("http://","")
+        status_url = "http://" + status_url
+
         # Update DB Entry
         p = Task.objects.get(id=task_id)
-        p.status_url = xml.get('statusLocation')
+        p.status_url = status_url
         p.status = '3'
         p.started_at = datetime.now()
         print(p.started_at)
