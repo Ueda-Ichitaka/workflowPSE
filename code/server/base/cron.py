@@ -736,7 +736,7 @@ def update_wps_processes():
         root = tree.getroot()
         process_elements = root.findall('ProcessDescription')
         wpsLog.debug(
-            f"found {len(process_element)} processes on WPS{wps_server.id}")
+            f"found {len(process_elements)} processes on WPS{wps_server.id}")
         for process_element in process_elements:
             process = utils_module.parse_process_info(
                 process_element, xml_namespaces, wps_server)
