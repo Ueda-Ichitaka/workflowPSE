@@ -11,13 +11,15 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import logging
+import logging.handlers
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')  #
-filehandler = logging.FileHandler(BASE_DIR + '/wps.log', mode='a')
+filehandler = logging.handlers.RotatingFileHandler(BASE_DIR + '/wps.log', mode='a', maxBytes=32*1024, backupCount=2, encoding=None, delay=0)
+#filehandler = logging.FileHandler(BASE_DIR + '/wps.log', mode='a')
 filehandler.setFormatter(formatter)
 wpsLog = logging.getLogger('wps')
 
