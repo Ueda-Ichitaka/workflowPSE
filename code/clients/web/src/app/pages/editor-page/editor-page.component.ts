@@ -129,7 +129,7 @@ export class EditorPageComponent implements OnInit {
   /**
    * tells if delta exists
    */
-  public canUndo() {
+  public canUndo(): boolean {
     return this.editorComponent ? this.editorComponent.canUndo() : false;
   }
 

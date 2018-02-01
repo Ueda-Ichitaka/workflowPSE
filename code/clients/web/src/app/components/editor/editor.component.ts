@@ -438,11 +438,7 @@ export class EditorComponent implements OnInit {
     this.workflowChanged.emit(this.workflow);
   }
 
-  public async canUndo(): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      setTimeout(() => {
-        resolve(this.snapshots.length > 0 && !this.running);
-      }, 10);
-    });
+  public canUndo(): boolean {
+    return this.snapshots.length > 0 && !this.running;
   }
 }

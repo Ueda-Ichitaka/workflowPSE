@@ -8,13 +8,14 @@
     </div>
     <div [style.display]="editTitleMode ? 'block' : 'none'">
       <mat-form-field>
-        <input #tileInput matInput [placeholder]="workflow?.title" (keyup.enter)="editTitle(tileInput.value)" autofocus>
+        <input #tileInput matInput [placeholder]="workflow?.title" (keyup.enter)="editTitle(tileInput.value)" (blur)="editTitle(tileInput.value)"
+          autofocus>
       </mat-form-field>
     </div>
   </div>
 
   <div>
-    <button mat-button (click)="undo()" [disabled]="!canUndo() | async" i18n="@@undo">Undo</button>
+    <button mat-button (click)="undo()" [disabled]="!canUndo()" i18n="@@undo">Undo</button>
     <button mat-raised-button (click)="save()" color="primary" i18n="@@save">Save</button>
   </div>
 </div>
