@@ -31,12 +31,8 @@ ns_map = {
     "ProcessOutputs": f"{{{ns['wps']}}}ProcessOutputs",
     "Input": f"{{{ns['wps']}}}Input",
     "DataInput": f"{{{ns['wps']}}}DataInput",
-    "Default": f"{{{ns['wps']}}}Default",
-    "Format": f"{{{ns['wps']}}}Format",
-    "MimeType": f"{{{ns['wps']}}}MimeType",
-    "Supported": f"{{{ns['wps']}}}Supported",
-    "CRS": f"{{{ns['wps']}}}CRS",
     "Reference": f"{{{ns['wps']}}}Reference",
+    "ExceptionReport": f"{{{ns['wps']}}}ExceptionReport",
 
     # ows namespaced tags
     "Identifier": f"{{{ns['ows']}}}Identifier",
@@ -45,21 +41,16 @@ ns_map = {
     "BoundingBox": f"{{{ns['ows']}}}BoundingBox",
     "DataType": f"{{{ns['ows']}}}DataType",
     "AllowedValues": f"{{{ns['ows']}}}AllowedValues",
-    "Value": f"{{{ns['ows']}}}Value",
-    "Range": f"{{{ns['ows']}}}Range",
-    "MinimumValue": f"{{{ns['ows']}}}MinimumValue",
-    "MaximumValue": f"{{{ns['ows']}}}MaximumValue",
     "LowerCorner": f"{{{ns['ows']}}}LowerCorner",
     "UpperCorner": f"{{{ns['ows']}}}UpperCorner",
-    "Spacing": f"{{{ns['ows']}}}Spacing",
-    "AnyValue": f"{{{ns['ows']}}}AnyValue",
     "Metadata": f"{{{ns['ows']}}}Metadata",
+    "Exception": f"{{{ns['ows']}}}Exception",
+    "ExceptionText": f"{{{ns['ows']}}}ExceptionText",
 
     # xlink namespaced tags
     "href": f"{{{ns['xlink']}}}href",
 }
 
-possible_stats = ["ProcessAccepted", "ProcessStarted", "ProcessPaused", "ProcessSucceeded", "ProcessFailed"]
 
 # TODO: rework if path problem is solved
 def getFilePath(task):

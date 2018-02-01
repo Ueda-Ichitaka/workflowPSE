@@ -11,7 +11,7 @@ from lxml import etree
 
 import base.utils as utils_module
 from base.models import WPS, Task, InputOutput, Artefact, Process, STATUS, Workflow, Edge
-from base.utils import ns_map, possible_stats, wps_em, ows_em
+from base.utils import ns_map, wps_em, ows_em
 from workflowPSE.settings import wpsLog, BASE_DIR
 from pathlib import Path
 from io import StringIO, BytesIO
@@ -165,6 +165,7 @@ def createDataDoc(task):
     wpsLog.debug(f"creating data subtree for task{task.id}")
     inputs = list(InputOutput.objects.filter(process=task.process, role='0'))
     data_inputs = wps_em.DataInputs()
+    wpsLog.debug(f"found inputs: {[input.id for input in data_inputs]}")
     for input in inputs:
         # try to get artefact from db
         try:
@@ -254,96 +255,6 @@ def createDataDoc(task):
     return data_inputs
 
 
-'''
-    try:
-        # Traverse Task table entries with status WAITING
-        task_list = list(Task.objects.filter(status='2').values())
-    except Task.DoesNotExist:
-        task_list = []
-
-    for task in task_list:
-
-        # Create root node
-        root = ET.Element('wps:Execute')
-        root.set('service', 'WPS')
-        root.set('version', '1.0.0')
-        root.set('xmlns:wps', 'http://www.opengis.net/wps/1.0.0')
-        root.set('xmlns:ows', 'http://www.opengis.net/ows/1.1')
-        root.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
-        root.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
-        root.set('xsi:schemaLocation', 'http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd')
-
-        try:
-            # Traverse Process table entries with id of task
-            process_list = list(Process.objects.filter(id=task["process_id"]).values())
-        except Process.DoesNotExist:
-            process_list = []
-        for process in process_list:
-            # Create Identifier node
-            identifier = ET.SubElement(root, 'ows:Identifier')
-            identifier.text = process["identifier"]
-
-        # Create DataInputs node
-        inputs = ET.SubElement(root, 'wps:DataInputs')
-
-        try:
-            # Traverse InputOutput table entries linked to Process
-            input_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='0').values())
-        except InputOutput.DoesNotExist:
-            input_list = []
-        for input in input_list:
-
-            # Create Input node
-            inputElement = ET.SubElement(inputs, 'wps:Input')
-            inputIdent = ET.SubElement(inputElement, 'ows:Identifier')
-            inputTitle = ET.SubElement(inputElement, 'ows:Title')
-            inputData = ET.SubElement(inputElement, 'wps:Data')
-            inputIdent.text = input["identifier"]
-            inputTitle.text = input["title"]
-
-            try:
-                # Traverse Artefact table entries linked to Process
-                artefact_list = list(Artefact.objects.filter(task_id=task["id"], parameter=input["id"]).values())
-            except Artefact.DoesNotExist:
-                artefact_list = []
-
-            for artefact in artefact_list:
-
-                type = input["datatype"]
-                if type == '0':
-                    type = "LiteralData"
-                elif type == '1':
-                    type = "ComplexData"
-                elif type == '2':
-                    type = "BoundingBoxData"
-
-                # Create Data node
-                data = ET.SubElement(inputData, 'wps:' + type)
-                data.text = artefact["data"]
-                data.set('datatype', artefact["format"])
-
-        # Create ResponseForm node for status url
-        responseForm = ET.SubElement(root, 'wps:ResponseForm')
-        responseDoc = ET.SubElement(responseForm, 'wps:ResponseDocument')
-        responseDoc.set('storeExecuteResponse', 'true')
-        responseDoc.set('lineage', 'true')
-        responseDoc.set('status', 'true')
-
-        output_list = list(InputOutput.objects.filter(process_id=task["process_id"], role='1').values())
-        for out in output_list:
-            outputElement = ET.SubElement(responseDoc, 'wps:Output')
-            outputElement.set('asReference', 'true')
-            outIdent = ET.SubElement(outputElement, 'ows:Identifier')
-            outTitle = ET.SubElement(outputElement, 'ows:Title')
-            outIdent.text = out["identifier"]
-            outTitle.text = out["title"]
-
-        # Write XML to file
-        tree = ET.ElementTree(root)
-        tree.write(xmlDir + 'task' + str(task["id"]) + '.xml')
-'''
-
-
 def sendTask(task_id, xmlDir):
     """
     Sends a Task identified by its Database ID to its WPS Server.
@@ -397,9 +308,7 @@ def sendTask(task_id, xmlDir):
         # TODO refactor dirty fix
         status_url = xml.get('statusLocation')
         if status_url is not None:
-            status_url = status_url.replace("http:/", "")
-            status_url = status_url.replace("http://", "")
-            status_url = "http://" + status_url
+            status_url = "http://" + status_url.lstrip("http://")
 
         # Update DB Entry
         p = Task.objects.get(id=task_id)
@@ -484,14 +393,15 @@ def parseExecuteResponse(task):
 
     process_info = root.find(ns_map["Process"])
     try:
-        process_outputs = root.find(ns_map["ProcessOutputs"])
-        output_list = process_outputs.findall(ns_map["Output"])
+        output_list = root.find(
+            ns_map["ProcessOutputs"]).findall(ns_map["Output"])
     except:
         # no Processes in output
+        wpsLog.warning(f"response xml for task{task.id} has no output nodes")
         output_list = []
 
     if process_info is None:
-        wpsLog.debug(f"Process information not found for task{task.id}")
+        wpsLog.warning(f"Process information not found for task{task.id}")
         return 2
 
     for output in output_list:
@@ -499,26 +409,45 @@ def parseExecuteResponse(task):
 
     try:
         process_status = root.find(ns_map["Status"])
+        status_name = etree.QName(process_status[0].tag).localname
     except:
-        wpsLog.debug(f"no status found in xml for task{task.id}")
+        wpsLog.warning(f"no status found in xml for task{task.id}")
+        return 2
 
-    process_status = etree.QName(process_status[0].tag).localname
-
-    new_status = STATUS[3][0] if process_status in possible_stats[:2] else STATUS[4][0] \
-        if process_status == possible_stats[3] else STATUS[5][0]  # TODO: maybe check for ProcessFailed exception? (optional)
+    new_status = STATUS[3][0] if status_name in ["ProcessAccepted", "ProcessStarted", "ProcessPaused"] \
+        else STATUS[4][0] if status_name == "ProcessSucceeded" else STATUS[5][0]
 
     if task.status != new_status:
         wpsLog.debug(
             f"old status of task{task.id}: {task.status}, new status: {new_status}")
         task.status = new_status
         task.save()
-    # else:
-     #   task.status = '5'
-      #  task.save()
-    task.workflow.percent_done = calculate_percent_done(task)
-    if process_status is None:
-        wpsLog.debug(f"no status found for task{task.id}")
+
+    # if status failed, create error output artefacts for task
+    if task.status == '5':
+        try:
+            err_msg = process_status[0].find(f"{ns_map['ExceptionReport']}/"
+                                             f"{ns_map['Exception']/{ns_map['ExceptionText']}}").text
+        except:
+            err_msg = "unknown error"
+
+        time_now = datetime.now()
+        for output in list(InputOutput.objects.filter(artefact__task=task, role='1')):
+            if len(list(Artefact.objects.filter(task=task, parameter=output, role='1'))) == 0:
+                Artefact.objects.create(task=task, parameter=output, role='1', format='error', data=err_msg,
+                                        created_at=time_now, updated_at=time_now)
+            else:
+                wpsLog.warning(f"task{task.id} failed due to ProcessFailed status, but there are already artefacts, "
+                               f"setting artefacts to error mode")
+                Artefact.objects.filter(task=task, parameter=output, role='1').update(format='error', data=err_msg,
+                                                                                      updated_at=time_now)
         return 3
+
+    # update process of workflow after every response
+    calculate_percent_done(task.workflow)
+
+    return 0
+
 
 # TODO: tests
 
@@ -741,7 +670,7 @@ def parseOutput(output, task):
 
 
 # TODO: tests
-def calculate_percent_done(task):
+def calculate_percent_done(workflow):
     """
     calculates the percentage of finished tasks in the workflow of task
     @param task: task with recently changed status
@@ -749,17 +678,22 @@ def calculate_percent_done(task):
     @return: percentage of finished tasks in the workflow of task
     @rtype: int
     """
-    err = list(Task.objects.filter(workflow=task.workflow, status='5'))
+    err = list(Task.objects.filter(workflow=workflow, status='5'))
     if len(err):
+        wpsLog.warning(f"workflow{workflow.id} execution has failed due to failure of tasks"
+                       f"{[task.id for task in err]}")
         percent_done = -1
-        Task.objects.filter(workflow=task.workflow).update(status='5')
+        workflow.save()
+        Task.objects.filter(workflow=workflow).update(status='5')
     else:
-        finished = list(Task.objects.filter(
-            workflow=task.workflow, status='4'))
-        all_wf_tasks = list(Task.objects.filter(workflow=task.workflow))
-        percent_done = int(len(finished) / len(all_wf_tasks))
+        finished = list(Task.objects.filter(workflow=workflow, status='4'))
+        all_wf_tasks = list(Task.objects.filter(workflow=workflow))
+        percent_done = int((len(finished) / len(all_wf_tasks)) * 100)
+        wpsLog.debug(
+            f"updating progress of workflow{workflow.id} to {percent_done}%")
 
-    return percent_done
+    workflow.percent_done = percent_done
+    workflow.save()
 
 
 def update_wps_processes():
@@ -784,18 +718,25 @@ def update_wps_processes():
     }
 
     wps_servers = WPS.objects.all()
-
+    wpsLog.debug("starting process update")
     for wps_server in wps_servers:
         print(wps_server.id)
         # TODO: repair hardcode
         describe_processes_url = wps_server.describe_url + \
             '?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
 
-        temp_xml, headers = urllib.request.urlretrieve(describe_processes_url)
+        try:
+            temp_xml, headers = urllib.request.urlretrieve(
+                describe_processes_url)
 
-        tree = ET.parse(temp_xml)
+            tree = ET.parse(temp_xml)
+        except:
+            wpsLog.warning(f"something went wrong while requesting describe process url from "
+                           f"{describe_processes_url} WPS{wps_server.id}")
         root = tree.getroot()
         process_elements = root.findall('ProcessDescription')
+        wpsLog.debug(
+            f"found {len(process_element)} processes on WPS{wps_server.id}")
         for process_element in process_elements:
             process = utils_module.parse_process_info(
                 process_element, xml_namespaces, wps_server)
@@ -803,11 +744,14 @@ def update_wps_processes():
                 process)
             if process_from_database is None:
                 process.save()
+                wpsLog.info(f"created new process: process{process.id}")
             else:
                 process = utils_module.overwrite_process(
                     process_from_database, process)
+            wpsLog.debug(
+                f"found matching process in database: process{process.id}")
 
-                # Save Inputs
+            # Save Inputs
             inputs_container_element = process_element.find('DataInputs')
             if inputs_container_element is not None:
                 input_elements = inputs_container_element.findall('Input')
@@ -819,11 +763,14 @@ def update_wps_processes():
                         input)
                     if input_from_database is None:
                         input.save()
+                        wpsLog.info(f"created new input: input{input.id}")
                     else:
                         input = utils_module.overwrite_input_output(
                             input_from_database, input)
+                        wpsLog.debug(
+                            f"found matching input in database: input{input.id}")
 
-                        # Save Outputs
+            # Save Outputs
             outputs_container_element = process_element.find('ProcessOutputs')
             if outputs_container_element is not None:
                 output_elements = outputs_container_element.findall('Output')
@@ -835,6 +782,9 @@ def update_wps_processes():
                         output)
                     if output_from_database is None:
                         output.save()
+                        wpsLog.info(f"created new output: output{output.id}")
                     else:
                         output = utils_module.overwrite_input_output(
                             output_from_database, output)
+                        wpsLog.debug(
+                            f"found matching output in database: output{output.id}")
