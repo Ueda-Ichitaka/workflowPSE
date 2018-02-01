@@ -259,6 +259,7 @@ class WorkflowView(View):
 
         workflow.save()
 
+        not_deleted_task_ids = []
         temporary_to_new_task_ids = {}
 
         for task_data in new_data['tasks']:
@@ -276,6 +277,8 @@ class WorkflowView(View):
                 artefacts_data = task_data['input_artefacts'] + \
                     task_data['output_artefacts']
 
+                not_deleted_artefact_ids = []
+
                 for artefact_data in artefacts_data:
                     if ('id' in artefact_data) and (artefact_data['id'] > 0):
                         artefact = get_object_or_404(
@@ -290,7 +293,7 @@ class WorkflowView(View):
 
                         artefact.save()
                     else:
-                        Artefact.objects.create(
+                        artefact = Artefact.objects.create(
                             task_id=task.id,
                             parameter_id=artefact_data['parameter_id'],
                             role=(
@@ -298,6 +301,10 @@ class WorkflowView(View):
                             format=artefact_data['format'],
                             data=artefact_data['data']
                         )
+
+                    not_deleted_artefact_ids.append(artefact.pk)
+
+                task.artefact_set.exclude(not_deleted_artefact_ids).delete()
             else:
                 task = Task.objects.create(
                     workflow_id=workflow.id,
@@ -307,7 +314,12 @@ class WorkflowView(View):
                     status=task_data['state']
                 )
 
+            not_deleted_task_ids.append(task.pk)
             temporary_to_new_task_ids[task_data['id']] = task.id
+
+        workflow.task_set.exclude(pk__in=not_deleted_task_ids).delete()
+
+        not_deleted_edge_ids = []
 
         for edge_data in new_data['edges']:
             if edge_data['id'] > 0:
@@ -321,13 +333,17 @@ class WorkflowView(View):
 
                 edge.save()
             else:
-                Edge.objects.create(
+                edge = Edge.objects.create(
                     workflow_id=workflow.id,
                     from_task_id=temporary_to_new_task_ids[edge_data['from_task_id']],
                     to_task_id=temporary_to_new_task_ids[edge_data['to_task_id']],
                     input_id=edge_data['input_id'],
                     output_id=edge_data['output_id']
                 )
+
+            not_deleted_edge_ids.append(edge.pk)
+
+        workflow.edge_set.exclude(pk__in=not_deleted_edge_ids).delete()
 
         return WorkflowView.get(request, workflow_id=kwargs['workflow_id'])
 
@@ -377,7 +393,13 @@ class WorkflowView(View):
         @return:
         @rtype:
         """
-        Task.objects.filter(workflow=workflow_id).update(status=0)
+        workflow = get_object_or_404(Workflow, pk=workflow_id)
+        tasks = workflow.task_set.all()
+
+        tasks.update(status=0)
+
+        for task in tasks:
+            task.artefact_set.filter(role=1).delete()
 
         return JsonResponse({})
 

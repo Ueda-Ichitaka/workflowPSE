@@ -57,6 +57,10 @@ export enum WorkflowValidationResult {
    * Workflow has a cycle
    */
   CYCLE_IN_WORKFLOW,
+  /**
+   * Workflow has task with multiple inputs
+   */
+  MULIPLE_INPUTS,
 }
 
 @Injectable()
@@ -247,6 +251,19 @@ export class WorkflowService {
         }
       }
     }
+
+    // check for multiple inputs
+    if (workflow.edges) {
+      for (let i = 0; i < workflow.edges.length; i++) {
+        for (let j = i + 1; j < workflow.edges.length; j++) {
+          if (workflow.edges[i].to_task_id === workflow.edges[j].to_task_id && workflow.edges[i].input_id === workflow.edges[j].input_id) {
+            return WorkflowValidationResult.MULIPLE_INPUTS;
+          }
+        }
+      }
+    }
+
+
     return WorkflowValidationResult.SUCCESSFUL;
   }
 
