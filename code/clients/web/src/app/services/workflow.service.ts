@@ -96,7 +96,7 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public create(workflow: Partial<Workflow>): Observable<Workflow> {
-    this.bar.open(`Created Workflow`, 'CLOSE', { duration: 3000 });
+    this.bar.open(`Created Workflow`, 'CLOSE', { duration: 2500 });
     return this.http.post<Workflow>(`http://127.0.0.1:8000/workflow/`, workflow);
   }
 
@@ -107,7 +107,7 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public update(id: number, workflow: Partial<Workflow>): Observable<Workflow> {
-    this.bar.open(`Updated Workflow`, 'CLOSE', { duration: 3000 });
+    this.bar.open(`Updated Workflow`, 'CLOSE', { duration: 2500 });
     return this.http.patch<Workflow>(`http://127.0.0.1:8000/workflow/${id}`, workflow);
   }
 
@@ -117,7 +117,7 @@ export class WorkflowService {
    * @returns {Promise<boolean>}
    */
   public async remove(id: number): Promise<boolean> {
-    this.bar.open(`Deleted Workflow`, 'CLOSE', { duration: 3000 });
+    this.bar.open(`Deleted Workflow`, 'CLOSE', { duration: 2500 });
     return this.http.delete<boolean>(`http://127.0.0.1:8000/workflow/${id}`).toPromise();
 
   }
@@ -131,8 +131,26 @@ export class WorkflowService {
     if (!workflow || !workflow.tasks) {
       return false;
     }
+    for (const task of workflow.tasks) {
+      if (task.state !== TaskState.NONE) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-    return workflow.tasks.findIndex(task => task.state !== TaskState.NONE) >= 0;
+  public finished(workflow: Partial<Workflow>): boolean {
+    if (!workflow || !workflow.tasks) {
+      return false;
+    }
+
+    for (const task of workflow.tasks) {
+      if (task.state !== TaskState.FINISHED) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   /**

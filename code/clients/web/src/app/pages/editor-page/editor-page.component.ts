@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { ProcessService } from 'app/services/process.service';
 import { Observable } from 'rxjs/Observable';
 import { Process } from 'app/models/Process';
@@ -14,6 +14,7 @@ import { WPS } from 'app/models/WPS';
   selector: 'app-editor-page',
   templateUrl: './editor-page.component.html',
   styleUrls: ['./editor-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('slide', [
       transition(':enter', [
@@ -98,7 +99,7 @@ export class EditorPageComponent implements OnInit {
 
     setInterval(async () => {
       await this.updateWorkflowStatus();
-    }, 13000);
+    }, 8000);
   }
 
   public async updateWorkflowStatus() {
@@ -106,6 +107,7 @@ export class EditorPageComponent implements OnInit {
     this.workflow = await this.workflowService.get(this.workflow.id).toPromise();
     await this.workflowService.refresh(this.workflow.id);
     console.log('-- Refreshed Workflow Execution Status --');
+
   }
 
   /**
@@ -208,6 +210,10 @@ export class EditorPageComponent implements OnInit {
       return null;
     }
     return this.workflowService.isRunning(this.workflow);
+  }
+
+  public finished(): boolean {
+    return this.workflowService.finished(this.workflow);
   }
 
   /**

@@ -73,9 +73,9 @@ export class TaskComponent implements OnInit {
       { state: TaskState.DEPRECATED, name: 'DEPRECATED', color: '#E91E63' },
       { state: TaskState.FAILED, name: 'FAILED', color: '#F44336' },
       { state: TaskState.FINISHED, name: 'FINISHED', color: '#2196F3' },
-      { state: TaskState.READY, name: 'READY', color: '#03A9F4' },
+      { state: TaskState.READY, name: 'READY', color: '#9E9E9E' },
       { state: TaskState.RUNNING, name: 'RUNNING', color: '#FFC107' },
-      { state: TaskState.WAITING, name: 'WAITING', color: '#9E9E9E' },
+      { state: TaskState.WAITING, name: 'WAITING', color: '#03A9F4' },
     ];
 
     return infoMap.find(info => info.state === this.task.state);
@@ -167,6 +167,9 @@ export class TaskComponent implements OnInit {
    */
   public parameterMouseUp(parameter: ProcessParameter<'input' | 'output'>, event: MouseEvent) {
     if (this.mouseDownPos && this.mouseDownPos[0] === event.pageX && this.mouseDownPos[1] === event.pageY) {
+      if (parameter.role === 'output' && !this.showState) {
+        return;
+      }
       this.dialog.open(ArtefactDialogComponent, {
         data: {
           task: this,
@@ -197,12 +200,17 @@ export class TaskComponent implements OnInit {
    * returns if the task component has an artefact
    * @param parameter process parameter
    */
-  public hasArtefact(parameter: ProcessParameter<'input' | 'output'>) {
-    if (!this.task.input_artefacts) {
-      return;
+  public hasArtefact(parameter: ProcessParameter<'input' | 'output'>): boolean {
+    if (!this.task.input_artefacts || !this.task.output_artefacts) {
+      return false;
     }
-    const index = this.task.input_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id);
-    return index !== -1;
+
+    if (parameter.role === 'input') {
+      return -1 !== this.task.input_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id);
+    } else if (this.showState) {
+      return -1 !== this.task.output_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id);
+    }
+    return false;
   }
 
   /**
