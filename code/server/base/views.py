@@ -304,7 +304,8 @@ class WorkflowView(View):
 
                     not_deleted_artefact_ids.append(artefact.pk)
 
-                task.artefact_set.exclude(not_deleted_artefact_ids).delete()
+                task.artefact_set.exclude(
+                    pk__in=not_deleted_artefact_ids).delete()
             else:
                 task = Task.objects.create(
                     workflow_id=workflow.id,
