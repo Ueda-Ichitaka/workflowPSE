@@ -98,7 +98,7 @@ export class EditorPageComponent implements OnInit {
 
     setInterval(async () => {
       await this.updateWorkflowStatus();
-    }, 2500);
+    }, 13000);
   }
 
   public async updateWorkflowStatus() {
