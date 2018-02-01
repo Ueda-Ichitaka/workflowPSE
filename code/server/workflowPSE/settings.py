@@ -19,12 +19,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')  #
 filehandler = logging.FileHandler(BASE_DIR + '/wps.log', mode='a')
 filehandler.setFormatter(formatter)
-# streamHandler = logging.StreamHandler()
-# streamHandler.setFormatter(formatter)
 wpsLog = logging.getLogger('wps')
 
-wpsLog.setLevel(logging.INFO)
+wpsLog.setLevel(logging.DEBUG) # set logging level here
 wpsLog.addHandler(filehandler)
+# streamHandler = logging.StreamHandler()
+# streamHandler.setFormatter(formatter)
 # tmLog.addHandler(streamHandler) # stream handler is just used for output to console, so we might not need it here
 
 # Quick-start development settings - unsuitable for production
