@@ -369,9 +369,10 @@ def sendTask(task_id, xmlDir):
     try:
         # TODO refactor dirty fix
         status_url = xml.get('statusLocation')
-        status_url = status_url.replace("http:/","")
-        status_url = status_url.replace("http://","")
-        status_url = "http://" + status_url
+        if status_url is not None:
+            status_url = status_url.replace("http:/","")
+            status_url = status_url.replace("http://","")
+            status_url = "http://" + status_url
 
         # Update DB Entry
         p = Task.objects.get(id=task_id)
