@@ -377,7 +377,13 @@ class WorkflowView(View):
         @return:
         @rtype:
         """
-        Task.objects.filter(workflow=workflow_id).update(status=0)
+        workflow = get_object_or_404(Workflow, pk=workflow_id)
+        tasks = workflow.task_set.all()
+
+        tasks.update(status=0)
+
+        for task in tasks:
+            task.artefact_set.filter(role=1).delete()
 
         return JsonResponse({})
 
