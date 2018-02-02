@@ -714,13 +714,6 @@ def update_wps_processes():
         wpsLog.debug(f"checking WPS{wps_server.id}")
         describe_processes_url = wps_server.describe_url
         wpsLog.debug(f"describe processes request sent to: {describe_processes_url}")
-        describe_processes_url = wps_server.describe_url + \
-            '?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
-        wpsLog.debug(
-            f"describe processes request sent to: {describe_processes_url}")
-        try:
-            temp_xml, headers = urllib.request.urlretrieve(
-                describe_processes_url)
 
         temp_xml, headers = urllib.request.urlretrieve(describe_processes_url)
 
