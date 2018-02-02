@@ -4,45 +4,7 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="WPS" version="1.0.0" xml:lang="en-US"
                   xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsGetCapabilities_response.xsd"
                   updateSequence="1">
-    <ows:ServiceIdentification>
-        <ows:Title>PyWPS Processing Service</ows:Title>
-        <ows:Abstract>PyWPS is an implementation of the Web Processing Service standard from
-            the Open Geospatial Consortium. PyWPS is written in Python.</ows:Abstract>
-        <ows:Keywords>
-            <ows:Keyword>PyWPS</ows:Keyword>
-            <ows:Keyword>WPS</ows:Keyword>
-            <ows:Keyword>OGC</ows:Keyword>
-            <ows:Keyword>processing</ows:Keyword>
-            <ows:Type codeSpace="ISOTC211/19115">theme</ows:Type>
-        </ows:Keywords>
-        <ows:ServiceType>WPS</ows:ServiceType>
-        <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
-        <ows:Fees>NONE</ows:Fees>
-        <ows:AccessConstraints>NONE</ows:AccessConstraints>
-    </ows:ServiceIdentification>
-    <ows:ServiceProvider>
-        <ows:ProviderName>Organization Name</ows:ProviderName>
-        <ows:ProviderSite xlink:href="http://pywps.org/"/>
-        <ows:ServiceContact>
-            <ows:IndividualName>Lastname, Firstname</ows:IndividualName>
-            <ows:PositionName>Position Title</ows:PositionName>
-            <ows:ContactInfo>
-                <ows:Phone>
-                    <ows:Voice>+xx-xxx-xxx-xxxx</ows:Voice>
-                </ows:Phone>
-                <ows:Address>
-                    <ows:AdministrativeArea>Administrative Area</ows:AdministrativeArea>
-                    <ows:PostalCode>Zip or Postal Code</ows:PostalCode>
-                    <ows:Country>Country</ows:Country>
-                    <ows:ElectronicMailAddress>Email Address</ows:ElectronicMailAddress>
-                </ows:Address>
-                <ows:OnlineResource xlink:href="Contact URL"/>
-                <ows:HoursOfService>Hours of Service</ows:HoursOfService>
-                <ows:ContactInstructions>During hours of service. Off on weekends.</ows:ContactInstructions>
-            </ows:ContactInfo>
-            <ows:Role>pointOfContact</ows:Role>
-        </ows:ServiceContact>
-    </ows:ServiceProvider>
+<!--ows:ServiceIdentification and ows:ServiceProvider are missing-->
     <ows:OperationsMetadata>
         <ows:Operation name="GetCapabilities">
             <ows:DCP>

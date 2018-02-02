@@ -1,5 +1,6 @@
 import urllib.request
 import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import ParseError
 
 from lxml.builder import ElementMaker
 from pywps import NAMESPACES as ns
@@ -7,7 +8,7 @@ import os
 
 import base.cron
 from base.models import WPSProvider, WPS, Process, InputOutput, DATATYPE, ROLE
-from workflowPSE.settings import BASE_DIR
+from workflowPSE.settings import BASE_DIR, wpsLog
 
 E = ElementMaker()
 wps_em = ElementMaker(namespace=ns['wps'], nsmap=ns)
@@ -66,6 +67,7 @@ def getFilePath(task):
         return possible_path
     return None
 
+
 def add_wps_server(server_url):
     """
     This method adds new wps server to the database.
@@ -84,7 +86,6 @@ def add_wps_server(server_url):
     @return: None
     @rtype: NoneType
     """
-    # server_url = 'http://pse.rudolphrichard.de:5000'
     if server_url[-1] != '/':
         server_url = server_url + '/'
 
@@ -111,7 +112,8 @@ def add_wps_server(server_url):
         service_provider.save()
     else:
         service_provider = service_provider_from_database
-        # Parse and save information about wps server
+
+    # Parse and save information about wps server
     wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
     wps_server_from_database = search_server_in_database(wps_server)
     if wps_server_from_database is None:
@@ -185,7 +187,6 @@ def search_process_in_database(parsed_process):
             process_from_database = None
     except Process.DoesNotExist:
         process_from_database = None
-
 
     return process_from_database
 
@@ -286,30 +287,28 @@ def parse_service_provider_info(root, namespaces):
     @return: WPS server provider
     @rtype: WPSProvider
     """
-    service_provider_element = root.find('ows:ServiceProvider', namespaces)
-    provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
     try:
-        # note: .get for xml parsing also raises error if no matching element is found
+        service_provider_element = root.find('ows:ServiceProvider', namespaces)
+        provider_name = service_provider_element.find('ows:ProviderName', namespaces).text
+
         provider_site = service_provider_element.find('ows:ProviderSite', namespaces).attrib.get(
             '{' + namespaces.get('xlink') + '}href')
-    except:
-        # TODO: return error code or not?
-        provider_site = ""
 
-    service_contact_element = service_provider_element.find('ows:ServiceContact', namespaces)
+        service_contact_element = service_provider_element.find('ows:ServiceContact', namespaces)
 
-    individual_name = service_contact_element.find('ows:IndividualName', namespaces).text
-    position_name = service_contact_element.find('ows:PositionName', namespaces).text
+        individual_name = service_contact_element.find('ows:IndividualName', namespaces).text
+        position_name = service_contact_element.find('ows:PositionName', namespaces).text
 
-    try:
-        service_provider = WPSProvider.objects.get(provider_name=provider_name,
-                                                   provider_site=provider_site,
-                                                   individual_name=individual_name)
-    except WPSProvider.DoesNotExist:
-        service_provider = WPSProvider(provider_name=provider_name,
-                                       provider_site=provider_site,
-                                       individual_name=individual_name,
-                                       position_name=position_name)
+    #fails if one of elements cannot be found
+    except AttributeError:
+        wpsLog.error('Unable to parse information about service provider')
+        return None
+
+    service_provider = WPSProvider(provider_name=provider_name,
+                                   provider_site=provider_site,
+                                   individual_name=individual_name,
+                                   position_name=position_name)
+
     return service_provider
 
 
@@ -328,32 +327,38 @@ def parse_wps_server_info(root, namespaces, provider):
     @return: wps server
     @rtype: WPS
     """
-    service_identification_element = root.find('ows:ServiceIdentification', namespaces)
-
-    server_title = service_identification_element.find('ows:Title', namespaces).text
-    server_abstract = service_identification_element.find('ows:Abstract', namespaces).text
-
-    operations_metadata_element = root.find('ows:OperationsMetadata', namespaces)
-
-    urls_elements = operations_metadata_element.findall('ows:Operation/ows:DCP/ows:HTTP/ows:Get', namespaces)
-    urls = []
-    for item in urls_elements:
-        try:
-            urls.append(item.attrib.get('{' + namespaces.get('xlink') + '}href'))
-        except:
-            # TODO: is there something to do here? at least if something goes wrong here, the except below also crashes! fix please
-            pass
+    get_capabilities_annex = '?request=GetCapabilities&service=WPS'
+    describe_processes_annex = '?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
+    execute_annex = '?request=Execute&service=WPS'
 
     try:
-        wps_server = WPS.objects.get(service_provider=provider,
-                                     title=server_title)
-    except WPS.DoesNotExist:
-        wps_server = WPS(service_provider=provider,
-                         title=server_title,
-                         abstract=server_abstract,
-                         capabilities_url=urls[0],
-                         describe_url=urls[1],
-                         execute_url=urls[2])
+        service_identification_element = root.find('ows:ServiceIdentification', namespaces)
+
+        server_title = service_identification_element.find('ows:Title', namespaces).text
+        server_abstract = service_identification_element.find('ows:Abstract', namespaces).text
+        server_abstract = ' '.join(server_abstract.split())
+
+        operations_metadata_element = root.find('ows:OperationsMetadata', namespaces)
+
+        urls_elements = operations_metadata_element.findall('ows:Operation/ows:DCP/ows:HTTP/ows:Get', namespaces)
+        urls = []
+        for item in urls_elements:
+            urls.append(item.attrib.get('{' + namespaces.get('xlink') + '}href'))
+
+        urls[0] = urls[0] + get_capabilities_annex
+        urls[1] = urls[1] + describe_processes_annex
+        urls[2] = urls[2] + execute_annex
+
+    except AttributeError:
+        wpsLog.error('Unable to parse information about wps server')
+        return None
+
+    wps_server = WPS(service_provider=provider,
+                     title=server_title,
+                     abstract=server_abstract,
+                     capabilities_url=urls[0],
+                     describe_url=urls[1],
+                     execute_url=urls[2])
     return wps_server
 
 
