@@ -377,22 +377,21 @@ def parse_process_info(process_element, namespaces, wps_server):
     @return: wps Process
     @rtype: Process
     """
-    process_identifier = process_element.find('ows:Identifier', namespaces).text
-    process_title = process_element.find('ows:Title', namespaces).text
-
-    process_abstract_element = process_element.find('ows:Abstract', namespaces)
-    process_abstract = process_abstract_element.text if process_abstract_element is not None \
-        else 'No process description available'
-
     try:
-        process = Process.objects.get(wps=wps_server,
-                                      identifier=process_identifier,
-                                      title=process_title)
-    except Process.DoesNotExist:
-        process = Process(wps=wps_server,
-                          identifier=process_identifier,
-                          title=process_title,
-                          abstract=process_abstract)
+        process_identifier = process_element.find('ows:Identifier', namespaces).text
+        process_title = process_element.find('ows:Title', namespaces).text
+
+        process_abstract_element = process_element.find('ows:Abstract', namespaces)
+        process_abstract = process_abstract_element.text if process_abstract_element is not None \
+            else 'No process description available'
+    except AttributeError:
+        wpsLog.error('Unable to parse information about wps process')
+        return None
+
+    process = Process(wps=wps_server,
+                      identifier=process_identifier,
+                      title=process_title,
+                      abstract=process_abstract)
     return process
 
 

@@ -72,6 +72,26 @@ class ParsingTestCase(TestCase):
 
     capabilities_wrong_root = ET.parse(get_cap_url_from_scc_vm_wrong).getroot()
 
+    wps_provider = WPSProvider(provider_name='Organization Name',
+                               provider_site='http://pywps.org/',
+                               individual_name='Lastname, Firstname',
+                               position_name='Position Title')
+
+    wps_server = WPS(service_provider=wps_provider,
+                     title='PyWPS Processing Service',
+                     abstract='PyWPS is an implementation of the Web Processing '
+                              'Service standard from the Open Geospatial Consortium. '
+                              'PyWPS is written in Python.',
+                     capabilities_url='http://localhost/wps?request=GetCapabilities&service=WPS',
+                     describe_url='http://localhost/wps?request=DescribeProcess'
+                                  '&service=WPS&identifier=all&version=1.0.0',
+                     execute_url='http://localhost/wps?request=Execute&service=WPS')
+
+    wps_process = Process(wps=wps_server,
+                          identifier='feature_count',
+                          title='Feature count',
+                          abstract='This process counts the number of features in an uploaded GML')
+
     def test_parse_service_provider_info(self):
         """
         Tests, if parse_service_provider_info parses correct
@@ -80,10 +100,10 @@ class ParsingTestCase(TestCase):
         """
 
         wps_provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
-        self.assertEqual(wps_provider.provider_name, 'Organization Name')
-        self.assertEqual(wps_provider.provider_site, 'http://pywps.org/')
-        self.assertEqual(wps_provider.individual_name, 'Lastname, Firstname')
-        self.assertEqual(wps_provider.position_name, 'Position Title')
+        self.assertEqual(wps_provider.provider_name, self.wps_provider.provider_name)
+        self.assertEqual(wps_provider.provider_site, self.wps_provider.provider_site)
+        self.assertEqual(wps_provider.individual_name, self.wps_provider.individual_name)
+        self.assertEqual(wps_provider.position_name, self.wps_provider.position_name)
 
     def test_parse_service_provider_info_fail(self):
         """
@@ -102,14 +122,11 @@ class ParsingTestCase(TestCase):
         """
         wps_provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
         wps_server = base.utils.parse_wps_server_info(self.capabilities_root, self.xml_namespaces, wps_provider)
-        self.assertEqual(wps_server.title, 'PyWPS Processing Service')
-        self.assertEqual(wps_server.abstract, 'PyWPS is an implementation of the Web Processing '
-                                              'Service standard from the Open Geospatial Consortium. '
-                                              'PyWPS is written in Python.')
-        self.assertEqual(wps_server.capabilities_url, 'http://localhost/wps?request=GetCapabilities&service=WPS')
-        self.assertEqual(wps_server.describe_url, 'http://localhost/wps?request=DescribeProcess'
-                                                  '&service=WPS&identifier=all&version=1.0.0')
-        self.assertEqual(wps_server.execute_url, 'http://localhost/wps?request=Execute&service=WPS')
+        self.assertEqual(wps_server.title, self.wps_server.title)
+        self.assertEqual(wps_server.abstract, self.wps_server.abstract,)
+        self.assertEqual(wps_server.capabilities_url, self.wps_server.capabilities_url,)
+        self.assertEqual(wps_server.describe_url, self.wps_server.describe_url)
+        self.assertEqual(wps_server.execute_url, self.wps_server.execute_url)
 
     def test_parse_wps_server_info_fail(self):
         """
@@ -117,10 +134,20 @@ class ParsingTestCase(TestCase):
         @return: Nothing
         @rtype: None
         """
-        wps_provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
         self.assertRaises(AttributeError, base.utils.parse_wps_server_info(self.capabilities_wrong_root,
                                                                            self.xml_namespaces,
-                                                                           wps_provider))
+                                                                           self.wps_provider))
+
+    def test_parse_wps_process(self):
+        process_element = self.describe_processes_root.find('ProcessDescription')
+        wps_process = base.utils.parse_process_info(process_element, self.xml_namespaces, self.wps_server)
+
+        self.assertEqual(wps_process.identifier, self.wps_process.identifier)
+        self.assertEqual(wps_process.title, self.wps_process.title)
+        self.assertEqual(wps_process.abstract, self.wps_process.abstract)
+
+    def test_parse_wps_process_fail(self):
+        self.assertRaises(AttributeError, base.utils.parse_process_info(None, self.xml_namespaces, self.wps_server))
 
 
 class DatabaseSearcherTestCase(TestCase):
