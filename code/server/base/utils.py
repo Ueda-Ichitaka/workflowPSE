@@ -171,7 +171,7 @@ def search_process_in_database(parsed_process):
     Check that the wps process instance given in parameter
     is not already in database.
     The instances are equal, if their 'identifier' fields
-    are equal
+    are equal and both processes are from the same wps server
     If database has the same instance, it will be returned.
     If database not contains instance, None will be returned.
     @param parsed_process: An instance od process
@@ -181,8 +181,11 @@ def search_process_in_database(parsed_process):
     """
     try:
         process_from_database = Process.objects.get(identifier=parsed_process.identifier)
+        if process_from_database.wps.title != parsed_process.wps.title:
+            process_from_database = None
     except Process.DoesNotExist:
         process_from_database = None
+
 
     return process_from_database
 
