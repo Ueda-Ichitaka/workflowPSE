@@ -23,7 +23,7 @@ filehandler = logging.handlers.RotatingFileHandler(BASE_DIR + '/wps.log', mode='
 filehandler.setFormatter(formatter)
 wpsLog = logging.getLogger('wps')
 
-wpsLog.setLevel(logging.DEBUG) # set logging level here
+wpsLog.setLevel(logging.INFO) # set logging level here
 wpsLog.addHandler(filehandler)
 # streamHandler = logging.StreamHandler()
 # streamHandler.setFormatter(formatter)

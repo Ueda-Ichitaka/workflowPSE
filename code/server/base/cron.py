@@ -15,6 +15,7 @@ from base.utils import ns_map, wps_em, ows_em
 from workflowPSE.settings import wpsLog, BASE_DIR
 from pathlib import Path
 from io import StringIO, BytesIO
+import base64
 
 
 def scheduler():
@@ -184,6 +185,7 @@ def createDataDoc(task):
 
         # first check if it is a file path, as data with length over 490 chars will be stored in a file
         # if so insert file path in Reference node
+        # TODO: must check if this equals correct url of own server matching to task
         if artefact.data == utils_module.getFilePath(task):
             wpsLog.debug(
                 f"file path found in task{task.id}s artefact{artefact.id}s data, inserting as data")
@@ -193,18 +195,16 @@ def createDataDoc(task):
             continue
 
         wpsLog.debug(
-            f"no file path as data in task{task.id}s artefact{artefact.id}")
+            f"no file path as data in task{task.id}s artefact{artefact.id}, so there must be data")
         # literal data case, there is either a url or real data in the LiteralData element
         # in this case just send the data
         if input.datatype == '0':
             wpsLog.debug(f"literal data found for task{task.id}")
             literal_data = wps_em.LiteralData(artefact.data)
             # check for attributes
-            for attribute in artefact.format.split(";"):
-                if "uom" in attribute:
-                    literal_data.set("uom", attribute.split("=")[1])
-                if "dataType" in attribute:
-                    literal_data.set("dataType", attribute.split("=")[1])
+            if artefact.format != 'plain':
+                literal_data.set('dataType', artefact.format)
+
             # just create subtree with identifier, title and data with nested literaldata containing the artefacts data
             data_inputs.append(wps_em.Input(
                 identifier, title, wps_em.Data(literal_data)))
@@ -213,25 +213,27 @@ def createDataDoc(task):
         elif input.datatype == '1':
             wpsLog.debug(f"complex data found for task{task.id}")
             # append format data as attributes to complex data element
-            complex_data = wps_em.ComplexData()
-            for attribute in artefact.format.strip("CDATA;").split(";"):
-                complex_data.set(attribute.split(
-                    "=")[0], attribute.split("=")[1])
+            # TODO: delete if unneeded, uncommented complex data format handling - complicated stuff
             # check if there is cdata in format
-            if artefact.format.split(";")[0] == "CDATA":
-                wpsLog.debug(
-                    f"cdata found in task{task.id} inserting cdata nested in tags into data of artefact{artefact.id}")
-                complex_data.append(f"<![CDATA[{artefact.data}]]")
-                # put data nested in cdata tag in complex data element
-                data_inputs.append(wps_em.Input(
-                    identifier, title, wps_em.Data(complex_data)))
-            else:
-                # just append it as if it is in xml format, it can also be inserted as text, will then not be in
-                # pretty_print format, but wps server doesn't care about that
+            # if artefact.format.split(";")[0] == "CDATA":
+            #     wpsLog.debug(
+            #         f"cdata found in task{task.id} inserting cdata nested in tags into data of artefact{artefact.id}")
+            #     complex_data.append(f"<![CDATA[{artefact.data}]]")
+            #     # put data nested in cdata tag in complex data element
+            #     data_inputs.append(wps_em.Input(
+            #         identifier, title, wps_em.Data(complex_data)))
+            # else:
+            # just append it as if it is in xml format, it can also be inserted as text, will then not be in
+            # pretty_print format, but wps server doesn't care about that
+            try:
                 wpsLog.debug(
                     f"just inserting complex data for task{task.id} of artefact{artefact.id} in xml")
                 data_inputs.append(wps_em.Input(
-                    identifier, title, wps_em.Data(artefact.data)))
+                    identifier, title, wps_em.Data(wps_em.ComplexData(artefact.data))))
+            except:
+                wpsLog.debug(f"inserting CDATA for task{task.id} of artefact{artefact.id} in xml")
+                data_inputs.append(wps_em.Input(
+                    identifier, title, wps_em.Data(wps_em.ComplexData(etree.CDATA(base64.b64decode(artefact.data))))))
         # bounding box case there should just be lowercorner and uppercorner data
         elif input.datatype == '2':
             wpsLog.debug(f"boundingbox data found for task{task.id}")
@@ -247,11 +249,17 @@ def createDataDoc(task):
             # quite strange, but this node is called BoundingBoxData for inputs, for outputs it's just BoundingBox
             # also for inputs it is used with wps namespace, for outputs the ows namespace is used
             bbox_elem = wps_em.BoundingBoxData(lower_corner, upper_corner)
+<<<<<<< HEAD
             # set attributes of boundingboxdata if there were any
 
             # TODO: check if this in necessary
             for attribute in artefact.format.split(";"):
                 bbox_elem.set(attribute.split("=")[0], attribute.split("=")[1])
+=======
+            # set attributes of boundingboxdata if there were any # TODO: leave it like that or change?
+            # for attribute in artefact.format.split(";"):
+            #     bbox_elem.set(attribute.split("=")[0], attribute.split("=")[1])
+>>>>>>> 3edaebacbc5aa8b06371fbda0ae13b290f37d278
             # finally create subtree
             data_inputs.append(wps_em.Input(identifier, title, bbox_elem))
     # TODO: check if something is missing
@@ -512,14 +520,7 @@ def parseOutput(output, task):
         if data_elem.tag == ns_map["LiteralData"]:
             wpsLog.debug(
                 f"literal data found in data for output{output_db.id} of task{task.id}")
-            d_attribs = data_elem.attrib
-            db_format = ""
-            for attrib in d_attribs:
-                if attrib == "dataType":
-                    db_format += f"{attrib}={d_attribs[attrib].split(':')[-1]}"
-                else:
-                    db_format += f";{attrib}={d_attribs[attrib]}"
-            db_format.strip(";")
+            db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
             db_data = data_elem.text
 
             # if the string is less than 490 chars long write to db
@@ -547,14 +548,7 @@ def parseOutput(output, task):
                 f"boundingbox data found in data for output{output_db.id} of task{task.id}")
             lower_corner = data_elem.find(ns_map["LowerCorner"])
             upper_corner = data_elem.find(ns_map["UpperCorner"])
-            d_attribs = data_elem.attrib
-            db_format = ""
-            for attrib in d_attribs:
-                if attrib == "dataType":
-                    db_format += f"{attrib}={d_attribs[attrib].split(':')[-1]}"
-                else:
-                    db_format += f";{attrib}={d_attribs[attrib]}"
-            db_format.strip(";")
+            db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
             db_data = f"LowerCorner={lower_corner.text};UpperCorner={upper_corner.text}"
             wpsLog.debug("writing data to db")
             artefact.format = db_format
@@ -566,21 +560,14 @@ def parseOutput(output, task):
             wpsLog.debug(
                 f"complex data found in data for output{output_db.id} of task{task.id}")
             # TODO: test!
-            d_attribs = data_elem.attrib
-            db_format = ""
-            for attrib in d_attribs:
-                if attrib == "dataType":
-                    db_format += f"{attrib}={d_attribs[attrib].split(':')[-1]}"
-                else:
-                    db_format += f";{attrib}={d_attribs[attrib]}"
-            db_format.strip(";")
+            db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
             db_data = data_elem.text
             artefact.format = db_format
 
             if "CDATA" in data_elem.text:
                 wpsLog.debug(
                     f"cdata found in complex data for output{output_db.id} of task{task.id}!")
-                db_format = "CDATA;" + db_format
+                #db_format = "CDATA;" + db_format
 
                 # if the string is less than 490 chars long write to db
                 # otherwise write to file and write url to db
@@ -644,14 +631,7 @@ def parseOutput(output, task):
     elif reference is not None:
         # complexdata found, usually gets passed by url reference which won't be 500 chars long
         # TODO: test ?!
-        d_attribs = data_elem.attrib
-        db_format = ""
-        for attrib in d_attribs:
-            if attrib == "dataType":
-                db_format += f"{attrib}={d_attribs[attrib].split(':')[-1]}"
-            else:
-                db_format += f";{attrib}={d_attribs[attrib]}"
-        db_format.strip(";")
+        db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
         wpsLog.debug("writing data to db")
         db_data = reference.text  # should be a url
         artefact.format = db_format
