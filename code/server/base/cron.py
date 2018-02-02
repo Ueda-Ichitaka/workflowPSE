@@ -703,17 +703,13 @@ def update_wps_processes():
     for wps_server in wps_servers:
         wpsLog.debug(f"checking WPS{wps_server.id}")
         # TODO: repair hardcode
-        describe_processes_url = wps_server.describe_url + \
-            '?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
+        describe_processes_url = wps_server.describe_url
         wpsLog.debug(f"describe processes request sent to: {describe_processes_url}")
-        try:
-            temp_xml, headers = urllib.request.urlretrieve(
-                describe_processes_url)
 
-            tree = ET.parse(temp_xml)
-        except:
-            wpsLog.warning(f"something went wrong while requesting describe process url from "
-                           f"{describe_processes_url} WPS{wps_server.id}")
+        temp_xml, headers = urllib.request.urlretrieve(describe_processes_url)
+
+        tree = ET.parse(temp_xml)
+
         root = tree.getroot()
         process_elements = root.findall('ProcessDescription')
         wpsLog.debug(
