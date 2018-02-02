@@ -39,9 +39,6 @@ export class ArtefactDialogComponent implements OnInit {
   constructor( @Inject(MAT_DIALOG_DATA) data: ArtefactDialogData, public dialog: MatDialogRef<ArtefactDialogComponent>) {
     this.task = data.task;
     this.parameter = data.parameter;
-
-    console.log(data);
-
     // Get all artefacts of this tasks
     const artefacts: Artefact<'input' | 'output'>[] = this.parameter.role === 'input'
       ? this.task.task.input_artefacts
@@ -95,7 +92,7 @@ export class ArtefactDialogComponent implements OnInit {
       el.classList.add(format);
 
       const data = this.parameter.type === ProcessParameterType.BOUNDING_BOX
-        ? `${this.data.tx}, ${this.data.ty}, ${this.data.bx}, ${this.data.by}`
+        ? `UpperCorner=${this.data.tx} ${this.data.ty};LowerCorner=${this.data.bx} ${this.data.by}`
         : this.data.value;
 
       if (data) {
@@ -118,7 +115,7 @@ export class ArtefactDialogComponent implements OnInit {
 
     const out = {
       value: this.parameter.type === ProcessParameterType.BOUNDING_BOX
-        ? `${this.data.tx},${this.data.ty},${this.data.bx},${this.data.by}`
+        ? `UpperCorner=${this.data.tx} ${this.data.ty};LowerCorner=${this.data.bx} ${this.data.by}`
         : this.data.value,
 
       format: this.selectedFormat === 'markdown' ? 'plain' : this.selectedFormat

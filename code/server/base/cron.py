@@ -239,13 +239,17 @@ def createDataDoc(task):
             upper_corner = ows_em.UpperCorner()
             for data in artefact.data.split(";"):
                 if data.split("=")[0] == "LowerCorner":
-                    lower_corner.append(data.split("=")[1])
+                    lower_corner = ows_em.LowerCorner(data.split("=")[1])
+
                 elif data.split("=")[0] == "UpperCorner":
-                    upper_corner.append(data.split("=")[1])
+                    upper_corner = ows_em.UpperCorner(data.split("=")[1])
+
             # quite strange, but this node is called BoundingBoxData for inputs, for outputs it's just BoundingBox
             # also for inputs it is used with wps namespace, for outputs the ows namespace is used
             bbox_elem = wps_em.BoundingBoxData(lower_corner, upper_corner)
             # set attributes of boundingboxdata if there were any
+
+            # TODO: check if this in necessary
             for attribute in artefact.format.split(";"):
                 bbox_elem.set(attribute.split("=")[0], attribute.split("=")[1])
             # finally create subtree
@@ -425,7 +429,8 @@ def parseExecuteResponse(task):
 
     # if status failed, create error output artefacts for task
     if task.status == '5':
-        wpsLog.debug(f"task{task.id} failed, status link can be found here: {task.status_url}")
+        wpsLog.debug(
+            f"task{task.id} failed, status link can be found here: {task.status_url}")
         try:
             err_msg = process_status[0].find(f"{ns_map['ExceptionReport']}/"
                                              f"{ns_map['Exception']}/{ns_map['ExceptionText']}").text
@@ -437,8 +442,10 @@ def parseExecuteResponse(task):
         time_now = datetime.now()
         process = Process.objects.get(task=task)
 
-        error_output_list = list(InputOutput.objects.filter(process=process, role='1'))
-        wpsLog.debug(f"trying to generate {len(error_output_list)} error artefacts")
+        error_output_list = list(
+            InputOutput.objects.filter(process=process, role='1'))
+        wpsLog.debug(
+            f"trying to generate {len(error_output_list)} error artefacts")
         for output in error_output_list:
             if len(list(Artefact.objects.filter(task=task, parameter=output, role='1'))) == 0:
                 Artefact.objects.create(task=task, parameter=output, role='1', format='error', data=err_msg,
@@ -731,7 +738,8 @@ def update_wps_processes():
         # TODO: repair hardcode
         describe_processes_url = wps_server.describe_url + \
             '?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
-        wpsLog.debug(f"describe processes request sent to: {describe_processes_url}")
+        wpsLog.debug(
+            f"describe processes request sent to: {describe_processes_url}")
         try:
             temp_xml, headers = urllib.request.urlretrieve(
                 describe_processes_url)
