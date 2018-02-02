@@ -179,6 +179,13 @@ export class EditorPageComponent implements OnInit {
    * @param name new name of the workflow
    */
   public editTitle(name: string) {
+    if (name.length === 0) {
+      name = 'My Workflow';
+    } else if (name.length > 24) {
+      name = name.slice(0, 24);
+    }
+
+
     this.workflow.title = name;
 
     if (this.fresh) {
