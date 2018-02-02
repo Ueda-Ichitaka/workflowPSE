@@ -156,7 +156,8 @@ export class EditorComponent implements OnInit {
         });
       }
 
-      this.workflow.edges = this.workflow.edges.filter(e => e.from_task_id !== task.id || e.to_task_id !== task.id);
+      // Delete edge
+      this.workflow.edges = this.workflow.edges.filter(e => e.to_task_id !== task.id);
     }
 
 

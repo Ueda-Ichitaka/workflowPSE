@@ -6,7 +6,9 @@
             <mat-expansion-panel *ngFor="let workflow of workflows" (opened)="opened(workflow)" (closed)="closed(workflow)">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        {{ workflow.title }}
+                        <span>{{ workflow.title }}</span>
+                        <span class="running" *ngIf="runs(workflow) && !finished(workflow)">(Running)</span>
+                        <span class="finished" *ngIf="finished(workflow)">(Finished)</span>
                     </mat-panel-title>
                     <div class="last-update">{{ (workflow.updated_at * 1000) | date }}</div>
                 </mat-expansion-panel-header>
@@ -18,7 +20,8 @@
                     </div>
                     <div class="actions-right">
                         <button mat-raised-button (click)="edit(workflow.id)" i18n="@@edit">Edit</button>
-                        <button *ngIf="validate(workflow)" mat-raised-button color="primary" (click)="run(workflow.id)" [disabled]="runs(workflow)">{{runs(workflow) ? 'RUNNING' : 'RUN'}}</button>
+                        <button *ngIf="validate(workflow) && !finished(workflow)" mat-raised-button color="primary" (click)="run(workflow.id)" [disabled]="runs(workflow)">{{runs(workflow) ? 'RUNNING' : 'RUN'}}</button>
+                        <button *ngIf="finished(workflow)" mat-raised-button color="primary" disabled>FINISHED</button>
                     </div>
                 </div>
             </mat-expansion-panel>

@@ -35,3 +35,17 @@
     width: 100%;
     text-align: center;
 }
+
+.running, .finished {
+    font-size: 13px;
+    line-height: 21px;
+    margin-left: 21px;
+}
+
+.finished {
+    color: rgba(33, 150, 243, 0.89);
+}
+
+.running {
+    color: rgba(255, 152, 0, 0.89);
+}

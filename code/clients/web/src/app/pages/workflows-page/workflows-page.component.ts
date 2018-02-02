@@ -114,4 +114,8 @@ export class WorkflowsPageComponent implements OnInit {
   public runs(workflow: Workflow): boolean {
     return this.workflowService.isRunning(workflow) || this.running.includes(workflow.id);
   }
+
+  public finished(workflow: Workflow): boolean {
+    return this.workflowService.finished(workflow);
+  }
 }

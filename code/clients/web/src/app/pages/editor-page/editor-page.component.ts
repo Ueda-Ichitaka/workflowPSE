@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ProcessService } from 'app/services/process.service';
 import { Observable } from 'rxjs/Observable';
 import { Process } from 'app/models/Process';
@@ -54,6 +54,8 @@ export class EditorPageComponent implements OnInit {
 
   private fresh = false;
 
+  private canRefreshWorkflow = true;
+
   /**
    * creates the editor page
    * @param processService which gets process data
@@ -69,6 +71,7 @@ export class EditorPageComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public dialog: MatDialog,
+    private cd: ChangeDetectorRef,
   ) {
 
   }
@@ -103,9 +106,9 @@ export class EditorPageComponent implements OnInit {
       }
     });
 
-    setInterval(async () => {
-      await this.updateWorkflowStatus();
-    }, 8000);
+    setInterval(() => {
+      this.updateWorkflowStatus();
+    }, 1500);
 
     setTimeout(() => {
       this.workflowChanged(this.workflow);
@@ -119,11 +122,13 @@ export class EditorPageComponent implements OnInit {
   }
 
   public async updateWorkflowStatus() {
-    if (!this.runs()) { return; }
+    if (!this.runs() || !this.canRefreshWorkflow) { return; }
+    this.canRefreshWorkflow = false;
     this.workflow = await this.workflowService.get(this.workflow.id).toPromise();
     await this.workflowService.refresh(this.workflow.id);
     console.log('-- Refreshed Workflow Execution Status --');
-
+    this.canRefreshWorkflow = true;
+    this.cd.detectChanges();
   }
 
   /**
