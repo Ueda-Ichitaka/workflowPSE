@@ -231,7 +231,8 @@ def createDataDoc(task):
                 data_inputs.append(wps_em.Input(
                     identifier, title, wps_em.Data(wps_em.ComplexData(artefact.data))))
             except:
-                wpsLog.debug(f"inserting CDATA for task{task.id} of artefact{artefact.id} in xml")
+                wpsLog.debug(
+                    f"inserting CDATA for task{task.id} of artefact{artefact.id} in xml")
                 data_inputs.append(wps_em.Input(
                     identifier, title, wps_em.Data(wps_em.ComplexData(etree.CDATA(base64.b64decode(artefact.data))))))
         # bounding box case there should just be lowercorner and uppercorner data
@@ -241,9 +242,11 @@ def createDataDoc(task):
             upper_corner = ows_em.UpperCorner()
             for data in artefact.data.split(";"):
                 if data.split("=")[0] == "LowerCorner":
-                    lower_corner.append(data.split("=")[1])
+                    lower_corner = ows_em.LowerCorner(data.split("=")[1])
+
                 elif data.split("=")[0] == "UpperCorner":
-                    upper_corner.append(data.split("=")[1])
+                    upper_corner = ows_em.UpperCorner(data.split("=")[1])
+
             # quite strange, but this node is called BoundingBoxData for inputs, for outputs it's just BoundingBox
             # also for inputs it is used with wps namespace, for outputs the ows namespace is used
             bbox_elem = wps_em.BoundingBoxData(lower_corner, upper_corner)
@@ -427,7 +430,8 @@ def parseExecuteResponse(task):
 
     # if status failed, create error output artefacts for task
     if task.status == '5':
-        wpsLog.debug(f"task{task.id} failed, status link can be found here: {task.status_url}")
+        wpsLog.debug(
+            f"task{task.id} failed, status link can be found here: {task.status_url}")
         try:
             err_msg = process_status[0].find(f"{ns_map['ExceptionReport']}/"
                                              f"{ns_map['Exception']}/{ns_map['ExceptionText']}").text
@@ -439,8 +443,10 @@ def parseExecuteResponse(task):
         time_now = datetime.now()
         process = Process.objects.get(task=task)
 
-        error_output_list = list(InputOutput.objects.filter(process=process, role='1'))
-        wpsLog.debug(f"trying to generate {len(error_output_list)} error artefacts")
+        error_output_list = list(
+            InputOutput.objects.filter(process=process, role='1'))
+        wpsLog.debug(
+            f"trying to generate {len(error_output_list)} error artefacts")
         for output in error_output_list:
             if len(list(Artefact.objects.filter(task=task, parameter=output, role='1'))) == 0:
                 Artefact.objects.create(task=task, parameter=output, role='1', format='error', data=err_msg,
@@ -507,7 +513,8 @@ def parseOutput(output, task):
         if data_elem.tag == ns_map["LiteralData"]:
             wpsLog.debug(
                 f"literal data found in data for output{output_db.id} of task{task.id}")
-            db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
+            db_format = "plain" if data_elem.get(
+                "dataType") is None else data_elem.get("dataType").split(':')[-1]
             db_data = data_elem.text
 
             # if the string is less than 490 chars long write to db
@@ -535,7 +542,8 @@ def parseOutput(output, task):
                 f"boundingbox data found in data for output{output_db.id} of task{task.id}")
             lower_corner = data_elem.find(ns_map["LowerCorner"])
             upper_corner = data_elem.find(ns_map["UpperCorner"])
-            db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
+            db_format = "plain" if data_elem.get(
+                "dataType") is None else data_elem.get("dataType").split(':')[-1]
             db_data = f"LowerCorner={lower_corner.text};UpperCorner={upper_corner.text}"
             wpsLog.debug("writing data to db")
             artefact.format = db_format
@@ -547,7 +555,8 @@ def parseOutput(output, task):
             wpsLog.debug(
                 f"complex data found in data for output{output_db.id} of task{task.id}")
             # TODO: test!
-            db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
+            db_format = "plain" if data_elem.get(
+                "dataType") is None else data_elem.get("dataType").split(':')[-1]
             db_data = data_elem.text
             artefact.format = db_format
 
@@ -618,7 +627,8 @@ def parseOutput(output, task):
     elif reference is not None:
         # complexdata found, usually gets passed by url reference which won't be 500 chars long
         # TODO: test ?!
-        db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
+        db_format = "plain" if data_elem.get(
+            "dataType") is None else data_elem.get("dataType").split(':')[-1]
         wpsLog.debug("writing data to db")
         db_data = reference.text  # should be a url
         artefact.format = db_format
@@ -702,9 +712,15 @@ def update_wps_processes():
     wpsLog.debug("starting process update")
     for wps_server in wps_servers:
         wpsLog.debug(f"checking WPS{wps_server.id}")
-        # TODO: repair hardcode
         describe_processes_url = wps_server.describe_url
         wpsLog.debug(f"describe processes request sent to: {describe_processes_url}")
+        describe_processes_url = wps_server.describe_url + \
+            '?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
+        wpsLog.debug(
+            f"describe processes request sent to: {describe_processes_url}")
+        try:
+            temp_xml, headers = urllib.request.urlretrieve(
+                describe_processes_url)
 
         temp_xml, headers = urllib.request.urlretrieve(describe_processes_url)
 
