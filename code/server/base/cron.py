@@ -231,7 +231,8 @@ def createDataDoc(task):
                 data_inputs.append(wps_em.Input(
                     identifier, title, wps_em.Data(wps_em.ComplexData(artefact.data))))
             except:
-                wpsLog.debug(f"inserting CDATA for task{task.id} of artefact{artefact.id} in xml")
+                wpsLog.debug(
+                    f"inserting CDATA for task{task.id} of artefact{artefact.id} in xml")
                 data_inputs.append(wps_em.Input(
                     identifier, title, wps_em.Data(wps_em.ComplexData(etree.CDATA(base64.b64decode(artefact.data))))))
         # bounding box case there should just be lowercorner and uppercorner data
@@ -249,17 +250,9 @@ def createDataDoc(task):
             # quite strange, but this node is called BoundingBoxData for inputs, for outputs it's just BoundingBox
             # also for inputs it is used with wps namespace, for outputs the ows namespace is used
             bbox_elem = wps_em.BoundingBoxData(lower_corner, upper_corner)
-<<<<<<< HEAD
-            # set attributes of boundingboxdata if there were any
-
-            # TODO: check if this in necessary
-            for attribute in artefact.format.split(";"):
-                bbox_elem.set(attribute.split("=")[0], attribute.split("=")[1])
-=======
             # set attributes of boundingboxdata if there were any # TODO: leave it like that or change?
             # for attribute in artefact.format.split(";"):
             #     bbox_elem.set(attribute.split("=")[0], attribute.split("=")[1])
->>>>>>> 3edaebacbc5aa8b06371fbda0ae13b290f37d278
             # finally create subtree
             data_inputs.append(wps_em.Input(identifier, title, bbox_elem))
     # TODO: check if something is missing
@@ -520,7 +513,8 @@ def parseOutput(output, task):
         if data_elem.tag == ns_map["LiteralData"]:
             wpsLog.debug(
                 f"literal data found in data for output{output_db.id} of task{task.id}")
-            db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
+            db_format = "plain" if data_elem.get(
+                "dataType") is None else data_elem.get("dataType").split(':')[-1]
             db_data = data_elem.text
 
             # if the string is less than 490 chars long write to db
@@ -548,7 +542,8 @@ def parseOutput(output, task):
                 f"boundingbox data found in data for output{output_db.id} of task{task.id}")
             lower_corner = data_elem.find(ns_map["LowerCorner"])
             upper_corner = data_elem.find(ns_map["UpperCorner"])
-            db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
+            db_format = "plain" if data_elem.get(
+                "dataType") is None else data_elem.get("dataType").split(':')[-1]
             db_data = f"LowerCorner={lower_corner.text};UpperCorner={upper_corner.text}"
             wpsLog.debug("writing data to db")
             artefact.format = db_format
@@ -560,7 +555,8 @@ def parseOutput(output, task):
             wpsLog.debug(
                 f"complex data found in data for output{output_db.id} of task{task.id}")
             # TODO: test!
-            db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
+            db_format = "plain" if data_elem.get(
+                "dataType") is None else data_elem.get("dataType").split(':')[-1]
             db_data = data_elem.text
             artefact.format = db_format
 
@@ -631,7 +627,8 @@ def parseOutput(output, task):
     elif reference is not None:
         # complexdata found, usually gets passed by url reference which won't be 500 chars long
         # TODO: test ?!
-        db_format = "plain" if data_elem.get("dataType") is None else data_elem.get("dataType").split(':')[-1]
+        db_format = "plain" if data_elem.get(
+            "dataType") is None else data_elem.get("dataType").split(':')[-1]
         wpsLog.debug("writing data to db")
         db_data = reference.text  # should be a url
         artefact.format = db_format
