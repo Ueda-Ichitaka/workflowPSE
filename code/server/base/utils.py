@@ -54,13 +54,13 @@ ns_map = {
 
 # TODO: rework if path problem is solved
 def getFilePath(task):
-    '''
+    """
     returns path to file for artefact or None if there is no such file
     @param artefact: artefact for which path is returned
     @type artefact: models.Artefact
     @return: path to data
     @rtype: string
-    '''
+    """
     possible_path = f"{BASE_DIR}/outputs/task{task.id}.xml"
     if os.path.isfile(possible_path):
         return possible_path
