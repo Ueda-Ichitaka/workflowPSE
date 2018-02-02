@@ -1,11 +1,11 @@
 <mat-menu #menu="matMenu">
   <button mat-menu-item (click)="openDetail()" i18n="@@info">Info</button>
-  <button mat-menu-item (click)="clickDelete()" i18n="@@delete">Delete</button>
+  <button *ngIf="!this.running" mat-menu-item (click)="clickDelete()" i18n="@@delete">Delete</button>
 </mat-menu>
 
 
 <div class="title">{{ process.title }}</div>
-<span *ngIf="showState" class="state" [style.color]="stateInfo.color" [style.borderColor]="stateInfo.color">{{ stateInfo.name }}</span>
+<span *ngIf="running" class="state" [style.color]="stateInfo.color" [style.borderColor]="stateInfo.color">{{ stateInfo.name }}</span>
 <span [matMenuTriggerFor]="menu"></span>
 
 <div class="inputs" #inputs>

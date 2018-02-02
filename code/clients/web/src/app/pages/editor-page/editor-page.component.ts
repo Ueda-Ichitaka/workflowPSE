@@ -9,6 +9,8 @@ import { EditorComponent } from 'app/components/editor/editor.component';
 import { trigger, transition, animate, style } from '@angular/animations';
 import { WpsService } from 'app/services/wps.service';
 import { WPS } from 'app/models/WPS';
+import { MatDialog } from '@angular/material';
+import { ResultDialogComponent } from 'app/components/result-dialog/result-dialog.component';
 
 @Component({
   selector: 'app-editor-page',
@@ -18,8 +20,11 @@ import { WPS } from 'app/models/WPS';
   animations: [
     trigger('slide', [
       transition(':enter', [
-        style({ transform: 'translateX(200%)' }),
+        style({ transform: 'translateX(100%)' }),
         animate('233ms ease-in-out')
+      ]),
+      transition(':leave', [
+        animate('233ms ease-in-out', style({ transform: 'translateX(100%)' }))
       ]),
     ])
   ]
@@ -63,6 +68,7 @@ export class EditorPageComponent implements OnInit {
     private wpsService: WpsService,
     private route: ActivatedRoute,
     private router: Router,
+    public dialog: MatDialog,
   ) {
 
   }
@@ -100,6 +106,16 @@ export class EditorPageComponent implements OnInit {
     setInterval(async () => {
       await this.updateWorkflowStatus();
     }, 8000);
+
+    setTimeout(() => {
+      this.workflowChanged(this.workflow);
+    }, 500);
+  }
+
+  public showResults() {
+    this.dialog.open(ResultDialogComponent, {
+      data: this.workflow
+    });
   }
 
   public async updateWorkflowStatus() {

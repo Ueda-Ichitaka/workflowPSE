@@ -50,7 +50,7 @@ export class TaskComponent implements OnInit {
   public changeArtefact = new EventEmitter<[TaskParameterTuple, object]>();
 
   @Input()
-  public showState = false;
+  public running = false;
 
   private mouseDownPos: number[];
 
@@ -167,9 +167,23 @@ export class TaskComponent implements OnInit {
    */
   public parameterMouseUp(parameter: ProcessParameter<'input' | 'output'>, event: MouseEvent) {
     if (this.mouseDownPos && this.mouseDownPos[0] === event.pageX && this.mouseDownPos[1] === event.pageY) {
-      if (parameter.role === 'output' && !this.showState) {
+      // Can't open output dialog when editing
+      if (parameter.role === 'output' && !this.running) {
         return;
       }
+      // Can't open input dialog when running
+      if (parameter.role === 'input' && this.running) {
+        return;
+      }
+      // Can't open output artefakt without a result
+      if (
+        parameter.role === 'output' &&
+        this.task.output_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id) === -1
+      ) {
+        return;
+      }
+
+
       this.dialog.open(ArtefactDialogComponent, {
         data: {
           task: this,
@@ -207,7 +221,7 @@ export class TaskComponent implements OnInit {
 
     if (parameter.role === 'input') {
       return -1 !== this.task.input_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id);
-    } else if (this.showState) {
+    } else if (this.running) {
       return -1 !== this.task.output_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id);
     }
     return false;

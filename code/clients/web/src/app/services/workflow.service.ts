@@ -132,7 +132,7 @@ export class WorkflowService {
    * @returns {boolean}
    */
   public isRunning(workflow: Partial<Workflow>): boolean {
-    if (!workflow || !workflow.tasks) {
+    if (!workflow || !workflow.tasks || workflow.tasks.length === 0) {
       return false;
     }
     for (const task of workflow.tasks) {
@@ -144,7 +144,7 @@ export class WorkflowService {
   }
 
   public finished(workflow: Partial<Workflow>): boolean {
-    if (!workflow || !workflow.tasks) {
+    if (!workflow || !workflow.tasks || workflow.tasks.length === 0) {
       return false;
     }
 

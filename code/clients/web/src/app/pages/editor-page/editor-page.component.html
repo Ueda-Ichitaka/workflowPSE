@@ -2,7 +2,7 @@
   <div *ngIf="workflow">
     <div [style.display]="editTitleMode ? 'none' : 'block'" class="title">
       {{ workflow?.title }}
-      <button mat-icon-button class="edit-name" (click)="clickTitleEdit()">
+      <button @slide *ngIf="!runs()" mat-icon-button class="edit-name" (click)="clickTitleEdit()">
         <mat-icon aria-label="Example icon-button with a heart icon">edit</mat-icon>
       </button>
     </div>
@@ -15,8 +15,13 @@
   </div>
 
   <div>
-    <button mat-button (click)="undo()" [disabled]="!canUndo()" i18n="@@undo">Undo</button>
-    <button mat-raised-button (click)="save()" color="primary" i18n="@@save">Save</button>
+    <div @slide *ngIf="!runs()">
+      <button mat-button (click)="undo()" [disabled]="!canUndo()" i18n="@@undo">UNDO</button>
+      <button mat-raised-button (click)="save()" color="primary" i18n="@@save">SAVE</button>
+    </div>
+
+
+    <button @slide (click)="showResults()" *ngIf="finished()" class="results" mat-raised-button color="primary">SHOW RESULT</button>
   </div>
 </div>
 
@@ -24,7 +29,7 @@
   [running]="runs()"></app-editor>
 
 
-<app-process-list @slide *ngIf="showProcessList" [processes]="processes | async" [wps]="wps | async" class="process-list"></app-process-list>
+<app-process-list @slide *ngIf="!runs()" [processes]="processes | async" [wps]="wps | async" class="process-list"></app-process-list>
 
 <ng-container *ngIf="workflow?.id >= 0">
   <button *ngIf="!runs(); else runningTemplate" mat-fab color="primary" class="run" [disabled]="workflowError !== ''" (click)="run()">

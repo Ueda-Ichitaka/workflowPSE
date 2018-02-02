@@ -23,6 +23,7 @@ import { WpsService } from 'app/services/wps.service';
 import { SettingsPageComponent } from 'app/pages/settings-page/settings-page.component';
 import { ArtefactDialogComponent } from 'app/components/artefact-dialog/artefact-dialog.component';
 import { FormsModule } from '@angular/forms';
+import { ResultDialogComponent } from 'app/components/result-dialog/result-dialog.component';
 
 
 
@@ -44,6 +45,7 @@ const routes = [
     ProcessComponent,
     ProcessDialogComponent,
     ArtefactDialogComponent,
+    ResultDialogComponent,
     EditorComponent,
     TaskComponent
   ],
@@ -75,7 +77,8 @@ const routes = [
   ],
   entryComponents: [
     ProcessDialogComponent,
-    ArtefactDialogComponent
+    ArtefactDialogComponent,
+    ResultDialogComponent
   ],
   providers: [ProcessService, WorkflowService, WpsService, WpsService, { provide: LOCALE_ID, useValue: 'en' }],
   bootstrap: [AppComponent]

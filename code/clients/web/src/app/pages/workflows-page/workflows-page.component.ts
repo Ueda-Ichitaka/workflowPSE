@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { ProcessService } from 'app/services/process.service';
 import { Process } from 'app/models/Process';
+import { take } from 'rxjs/operators/take';
+import { delay } from 'rxjs/operators/delay';
 
 @Component({
   selector: 'app-workflows-page',
@@ -17,6 +19,7 @@ export class WorkflowsPageComponent implements OnInit {
   public processes: Process[];
 
   public openedWorkflowID = -1;
+  private running = [];
 
   /**
    * creates the workflow page object
@@ -93,6 +96,7 @@ export class WorkflowsPageComponent implements OnInit {
    */
   public run(id: number) {
     this.workflowService.start(id);
+    this.running.push(id);
   }
 
   /**
@@ -107,7 +111,7 @@ export class WorkflowsPageComponent implements OnInit {
    * checks if a workflow is running
    * @param worflow the workflow which is checked
    */
-  public runs(worflow: Workflow): boolean {
-    return this.workflowService.isRunning(worflow);
+  public runs(workflow: Workflow): boolean {
+    return this.workflowService.isRunning(workflow) || this.running.includes(workflow.id);
   }
 }

@@ -88,6 +88,10 @@ export class EditorComponent implements OnInit {
    * @param edges the workflows edges
    */
   public clickEdge(edges) {
+
+    // Delete edge
+    if (this.running) { return; }
+
     const id = edges[4];
     const index = this.workflow.edges.findIndex(edge => edge.id === id);
     if (index !== -1) {
