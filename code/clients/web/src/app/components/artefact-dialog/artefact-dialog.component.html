@@ -74,7 +74,7 @@
   <button mat-button mat-dialog-close i18n="@@close">Close</button>
 
   <ng-container *ngIf="parameter.role === 'input'">
-    <button *ngIf="data.value" mat-button (click)="remove()" i18n="@@delete" color="warn">Delete</button>
-    <button mat-raised-button (click)="save()" i18n="@@save" color="primary">Save</button>
+    <button *ngIf="deletable" mat-button (click)="remove()" i18n="@@delete" color="warn">DELETE</button>
+    <button mat-raised-button (click)="save()" i18n="@@add" color="primary">SAVE</button>
   </ng-container>
 </mat-dialog-actions>

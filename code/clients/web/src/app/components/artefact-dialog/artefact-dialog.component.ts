@@ -29,6 +29,8 @@ export class ArtefactDialogComponent implements OnInit {
   public task: TaskComponent;
   public parameter: ProcessParameter<'input' | 'output'>;
 
+  public deletable = false;
+
   /**
    * creates an artefact object
    * @param data the artefact data
@@ -51,6 +53,10 @@ export class ArtefactDialogComponent implements OnInit {
         value: artefact.data,
         format: artefact.format,
       };
+    }
+
+    if (this.data.value) {
+      this.deletable = true;
     }
   }
 

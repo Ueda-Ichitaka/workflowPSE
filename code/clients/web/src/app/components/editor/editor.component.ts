@@ -8,6 +8,7 @@ import { Workflow } from 'app/models/Workflow';
 import { Task, TaskState } from 'app/models/Task';
 import { ProcessParameter } from 'app/models/ProcessParameter';
 import { TaskComponent } from 'app/components/task/task.component';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 /**
  * is used to undo/redo movements of elements
@@ -26,7 +27,18 @@ interface MovementData {
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('fade', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('144ms ease-in-out')
+      ]),
+      transition(':leave', [
+        animate('233ms ease-in-out', style({ opacity: 0 }))
+      ]),
+    ])
+  ]
 })
 export class EditorComponent implements OnInit {
 
@@ -114,6 +126,7 @@ export class EditorComponent implements OnInit {
    * @param event the event that triggers the call
    */
   public changeArtefact(event) {
+    this.snapshot();
     let task: Task = event[0].task;
     task = this.workflow.tasks.find(t => t.id === task.id);
     const parameter: ProcessParameter<'input' | 'output'> = event[0].parameter;
