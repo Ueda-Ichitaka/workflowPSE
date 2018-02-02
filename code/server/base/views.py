@@ -402,6 +402,13 @@ class WorkflowView(View):
         for task in tasks:
             task.artefact_set.filter(role=1).delete()
 
+        artefacts = Artefact.objects.filter(task__workflow_id=workflow_id).filter(role=0)
+        for artefact in artefacts:
+            edge = Edge.objects.filter(workflow_id=workflow_id).filter(to_task_id=artefact.task_id).filter(input_id=artefact.parameter_id).values()
+
+            if edge.count() > 0:
+                artefact.delete()
+
         return JsonResponse({})
 
     @staticmethod
