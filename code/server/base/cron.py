@@ -425,14 +425,21 @@ def parseExecuteResponse(task):
 
     # if status failed, create error output artefacts for task
     if task.status == '5':
+        wpsLog.debug(f"task{task.id} failed, status link can be found here: {task.status_url}")
         try:
             err_msg = process_status[0].find(f"{ns_map['ExceptionReport']}/"
-                                             f"{ns_map['Exception']/{ns_map['ExceptionText']}}").text
+                                             f"{ns_map['Exception']}/{ns_map['ExceptionText']}").text
+            wpsLog.debug("found failure information")
         except:
+            wpsLog.debug("could not find information about failure")
             err_msg = "unknown error"
 
         time_now = datetime.now()
-        for output in list(InputOutput.objects.filter(artefact__task=task, role='1')):
+        process = Process.objects.get(task=task)
+
+        error_output_list = list(InputOutput.objects.filter(process=process, role='1'))
+        wpsLog.debug(f"trying to generate {len(error_output_list)} error artefacts")
+        for output in error_output_list:
             if len(list(Artefact.objects.filter(task=task, parameter=output, role='1'))) == 0:
                 Artefact.objects.create(task=task, parameter=output, role='1', format='error', data=err_msg,
                                         created_at=time_now, updated_at=time_now)
@@ -720,11 +727,11 @@ def update_wps_processes():
     wps_servers = WPS.objects.all()
     wpsLog.debug("starting process update")
     for wps_server in wps_servers:
-        print(wps_server.id)
+        wpsLog.debug(f"checking WPS{wps_server.id}")
         # TODO: repair hardcode
         describe_processes_url = wps_server.describe_url + \
             '?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
-
+        wpsLog.debug(f"describe processes request sent to: {describe_processes_url}")
         try:
             temp_xml, headers = urllib.request.urlretrieve(
                 describe_processes_url)
