@@ -40,6 +40,8 @@ export class ArtefactDialogComponent implements OnInit {
     this.task = data.task;
     this.parameter = data.parameter;
 
+    console.log(data);
+
     // Get all artefacts of this tasks
     const artefacts: Artefact<'input' | 'output'>[] = this.parameter.role === 'input'
       ? this.task.task.input_artefacts

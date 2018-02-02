@@ -1,7 +1,8 @@
 import {
   Component, OnInit, HostListener, ElementRef, Input, QueryList,
   ViewChildren, NgZone, ChangeDetectionStrategy, EventEmitter, Output,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  AfterContentInit
 } from '@angular/core';
 import { Process } from 'app/models/Process';
 import { Workflow } from 'app/models/Workflow';
@@ -9,6 +10,8 @@ import { Task, TaskState } from 'app/models/Task';
 import { ProcessParameter } from 'app/models/ProcessParameter';
 import { TaskComponent } from 'app/components/task/task.component';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { window } from 'rxjs/operators/window';
+import { AfterContentChecked } from '@angular/core/src/metadata/lifecycle_hooks';
 
 /**
  * is used to undo/redo movements of elements
@@ -30,17 +33,13 @@ interface MovementData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('fade', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('144ms ease-in-out')
-      ]),
       transition(':leave', [
         animate('233ms ease-in-out', style({ opacity: 0 }))
       ]),
     ])
   ]
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent implements OnInit, AfterContentInit {
 
   @Input()
   public workflow: Workflow;
@@ -87,14 +86,14 @@ export class EditorComponent implements OnInit {
     if (!this.workflow) {
       this.empty();
     }
-
-    setTimeout(() => {
-      this.cd.detectChanges();
-      this.workflowChanged.emit(this.workflow);
-      this.scrollToMiddle();
-    }, 100);
   }
 
+  ngAfterContentInit(): void {
+    this.workflowChanged.emit(this.workflow);
+    this.scrollToMiddle();
+    setTimeout(() => { this.cd.detectChanges(); }, 100);
+    setTimeout(() => { this.cd.detectChanges(); }, 1000);
+  }
   /**
    * is called when an edge is clicked
    * @param edges the workflows edges
@@ -304,13 +303,20 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  @HostListener('mousedown', ['$event'])
+  public mouseDown(event: MouseEvent) {
+    this.zone.runOutsideAngular(() => {
+      document.addEventListener('mousemove', this.mouseMove.bind(this));
+    });
+
+  }
+
   /**
    * triggered when the user moves the cursor to
    * from a parameter node to somewhere creating an edge
    * @param event the user moves the mouse
    */
-  @HostListener('mousemove', ['$event'])
-  public dragMove(event: MouseEvent) {
+  public mouseMove(event: MouseEvent) {
     // return if no task / parameter is selected
     if (this.movement.index === undefined && this.movement.edge === undefined) {
       return true;
@@ -335,6 +341,7 @@ export class EditorComponent implements OnInit {
       this.movement.edge[2] = event.pageX + n.scrollLeft - r.left;
       this.movement.edge[3] = event.pageY + n.scrollTop - r.top;
     }
+    this.cd.detectChanges();
   }
 
   /**
@@ -354,6 +361,8 @@ export class EditorComponent implements OnInit {
     this.movement = {};
     // reset cursor
     document.body.style.cursor = 'default';
+
+    document.removeEventListener('mousemove', this.mouseMove);
   }
 
   /**

@@ -100,7 +100,6 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public create(workflow: Partial<Workflow>): Observable<Workflow> {
-    this.bar.open(`Created Workflow`, 'CLOSE', { duration: 2500 });
     return this.http.post<Workflow>(`http://127.0.0.1:8000/workflow/`, workflow);
   }
 

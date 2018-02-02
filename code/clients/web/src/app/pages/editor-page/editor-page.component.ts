@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { ProcessService } from 'app/services/process.service';
 import { Observable } from 'rxjs/Observable';
 import { Process } from 'app/models/Process';
@@ -11,6 +11,7 @@ import { WpsService } from 'app/services/wps.service';
 import { WPS } from 'app/models/WPS';
 import { MatDialog } from '@angular/material';
 import { ResultDialogComponent } from 'app/components/result-dialog/result-dialog.component';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-editor-page',
@@ -72,6 +73,7 @@ export class EditorPageComponent implements OnInit {
     private router: Router,
     public dialog: MatDialog,
     private cd: ChangeDetectorRef,
+    private zone: NgZone,
   ) {
 
   }
@@ -89,7 +91,6 @@ export class EditorPageComponent implements OnInit {
         this.fresh = false;
         this.workflowService.get(+params['id']).subscribe(w => {
           this.workflow = w;
-
         });
       } else {
         this.fresh = true;
@@ -106,12 +107,15 @@ export class EditorPageComponent implements OnInit {
       }
     });
 
+
     setInterval(() => {
       this.updateWorkflowStatus();
     }, 1500);
 
+
     setTimeout(() => {
       this.workflowChanged(this.workflow);
+      this.cd.detectChanges();
     }, 500);
   }
 
@@ -122,13 +126,13 @@ export class EditorPageComponent implements OnInit {
   }
 
   public async updateWorkflowStatus() {
-    if (!this.runs() || !this.canRefreshWorkflow) { return; }
+    if (!this.canRefreshWorkflow || !this.runs()) { return; }
     this.canRefreshWorkflow = false;
     this.workflow = await this.workflowService.get(this.workflow.id).toPromise();
     await this.workflowService.refresh(this.workflow.id);
     console.log('-- Refreshed Workflow Execution Status --');
     this.canRefreshWorkflow = true;
-    this.cd.detectChanges();
+    setTimeout(() => { this.cd.detectChanges(); }, 1);
   }
 
   /**
@@ -165,16 +169,18 @@ export class EditorPageComponent implements OnInit {
 
     await this.save();
     this.workflowService.start(this.workflow.id);
-    this.workflowService.get(this.workflow.id).subscribe(workflow => {
+    this.workflowService.get(this.workflow.id).pipe(take(1)).subscribe(workflow => {
       this.workflow = workflow;
+      setTimeout(() => { this.cd.detectChanges(); }, 10);
     });
     this.updateWorkflowStatus();
   }
 
   public stop() {
     this.workflowService.stop(this.workflow.id);
-    this.workflowService.get(this.workflow.id).subscribe(workflow => {
+    this.workflowService.get(this.workflow.id).pipe(take(1)).subscribe(workflow => {
       this.workflow = workflow;
+      setTimeout(() => { this.cd.detectChanges(); }, 10);
     });
     this.updateWorkflowStatus();
   }
@@ -213,7 +219,7 @@ export class EditorPageComponent implements OnInit {
     setTimeout(() => {
       const native: HTMLInputElement = this.titleInputComponent.nativeElement;
       native.focus();
-    }, 100);
+    }, 150);
   }
 
   /**
@@ -226,9 +232,12 @@ export class EditorPageComponent implements OnInit {
         this.router.navigate([`/editor/${obj.id}`]);
       });
     } else {
-      return this.workflowService.update(this.workflow.id, this.workflow).toPromise();
+      const result = this.workflowService.update(this.workflow.id, this.workflow).toPromise();
+      setTimeout(() => { this.cd.detectChanges(); }, 10);
+      return result;
     }
   }
+
 
   /**
    * tells wether the current workflow is running
@@ -237,7 +246,9 @@ export class EditorPageComponent implements OnInit {
     if (!this.workflow) {
       return null;
     }
-    return this.workflowService.isRunning(this.workflow);
+    const running = this.workflowService.isRunning(this.workflow);
+    this.canRefreshWorkflow = running && !this.finished();
+    return running;
   }
 
   public finished(): boolean {

@@ -22,7 +22,7 @@ export class ResultDialogComponent implements OnInit {
    * @param dialog the artefact dialog
    */
   constructor(
-    @Inject(MAT_DIALOG_DATA) private workflow: Workflow,
+    @Inject(MAT_DIALOG_DATA) public workflow: Workflow,
     public dialog: MatDialogRef<ResultDialogComponent>
   ) {
 
