@@ -13,7 +13,7 @@ export class ProcessDialogComponent implements OnInit {
 
   /**
    * creates a process dialog object
-   * @param process the associated process 
+   * @param process the associated process
    */
   constructor( @Inject(MAT_DIALOG_DATA) public process: Process) { }
 

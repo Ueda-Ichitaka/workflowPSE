@@ -168,7 +168,7 @@ export class EditorPageComponent implements OnInit {
     }
 
     await this.save();
-    this.workflowService.start(this.workflow.id);
+    await this.workflowService.start(this.workflow.id);
     this.workflowService.get(this.workflow.id).pipe(take(1)).subscribe(workflow => {
       this.workflow = workflow;
       setTimeout(() => { this.cd.detectChanges(); }, 10);
@@ -232,7 +232,7 @@ export class EditorPageComponent implements OnInit {
         this.router.navigate([`/editor/${obj.id}`]);
       });
     } else {
-      const result = this.workflowService.update(this.workflow.id, this.workflow).toPromise();
+      const result = await this.workflowService.update(this.workflow.id, this.workflow).toPromise();
       setTimeout(() => { this.cd.detectChanges(); }, 10);
       return result;
     }

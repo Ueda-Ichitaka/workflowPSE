@@ -22,6 +22,7 @@ export interface ProcessParameter<T extends 'input' | 'output'> {
     type: ProcessParameterType;
     title: string;
     abstract: string;
+    format: string;
     min_occurs: number;
     max_occurs: number;
 }

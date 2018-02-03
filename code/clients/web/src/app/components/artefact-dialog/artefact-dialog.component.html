@@ -9,23 +9,13 @@
   <!-- INPUT -->
   <div *ngIf="parameter.role === 'input'" class="type-container" [ngSwitch]="parameter.type">
     <p class="abstract" *ngIf="parameter.abstract">{{ parameter.abstract }}</p>
-    <mat-divider></mat-divider>
-
-    <div fxLayout="row" fxLayoutAlign="space-between">
-      <span class="subtitle">Change Input</span>
-      <button mat-icon-button (click)="clickEditButton()">
-        <mat-icon>{{editMode ? 'check' : 'edit'}}</mat-icon>
-      </button>
-    </div>
-    <pre [style.display]="editMode ? 'none' : 'block'">
-        <code #code></code>
-    </pre>
 
     <div [style.display]="editMode ? 'block' : 'none'">
       <!-- Literal Input -->
       <ng-container *ngSwitchCase="0">
         <mat-form-field class="data-field">
-          <input matInput [(ngModel)]="data.value" placeholder="Input Data ({{ artefact.format }})">
+          <input type="text" matInput [(ngModel)]="data.value" placeholder="Input Value">
+          <mat-hint>Format: {{ data.format | uppercase }}</mat-hint>
         </mat-form-field>
       </ng-container>
 
@@ -61,12 +51,11 @@
 
 </mat-dialog-content>
 
-<mat-divider></mat-divider>
 <mat-dialog-actions fxLayout="row" fxLayoutAlign="end">
   <button mat-button mat-dialog-close i18n="@@close">Close</button>
 
   <ng-container *ngIf="parameter.role === 'input'">
     <button *ngIf="deletable" mat-button (click)="remove()" i18n="@@delete" color="warn">DELETE</button>
-    <button mat-raised-button (click)="save()" i18n="@@add" color="primary">SAVE</button>
+    <button mat-raised-button (click)="save()" i18n="@@add" color="primary" [disabled]="!valid">SAVE</button>
   </ng-container>
 </mat-dialog-actions>

@@ -30,7 +30,6 @@ export class ArtefactDialogComponent implements OnInit {
   public parameter: ProcessParameter<'input' | 'output'>;
 
   public deletable = false;
-  public artefact: Artefact<'input' | 'output'>;
 
   /**
    * creates an artefact object
@@ -45,13 +44,17 @@ export class ArtefactDialogComponent implements OnInit {
       ? this.task.task.input_artefacts
       : this.task.task.output_artefacts;
 
-    this.artefact = artefacts.find(a => a.parameter_id === this.parameter.id);
+    const artefact = artefacts.find(a => a.parameter_id === this.parameter.id);
 
     // Check if parameter has artefact
-    if (this.artefact) {
+    if (artefact) {
       this.data = {
-        value: this.artefact.data,
-        format: this.artefact.format,
+        value: artefact.data,
+        format: artefact.format,
+      };
+    } else {
+      this.data = {
+        format: this.parameter.format || 'string',
       };
     }
 
@@ -64,6 +67,24 @@ export class ArtefactDialogComponent implements OnInit {
   public codeComponent: ElementRef;
 
   public ngOnInit() {
+  }
+
+  public get valid(): boolean {
+    // Check Literal Data
+    if (this.parameter.type === ProcessParameterType.LITERAL) {
+      if (!this.data.value || this.data.value.length === 0) {
+        return false;
+      }
+
+      switch (this.data.format) {
+        case 'string': return true;
+        case 'float': return !isNaN(this.data.value);
+        case 'integer': return /^-?[0-9]+$/.test(this.data.value);
+        default: return true; /* Match any type */
+      }
+    }
+
+    return true;
   }
 
   /**

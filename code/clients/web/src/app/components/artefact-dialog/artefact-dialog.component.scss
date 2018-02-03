@@ -26,11 +26,14 @@
 }
 
 .data-field {
-    width: 100%;
+    width: calc(100% - 16px);
+    background: #F9F9F9;
+    border-radius: 3px;
+    padding: 8px;
 }
 
 .type-container {
-    margin: 21px 0;
+    margin: 3px 0 21px 0;
 }
 .subtitle {
     line-height: 40px;
@@ -40,4 +43,5 @@
 
 .data-field-small {
     width: 40%;
+    background: #F9F9F9;
 }
