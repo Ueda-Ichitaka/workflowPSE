@@ -81,8 +81,8 @@ def add_wps_server(server_url):
 
     After that the method update_wps_processes will called.
 
-    @param server_urls: List of urls given by admin on admin page
-    @type server_urls: str list
+    @param server_url: List of urls given by admin on admin page
+    @type server_url: str list
     @return: None
     @rtype: NoneType
     """
@@ -139,7 +139,8 @@ def search_provider_in_database(service_provider):
     @rtype: WPSProvider | NoneType
     """
     try:
-        provider = WPSProvider.objects.get(provider_name=service_provider.provider_name, provider_site=service_provider.provider_site)
+        provider = WPSProvider.objects.get(provider_name=service_provider.provider_name,
+                                           provider_site=service_provider.provider_site)
     except WPSProvider.DoesNotExist:
         provider = None
 
@@ -205,15 +206,14 @@ def search_input_output_in_database(parsed_input_output):
     @return:
     """
     try:
-        ioput = InputOutput.objects.get(identifier=parsed_input_output.identifier,
-                                        process=parsed_input_output.process, role=parsed_input_output.role)
+        input_output = InputOutput.objects.get(identifier=parsed_input_output.identifier,
+                                               process=parsed_input_output.process, role=parsed_input_output.role)
     except InputOutput.DoesNotExist:
-        ioput = None
+        input_output = None
 
-    return ioput
+    return input_output
 
 
-# TODO: tests, documentation
 def overwrite_server(old_entry, new_entry):
     """
     Overwrites the fields of WPS server object in database
@@ -299,7 +299,7 @@ def parse_service_provider_info(root, namespaces):
         individual_name = service_contact_element.find('ows:IndividualName', namespaces).text
         position_name = service_contact_element.find('ows:PositionName', namespaces).text
 
-    #fails if one of elements cannot be found
+    # Fails if one of elements cannot be found
     except AttributeError:
         wpsLog.error('Unable to parse information about service provider')
         return None

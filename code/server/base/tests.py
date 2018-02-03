@@ -264,82 +264,109 @@ class ParsingTestCase(TestCase):
                                                                        self.say_hello_literal_process))
 
 
-
-
 class DatabaseSearcherTestCase(TestCase):
     """
 
     """
     wps_provider = None
     wps_server = None
+    wps_process = None
+    wps_process_input = None
+    wps_process_output = None
 
-    def create_and_save_wps_provider(self):
+    def setUp(self):
+        self.wps_provider = WPSProvider.objects.create(provider_name='Organization Name',
+                                                       provider_site='http://pywps.org/',
+                                                       individual_name='Lastname, Firstname',
+                                                       position_name='Position Title')
+        self.wps_server = WPS.objects.create(service_provider=self.wps_provider,
+                                             title='PyWPS Processing Service',
+                                             abstract='PyWPS is an implementation of the Web Processing '
+                                                      'Service standard from the Open Geospatial Consortium. '
+                                                      'PyWPS is written in Python.',
+                                             capabilities_url='http://localhost/wps?request=GetCapabilities&service=WPS',
+                                             describe_url='http://localhost/wps?request=DescribeProcess'
+                                                          '&service=WPS&identifier=all&version=1.0.0',
+                                             execute_url='http://localhost/wps?request=Execute&service=WPS')
+        self.wps_process = Process.objects.create(wps=self.wps_server,
+                                                  identifier='say_hello',
+                                                  title='Process Say Hello',
+                                                  abstract='Returns a literal string output with Hello plus '
+                                                           'the inputed name')
+        self.wps_process_input = InputOutput.objects.create(process=self.wps_process,
+                                                            role='0',  # Input
+                                                            identifier='name',
+                                                            title='Input name',
+                                                            abstract='No description for input available',
+                                                            datatype='0',  # Literal
+                                                            format='string',
+                                                            min_occurs='1',
+                                                            max_occurs='1')
+        self.wps_process_output = InputOutput.objects.create(process=self.wps_process,
+                                                             role='1',  # Output
+                                                             identifier='response',
+                                                             title='Output response',
+                                                             abstract='No description for output available',
+                                                             datatype='0',  # Literal
+                                                             format='string',
+                                                             min_occurs='1',
+                                                             max_occurs='1')
+
+    def test_search_provider_in_database(self):
         """
-
+        Tests, if search_provider_in_database search correct
         @return:
         @rtype:
         """
-        self.wps_provider = WPSProvider(provider_name='Help Service - Remote Sensing',
-                                        provider_site='http://bnhelp.cz',
-                                        individual_name='Jachym Cepicky',
-                                        position_name='developer')
-        self.wps_provider.save()
-
-    def create_and_save_wps_server(self):
-        """
-
-        @return:
-        @rtype:
-        """
-        self.create_and_save_wps_provider()
-        self.wps_server = WPS(service_provider=self.wps_provider,
-                              title='PyWPS Example deploy server',
-                              abstract='Instance of PyWPS, for testing and teaching purposes.',
-                              capabilities_url='http://appd.esdi-humboldt.cz/pywps/?',
-                              describe_url='http://appd.esdi-humboldt.cz/pywps/?',
-                              execute_url='http://appd.esdi-humboldt.cz/pywps/?')
-        self.wps_server.save()
-
-    @unittest.skip('fails')
-    def test_search_provider_in_database_1(self):
-        """
-
-        @return:
-        @rtype:
-        """
-        self.create_and_save_wps_provider()
         provider_from_database = utils.search_provider_in_database(self.wps_provider)
         self.assertIsNotNone(provider_from_database)
 
-    @unittest.skip('fails')
-    def test_search_provider_in_database_2(self):
+    def test_search_provider_in_empty_database(self):
         """
 
         @return:
         @rtype:
         """
+        WPSProvider.objects.all().delete()
         provider_from_database = utils.search_provider_in_database(self.wps_provider)
         self.assertIsNone(provider_from_database)
 
-    def test_search_server_in_database_1(self):
+    def test_search_server_in_database(self):
         """
 
         @return:
         @rtype:
         """
-        self.create_and_save_wps_server()
         server_from_database = utils.search_server_in_database(self.wps_server)
         self.assertIsNotNone(server_from_database)
 
-    @unittest.skip('fails')
-    def test_search_server_in_database_2(self):
+    def test_search_server_in_empty_database_(self):
         """
 
         @return:
         @rtype:
         """
+        WPS.objects.all().delete()
         server_from_database = utils.search_server_in_database(self.wps_server)
         self.assertIsNone(server_from_database)
+
+    def test_search_process_in_database(self):
+        process_from_database = utils.search_process_in_database(self.wps_process)
+        self.assertIsNotNone(process_from_database)
+
+    def test_search_process_in_empty_database(self):
+        Process.objects.all().delete()
+        process_from_database = utils.search_process_in_database(self.wps_process)
+        self.assertIsNone(process_from_database)
+
+    def test_search_input_output_in_database(self):
+        input_from_database = utils.search_input_output_in_database(self.wps_process_input)
+        self.assertIsNotNone(input_from_database)
+
+    def test_search_input_output_in_empty_database(self):
+        InputOutput.objects.all().delete()
+        input_from_database = utils.search_input_output_in_database(self.wps_process_input)
+        self.assertIsNone(input_from_database)
 
     @unittest.skip('fails')
     def test_overwrite_server(self):
