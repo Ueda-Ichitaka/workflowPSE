@@ -411,51 +411,44 @@ def parse_input_info(input_element, namespaces, process):
     @return: input of the WPS process
     @rtype: InputOutput
     """
-    input_identifier = input_element.find('ows:Identifier', namespaces).text
-    input_title = input_element.find('ows:Title', namespaces).text
-
-    input_abstract_element = input_element.find('ows:Abstract', namespaces)
-    input_abstract = input_abstract_element.text if input_abstract_element is not None \
-        else 'No description for input available'
-
-    input_datatype = None
-    input_format = None
-
-    if input_element.find('LiteralData') is not None:
-        input_datatype = DATATYPE[0][0]
-        literal_data_element = input_element.find('LiteralData')
-        input_format = literal_data_element.find('ows:DataType', namespaces).text
-    elif input_element.find('ComplexData') is not None:
-        input_datatype = DATATYPE[1][0]
-        input_format = None
-    elif input_element.find('BoundingBoxData') is not None:
-        input_datatype = DATATYPE[2][0]
-        input_format = None
-
     try:
+        input_identifier = input_element.find('ows:Identifier', namespaces).text
+        input_title = input_element.find('ows:Title', namespaces).text
+
+        input_abstract_element = input_element.find('ows:Abstract', namespaces)
+        input_abstract = input_abstract_element.text if input_abstract_element is not None \
+            else 'No description for input available'
+
+        input_datatype = None
+        input_format = None
+
+        if input_element.find('LiteralData') is not None:
+            input_datatype = DATATYPE[0][0]
+            literal_data_element = input_element.find('LiteralData')
+            input_format = literal_data_element.find('ows:DataType', namespaces).text
+        elif input_element.find('ComplexData') is not None:
+            input_datatype = DATATYPE[1][0]
+            input_format = None
+        elif input_element.find('BoundingBoxData') is not None:
+            input_datatype = DATATYPE[2][0]
+            input_format = None
+
         input_min_occurs = input_element.attrib.get('minOccurs')
         input_max_occurs = input_element.attrib.get('maxOccurs')
-    except:
-        # TODO: is this ok?
-        input_min_occurs = '0'
-        input_max_occurs = '0'
+    except AttributeError:
+        wpsLog.error('Unable to parse information about wps process s input')
+        return None
 
-    try:
-        input = InputOutput.objects.get(process=process,
-                                        role=ROLE[0][0],
-                                        identifier=input_identifier,
-                                        title=input_title)
-    except InputOutput.DoesNotExist:
-        input = InputOutput(process=process,
-                            role=ROLE[0][0],
-                            identifier=input_identifier,
-                            title=input_title,
-                            abstract=input_abstract,
-                            datatype=input_datatype,
-                            format=input_format,
-                            min_occurs=input_min_occurs,
-                            max_occurs=input_max_occurs)
-    return input
+    return_input = InputOutput(process=process,
+                               role=ROLE[0][0],
+                               identifier=input_identifier,
+                               title=input_title,
+                               abstract=input_abstract,
+                               datatype=input_datatype,
+                               format=input_format,
+                               min_occurs=input_min_occurs,
+                               max_occurs=input_max_occurs)
+    return return_input
 
 
 def parse_output_info(output_element, namespaces, process):
@@ -473,43 +466,41 @@ def parse_output_info(output_element, namespaces, process):
     @return: output of the WPS process
     @rtype: InputOutput
     """
-    output_identifier = output_element.find('ows:Identifier', namespaces).text
-    output_title = output_element.find('ows:Title', namespaces).text
-
-    output_abstract_element = output_element.find('ows:Abstract', namespaces)
-    output_abstract = output_abstract_element.text if output_abstract_element is not None \
-        else 'No description for output avaible'
-
-    output_datatype = None
-    output_format = None
-
-    if output_element.find('LiteralOutput') is not None:
-        output_datatype = DATATYPE[0][0]
-        literal_data_element = output_element.find('LiteralOutput')
-        output_format = literal_data_element.find('ows:DataType', namespaces).text
-    elif output_element.find('ComplexOutput') is not None:
-        output_datatype = DATATYPE[1][0]
-        output_format = None
-    elif output_element.find('BoundingBoxOutput') is not None:
-        output_datatype = DATATYPE[2][0]
-        output_format = None
-
-    output_min_occurs = 1
-    output_max_occurs = 1
-
     try:
-        output = InputOutput.objects.get(process=process,
-                                         role=ROLE[1][0],
-                                         identifier=output_identifier,
-                                         title=output_title)
-    except InputOutput.DoesNotExist:
-        output = InputOutput(process=process,
-                             role=ROLE[1][0],
-                             identifier=output_identifier,
-                             title=output_title,
-                             abstract=output_abstract,
-                             datatype=output_datatype,
-                             format=output_format,
-                             min_occurs=output_min_occurs,
-                             max_occurs=output_max_occurs)
+        output_identifier = output_element.find('ows:Identifier', namespaces).text
+        output_title = output_element.find('ows:Title', namespaces).text
+
+        output_abstract_element = output_element.find('ows:Abstract', namespaces)
+        output_abstract = output_abstract_element.text if output_abstract_element is not None \
+            else 'No description for output available'
+
+        output_datatype = None
+        output_format = None
+
+        if output_element.find('LiteralOutput') is not None:
+            output_datatype = DATATYPE[0][0]
+            literal_data_element = output_element.find('LiteralOutput')
+            output_format = literal_data_element.find('ows:DataType', namespaces).text
+        elif output_element.find('ComplexOutput') is not None:
+            output_datatype = DATATYPE[1][0]
+            output_format = None
+        elif output_element.find('BoundingBoxOutput') is not None:
+            output_datatype = DATATYPE[2][0]
+            output_format = None
+
+        output_min_occurs = '1'
+        output_max_occurs = '1'
+    except AttributeError:
+        wpsLog.error('Unable to parse information about wps process s output')
+        return None
+
+    output = InputOutput(process=process,
+                         role=ROLE[1][0],
+                         identifier=output_identifier,
+                         title=output_title,
+                         abstract=output_abstract,
+                         datatype=output_datatype,
+                         format=output_format,
+                         min_occurs=output_min_occurs,
+                         max_occurs=output_max_occurs)
     return output
