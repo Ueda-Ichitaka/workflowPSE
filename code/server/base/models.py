@@ -148,7 +148,7 @@ class InputOutput(models.Model):
     identifier = models.CharField(max_length=200, null=True)
     title = models.CharField(max_length=200)
     abstract = models.TextField(
-        'Descriptive text', default='Add your super descriptive text here...')
+        'Descriptive text', default='Add your super descriptive text here...', null=True)
     datatype = models.CharField(max_length=1, choices=DATATYPE, null=True)
     format = models.CharField(max_length=200, null=True)
     min_occurs = models.IntegerField()

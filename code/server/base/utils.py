@@ -416,8 +416,7 @@ def parse_input_info(input_element, namespaces, process):
         input_title = input_element.find('ows:Title', namespaces).text
 
         input_abstract_element = input_element.find('ows:Abstract', namespaces)
-        input_abstract = input_abstract_element.text if input_abstract_element is not None \
-            else 'No description for input available'
+        input_abstract = input_abstract_element.text if input_abstract_element is not None else None
 
         input_datatype = None
         input_format = None
@@ -471,8 +470,7 @@ def parse_output_info(output_element, namespaces, process):
         output_title = output_element.find('ows:Title', namespaces).text
 
         output_abstract_element = output_element.find('ows:Abstract', namespaces)
-        output_abstract = output_abstract_element.text if output_abstract_element is not None \
-            else 'No description for output available'
+        output_abstract = output_abstract_element.text if output_abstract_element is not None else None
 
         output_datatype = None
         output_format = None
