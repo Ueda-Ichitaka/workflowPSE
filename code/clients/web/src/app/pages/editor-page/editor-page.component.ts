@@ -176,8 +176,8 @@ export class EditorPageComponent implements OnInit {
     this.updateWorkflowStatus();
   }
 
-  public stop() {
-    this.workflowService.stop(this.workflow.id);
+  public async stop() {
+    await this.workflowService.stop(this.workflow.id);
     this.workflowService.get(this.workflow.id).pipe(take(1)).subscribe(workflow => {
       this.workflow = workflow;
       setTimeout(() => { this.cd.detectChanges(); }, 10);

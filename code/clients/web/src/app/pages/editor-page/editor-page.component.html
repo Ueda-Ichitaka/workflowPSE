@@ -39,7 +39,8 @@
   <ng-template #runningTemplate>
     <mat-spinner *ngIf="!finished()" class="run" class="spinner" diameter="89"></mat-spinner>
     <button mat-fab color="primary" class="run" (click)="stop()">
-      <mat-icon matTooltip="Stop" aria-label="Stop">stop</mat-icon>
+      <mat-icon *ngIf="!finished()" matTooltip="Stop" aria-label="Stop">stop</mat-icon>
+      <mat-icon *ngIf="finished()" matTooltip="Edit" aria-label="Edit">edit</mat-icon>
     </button>
   </ng-template>
 </ng-container>

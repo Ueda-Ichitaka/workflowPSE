@@ -8,7 +8,7 @@
 <mat-dialog-content class="content">
   <!-- INPUT -->
   <div *ngIf="parameter.role === 'input'" class="type-container" [ngSwitch]="parameter.type">
-    <p class="abstract">{{ parameter.abstract }}</p>
+    <p class="abstract" *ngIf="parameter.abstract">{{ parameter.abstract }}</p>
     <mat-divider></mat-divider>
 
     <div fxLayout="row" fxLayoutAlign="space-between">
@@ -25,20 +25,12 @@
       <!-- Literal Input -->
       <ng-container *ngSwitchCase="0">
         <mat-form-field class="data-field">
-          <input matInput [(ngModel)]="data.value" placeholder="Input Data">
+          <input matInput [(ngModel)]="data.value" placeholder="Input Data ({{ artefact.format }})">
         </mat-form-field>
       </ng-container>
 
       <!-- Compley Input -->
       <ng-container *ngSwitchCase="1">
-        <mat-form-field>
-          <mat-select placeholder="Format" [(value)]="selectedFormat">
-            <mat-option value="markdown">No Format</mat-option>
-            <mat-option value="sql">SQL</mat-option>
-            <mat-option value="xml">XML</mat-option>
-            <mat-option value="json">JSON</mat-option>
-          </mat-select>
-        </mat-form-field>
         <mat-form-field class="data-field">
           <textarea matInput [(ngModel)]="data.value" placeholder="Input Data" matTextareaAutosize matAutosizeMinRows="5"></textarea>
         </mat-form-field>

@@ -30,6 +30,7 @@ export class ArtefactDialogComponent implements OnInit {
   public parameter: ProcessParameter<'input' | 'output'>;
 
   public deletable = false;
+  public artefact: Artefact<'input' | 'output'>;
 
   /**
    * creates an artefact object
@@ -44,13 +45,13 @@ export class ArtefactDialogComponent implements OnInit {
       ? this.task.task.input_artefacts
       : this.task.task.output_artefacts;
 
-    const artefact = artefacts.find(a => a.parameter_id === this.parameter.id);
+    this.artefact = artefacts.find(a => a.parameter_id === this.parameter.id);
 
     // Check if parameter has artefact
-    if (artefact) {
+    if (this.artefact) {
       this.data = {
-        value: artefact.data,
-        format: artefact.format,
+        value: this.artefact.data,
+        format: this.artefact.format,
       };
     }
 
