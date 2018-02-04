@@ -34,6 +34,11 @@ ns_map = {
     "DataInput": f"{{{ns['wps']}}}DataInput",
     "Reference": f"{{{ns['wps']}}}Reference",
     "ExceptionReport": f"{{{ns['wps']}}}ExceptionReport",
+    "ProcessFailed": f"{{{ns['wps']}}}ProcessFailed",
+    "ProcessAccepted": f"{{{ns['wps']}}}ProcessAccepted",
+    "ProcessStarted": f"{{{ns['wps']}}}ProcessStarted",
+    "ProcessPaused": f"{{{ns['wps']}}}ProcessPaused",
+    "ProcessSucceeded": f"{{{ns['wps']}}}ProcessSucceeded",
 
     # ows namespaced tags
     "Identifier": f"{{{ns['ows']}}}Identifier",
