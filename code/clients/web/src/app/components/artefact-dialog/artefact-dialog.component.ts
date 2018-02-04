@@ -48,15 +48,20 @@ export class ArtefactDialogComponent implements OnInit {
 
     // Check if parameter has artefact
     if (artefact) {
-      this.data = {
-        value: artefact.data,
-        format: artefact.format,
-      };
-    } else {
-      this.data = {
-        format: this.parameter.format || 'string',
-      };
+      this.data['value'] = artefact.data;
     }
+    if (artefact && this.parameter.type === ProcessParameterType.BOUNDING_BOX) {
+      const coords = artefact.data.split(';')
+        .map(value => value.split('=')[1])
+        .map(value => value.split(' '));
+
+      this.data.ux = coords[0][0];
+      this.data.uy = coords[0][1];
+      this.data.lx = coords[1][0];
+      this.data.ly = coords[1][1];
+    }
+
+    this.data['format'] = this.parameter.format || 'string';
 
     if (this.data.value) {
       this.deletable = true;
@@ -70,8 +75,9 @@ export class ArtefactDialogComponent implements OnInit {
   }
 
   public get valid(): boolean {
-    // Check Literal Data
+
     if (this.parameter.type === ProcessParameterType.LITERAL) {
+      // Check Literal Data
       if (!this.data.value || this.data.value.length === 0) {
         return false;
       }
@@ -82,6 +88,22 @@ export class ArtefactDialogComponent implements OnInit {
         case 'integer': return /^-?[0-9]+$/.test(this.data.value);
         default: return true; /* Match any type */
       }
+    } else if (this.parameter.type === ProcessParameterType.COMPLEX) {
+      // Check Compley Data
+
+    } else if (this.parameter.type === ProcessParameterType.BOUNDING_BOX) {
+      // Check Bounding Box Data
+
+      // All fields must exist
+      if (this.data.ux === undefined
+        || this.data.uy === undefined
+        || this.data.lx === undefined
+        || this.data.lx === undefined) {
+        return false;
+      }
+
+    } else {
+      console.log(`Error: Process Type Not Found ${this.parameter.type}`);
     }
 
     return true;
@@ -114,7 +136,7 @@ export class ArtefactDialogComponent implements OnInit {
       el.classList.add(format);
 
       const data = this.parameter.type === ProcessParameterType.BOUNDING_BOX
-        ? `UpperCorner=${this.data.tx} ${this.data.ty};LowerCorner=${this.data.bx} ${this.data.by}`
+        ? `UpperCorner=${this.data.ux} ${this.data.uy};LowerCorner=${this.data.lx} ${this.data.ly}`
         : this.data.value;
 
       if (data) {
@@ -137,7 +159,7 @@ export class ArtefactDialogComponent implements OnInit {
 
     const out = {
       value: this.parameter.type === ProcessParameterType.BOUNDING_BOX
-        ? `UpperCorner=${this.data.tx} ${this.data.ty};LowerCorner=${this.data.bx} ${this.data.by}`
+        ? `UpperCorner=${this.data.ux} ${this.data.uy};LowerCorner=${this.data.lx} ${this.data.ly}`
         : this.data.value,
 
       format: this.selectedFormat === 'markdown' ? 'plain' : this.selectedFormat

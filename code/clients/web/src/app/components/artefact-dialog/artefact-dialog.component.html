@@ -29,16 +29,16 @@
       <!-- Bounding Box Input -->
       <ng-container *ngSwitchCase="2">
         <mat-form-field class="data-field-small">
-          <input matInput [(ngModel)]="data.tx" placeholder="Top X" type="number">
+          <input matInput [(ngModel)]="data.ux" placeholder="UpperCorner X" type="number">
         </mat-form-field>
         <mat-form-field class="data-field-small">
-          <input matInput [(ngModel)]="data.ty" placeholder="Top Y" type="number">
+          <input matInput [(ngModel)]="data.uy" placeholder="UpperCorner Y" type="number">
         </mat-form-field>
         <mat-form-field class="data-field-small">
-          <input matInput [(ngModel)]="data.bx" placeholder="Bottom X" type="number">
+          <input matInput [(ngModel)]="data.lx" placeholder="LowerCorner X" type="number">
         </mat-form-field>
         <mat-form-field class="data-field-small">
-          <input matInput [(ngModel)]="data.by" placeholder="Bottom Y" type="number">
+          <input matInput [(ngModel)]="data.ly" placeholder="LowerCorner Y" type="number">
         </mat-form-field>
       </ng-container>
     </div>

@@ -123,3 +123,7 @@ ENV/
 .vscode
 
 
+# WPSflow
+*.log
+db.sqlite3
+testfiles/
