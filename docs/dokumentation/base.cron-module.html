@@ -72,7 +72,7 @@
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">None</span>
+      <span class="summary-type">NoneType</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -89,12 +89,12 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">None</span>
+      <span class="summary-type">NoneType</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#xmlGenerator" class="summary-sig-name">xmlGenerator</a>(<span class="summary-sig-arg">xmlDir</span>)</span><br />
-      Traverses Database and generates execution XMLL files for every Task 
+      Traverses Database and generates execution XML files for every Task 
       set to status WAITING</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#xmlGenerator">source&nbsp;code</a></span>
@@ -107,7 +107,24 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">None</span>
+      <span class="summary-type">lxml.etree._Element/int</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="base.cron-module.html#createDataDoc" class="summary-sig-name">createDataDoc</a>(<span class="summary-sig-arg">task</span>)</span><br />
+      creates subtree for execute request for model.Task task</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.cron-pysrc.html#createDataDoc">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">NoneType</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -142,7 +159,7 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">None</span>
+      <span class="summary-type">NoneType</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -164,12 +181,12 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#parse_execute_response" class="summary-sig-name">parse_execute_response</a>(<span class="summary-sig-arg">task</span>)</span><br />
+          <td><span class="summary-sig"><a href="base.cron-module.html#parseExecuteResponse" class="summary-sig-name">parseExecuteResponse</a>(<span class="summary-sig-arg">task</span>)</span><br />
       checks parameter tasks status by checking xml file found at 
       status_url for change if task has finished write data to db if there 
       is any data</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#parse_execute_response">source&nbsp;code</a></span>
+            <span class="codelink"><a href="base.cron-pysrc.html#parseExecuteResponse">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -179,12 +196,50 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">NoneType</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="base.cron-module.html#parseOutput" class="summary-sig-name">parseOutput</a>(<span class="summary-sig-arg">output</span>,
+        <span class="summary-sig-arg">task</span>)</span><br />
+      parses output node of xml and inserts respective data if found also 
+      updates status of task if there are any changes @param output the 
+      output that has to be parsed @type output lxmls.etree._Element</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.cron-pysrc.html#parseOutput">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">int</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="base.cron-module.html#calculate_percent_done" class="summary-sig-name">calculate_percent_done</a>(<span class="summary-sig-arg">workflow</span>)</span><br />
+      calculates the percentage of finished tasks in the workflow of task</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.cron-pysrc.html#calculate_percent_done">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">None</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#update_wps_processes" class="summary-sig-name">update_wps_processes</a>()</span><br />
-      Returns:</td>
+      This method update the list of WPS processes provided by the WPS 
+      Server.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#update_wps_processes">source&nbsp;code</a></span>
             
@@ -231,7 +286,7 @@
   their execution order, generates execution XML files and sends tasks to 
   their server for execution</p>
   <dl class="fields">
-    <dt>Returns: None</dt>
+    <dt>Returns: NoneType</dt>
         <dd>None</dd>
   </dl>
 </td></tr></table>
@@ -250,15 +305,36 @@
     </td>
   </tr></table>
   
-  <p>Traverses Database and generates execution XMLL files for every Task 
+  <p>Traverses Database and generates execution XML files for every Task 
   set to status WAITING</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>xmlDir</code></strong> (string) - Directory where XMLs are generated in</li>
     </ul></dd>
-    <dt>Returns: None</dt>
+    <dt>Returns: NoneType</dt>
         <dd>None</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="createDataDoc"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">createDataDoc</span>(<span class="sig-arg">task</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.cron-pysrc.html#createDataDoc">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>creates subtree for execute request for model.Task task</p>
+  <dl class="fields">
+    <dt>Returns: lxml.etree._Element/int</dt>
+        <dd>subtree on success, error code 1 otherwise</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -284,7 +360,7 @@
         <li><strong class="pname"><code>task_id</code></strong> (int) - ID of Task in Database</li>
         <li><strong class="pname"><code>xmlDir</code></strong> (string) - Directory where XMLs are stored in</li>
     </ul></dd>
-    <dt>Returns: None</dt>
+    <dt>Returns: NoneType</dt>
         <dd>None</dd>
   </dl>
 </td></tr></table>
@@ -332,22 +408,22 @@
   <p>loops all running tasks parses xml on server and checks for status 
   overwrites status if changed if task is finished, write data to db</p>
   <dl class="fields">
-    <dt>Returns: None</dt>
+    <dt>Returns: NoneType</dt>
         <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
-<a name="parse_execute_response"></a>
+<a name="parseExecuteResponse"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_execute_response</span>(<span class="sig-arg">task</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parseExecuteResponse</span>(<span class="sig-arg">task</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#parse_execute_response">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="base.cron-pysrc.html#parseExecuteResponse">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
@@ -360,6 +436,60 @@
     </ul></dd>
     <dt>Returns: int</dt>
         <dd>0 on success, error code otherwise</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="parseOutput"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parseOutput</span>(<span class="sig-arg">output</span>,
+        <span class="sig-arg">task</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.cron-pysrc.html#parseOutput">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>parses output node of xml and inserts respective data if found also 
+  updates status of task if there are any changes @param output the output 
+  that has to be parsed @type output lxmls.etree._Element</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>task</code></strong> (subclass of models.Model) - the task that belongs to the output</li>
+    </ul></dd>
+    <dt>Returns: NoneType</dt>
+        <dd>None</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="calculate_percent_done"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">calculate_percent_done</span>(<span class="sig-arg">workflow</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.cron-pysrc.html#calculate_percent_done">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>calculates the percentage of finished tasks in the workflow of 
+  task</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>task</code></strong> (Task) - task with recently changed status</li>
+    </ul></dd>
+    <dt>Returns: int</dt>
+        <dd>percentage of finished tasks in the workflow of task</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -377,8 +507,16 @@
     </td>
   </tr></table>
   
-  
+  <p>This method update the list of WPS processes provided by the WPS 
+  Server. It takes a describe_processes_url of each wps server saved in 
+  database, open it, and parses the xml file, that comes in request 
+  message.</p>
+  <p>It will be checked if any object present in database. If no, it will 
+  be saved, else it will be overwritten with the actual information 
+  provided by the WPS server.</p>
   <dl class="fields">
+    <dt>Returns: None</dt>
+        <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -406,7 +544,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Jan 30 12:32:06 2018
+    Generated by Epydoc 3.0.1 on Sun Feb  4 12:39:11 2018
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
