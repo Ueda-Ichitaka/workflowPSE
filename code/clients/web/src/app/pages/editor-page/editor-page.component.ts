@@ -168,16 +168,13 @@ export class EditorPageComponent implements OnInit {
     }
 
     await this.save();
-    // Make sure workflow was realy saved
-    setTimeout(async () => {
-      await this.workflowService.start(this.workflow.id);
-      this.workflowService.get(this.workflow.id).pipe(take(1)).subscribe(workflow => {
-        this.workflow = workflow;
-        setTimeout(() => { this.cd.detectChanges(); }, 10);
-      });
-      this.updateWorkflowStatus();
-    }, 100);
 
+    await this.workflowService.start(this.workflow.id);
+    this.workflowService.get(this.workflow.id).pipe(take(1)).subscribe(workflow => {
+      this.workflow = workflow;
+      setTimeout(() => { this.cd.detectChanges(); }, 10);
+    });
+    this.updateWorkflowStatus();
   }
 
   public async stop() {

@@ -124,6 +124,6 @@ ENV/
 
 
 # WPSflow
-*.log
+wps.log.*
 db.sqlite3
 testfiles/

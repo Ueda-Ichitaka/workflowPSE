@@ -148,7 +148,9 @@ export class WorkflowService {
     }
 
     for (const task of workflow.tasks) {
-      if (task.state !== TaskState.FINISHED) {
+      if (task.state !== TaskState.FINISHED
+        && task.state !== TaskState.DEPRECATED
+        && task.state !== TaskState.FAILED) {
         return false;
       }
     }

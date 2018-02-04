@@ -50,7 +50,13 @@ export class ArtefactDialogComponent implements OnInit {
     if (artefact) {
       this.data['value'] = artefact.data;
     }
-    if (artefact && this.parameter.type === ProcessParameterType.BOUNDING_BOX) {
+    if (artefact.role === 'input') {
+      this.data['format'] = this.parameter.format || 'string';
+    }
+    if (artefact.role === 'output') {
+      this.data['format'] = artefact.format || 'string';
+    }
+    if (artefact.role === 'input' && this.parameter.type === ProcessParameterType.BOUNDING_BOX) {
       const coords = artefact.data.split(';')
         .map(value => value.split('=')[1])
         .map(value => value.split(' '));
@@ -60,8 +66,6 @@ export class ArtefactDialogComponent implements OnInit {
       this.data.lx = coords[1][0];
       this.data.ly = coords[1][1];
     }
-
-    this.data['format'] = this.parameter.format || 'string';
 
     if (this.data.value) {
       this.deletable = true;
