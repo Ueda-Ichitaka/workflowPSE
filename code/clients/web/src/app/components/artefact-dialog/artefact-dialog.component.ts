@@ -49,23 +49,28 @@ export class ArtefactDialogComponent implements OnInit {
     // Check if parameter has artefact
     if (artefact) {
       this.data['value'] = artefact.data;
-    }
-    if (artefact.role === 'input') {
+
+      if (artefact.role === 'input') {
+        this.data['format'] = this.parameter.format || 'string';
+
+        if (this.parameter.type === ProcessParameterType.BOUNDING_BOX) {
+          const coords = artefact.data.split(';')
+            .map(value => value.split('=')[1])
+            .map(value => value.split(' '));
+
+          this.data.ux = coords[0][0];
+          this.data.uy = coords[0][1];
+          this.data.lx = coords[1][0];
+          this.data.ly = coords[1][1];
+        }
+      }
+      if (artefact.role === 'output') {
+        this.data['format'] = artefact.format || 'string';
+      }
+    } else {
       this.data['format'] = this.parameter.format || 'string';
     }
-    if (artefact.role === 'output') {
-      this.data['format'] = artefact.format || 'string';
-    }
-    if (artefact.role === 'input' && this.parameter.type === ProcessParameterType.BOUNDING_BOX) {
-      const coords = artefact.data.split(';')
-        .map(value => value.split('=')[1])
-        .map(value => value.split(' '));
 
-      this.data.ux = coords[0][0];
-      this.data.uy = coords[0][1];
-      this.data.lx = coords[1][0];
-      this.data.ly = coords[1][1];
-    }
 
     if (this.data.value) {
       this.deletable = true;
