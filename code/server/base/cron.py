@@ -307,9 +307,8 @@ def sendTask(task_id, xmlDir):
         elif xml.find(ns_map['Status']).find(ns_map['ProcessFailed']) is not None:
             status = '5'
             try:
-                exception_elem = xml.find(ns_map['Status']).find(ns_map['ProcessFailed']) \
-                    .find(ns_map['ExceptionReport']).find(ns_map['Exception']).find(ns_map['ExceptionText'])
-                err_msg = exception_elem.text
+                err_msg = xml.find(ns_map['Status']).find(ns_map['ProcessFailed']) \
+                    .find(ns_map['ExceptionReport']).find(ns_map['Exception']).find(ns_map['ExceptionText']).text
             except:
                 err_msg = "unknown error"
     elif xml.find(ns_map['Exception']) is not None:
@@ -317,6 +316,8 @@ def sendTask(task_id, xmlDir):
         exception_elem = xml.find(ns_map['Exception']).find(ns_map['ExceptionText'])
         if exception_elem is None:
             err_msg = "unknown error"
+        else:
+            err_msg = exception_elem.text
     else:
         status = '5'
         err_msg = "unknown error"
@@ -335,6 +336,8 @@ def sendTask(task_id, xmlDir):
         status_url = "error_url"
     else:
         status_url = "http://" + status_url.lstrip("http://")
+
+    wpsLog.info(f"STATUS URL: {status_url}")
 
     task.status_url = status_url
 
@@ -703,7 +706,7 @@ def calculate_percent_done(workflow):
     workflow.save()
 
 def task_failed_handling(task, err_msg):
-    wpsLog.debug(f"task{task.id} failed, status url: {task.status_url}")
+    wpsLog.debug(f"task{task.id} failed, due to error: {err_msg}")
     wpsLog.debug("error artefacts are created")
 
     time_now = datetime.now()
