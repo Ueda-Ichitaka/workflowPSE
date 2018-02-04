@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path
 
 from base import views
@@ -25,4 +26,7 @@ urlpatterns = [
     url(r'^workflows/', views.WorkflowsView.as_view(), name='workflows'),
     url(r'^editor/', views.EditorView.as_view(), name='editor'),
     url(r'^settings/', views.SettingsView.as_view(), name='settings'),
+
+    url(r'^login/', LoginView.as_view(template_name='base/login.html'), name='login'),
+    url(r'^logout/', LogoutView.as_view())
 ]

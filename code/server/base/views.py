@@ -2,6 +2,7 @@ import calendar
 import datetime
 import json
 
+from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -55,6 +56,27 @@ class WorkflowView(View):
 
     """
 
+    @staticmethod
+    def can_user_access_workflow(user, workflow_id):
+        """"
+
+        @param user
+        @type user
+        @param workflow_id
+        @type workflow_id int
+        @return:
+        @rtype: bool
+        """
+        if not user.is_authenticated:
+            return False
+
+        if user.is_staff:
+            return True
+
+        workflow = get_object_or_404(Workflow, pk=workflow_id)
+
+        return workflow.shared or workflow.creator_id == user.id
+
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
@@ -81,6 +103,9 @@ class WorkflowView(View):
         @rtype:
         """
         if 'workflow_id' in kwargs:
+            if not WorkflowView.can_user_access_workflow(request.user, kwargs['workflow_id']):
+                return JsonResponse({'error': 'no access'})
+
             workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
 
             # get_object_or_404() ist not used here because for some reason
@@ -134,7 +159,10 @@ class WorkflowView(View):
 
             return as_json_response(returned)
         else:
-            returned = list(Workflow.objects.all().order_by(
+            if not request.user.is_authenticated:
+                return JsonResponse({'error': 'no access'})
+
+            returned = list(Workflow.objects.filter(Q(shared=True) | Q(creator_id=request.user.id)).order_by(
                 '-updated_at').values())
 
             for (i, workflow) in enumerate(returned):
@@ -195,13 +223,17 @@ class WorkflowView(View):
         @return:
         @rtype:
         """
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'no access'})
+
         new_data = json.loads(request.body)
 
         new_workflow = Workflow.objects.create(
             name=new_data['title'],
             percent_done=0,
-            creator_id=1,  # TODO: request.user.id
-            last_modifier_id=1  # TODO: request.user.id
+            shared=new_data['shared'],
+            creator_id=request.user.id,
+            last_modifier_id=request.user.id
         )
 
         temporary_to_new_task_ids = {}
@@ -251,11 +283,15 @@ class WorkflowView(View):
         @return:
         @rtype:
         """
+        if not WorkflowView.can_user_access_workflow(request.user, kwargs['workflow_id']):
+            return JsonResponse({'error': 'no access'})
+
         new_data = json.loads(request.body)
         workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
 
         workflow.name = new_data['title']
-        workflow.last_modifier_id = 1  # TODO: request.user.id
+        workflow.shared=new_data['shared']
+        workflow.last_modifier_id = request.user.id
 
         workflow.save()
 
@@ -359,6 +395,9 @@ class WorkflowView(View):
         @return:
         @rtype:
         """
+        if not WorkflowView.can_user_access_workflow(request.user, kwargs['workflow_id']):
+            return JsonResponse({'error': 'no access'})
+
         workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
         (deletedWorkflowCount, countOfDeletionsPerType) = workflow.delete()
         deleted = (deletedWorkflowCount > 0)
@@ -377,6 +416,9 @@ class WorkflowView(View):
         @return:
         @rtype:
         """
+        if not WorkflowView.can_user_access_workflow(request.user, workflow_id):
+            return JsonResponse({'error': 'no access'})
+
         Task.objects.filter(workflow=workflow_id).update(status=1)
 
         # TODO: return {"error": "..."} for some errors
@@ -394,6 +436,9 @@ class WorkflowView(View):
         @return:
         @rtype:
         """
+        if not WorkflowView.can_user_access_workflow(request.user, workflow_id):
+            return JsonResponse({'error': 'no access'})
+
         workflow = get_object_or_404(Workflow, pk=workflow_id)
         tasks = workflow.task_set.all()
 

@@ -34,10 +34,11 @@ class Workflow(models.Model):
     percent_done = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    shared = models.BooleanField(default=False)
     creator = models.ForeignKey(
         User, editable=True, related_name='creator_user', on_delete=models.CASCADE)
     last_modifier = models.ForeignKey(
-        User, editable=True, null=True, blank=True, on_delete=models.SET_NULL)
+        User, editable=True, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Workflow"
