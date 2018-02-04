@@ -299,6 +299,8 @@ class WorkflowView(View):
         temporary_to_new_task_ids = {}
 
         for task_data in new_data['tasks']:
+            artefacts_data = task_data['input_artefacts'] + task_data['output_artefacts']
+
             if task_data['id'] > 0:
                 task = get_object_or_404(Task, pk=task_data['id'])
 
@@ -309,9 +311,6 @@ class WorkflowView(View):
                 task.status = task_data['state']
 
                 task.save()
-
-                artefacts_data = task_data['input_artefacts'] + \
-                    task_data['output_artefacts']
 
                 not_deleted_artefact_ids = []
 
@@ -350,6 +349,15 @@ class WorkflowView(View):
                     y=task_data['y'],
                     status=task_data['state']
                 )
+
+                for artefact_data in artefacts_data:
+                    Artefact.objects.create(
+                        task_id=task.id,
+                        parameter_id=artefact_data['parameter_id'],
+                        role=(0 if artefact_data['role'] == 'input' else 1),
+                        format=artefact_data['format'],
+                        data=artefact_data['data']
+                    )
 
             not_deleted_task_ids.append(task.pk)
             temporary_to_new_task_ids[task_data['id']] = task.id
