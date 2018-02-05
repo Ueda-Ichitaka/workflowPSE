@@ -1,10 +1,9 @@
+import os
 import urllib.request
 import xml.etree.ElementTree as ET
-from xml.etree.ElementTree import ParseError
 
 from lxml.builder import ElementMaker
 from pywps import NAMESPACES as ns
-import os
 
 import base.cron
 from base.models import WPSProvider, WPS, Process, InputOutput, DATATYPE, ROLE

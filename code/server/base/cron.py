@@ -1,12 +1,12 @@
-import os
 import base64
-import urllib.request
-import requests
-import xml.etree.ElementTree as ET
+import os
 import re
-
+import urllib.request
+import xml.etree.ElementTree as ET
 from datetime import datetime
 from io import StringIO, BytesIO
+
+import requests
 from lxml import etree
 
 import base.utils as utils_module
@@ -45,7 +45,7 @@ def scheduler():
                         f"task{current_task.id}'s prior task{current_edge.from_task.id} is finished")
                     if not Artefact.objects.filter(task=current_task, role='0'):
                         wps_log.warning(f"something is wrong here, task{current_task.id} has no artefacts,"
-                                       f"but there should at least be input artefacts")
+                                        f"but there should at least be input artefacts")
                         previous_tasks_finished = False
                         break
                     else:
@@ -79,8 +79,8 @@ def scheduler():
         wps_log.debug(f"sending execution request to server for task{tid}")
         send_task(tid, xml_dir)
 
-    # sys.stdout = orig_stdout
-    # f.close()
+        # sys.stdout = orig_stdout
+        # f.close()
 
 
 def xml_generator(xml_dir):
@@ -181,7 +181,7 @@ def create_data_doc(task):
             wps_log.debug(
                 f"file path found in task{task.id}s artefact{artefact.id}s data, inserting as data")
             data_inputs.append(wps_em.Input(identifier, title, wps_em.Reference({"method": "GET"},
-                                            {ns_map["href"]: utils_module.get_file_path(artefact)})))
+                                                                                {ns_map["href"]: utils_module.get_file_path(artefact)})))
             # go to loop header and continue
             continue
 
@@ -531,8 +531,8 @@ def parse_output(output, task):
             parse_response_complexdata(artefact, data_elem)
     elif reference is not None:
         # complexdata found, usually gets passed by url reference which won't be 500 chars long
-        db_format = "plain" if data_elem.get("dataType")\
-                            is None else data_elem.get("dataType").split(':')[-1]
+        db_format = "plain" if data_elem.get("dataType") \
+                               is None else data_elem.get("dataType").split(':')[-1]
         wps_log.debug("writing data to db")
         db_data = reference.text  # should be a url
         artefact.format = db_format
@@ -561,6 +561,7 @@ def parse_output(output, task):
                 to_artefact = Artefact.objects.create(task=edge.to_task, parameter=edge.input, role='0', format=artefact.format,
                                                       data=artefact.data, created_at=time_now, updated_at=time_now)
                 wps_log.debug(f"artefact{to_artefact.id} has been created")
+
 
 def parse_response_literaldata(artefact, data_elem):
     """
@@ -597,6 +598,7 @@ def parse_response_literaldata(artefact, data_elem):
         artefact.updated_at = time_now
         artefact.save()
 
+
 def parse_response_bbox(artefact, data_elem):
     """
     parses the xmls boundingboxdata subtree and inserts data into artefact
@@ -620,6 +622,7 @@ def parse_response_bbox(artefact, data_elem):
     artefact.updated_at = time_now
     artefact.save()
 
+
 def parse_response_complexdata(artefact, data_elem):
     """
     parses the xmls complexdata subtree and inserts data into artefact
@@ -640,7 +643,7 @@ def parse_response_complexdata(artefact, data_elem):
     if "CDATA" in data_elem.text:
         wps_log.debug(
             f"cdata found in complex data for output{output_db.id} of task{task.id}!")
-        #db_format = "CDATA;" + db_format
+        # db_format = "CDATA;" + db_format
 
         # if the string is less than 490 chars long write to db
         # otherwise write to file and write url to db
@@ -702,6 +705,7 @@ def parse_response_complexdata(artefact, data_elem):
         wps_log.debug(
             "no complex data found in complexdata tree element")
 
+
 # TODO: tests
 def calculate_percent_done(workflow):
     """
@@ -728,6 +732,7 @@ def calculate_percent_done(workflow):
     workflow.percent_done = percent_done
     workflow.save()
 
+
 def task_failed_handling(task, err_msg):
     """
     is called if a task failed to create error artefacts which signal the client
@@ -753,11 +758,9 @@ def task_failed_handling(task, err_msg):
                                     created_at=time_now, updated_at=time_now)
         else:
             wps_log.warning(f"task{task.id} failed due to ProcessFailed status, but there are already artefacts, "
-                           f"setting artefacts to error mode")
+                            f"setting artefacts to error mode")
             Artefact.objects.filter(task=task, parameter=output, role='1').update(format='error', data=err_msg,
                                                                                   updated_at=time_now)
-
-
 
 
 def update_wps_processes():

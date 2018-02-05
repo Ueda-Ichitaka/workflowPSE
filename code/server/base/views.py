@@ -1,5 +1,4 @@
 import calendar
-import datetime
 import json
 
 from django.db.models import Q
@@ -250,7 +249,7 @@ class WorkflowView(View):
             temporary_to_new_task_ids[new_task_data['id']] = new_task.id
 
             artefacts_data = new_task_data['input_artefacts'] + \
-                new_task_data['output_artefacts']
+                             new_task_data['output_artefacts']
 
             for artefact_data in artefacts_data:
                 Artefact.objects.create(
@@ -290,7 +289,7 @@ class WorkflowView(View):
         workflow = get_object_or_404(Workflow, pk=kwargs['workflow_id'])
 
         workflow.name = new_data['title']
-        workflow.shared=new_data['shared']
+        workflow.shared = new_data['shared']
         workflow.last_modifier_id = request.user.id
 
         workflow.save()
