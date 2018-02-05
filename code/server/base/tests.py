@@ -1,9 +1,9 @@
 import os
-import xml.etree.ElementTree as ET
-from xml.etree.ElementTree import ParseError
-from datetime import datetime
 import unittest
+import xml.etree.ElementTree as ET
+from datetime import datetime
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 
 import base.cron
@@ -13,44 +13,82 @@ from base.models import WPSProvider, WPS, Process, Workflow, Task, InputOutput, 
 
 class SchedulerTestCase(TestCase):
     """
-
+    Test Class for scheduler and execution tests
     """
     dir_path = os.path.dirname(os.path.abspath(__file__))
     xmlDir = os.path.join(dir_path, 'testfiles/')
 
     def setUp(self):
-        # user
-        Workflow.objects.create(name="TestWF", description="tl;dr", percent_done='0', created_at=datetime.now(), creator='1')
-        WPSProvider.objects.create(provider_name="Test Provider", provider_site="pse.rudolphrichard.de", individual_name="Rudolph, Richard",
-                                   position_name="Software Engineer")
-        WPS.objects.create(service_provider='1', title="PyWPS Testserver", abstract="tl;dr", capabilities_url="http://pse.rudolphrichard.de:5000/wps",
-                           describe_url="http://pse.rudolphrichard.de:5000/wps", execute_url="http://pse.rudolphrichard.de:5000/wps")
-        Process.objects.create(wps='1', identifier="say_hello", title="Process Say Hello", abstract="tl;dr")
-        Task.objects.create(workflow='1', process='1', x='1', y='1', status='1', title="Say Hello Task", status_url="http://pse.rudolphrichard.de")
-        InputOutput.objects.create(process='1', role='0', identifier="name", title="Input name", abstract="tl;dr", datatype='0', format="string",
-                                   min_occurs='1', max_occurs='1')
-        InputOutput.objects.create(process='1', role='1', identifier="response", title="Output name response", abstract="tl;dr", datatype='0',
-                                   format="string",
-                                   min_occurs='1', max_occurs='1')
-        Artefact.objects.create(task='1', parameter='1', role='0', format="string", data="Ueda")
+        """
+        Sets up test data in test db, gets called before every test function
+        @return: None
+        @rtype: NoneType
+        """
+        self.u = User.objects.create(username='testUser')
+        self.u.save()
+        self.w = Workflow.objects.create(name="TestWF", description="tl;dr", percent_done='0', created_at=datetime.now(), creator_id='1',
+                                         last_modifier_id='1')
+        self.w.save()
+        self.wp = WPSProvider.objects.create(provider_name="Test Provider", provider_site="pse.rudolphrichard.de", individual_name="Rudolph, Richard",
+                                             position_name="Software Engineer")
+        self.wp.save()
+        self.wps = WPS.objects.create(service_provider_id='1', title="PyWPS Testserver", abstract="tl;dr",
+                                      capabilities_url="http://pse.rudolphrichard.de:5000/wps",
+                                      describe_url="http://pse.rudolphrichard.de:5000/wps", execute_url="http://pse.rudolphrichard.de:5000/wps")
+        self.p = Process.objects.create(wps_id='1', identifier="say_hello", title="Process Say Hello", abstract="tl;dr")
+        self.p.save()
+        self.t = Task.objects.create(workflow_id='1', process_id='1', x='1', y='1', status='1', title="Say Hello Task",
+                                     status_url="http://pse.rudolphrichard.de")
+        self.t.save()
+        self.io1 = InputOutput.objects.create(process_id='1', role='0', identifier="name", title="Input name", abstract="tl;dr", datatype='0',
+                                              format="string",
+                                              min_occurs='1', max_occurs='1')
+        self.io1.save()
+        self.io2 = InputOutput.objects.create(process_id='1', role='1', identifier="response", title="Output name response", abstract="tl;dr",
+                                              datatype='0',
+                                              format="string",
+                                              min_occurs='1', max_occurs='1')
+        self.io2.save()
+        self.a = Artefact.objects.create(task_id='1', parameter_id='1', role='0', format="string", data="Ueda")
+        self.a.save()
 
-    @unittest.skip('fails')
-    def test_generate_XML(self):
-        pass
-
-    @unittest.skip('fails')
     def test_send_task(self):
+        """
+        Schedules the test Task and asserts it gets a response from server and status url is written to DB
+        @return: None
+        @rtype: NoneType
+        """
         base.cron.scheduler()
         task = Task.objects.get(title="Say Hello Task")
-        self.assertContains(task.status_url, "http://pse.rudolphrichard.de:5000/outputs/")
+        self.assertIn("http://pse.rudolphrichard.de:5000/outputs/", task.status_url)
 
-    @unittest.skip('fails')
     def test_execution(self):
+        """
+        Executes Task and tests if the correct answer is written to DB.
+        @return: None
+        @rtype: NoneType
+        """
         base.cron.scheduler()
         base.cron.receiver()
         base.cron.receiver()
         output = Artefact.objects.get(role='1', task='1', parameter='2')
         self.assertEqual(output.data, 'Hello Ueda')
+
+    def tearDown(self):
+        """
+        Destroys the test datasets in database after test method was executed. Gets called after every test method
+        @return: None
+        @rtype: NoneType
+        """
+        self.u.delete()
+        self.w.delete()
+        self.wp.delete()
+        self.wps.delete()
+        self.p.delete()
+        self.t.delete()
+        self.io1.delete()
+        self.io2.delete()
+        self.a.delete()
 
 
 # Create your tests here.
@@ -160,8 +198,8 @@ class ParserTestCase(TestCase):
         wps_provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
         wps_server = base.utils.parse_wps_server_info(self.capabilities_root, self.xml_namespaces, wps_provider)
         self.assertEqual(wps_server.title, self.wps_server.title)
-        self.assertEqual(wps_server.abstract, self.wps_server.abstract,)
-        self.assertEqual(wps_server.capabilities_url, self.wps_server.capabilities_url,)
+        self.assertEqual(wps_server.abstract, self.wps_server.abstract, )
+        self.assertEqual(wps_server.capabilities_url, self.wps_server.capabilities_url, )
         self.assertEqual(wps_server.describe_url, self.wps_server.describe_url)
         self.assertEqual(wps_server.execute_url, self.wps_server.execute_url)
 
@@ -210,7 +248,6 @@ class ParserTestCase(TestCase):
         self.assertEqual(wps_process_input.max_occurs, self.say_hello_literal_input.max_occurs)
 
     def test_parse_process_output_literal(self):
-
         say_hello_process_output_element = self.say_hello_process_element.find('./ProcessOutputs/Output')
         wps_process_input = base.utils.parse_output_info(say_hello_process_output_element, self.xml_namespaces,
                                                          self.say_hello_literal_process)

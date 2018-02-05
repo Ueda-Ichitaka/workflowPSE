@@ -93,11 +93,11 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#xmlGenerator" class="summary-sig-name">xmlGenerator</a>(<span class="summary-sig-arg">xmlDir</span>)</span><br />
+          <td><span class="summary-sig"><a href="base.cron-module.html#xml_generator" class="summary-sig-name">xml_generator</a>(<span class="summary-sig-arg">xml_dir</span>)</span><br />
       Traverses Database and generates execution XML files for every Task 
       set to status WAITING</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#xmlGenerator">source&nbsp;code</a></span>
+            <span class="codelink"><a href="base.cron-pysrc.html#xml_generator">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -111,10 +111,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#createDataDoc" class="summary-sig-name">createDataDoc</a>(<span class="summary-sig-arg">task</span>)</span><br />
+          <td><span class="summary-sig"><a href="base.cron-module.html#create_data_doc" class="summary-sig-name">create_data_doc</a>(<span class="summary-sig-arg">task</span>)</span><br />
       creates subtree for execute request for model.Task task</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#createDataDoc">source&nbsp;code</a></span>
+            <span class="codelink"><a href="base.cron-pysrc.html#create_data_doc">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -128,11 +128,11 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#sendTask" class="summary-sig-name">sendTask</a>(<span class="summary-sig-arg">task_id</span>,
-        <span class="summary-sig-arg">xmlDir</span>)</span><br />
+          <td><span class="summary-sig"><a href="base.cron-module.html#send_task" class="summary-sig-name">send_task</a>(<span class="summary-sig-arg">task_id</span>,
+        <span class="summary-sig-arg">xml_dir</span>)</span><br />
       Sends a Task identified by its Database ID to its WPS Server.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#sendTask">source&nbsp;code</a></span>
+            <span class="codelink"><a href="base.cron-pysrc.html#send_task">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -146,10 +146,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#getExecuteUrl" class="summary-sig-name">getExecuteUrl</a>(<span class="summary-sig-arg">task</span>)</span><br />
+          <td><span class="summary-sig"><a href="base.cron-module.html#get_execute_url" class="summary-sig-name">get_execute_url</a>(<span class="summary-sig-arg">task</span>)</span><br />
       Extracts the Execute URL from the Database for a given task.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#getExecuteUrl">source&nbsp;code</a></span>
+            <span class="codelink"><a href="base.cron-pysrc.html#get_execute_url">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -181,12 +181,12 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#parseExecuteResponse" class="summary-sig-name">parseExecuteResponse</a>(<span class="summary-sig-arg">task</span>)</span><br />
+          <td><span class="summary-sig"><a href="base.cron-module.html#parse_execute_response" class="summary-sig-name">parse_execute_response</a>(<span class="summary-sig-arg">task</span>)</span><br />
       checks parameter tasks status by checking xml file found at 
       status_url for change if task has finished write data to db if there 
       is any data</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#parseExecuteResponse">source&nbsp;code</a></span>
+            <span class="codelink"><a href="base.cron-pysrc.html#parse_execute_response">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -200,13 +200,68 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.cron-module.html#parseOutput" class="summary-sig-name">parseOutput</a>(<span class="summary-sig-arg">output</span>,
+          <td><span class="summary-sig"><a href="base.cron-module.html#parse_output" class="summary-sig-name">parse_output</a>(<span class="summary-sig-arg">output</span>,
         <span class="summary-sig-arg">task</span>)</span><br />
       parses output node of xml and inserts respective data if found also 
       updates status of task if there are any changes @param output the 
       output that has to be parsed @type output lxmls.etree._Element</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="base.cron-pysrc.html#parseOutput">source&nbsp;code</a></span>
+            <span class="codelink"><a href="base.cron-pysrc.html#parse_output">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">NoneType</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="base.cron-module.html#parse_response_literaldata" class="summary-sig-name">parse_response_literaldata</a>(<span class="summary-sig-arg">artefact</span>,
+        <span class="summary-sig-arg">data_elem</span>)</span><br />
+      parses the xmls literaldata subtree and inserts data into artefact</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.cron-pysrc.html#parse_response_literaldata">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">NoneType</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="base.cron-module.html#parse_response_bbox" class="summary-sig-name">parse_response_bbox</a>(<span class="summary-sig-arg">artefact</span>,
+        <span class="summary-sig-arg">data_elem</span>)</span><br />
+      parses the xmls boundingboxdata subtree and inserts data into 
+      artefact</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.cron-pysrc.html#parse_response_bbox">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">NoneType</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="base.cron-module.html#parse_response_complexdata" class="summary-sig-name">parse_response_complexdata</a>(<span class="summary-sig-arg">artefact</span>,
+        <span class="summary-sig-arg">data_elem</span>)</span><br />
+      parses the xmls complexdata subtree and inserts data into artefact</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.cron-pysrc.html#parse_response_complexdata">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -233,7 +288,26 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">None</span>
+      <span class="summary-type">NoneType</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="base.cron-module.html#task_failed_handling" class="summary-sig-name">task_failed_handling</a>(<span class="summary-sig-arg">task</span>,
+        <span class="summary-sig-arg">err_msg</span>)</span><br />
+      is called if a task failed to create error artefacts which signal the
+      client that the task has failed</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.cron-pysrc.html#task_failed_handling">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">NoneType</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -291,17 +365,17 @@
   </dl>
 </td></tr></table>
 </div>
-<a name="xmlGenerator"></a>
+<a name="xml_generator"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">xmlGenerator</span>(<span class="sig-arg">xmlDir</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">xml_generator</span>(<span class="sig-arg">xml_dir</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#xmlGenerator">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="base.cron-pysrc.html#xml_generator">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
@@ -310,46 +384,50 @@
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>xmlDir</code></strong> (string) - Directory where XMLs are generated in</li>
+        <li><strong class="pname"><code>xml_dir</code></strong> (string) - Directory where XMLs are generated in</li>
     </ul></dd>
     <dt>Returns: NoneType</dt>
         <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
-<a name="createDataDoc"></a>
+<a name="create_data_doc"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">createDataDoc</span>(<span class="sig-arg">task</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">create_data_doc</span>(<span class="sig-arg">task</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#createDataDoc">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="base.cron-pysrc.html#create_data_doc">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
   <p>creates subtree for execute request for model.Task task</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>task</code></strong> (models.Task) - the task for which the data subtree is created</li>
+    </ul></dd>
     <dt>Returns: lxml.etree._Element/int</dt>
         <dd>subtree on success, error code 1 otherwise</dd>
   </dl>
 </td></tr></table>
 </div>
-<a name="sendTask"></a>
+<a name="send_task"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">sendTask</span>(<span class="sig-arg">task_id</span>,
-        <span class="sig-arg">xmlDir</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">send_task</span>(<span class="sig-arg">task_id</span>,
+        <span class="sig-arg">xml_dir</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#sendTask">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="base.cron-pysrc.html#send_task">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
@@ -358,24 +436,24 @@
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>task_id</code></strong> (int) - ID of Task in Database</li>
-        <li><strong class="pname"><code>xmlDir</code></strong> (string) - Directory where XMLs are stored in</li>
+        <li><strong class="pname"><code>xml_dir</code></strong> (string) - Directory where XMLs are stored in</li>
     </ul></dd>
     <dt>Returns: NoneType</dt>
         <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
-<a name="getExecuteUrl"></a>
+<a name="get_execute_url"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">getExecuteUrl</span>(<span class="sig-arg">task</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_execute_url</span>(<span class="sig-arg">task</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#getExecuteUrl">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="base.cron-pysrc.html#get_execute_url">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
@@ -413,17 +491,17 @@
   </dl>
 </td></tr></table>
 </div>
-<a name="parseExecuteResponse"></a>
+<a name="parse_execute_response"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">parseExecuteResponse</span>(<span class="sig-arg">task</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_execute_response</span>(<span class="sig-arg">task</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#parseExecuteResponse">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="base.cron-pysrc.html#parse_execute_response">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
@@ -439,18 +517,18 @@
   </dl>
 </td></tr></table>
 </div>
-<a name="parseOutput"></a>
+<a name="parse_output"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">parseOutput</span>(<span class="sig-arg">output</span>,
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_output</span>(<span class="sig-arg">output</span>,
         <span class="sig-arg">task</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.cron-pysrc.html#parseOutput">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="base.cron-pysrc.html#parse_output">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
@@ -461,6 +539,88 @@
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>task</code></strong> (subclass of models.Model) - the task that belongs to the output</li>
+    </ul></dd>
+    <dt>Returns: NoneType</dt>
+        <dd>None</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="parse_response_literaldata"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_response_literaldata</span>(<span class="sig-arg">artefact</span>,
+        <span class="sig-arg">data_elem</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.cron-pysrc.html#parse_response_literaldata">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>parses the xmls literaldata subtree and inserts data into artefact</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>artefact</code></strong> (models.Artefact) - the artefact which the data is put into</li>
+        <li><strong class="pname"><code>data_elem</code></strong> (lxml.etree._Element) - the xml node element which holds the data</li>
+    </ul></dd>
+    <dt>Returns: NoneType</dt>
+        <dd>None</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="parse_response_bbox"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_response_bbox</span>(<span class="sig-arg">artefact</span>,
+        <span class="sig-arg">data_elem</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.cron-pysrc.html#parse_response_bbox">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>parses the xmls boundingboxdata subtree and inserts data into 
+  artefact</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>artefact</code></strong> (models.Artefact) - the artefact which the data is put into</li>
+        <li><strong class="pname"><code>data_elem</code></strong> (lxml.etree._Element) - the xml node element which holds the data</li>
+    </ul></dd>
+    <dt>Returns: NoneType</dt>
+        <dd>None</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="parse_response_complexdata"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_response_complexdata</span>(<span class="sig-arg">artefact</span>,
+        <span class="sig-arg">data_elem</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.cron-pysrc.html#parse_response_complexdata">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>parses the xmls complexdata subtree and inserts data into artefact</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>artefact</code></strong> (models.Artefact) - the artefact which the data is put into</li>
+        <li><strong class="pname"><code>data_elem</code></strong> (lxml.etree._Element) - the xml node element which holds the data</li>
     </ul></dd>
     <dt>Returns: NoneType</dt>
         <dd>None</dd>
@@ -493,6 +653,34 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="task_failed_handling"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">task_failed_handling</span>(<span class="sig-arg">task</span>,
+        <span class="sig-arg">err_msg</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.cron-pysrc.html#task_failed_handling">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>is called if a task failed to create error artefacts which signal the 
+  client that the task has failed</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>task</code></strong> (models.Task) - the failed task</li>
+        <li><strong class="pname"><code>err_msg</code></strong> (string) - the error message</li>
+    </ul></dd>
+    <dt>Returns: NoneType</dt>
+        <dd>None</dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="update_wps_processes"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -515,7 +703,7 @@
   be saved, else it will be overwritten with the actual information 
   provided by the WPS server.</p>
   <dl class="fields">
-    <dt>Returns: None</dt>
+    <dt>Returns: NoneType</dt>
         <dd>None</dd>
   </dl>
 </td></tr></table>
@@ -544,7 +732,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sun Feb  4 12:39:11 2018
+    Generated by Epydoc 3.0.1 on Mon Feb  5 16:07:30 2018
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

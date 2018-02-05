@@ -18,11 +18,11 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d;%(funcName)s()] - %(message)s')  #
-filehandler = logging.handlers.RotatingFileHandler(BASE_DIR + '/wps.log', mode='a', maxBytes=32*1024, backupCount=2, encoding=None, delay=0)
+filehandler = logging.handlers.RotatingFileHandler(BASE_DIR + '/wps.log', mode='a', maxBytes=32 * 1024, backupCount=2, encoding=None, delay=0)
 filehandler.setFormatter(formatter)
 wps_log = logging.getLogger('wps')
 
-wps_log.setLevel(logging.DEBUG) # set logging level here
+wps_log.setLevel(logging.DEBUG)  # set logging level here
 wps_log.addHandler(filehandler)
 # streamHandler = logging.StreamHandler()
 # streamHandler.setFormatter(formatter)
@@ -125,7 +125,6 @@ if (DEBUG):
     MIDDLEWARE += 'corsheaders.middleware.CorsMiddleware',
     INSTALLED_APPS += 'corsheaders',
     CORS_ORIGIN_ALLOW_ALL = True
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

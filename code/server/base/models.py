@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-
 STATUS = (
     ('0', 'NONE'),
     ('1', 'READY'),
