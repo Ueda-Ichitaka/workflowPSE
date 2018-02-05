@@ -3,6 +3,7 @@ import base64
 import urllib.request
 import requests
 import xml.etree.ElementTree as ET
+import re
 
 from datetime import datetime
 from io import StringIO, BytesIO
@@ -330,7 +331,7 @@ def send_task(task_id, xml_dir):
         status = '5'
         status_url = "error_url"
     else:
-        status_url = "http://" + status_url.lstrip("http://")
+        status_url = "http://" + re.sub(r"^http://", "", status_url)
 
     wps_log.info(f"STATUS URL: {status_url}")
 
