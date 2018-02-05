@@ -9,7 +9,7 @@ from django.test import TestCase
 import base.cron
 import base.utils as utils
 from base.models import WPSProvider, WPS, Process, Workflow, Task, InputOutput, Artefact
-
+from django.contrib.auth.models import User
 
 class SchedulerTestCase(TestCase):
     """
@@ -19,32 +19,37 @@ class SchedulerTestCase(TestCase):
     xmlDir = os.path.join(dir_path, 'testfiles/')
 
     def setUp(self):
-        # user
-        Workflow.objects.create(name="TestWF", description="tl;dr", percent_done='0', created_at=datetime.now(), creator='1')
-        WPSProvider.objects.create(provider_name="Test Provider", provider_site="pse.rudolphrichard.de", individual_name="Rudolph, Richard",
+        self.u = User.objects.create(username='testUser')
+        self.u.save()
+        self.w = Workflow.objects.create(name="TestWF", description="tl;dr", percent_done='0', created_at=datetime.now(), creator_id='1', last_modifier_id='1')
+        self.w.save()
+        self.wp = WPSProvider.objects.create(provider_name="Test Provider", provider_site="pse.rudolphrichard.de", individual_name="Rudolph, Richard",
                                    position_name="Software Engineer")
-        WPS.objects.create(service_provider='1', title="PyWPS Testserver", abstract="tl;dr", capabilities_url="http://pse.rudolphrichard.de:5000/wps",
+        self.wp.save()
+        self.wps = WPS.objects.create(service_provider_id='1', title="PyWPS Testserver", abstract="tl;dr", capabilities_url="http://pse.rudolphrichard.de:5000/wps",
                            describe_url="http://pse.rudolphrichard.de:5000/wps", execute_url="http://pse.rudolphrichard.de:5000/wps")
-        Process.objects.create(wps='1', identifier="say_hello", title="Process Say Hello", abstract="tl;dr")
-        Task.objects.create(workflow='1', process='1', x='1', y='1', status='1', title="Say Hello Task", status_url="http://pse.rudolphrichard.de")
-        InputOutput.objects.create(process='1', role='0', identifier="name", title="Input name", abstract="tl;dr", datatype='0', format="string",
+        self.p = Process.objects.create(wps_id='1', identifier="say_hello", title="Process Say Hello", abstract="tl;dr")
+        self.p.save()
+        self.t = Task.objects.create(workflow_id='1', process_id='1', x='1', y='1', status='1', title="Say Hello Task", status_url="http://pse.rudolphrichard.de")
+        self.t.save()
+        self.io1 = InputOutput.objects.create(process_id='1', role='0', identifier="name", title="Input name", abstract="tl;dr", datatype='0', format="string",
                                    min_occurs='1', max_occurs='1')
-        InputOutput.objects.create(process='1', role='1', identifier="response", title="Output name response", abstract="tl;dr", datatype='0',
+        self.io1.save()
+        self.io2 = InputOutput.objects.create(process_id='1', role='1', identifier="response", title="Output name response", abstract="tl;dr", datatype='0',
                                    format="string",
                                    min_occurs='1', max_occurs='1')
-        Artefact.objects.create(task='1', parameter='1', role='0', format="string", data="Ueda")
-
-    @unittest.skip('fails')
+        self.io2.save()
+        self.a = Artefact.objects.create(task_id='1', parameter_id='1', role='0', format="string", data="Ueda")
+        self.a.save()
+         
     def test_generate_XML(self):
         pass
-
-    @unittest.skip('fails')
+ 
     def test_send_task(self):
         base.cron.scheduler()
         task = Task.objects.get(title="Say Hello Task")
-        self.assertContains(task.status_url, "http://pse.rudolphrichard.de:5000/outputs/")
-
-    @unittest.skip('fails')
+        self.assertIn("http://pse.rudolphrichard.de:5000/outputs/", task.status_url)
+ 
     def test_execution(self):
         base.cron.scheduler()
         base.cron.receiver()
@@ -52,6 +57,16 @@ class SchedulerTestCase(TestCase):
         output = Artefact.objects.get(role='1', task='1', parameter='2')
         self.assertEqual(output.data, 'Hello Ueda')
 
+    def tearDown(self):
+        self.u.delete()
+        self.w.delete()
+        self.wp.delete()
+        self.wps.delete()
+        self.p.delete()
+        self.t.delete()
+        self.io1.delete()
+        self.io2.delete()
+        self.a.delete()
 
 # Create your tests here.
 class ParsingTestCase(TestCase):
