@@ -1,0 +1,260 @@
+##########################
+### All files sorted   ###
+### by extension in    ###
+### alphabetical order ###
+##########################
+
+Total file count: 157
+
+There are 23 extensions
+
+         1               1           
+         1               2           
+         1             css           
+         1    editorconfig           
+         1      firebaserc           
+         1       gitignore           
+        19            html        515
+         2             ico          8
+         5              js         61
+        11            json       7141
+         1             log           
+         1              md           
+         5             png        935
+         2         project         36
+        17              py       3130
+        17             pyc       1098
+         2    pydevproject         24
+        12            scss        540
+         1         sqlite3           
+        48              ts       2876
+         2             txt        105
+         2             xlf        267
+         4             xml        819
+
+### 1 files ###
+
+./server/wps.log.1
+
+### 2 files ###
+
+./server/wps.log.2
+
+### css files ###
+
+./server/base/static/styles.e5da1c793135e1916e5e.bundle.css
+
+### editorconfig files ###
+
+./clients/web/.editorconfig
+
+### firebaserc files ###
+
+./clients/web/.firebaserc
+
+### gitignore files ###
+
+./clients/web/.gitignore
+
+### html files ###
+
+./clients/web/src/app/pages/settings-page/settings-page.component.html
+./clients/web/src/app/pages/editor-page/editor-page.component.html
+./clients/web/src/app/pages/workflows-page/workflows-page.component.html
+./clients/web/src/app/components/artefact-dialog/artefact-dialog.component.html
+./clients/web/src/app/components/process-list/process-list.component.html
+./clients/web/src/app/components/process/process.component.html
+./clients/web/src/app/components/result-dialog/result-dialog.component.html
+./clients/web/src/app/components/app/app.component.html
+./clients/web/src/app/components/process-dialog/process-dialog.component.html
+./clients/web/src/app/components/editor/editor.component.html
+./clients/web/src/app/components/task/task.component.html
+./clients/web/src/index.html
+./server/base/templates/base/base.html
+./server/base/templates/base/editor.html
+./server/base/templates/base/workflows.html
+./server/base/templates/base/settings.html
+./server/base/templates/base/index.html
+./server/base/templates/index.html
+./server/base/static/index.html
+
+### ico files ###
+
+./clients/web/src/favicon.ico
+./server/base/static/favicon.ico
+
+### js files ###
+
+./clients/web/karma.conf.js
+./clients/web/protractor.conf.js
+./server/base/static/inline.c087644dc00d1bf892a4.bundle.js
+./server/base/static/main.0bf83da57efe497c98a2.bundle.js
+./server/base/static/polyfills.64434f84d37df9d6f6cb.bundle.js
+
+### json files ###
+
+./clients/web/e2e/tsconfig.e2e.json
+./clients/web/tsconfig.json
+./clients/web/firebase.json
+./clients/web/src/tsconfig.json
+./clients/web/src/tsconfig.app.json
+./clients/web/src/app/services/mock.json
+./clients/web/src/tsconfig.spec.json
+./clients/web/package.json
+./clients/web/tslint.json
+./clients/web/.angular-cli.json
+./clients/web/package-lock.json
+
+### log files ###
+
+./server/wps.log
+
+### md files ###
+
+./clients/web/README.md
+
+### png files ###
+
+./clients/web/src/assets/img/logo.png
+./clients/web/src/assets/img/editor_bg.png
+./server/base/static/assets/img/logo.png
+./server/base/static/assets/img/editor_bg.png
+./server/base/static/editor_bg.a05b9f83c7c3ca3568ef.png
+
+### project files ###
+
+./.project
+./server/.project
+
+### py files ###
+
+./server/base/cron.py
+./server/base/admin.py
+./server/base/views.py
+./server/base/models.py
+./server/base/apps.py
+./server/base/migrations/0002_auto_20180131_1223.py
+./server/base/migrations/0001_initial.py
+./server/base/migrations/__init__.py
+./server/base/urls.py
+./server/base/__init__.py
+./server/base/tests.py
+./server/base/utils.py
+./server/workflowPSE/wsgi.py
+./server/workflowPSE/settings.py
+./server/workflowPSE/urls.py
+./server/workflowPSE/__init__.py
+./server/manage.py
+
+### pyc files ###
+
+./server/base/migrations/__pycache__/__init__.cpython-36.pyc
+./server/base/migrations/__pycache__/0001_initial.cpython-36.pyc
+./server/base/migrations/__pycache__/0002_auto_20180131_1223.cpython-36.pyc
+./server/base/__pycache__/__init__.cpython-36.pyc
+./server/base/__pycache__/utils.cpython-36.pyc
+./server/base/__pycache__/admin.cpython-36.pyc
+./server/base/__pycache__/apps.cpython-36.pyc
+./server/base/__pycache__/views.cpython-36.pyc
+./server/base/__pycache__/models.cpython-36.pyc
+./server/base/__pycache__/urls.cpython-36.pyc
+./server/base/__pycache__/cron.cpython-36.pyc
+./server/base/__pycache__/tests.cpython-36.pyc
+./server/__pycache__/manage.cpython-36.pyc
+./server/workflowPSE/__pycache__/__init__.cpython-36.pyc
+./server/workflowPSE/__pycache__/wsgi.cpython-36.pyc
+./server/workflowPSE/__pycache__/settings.cpython-36.pyc
+./server/workflowPSE/__pycache__/urls.cpython-36.pyc
+
+### pydevproject files ###
+
+./.pydevproject
+./server/.pydevproject
+
+### scss files ###
+
+./clients/web/src/styles.scss
+./clients/web/src/app/pages/settings-page/settings-page.component.scss
+./clients/web/src/app/pages/editor-page/editor-page.component.scss
+./clients/web/src/app/pages/workflows-page/workflows-page.component.scss
+./clients/web/src/app/components/artefact-dialog/artefact-dialog.component.scss
+./clients/web/src/app/components/process-list/process-list.component.scss
+./clients/web/src/app/components/process/process.component.scss
+./clients/web/src/app/components/result-dialog/result-dialog.component.scss
+./clients/web/src/app/components/app/app.component.scss
+./clients/web/src/app/components/process-dialog/process-dialog.component.scss
+./clients/web/src/app/components/editor/editor.component.scss
+./clients/web/src/app/components/task/task.component.scss
+
+### sqlite3 files ###
+
+./server/db.sqlite3
+
+### ts files ###
+
+./clients/web/e2e/app.e2e-spec.ts
+./clients/web/e2e/app.po.ts
+./clients/web/src/environments/environment.ts
+./clients/web/src/environments/environment.prod.ts
+./clients/web/src/polyfills.ts
+./clients/web/src/app/pages/settings-page/settings-page.component.ts
+./clients/web/src/app/pages/settings-page/settings-page.component.spec.ts
+./clients/web/src/app/pages/editor-page/editor-page.component.spec.ts
+./clients/web/src/app/pages/editor-page/editor-page.component.ts
+./clients/web/src/app/pages/workflows-page/workflows-page.component.ts
+./clients/web/src/app/pages/workflows-page/workflows-page.component.spec.ts
+./clients/web/src/app/services/session.service.spec.ts
+./clients/web/src/app/services/workflow.service.ts
+./clients/web/src/app/services/process.service.ts
+./clients/web/src/app/services/session.service.ts
+./clients/web/src/app/services/wps.service.ts
+./clients/web/src/app/services/workflow.service.spec.ts
+./clients/web/src/app/services/process.service.spec.ts
+./clients/web/src/app/services/wps.service.spec.ts
+./clients/web/src/app/models/Artefact.ts
+./clients/web/src/app/models/Session.ts
+./clients/web/src/app/models/Task.ts
+./clients/web/src/app/models/Process.ts
+./clients/web/src/app/models/Edge.ts
+./clients/web/src/app/models/ProcessParameter.ts
+./clients/web/src/app/models/WPS.ts
+./clients/web/src/app/models/WPSProvider.ts
+./clients/web/src/app/models/Workflow.ts
+./clients/web/src/app/app.module.ts
+./clients/web/src/app/components/artefact-dialog/artefact-dialog.component.ts
+./clients/web/src/app/components/artefact-dialog/artefact-dialog.component.spec.ts
+./clients/web/src/app/components/process-list/process-list.component.spec.ts
+./clients/web/src/app/components/process-list/process-list.component.ts
+./clients/web/src/app/components/process/process.component.ts
+./clients/web/src/app/components/process/process.component.spec.ts
+./clients/web/src/app/components/result-dialog/result-dialog.component.spec.ts
+./clients/web/src/app/components/result-dialog/result-dialog.component.ts
+./clients/web/src/app/components/app/app.component.ts
+./clients/web/src/app/components/app/app.component.spec.ts
+./clients/web/src/app/components/process-dialog/process-dialog.component.ts
+./clients/web/src/app/components/process-dialog/process-dialog.component.spec.ts
+./clients/web/src/app/components/editor/editor.component.spec.ts
+./clients/web/src/app/components/editor/editor.component.ts
+./clients/web/src/app/components/task/task.component.spec.ts
+./clients/web/src/app/components/task/task.component.ts
+./clients/web/src/main.ts
+./clients/web/src/typings.d.ts
+./clients/web/src/test.ts
+
+### txt files ###
+
+./server/base/outfile.txt
+./server/base/static/3rdpartylicenses.txt
+
+### xlf files ###
+
+./clients/web/src/locale/messages.de.xlf
+./clients/web/src/locale/messages.xlf
+
+### xml files ###
+
+./server/base/testfiles/wpsDescribeProcesses.xml
+./server/base/testfiles/wpsGetCapabilities.xml
+./server/base/testfiles/getCapabilitiesFromEsdiHumboldt.xml
+./server/base/testfiles/broken_wpsGetCapabilities.xml
+
