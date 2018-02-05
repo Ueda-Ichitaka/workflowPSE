@@ -138,7 +138,7 @@ class ParserTestCase(TestCase):
                                           role='0',  # Input
                                           identifier='name',
                                           title='Input name',
-                                          abstract='No description for input available',
+                                          abstract=None,
                                           datatype='0',  # Literal
                                           format='string',
                                           min_occurs='1',
@@ -148,7 +148,7 @@ class ParserTestCase(TestCase):
                                            role='1',  # Output
                                            identifier='response',
                                            title='Output response',
-                                           abstract='No description for output available',
+                                           abstract=None,
                                            datatype='0',  # Literal
                                            format='string',
                                            min_occurs='1',
@@ -157,16 +157,55 @@ class ParserTestCase(TestCase):
     say_hello_process_element = describe_processes_root.find("./ProcessDescription/[ows:Identifier='say_hello']",
                                                              xml_namespaces)
 
-    """
-    wps_process_input = InputOutput(#process=wps_process,
-                                    role='0',
-                                    identifier='layer',
-                                    title='Layer',
-                                    abstract='No description for input available',
-                                    datatype='1',
-                                    format=None,
-                                    min_occurs='1',
-                                    max_occurs='1')"""
+    centroids_process = Process(wps=wps_server,
+                                identifier='centroids',
+                                title='Process Centroids',
+                                abstract='Returns a GeoJSON with centroids of features from an uploaded GML.')
+    centroids_complex_input = InputOutput(process=centroids_process,
+                                          role='0',
+                                          identifier='layer',
+                                          title='Layer',
+                                          abstract=None,
+                                          datatype='1',
+                                          format=None, #application/gml+xml
+                                          min_occurs='1',
+                                          max_occurs='1')
+    centroids_complex_output = InputOutput(process=centroids_process,
+                                           role='1',
+                                           identifier='out',
+                                           title='Referenced Output',
+                                           abstract=None,
+                                           datatype='1',
+                                           format=None, #application/json
+                                           min_occurs='1',
+                                           max_occurs='1')
+    centroid_process_element = describe_processes_root.find("./ProcessDescription/[ows:Identifier='centroids']",
+                                                            xml_namespaces)
+
+    bbox_process = Process(wps=wps_server,
+                           identifier='boundingbox',
+                           title='Bounding box in- and out',
+                           abstract='Given a bounding box, it returns the same bounding box')
+    bbox_bounding_box_input = InputOutput(process=bbox_process,
+                                          role='0',
+                                          identifier='bboxin',
+                                          title='box in',
+                                          abstract=None,
+                                          datatype='2',
+                                          format=None,
+                                          min_occurs='1',
+                                          max_occurs='1')
+    bbox_bounding_box_output = InputOutput(process=bbox_process,
+                                           role='1',
+                                           identifier='bboxout',
+                                           title='box out',
+                                           abstract=None,
+                                           datatype='2',
+                                           format=None,
+                                           min_occurs='1',
+                                           max_occurs='1')
+    bbox_process_element = describe_processes_root.find("./ProcessDescription/[ows:Identifier='boundingbox']",
+                                                        xml_namespaces)
 
     def test_parse_service_provider_info(self):
         """
@@ -249,38 +288,95 @@ class ParserTestCase(TestCase):
 
     def test_parse_process_output_literal(self):
         say_hello_process_output_element = self.say_hello_process_element.find('./ProcessOutputs/Output')
-        wps_process_input = base.utils.parse_output_info(say_hello_process_output_element, self.xml_namespaces,
-                                                         self.say_hello_literal_process)
+        wps_process_output = base.utils.parse_output_info(say_hello_process_output_element, self.xml_namespaces,
+                                                          self.say_hello_literal_process)
 
-        self.assertEqual(wps_process_input.role, self.say_hello_literal_output.role)
-        self.assertEqual(wps_process_input.identifier, self.say_hello_literal_output.identifier)
-        self.assertEqual(wps_process_input.title, self.say_hello_literal_output.title)
-        self.assertEqual(wps_process_input.abstract, self.say_hello_literal_output.abstract)
-        self.assertEqual(wps_process_input.datatype, self.say_hello_literal_output.datatype)
-        self.assertEqual(wps_process_input.format, self.say_hello_literal_output.format)
-        self.assertEqual(wps_process_input.min_occurs, self.say_hello_literal_output.min_occurs)
-        self.assertEqual(wps_process_input.max_occurs, self.say_hello_literal_output.max_occurs)
+        self.assertEqual(wps_process_output.role, self.say_hello_literal_output.role)
+        self.assertEqual(wps_process_output.identifier, self.say_hello_literal_output.identifier)
+        self.assertEqual(wps_process_output.title, self.say_hello_literal_output.title)
+        self.assertEqual(wps_process_output.abstract, self.say_hello_literal_output.abstract)
+        self.assertEqual(wps_process_output.datatype, self.say_hello_literal_output.datatype)
+        self.assertEqual(wps_process_output.format, self.say_hello_literal_output.format)
+        self.assertEqual(wps_process_output.min_occurs, self.say_hello_literal_output.min_occurs)
+        self.assertEqual(wps_process_output.max_occurs, self.say_hello_literal_output.max_occurs)
 
-    @unittest.skip('HZ')
     def test_parse_process_input_complex(self):
         """
         Tests, if parse_input_info parses correct
         @return: Nothing
         @rtype: None
         """
-        process_description = self.describe_processes_root.find('ProcessDescription')
-        data_inputs = process_description.find('DataInputs')
-        input_element = data_inputs.find('Input')
-        wps_process_input = base.utils.parse_input_info(input_element, self.xml_namespaces, self.wps_process)
+        centroids_input_element = self.centroid_process_element.find('./DataInputs/Input')
+        wps_process_input = base.utils.parse_input_info(centroids_input_element, self.xml_namespaces,
+                                                        self.centroids_process)
 
-        self.assertEqual(wps_process_input.role, self.wps_process_input.role)
-        self.assertEqual(wps_process_input.identifier, self.wps_process_input.identifier)
-        self.assertEqual(wps_process_input.title, self.wps_process_input.title)
-        self.assertEqual(wps_process_input.abstract, self.wps_process_input.abstract)
-        self.assertEqual(wps_process_input.datatype, self.wps_process_input.datatype)
-        self.assertEqual(wps_process_input.format, self.wps_process_input.format)
-        self.assertEqual(wps_process_input.min_occurs, self.wps_process_input.min_occurs)
-        self.assertEqual(wps_process_input.max_occurs, self.wps_process_input.max_occurs)
+        self.assertEqual(wps_process_input.role, self.centroids_complex_input.role)
+        self.assertEqual(wps_process_input.identifier, self.centroids_complex_input.identifier)
+        self.assertEqual(wps_process_input.title, self.centroids_complex_input.title)
+        self.assertEqual(wps_process_input.abstract, self.centroids_complex_input.abstract)
+        self.assertEqual(wps_process_input.datatype, self.centroids_complex_input.datatype)
+        self.assertEqual(wps_process_input.format, self.centroids_complex_input.format)
+        self.assertEqual(wps_process_input.min_occurs, self.centroids_complex_input.min_occurs)
+        self.assertEqual(wps_process_input.max_occurs, self.centroids_complex_input.max_occurs)
+
+    def test_parse_process_output_complex(self):
+        """
+        Tests, if parse_output_info parses correct
+        @return: Nothing
+        @rtype: None
+        """
+        centroids_output_element = self.centroid_process_element.find('./ProcessOutputs/Output')
+        wps_process_output = base.utils.parse_output_info(centroids_output_element, self.xml_namespaces,
+                                                          self.centroids_process)
+
+        self.assertEqual(wps_process_output.role, self.centroids_complex_output.role)
+        self.assertEqual(wps_process_output.identifier, self.centroids_complex_output.identifier)
+        self.assertEqual(wps_process_output.title, self.centroids_complex_output.title)
+        self.assertEqual(wps_process_output.abstract, self.centroids_complex_output.abstract)
+        self.assertEqual(wps_process_output.datatype, self.centroids_complex_output.datatype)
+        self.assertEqual(wps_process_output.format, self.centroids_complex_output.format)
+        self.assertEqual(wps_process_output.min_occurs, self.centroids_complex_output.min_occurs)
+        self.assertEqual(wps_process_output.max_occurs, self.centroids_complex_output.max_occurs)
+
+    def test_parse_process_input_bounding_box(self):
+        """
+        Tests, if parse_input_info parses correct
+        @return: Nothing
+        @rtype: None
+        """
+        bbox_input_element = self.bbox_process_element.find('./DataInputs/Input')
+        wps_process_input = base.utils.parse_input_info(bbox_input_element, self.xml_namespaces,
+                                                        self.bbox_process)
+
+        self.assertEqual(wps_process_input.role, self.bbox_bounding_box_input.role)
+        self.assertEqual(wps_process_input.identifier, self.bbox_bounding_box_input.identifier)
+        self.assertEqual(wps_process_input.title, self.bbox_bounding_box_input.title)
+        self.assertEqual(wps_process_input.abstract, self.bbox_bounding_box_input.abstract)
+        self.assertEqual(wps_process_input.datatype, self.bbox_bounding_box_input.datatype)
+        self.assertEqual(wps_process_input.format, self.bbox_bounding_box_input.format)
+        self.assertEqual(wps_process_input.min_occurs, self.bbox_bounding_box_input.min_occurs)
+        self.assertEqual(wps_process_input.max_occurs, self.bbox_bounding_box_input.max_occurs)
+
+    def test_parse_process_output_bounding_box(self):
+        """
+        Tests, if parse_output_info parses correct
+        @return: Nothing
+        @rtype: None
+        """
+        bbox_output_element = self.bbox_process_element.find('./ProcessOutputs/Output')
+        wps_process_output = base.utils.parse_output_info(bbox_output_element, self.xml_namespaces,
+                                                          self.bbox_process)
+
+        self.assertEqual(wps_process_output.role, self.bbox_bounding_box_output.role)
+        self.assertEqual(wps_process_output.identifier, self.bbox_bounding_box_output.identifier)
+        self.assertEqual(wps_process_output.title, self.bbox_bounding_box_output.title)
+        self.assertEqual(wps_process_output.abstract, self.bbox_bounding_box_output.abstract)
+        self.assertEqual(wps_process_output.datatype, self.bbox_bounding_box_output.datatype)
+        self.assertEqual(wps_process_output.format, self.bbox_bounding_box_output.format)
+        self.assertEqual(wps_process_output.min_occurs, self.bbox_bounding_box_output.min_occurs)
+        self.assertEqual(wps_process_output.max_occurs, self.bbox_bounding_box_output.max_occurs)
+
+
 
     def test_parse_process_input_fail(self):
         """
@@ -439,6 +535,9 @@ class DatabaseTestCase(TestCase):
 
 class CronTestCase(TestCase):
     def test_update_wps_processes_with_empty_database(self):
-        self.assertEqual(Process.objects.all().__len__(), 0)
         base.cron.update_wps_processes()
         self.assertEqual(Process.objects.all().__len__(), 0)
+
+    def test_update_wps_processes(self):
+        base.utils.add_wps_server('http://milbaier.com:5000')
+        self.assertEqual(Process.objects.all().__len__(), 14)
