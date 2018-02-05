@@ -301,7 +301,7 @@ class ParserTestCase(TestCase):
                                                                        self.say_hello_literal_process))
 
 
-class DatabaseSearchTestCase(TestCase):
+class DatabaseTestCase(TestCase):
     """
 
     """
