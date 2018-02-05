@@ -41,10 +41,8 @@ class SchedulerTestCase(TestCase):
         self.io2.save()
         self.a = Artefact.objects.create(task_id='1', parameter_id='1', role='0', format="string", data="Ueda")
         self.a.save()
+
          
-    def test_generate_XML(self):
-        pass
- 
     def test_send_task(self):
         base.cron.scheduler()
         task = Task.objects.get(title="Say Hello Task")
