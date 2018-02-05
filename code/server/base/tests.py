@@ -54,7 +54,7 @@ class SchedulerTestCase(TestCase):
 
 
 # Create your tests here.
-class ParsingTestCase(TestCase):
+class ParserTestCase(TestCase):
     """
 
     """
@@ -264,7 +264,7 @@ class ParsingTestCase(TestCase):
                                                                        self.say_hello_literal_process))
 
 
-class DatabaseSearcherTestCase(TestCase):
+class DatabaseSearchTestCase(TestCase):
     """
 
     """
