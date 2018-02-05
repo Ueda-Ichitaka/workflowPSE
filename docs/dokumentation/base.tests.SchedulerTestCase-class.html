@@ -61,6 +61,8 @@ django.test.TestCase --+
 </pre>
 
 <hr />
+<p>Test Class for scheduler and execution tests</p>
+
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -80,11 +82,12 @@ django.test.TestCase --+
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">NoneType</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="setUp"></a><span class="summary-sig-name">setUp</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="base.tests.SchedulerTestCase-class.html#setUp" class="summary-sig-name">setUp</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Sets up test data in test db, gets called before every test function</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.tests-pysrc.html#SchedulerTestCase.setUp">source&nbsp;code</a></span>
             
@@ -96,27 +99,13 @@ django.test.TestCase --+
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">NoneType</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.tests.SchedulerTestCase-class.html#test_generate_XML" class="summary-sig-name">test_generate_XML</a>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="base.tests-pysrc.html#SchedulerTestCase.test_generate_XML">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="base.tests.SchedulerTestCase-class.html#test_send_task" class="summary-sig-name">test_send_task</a>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="base.tests.SchedulerTestCase-class.html#test_send_task" class="summary-sig-name">test_send_task</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Schedules the test Task and asserts it gets a response from server 
+      and status url is written to DB</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.tests-pysrc.html#SchedulerTestCase.test_send_task">source&nbsp;code</a></span>
             
@@ -128,13 +117,32 @@ django.test.TestCase --+
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">NoneType</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="base.tests.SchedulerTestCase-class.html#test_execution" class="summary-sig-name">test_execution</a>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="base.tests.SchedulerTestCase-class.html#test_execution" class="summary-sig-name">test_execution</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Executes Task and tests if the correct answer is written to DB.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.tests-pysrc.html#SchedulerTestCase.test_execution">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">NoneType</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="base.tests.SchedulerTestCase-class.html#tearDown" class="summary-sig-name">tearDown</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Destroys the test datasets in database after test method was 
+      executed.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.tests-pysrc.html#SchedulerTestCase.tearDown">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -193,26 +201,25 @@ django.test.TestCase --+
   </td>
 </tr>
 </table>
-<a name="test_generate_XML"></a>
+<a name="setUp"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">test_generate_XML</span>(<span class="sig-arg">self</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setUp</span>(<span class="sig-arg">self</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="base.tests-pysrc.html#SchedulerTestCase.test_generate_XML">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="base.tests-pysrc.html#SchedulerTestCase.setUp">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  
+  <p>Sets up test data in test db, gets called before every test 
+  function</p>
   <dl class="fields">
-    <dt>Decorators:</dt>
-    <dd><ul class="nomargin-top">
-        <li><code>@unittest.skip('fails')</code></li>
-    </ul></dd>
+    <dt>Returns: NoneType</dt>
+        <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -230,12 +237,11 @@ django.test.TestCase --+
     </td>
   </tr></table>
   
-  
+  <p>Schedules the test Task and asserts it gets a response from server and
+  status url is written to DB</p>
   <dl class="fields">
-    <dt>Decorators:</dt>
-    <dd><ul class="nomargin-top">
-        <li><code>@unittest.skip('fails')</code></li>
-    </ul></dd>
+    <dt>Returns: NoneType</dt>
+        <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -253,12 +259,32 @@ django.test.TestCase --+
     </td>
   </tr></table>
   
-  
+  <p>Executes Task and tests if the correct answer is written to DB.</p>
   <dl class="fields">
-    <dt>Decorators:</dt>
-    <dd><ul class="nomargin-top">
-        <li><code>@unittest.skip('fails')</code></li>
-    </ul></dd>
+    <dt>Returns: NoneType</dt>
+        <dd>None</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="tearDown"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">tearDown</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.tests-pysrc.html#SchedulerTestCase.tearDown">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Destroys the test datasets in database after test method was executed.
+  Gets called after every test method</p>
+  <dl class="fields">
+    <dt>Returns: NoneType</dt>
+        <dd>None</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -286,7 +312,7 @@ django.test.TestCase --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sun Feb  4 12:39:11 2018
+    Generated by Epydoc 3.0.1 on Mon Feb  5 16:07:30 2018
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
