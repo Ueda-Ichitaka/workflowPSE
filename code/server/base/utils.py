@@ -8,7 +8,7 @@ import os
 
 import base.cron
 from base.models import WPSProvider, WPS, Process, InputOutput, DATATYPE, ROLE
-from workflowPSE.settings import BASE_DIR, wpsLog
+from workflowPSE.settings import BASE_DIR, wps_log
 
 E = ElementMaker()
 wps_em = ElementMaker(namespace=ns['wps'], nsmap=ns)
@@ -59,7 +59,7 @@ ns_map = {
 
 
 # TODO: rework if path problem is solved
-def getFilePath(task):
+def get_file_path(task):
     """
     returns path to file for artefact or None if there is no such file
     @param artefact: artefact for which path is returned
@@ -306,7 +306,7 @@ def parse_service_provider_info(root, namespaces):
 
     # Fails if one of elements cannot be found
     except AttributeError:
-        wpsLog.error('Unable to parse information about service provider')
+        wps_log.error('Unable to parse information about service provider')
         return None
 
     service_provider = WPSProvider(provider_name=provider_name,
@@ -355,7 +355,7 @@ def parse_wps_server_info(root, namespaces, provider):
         urls[2] = urls[2] + execute_annex
 
     except AttributeError:
-        wpsLog.error('Unable to parse information about wps server')
+        wps_log.error('Unable to parse information about wps server')
         return None
 
     wps_server = WPS(service_provider=provider,
@@ -390,7 +390,7 @@ def parse_process_info(process_element, namespaces, wps_server):
         process_abstract = process_abstract_element.text if process_abstract_element is not None \
             else 'No process description available'
     except AttributeError:
-        wpsLog.error('Unable to parse information about wps process')
+        wps_log.error('Unable to parse information about wps process')
         return None
 
     process = Process(wps=wps_server,
@@ -440,7 +440,7 @@ def parse_input_info(input_element, namespaces, process):
         input_min_occurs = input_element.attrib.get('minOccurs')
         input_max_occurs = input_element.attrib.get('maxOccurs')
     except AttributeError:
-        wpsLog.error('Unable to parse information about wps process s input')
+        wps_log.error('Unable to parse information about wps process s input')
         return None
 
     return_input = InputOutput(process=process,
@@ -494,7 +494,7 @@ def parse_output_info(output_element, namespaces, process):
         output_min_occurs = '1'
         output_max_occurs = '1'
     except AttributeError:
-        wpsLog.error('Unable to parse information about wps process s output')
+        wps_log.error('Unable to parse information about wps process s output')
         return None
 
     output = InputOutput(process=process,

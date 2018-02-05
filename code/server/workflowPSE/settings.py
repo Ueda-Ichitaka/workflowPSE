@@ -19,12 +19,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d;%(funcName)s()] - %(message)s')  #
 filehandler = logging.handlers.RotatingFileHandler(BASE_DIR + '/wps.log', mode='a', maxBytes=32*1024, backupCount=2, encoding=None, delay=0)
-#filehandler = logging.FileHandler(BASE_DIR + '/wps.log', mode='a')
 filehandler.setFormatter(formatter)
-wpsLog = logging.getLogger('wps')
+wps_log = logging.getLogger('wps')
 
-wpsLog.setLevel(logging.DEBUG) # set logging level here
-wpsLog.addHandler(filehandler)
+wps_log.setLevel(logging.DEBUG) # set logging level here
+wps_log.addHandler(filehandler)
 # streamHandler = logging.StreamHandler()
 # streamHandler.setFormatter(formatter)
 # tmLog.addHandler(streamHandler) # stream handler is just used for output to console, so we might not need it here
