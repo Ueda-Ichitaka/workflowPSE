@@ -167,7 +167,7 @@ class ParserTestCase(TestCase):
                                           title='Layer',
                                           abstract=None,
                                           datatype='1',
-                                          format=None, #application/gml+xml
+                                          format='application/gml+xml', #application/gml+xml
                                           min_occurs='1',
                                           max_occurs='1')
     centroids_complex_output = InputOutput(process=centroids_process,
@@ -176,7 +176,7 @@ class ParserTestCase(TestCase):
                                            title='Referenced Output',
                                            abstract=None,
                                            datatype='1',
-                                           format=None, #application/json
+                                           format='application/json', #application/json
                                            min_occurs='1',
                                            max_occurs='1')
     centroid_process_element = describe_processes_root.find("./ProcessDescription/[ows:Identifier='centroids']",

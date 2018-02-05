@@ -431,7 +431,7 @@ def parse_input_info(input_element, namespaces, process):
             input_format = literal_data_element.find('ows:DataType', namespaces).text
         elif input_element.find('ComplexData') is not None:
             input_datatype = DATATYPE[1][0]
-            input_format = None
+            input_format = input_element.find('./ComplexData/Default/Format/MimeType').text
         elif input_element.find('BoundingBoxData') is not None:
             input_datatype = DATATYPE[2][0]
             input_format = None
@@ -485,7 +485,7 @@ def parse_output_info(output_element, namespaces, process):
             output_format = literal_data_element.find('ows:DataType', namespaces).text
         elif output_element.find('ComplexOutput') is not None:
             output_datatype = DATATYPE[1][0]
-            output_format = None
+            output_format = output_element.find('./ComplexOutput/Default/Format/MimeType').text
         elif output_element.find('BoundingBoxOutput') is not None:
             output_datatype = DATATYPE[2][0]
             output_format = None
