@@ -134,6 +134,7 @@ def xml_generator(xml_dir):
         root.append(wps_em.ResponseForm(response_doc))
 
         wps_log.debug(f"successfully created xml for task{task.id}")
+                      #f":\n{etree.tostring(root, pretty_print=True).decode()}") # use to print xml to log
 
         # write to file, for testing let pretty_print=True for better readability
         # TODO: rework if file path problem is solved
@@ -231,14 +232,18 @@ def create_data_doc(task):
             wps_log.debug(f"boundingbox data found for task{task.id}: {artefact.data}")
             lower_corner = ows_em.LowerCorner()
             upper_corner = ows_em.UpperCorner()
-            data = artefact.data.split(",")
-            if len(data) == 4:
-                upper_corner = ows_em.UpperCorner(f"{data[0]} {data[1]}")
-                lower_corner = ows_em.LowerCorner(f"{data[2]} {data[3]}")
+            data = artefact.data
+            wps_log.debug(f"{len(data.split('LowerCorner')) == 2 and len(data.split('UpperCorner')) == 2}")
+            if len(data.split("LowerCorner")) == 2 and len(data.split("UpperCorner")) == 2:
+                bbox_corners = data.split(";")
+                lower_corner_data = bbox_corners[1].lstrip('LowerCorner').split(' ')
+                upper_corner_data = bbox_corners[0].lstrip('UpperCorner').split(' ')
+                upper_corner = ows_em.UpperCorner(f"{upper_corner_data[0]} {upper_corner_data[1]}")
+                lower_corner = ows_em.LowerCorner(f"{lower_corner_data[0]} {lower_corner_data[1]}")
 
             # quite strange, but this node is called BoundingBoxData for inputs, for outputs it's just BoundingBox
             # also for inputs it is used with wps namespace, for outputs the ows namespace is used
-            bbox_elem = wps_em.Data(wps_em.BoundingBoxData(lower_corner, upper_corner))
+            bbox_elem = wps_em.Data(wps_em.BoundingBoxData(lower_corner, upper_corner, {'crs':'EPSG:4326', 'dimensions':'2'}))
 
             # finally create subtree
             data_inputs.append(wps_em.Input(identifier, title, bbox_elem))
@@ -280,8 +285,11 @@ def send_task(task_id, xml_dir):
         xml = ET.fromstring(response.text)
 
     except:
-        wps_log.warning(
-            f"request for task{task_id} could not be posted or returned something unexpected, aborting")
+        task = Task.objects.get(id=task_id)
+        task.status = '5'
+        task.save()
+        task_failed_handling(task, "status could not be read, check internet connection or server availability")
+        wps_log.warning(f"request for task{task_id} could not be posted or returned something unexpected, aborting")
         return
 
     err_msg = ""
@@ -415,6 +423,7 @@ def parse_execute_response(task):
     except:
         task.status = '5'
         task.save()
+        task_failed_handling(task, "status could not be read, check internet connection or server availability")
         # otherwise just exit and return error code
         wps_log.debug(
             f"request of {task.status_url} for task {task.id} could not be parsed")

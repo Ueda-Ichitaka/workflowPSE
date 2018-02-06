@@ -210,8 +210,8 @@ class ParserTestCase(TestCase):
     def test_parse_service_provider_info(self):
         """
         Tests, if parse_service_provider_info parses correct
-        @return:
-        @rtype:
+        @return: None
+        @rtype: NoneType
         """
 
         wps_provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
@@ -223,16 +223,16 @@ class ParserTestCase(TestCase):
     def test_parse_service_provider_info_fail(self):
         """
         Test of exception throw
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         self.assertRaises(AttributeError, base.utils.parse_service_provider_info(None, self.xml_namespaces))
 
     def test_parse_wps_server_info(self):
         """
         Tests, if parse_wps_server_info parses correct
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         wps_provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
         wps_server = base.utils.parse_wps_server_info(self.capabilities_root, self.xml_namespaces, wps_provider)
@@ -245,8 +245,8 @@ class ParserTestCase(TestCase):
     def test_parse_wps_server_info_fail(self):
         """
         Test of exception throw
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         self.assertRaises(AttributeError, base.utils.parse_wps_server_info(None, self.xml_namespaces,
                                                                            self.wps_provider))
@@ -254,8 +254,8 @@ class ParserTestCase(TestCase):
     def test_parse_wps_process(self):
         """
         Tests, if parse_process_info parses correct
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         wps_process = base.utils.parse_process_info(self.say_hello_process_element, self.xml_namespaces,
                                                     self.wps_server)
@@ -267,8 +267,8 @@ class ParserTestCase(TestCase):
     def test_parse_wps_process_fail(self):
         """
         Test of exception throw
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         self.assertRaises(AttributeError, base.utils.parse_process_info(None, self.xml_namespaces, self.wps_server))
 
@@ -303,8 +303,8 @@ class ParserTestCase(TestCase):
     def test_parse_process_input_complex(self):
         """
         Tests, if parse_input_info parses correct
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         centroids_input_element = self.centroid_process_element.find('./DataInputs/Input')
         wps_process_input = base.utils.parse_input_info(centroids_input_element, self.xml_namespaces,
@@ -322,8 +322,8 @@ class ParserTestCase(TestCase):
     def test_parse_process_output_complex(self):
         """
         Tests, if parse_output_info parses correct
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         centroids_output_element = self.centroid_process_element.find('./ProcessOutputs/Output')
         wps_process_output = base.utils.parse_output_info(centroids_output_element, self.xml_namespaces,
@@ -341,8 +341,8 @@ class ParserTestCase(TestCase):
     def test_parse_process_input_bounding_box(self):
         """
         Tests, if parse_input_info parses correct
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         bbox_input_element = self.bbox_process_element.find('./DataInputs/Input')
         wps_process_input = base.utils.parse_input_info(bbox_input_element, self.xml_namespaces,
@@ -360,8 +360,8 @@ class ParserTestCase(TestCase):
     def test_parse_process_output_bounding_box(self):
         """
         Tests, if parse_output_info parses correct
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         bbox_output_element = self.bbox_process_element.find('./ProcessOutputs/Output')
         wps_process_output = base.utils.parse_output_info(bbox_output_element, self.xml_namespaces,
@@ -381,8 +381,8 @@ class ParserTestCase(TestCase):
     def test_parse_process_input_fail(self):
         """
         Test of exception throw
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         self.assertRaises(AttributeError, base.utils.parse_input_info(None, self.xml_namespaces,
                                                                       self.say_hello_literal_process))
@@ -390,8 +390,8 @@ class ParserTestCase(TestCase):
     def test_parse_process_output_fail(self):
         """
         Test of exception throw
-        @return: Nothing
-        @rtype: None
+        @return: None
+        @rtype: NoneType
         """
         self.assertRaises(AttributeError, base.utils.parse_output_info(None, self.xml_namespaces,
                                                                        self.say_hello_literal_process))
@@ -448,8 +448,8 @@ class DatabaseTestCase(TestCase):
     def test_search_provider_in_database(self):
         """
         Tests, if search_provider_in_database search correct
-        @return:
-        @rtype:
+        @return: None
+        @rtype: NoneType
         """
         provider_from_database = utils.search_provider_in_database(self.wps_provider)
         self.assertIsNotNone(provider_from_database)
@@ -457,8 +457,8 @@ class DatabaseTestCase(TestCase):
     def test_search_provider_in_empty_database(self):
         """
 
-        @return:
-        @rtype:
+        @return: None
+        @rtype: NoneType
         """
         WPSProvider.objects.all().delete()
         provider_from_database = utils.search_provider_in_database(self.wps_provider)
@@ -467,8 +467,8 @@ class DatabaseTestCase(TestCase):
     def test_search_server_in_database(self):
         """
 
-        @return:
-        @rtype:
+        @return: None
+        @rtype: NoneType
         """
         server_from_database = utils.search_server_in_database(self.wps_server)
         self.assertIsNotNone(server_from_database)
@@ -476,8 +476,8 @@ class DatabaseTestCase(TestCase):
     def test_search_server_in_empty_database_(self):
         """
 
-        @return:
-        @rtype:
+        @return: None
+        @rtype: NoneType
         """
         WPS.objects.all().delete()
         server_from_database = utils.search_server_in_database(self.wps_server)
@@ -505,8 +505,8 @@ class DatabaseTestCase(TestCase):
     def test_overwrite_server(self):
         """
 
-        @return:
-        @rtype:
+        @return: None
+        @rtype: NoneType
         """
         provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
         provider.save()
