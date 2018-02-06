@@ -38,6 +38,7 @@ ns_map = {
     "ProcessStarted": f"{{{ns['wps']}}}ProcessStarted",
     "ProcessPaused": f"{{{ns['wps']}}}ProcessPaused",
     "ProcessSucceeded": f"{{{ns['wps']}}}ProcessSucceeded",
+    "BoundingBoxData": f"{{{ns['wps']}}}BoundingBoxData",
 
     # ows namespaced tags
     "Identifier": f"{{{ns['ows']}}}Identifier",

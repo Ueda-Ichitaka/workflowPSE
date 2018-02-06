@@ -465,6 +465,12 @@ export class EditorComponent implements OnInit, AfterContentInit {
     this.workflowChanged.emit(this.workflow);
   }
 
+  /**
+   * is supposed to return true if there is the
+   * last snapshot and the workflow is not running
+   * else returns false
+   * @returns if a snapshot can be undone
+   */
   public canUndo(): boolean {
     return this.snapshots.length > 0 && !this.running;
   }

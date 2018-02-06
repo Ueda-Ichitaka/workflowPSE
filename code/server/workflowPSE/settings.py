@@ -18,7 +18,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d;%(funcName)s()] - %(message)s')  #
-filehandler = logging.handlers.RotatingFileHandler(BASE_DIR + '/wps.log', mode='a', maxBytes=32 * 1024, backupCount=2, encoding=None, delay=0)
+filehandler = logging.handlers.RotatingFileHandler(BASE_DIR + '/wps.log', mode='a', maxBytes=128 * 1024, backupCount=1, encoding=None, delay=0)
 filehandler.setFormatter(formatter)
 wps_log = logging.getLogger('wps')
 
