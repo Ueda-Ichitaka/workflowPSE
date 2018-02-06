@@ -737,6 +737,20 @@ class OurLoginView(LoginView):
 
     """
 
+    # needed because Django needs CSRF token in cookie unless you put this
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        """
+
+        @param args: non-keyworded arguments passed to models.Model.dispatch() method
+        @type args:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs:
+        @return:
+        @rtype: django.http.response.HttpResponse
+        """
+        return super(OurLoginView, self).dispatch(*args, **kwargs)
+
     @staticmethod
     def post(request, *args, **kwargs):
         login_data = json.loads(request.body)
