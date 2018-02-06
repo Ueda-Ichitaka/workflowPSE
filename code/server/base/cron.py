@@ -148,7 +148,7 @@ def xml_generator(xml_dir):
 
 def create_data_doc(task):
     """
-    creates subtree for execute request for model.Task task
+    Creates subtree for execute request for model.Task task.
     @param task: the task for which the data subtree is created
     @type task: models.Task
     @return: subtree on success, error code 1 otherwise
@@ -383,10 +383,10 @@ def get_execute_url(task):
 # TODO: tests
 def receiver():
     """
-    loops all running tasks
-    parses xml on server and checks for status
-    overwrites status if changed
-    if task is finished, write data to db
+    Loops all running tasks, then
+    parses xml on server and checks for status.
+    Overwrites status if changed and
+    if task is finished, writes data to db
     @return: None
     @rtype: NoneType
     """
@@ -400,8 +400,8 @@ def receiver():
 # TODO: tests
 def parse_execute_response(task):
     """
-    checks parameter tasks status by checking xml file found at status_url for change
-    if task has finished write data to db if there is any data
+    Checks parameter tasks status by checking xml file found at status_url for change
+    If task has finished write data to db if there is any data
     @param task: the task whose status is currently checked
     @type task: subclass of models.Model
     @return: 0 on success, error code otherwise
@@ -481,12 +481,9 @@ def parse_execute_response(task):
     return 0
 
 
-# TODO: tests
-
-
 def parse_output(output, task):
     """
-    parses output node of xml and inserts respective data if found
+    Parses output node of xml and inserts respective data if found and
     also updates status of task if there are any changes
     @param output the output that has to be parsed
     @type output lxmls.etree._Element
@@ -574,7 +571,7 @@ def parse_output(output, task):
 
 def parse_response_literaldata(artefact, data_elem):
     """
-    parses the xmls literaldata subtree and inserts data into artefact
+    Parses the xmls literaldata subtree and inserts data into artefact
     @param artefact: the artefact which the data is put into
     @type artefact: models.Artefact
     @param data_elem: the xml node element which holds the data
@@ -610,7 +607,7 @@ def parse_response_literaldata(artefact, data_elem):
 
 def parse_response_bbox(artefact, data_elem):
     """
-    parses the xmls boundingboxdata subtree and inserts data into artefact
+    Parses the xmls boundingboxdata subtree and inserts data into artefact
     @param artefact: the artefact which the data is put into
     @type artefact: models.Artefact
     @param data_elem: the xml node element which holds the data
@@ -634,7 +631,7 @@ def parse_response_bbox(artefact, data_elem):
 
 def parse_response_complexdata(artefact, data_elem):
     """
-    parses the xmls complexdata subtree and inserts data into artefact
+    Parses the xmls complexdata subtree and inserts data into artefact
     @param artefact: the artefact which the data is put into
     @type artefact: models.Artefact
     @param data_elem: the xml node element which holds the data
@@ -718,7 +715,7 @@ def parse_response_complexdata(artefact, data_elem):
 # TODO: tests
 def calculate_percent_done(workflow):
     """
-    calculates the percentage of finished tasks in the workflow of task
+    Calculates the percentage of finished tasks in the workflow of task
     @param task: task with recently changed status
     @type task: Task
     @return: percentage of finished tasks in the workflow of task
@@ -744,8 +741,8 @@ def calculate_percent_done(workflow):
 
 def task_failed_handling(task, err_msg):
     """
-    is called if a task failed to create error artefacts which signal the client
-    that the task has failed
+    Is called if a task failed to create error Artefacts which signals
+    the client that the task has failed
     @param task: the failed task
     @type task: models.Task
     @param err_msg: the error message

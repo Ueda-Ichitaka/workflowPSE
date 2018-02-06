@@ -8,7 +8,7 @@ app_name = 'base'
 urlpatterns = [
     url(r'^$', views.EditorView.as_view(), name='index'),
 
-    path('user/index/', views.UserView.index),
+    path('user/', views.UserView.as_view()),
 
     path('workflow/', views.WorkflowView.as_view()),
     path('workflow/<int:workflow_id>', views.WorkflowView.as_view()),
@@ -27,6 +27,6 @@ urlpatterns = [
     url(r'^editor/', views.EditorView.as_view(), name='editor'),
     url(r'^settings/', views.SettingsView.as_view(), name='settings'),
 
-    url(r'^login/', LoginView.as_view(template_name='base/login.html'), name='login'),
+    url(r'^login/', views.OurLoginView.as_view(template_name='base/login.html'), name='login'),
     url(r'^logout/', LogoutView.as_view())
 ]

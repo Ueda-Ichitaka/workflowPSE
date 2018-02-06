@@ -1,7 +1,9 @@
 import calendar
 import json
 
+from django.contrib.auth import authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
@@ -17,54 +19,51 @@ from base.models import InputOutput, WPSProvider, Process, Artefact, Edge, Task,
 # TODO: tests, documentation
 def as_json_response(list):
     """
-
-    @param list:
-    @type list:
-    @return:
-    @rtype:
+    method stub to return a JsonResponse
+    @param list: parameter list which is returned
+    @type list: dict
+    @return: JsonResponse
+    @rtype: django.http.JsonResponse
     """
     return JsonResponse(list, safe=False)
-
-
-class IndexView(TemplateView):
-    template_name = "base/index.html"
 
 
 # TODO: tests, documentation
 class UserView(View):
     """
-
+    Sends user data to the client
     """
 
     @staticmethod
-    @require_GET
-    def index(request):
+    def get(request):
         """
+        Sends the requested User information to the server.
+        @param request: the request sent from the server
+        @type request: django.http.request.HttpRequest
+        @return: a json response containing the user information
+        @rtype: django.http.JsonResponse
+        """
+        user = model_to_dict(request.user)
+        del user['password']
 
-        @param request:
-        @type request:
-        @return:
-        @rtype:
-        """
-        # TODO: Was not tested yet because of absence of user management in our project now
-        return as_json_response(model_to_dict(request.user))
+        return as_json_response(user)
 
 
 # TODO: tests, documentation
 class WorkflowView(View):
     """
-
+    Exchanges workflow data with the client
     """
 
     @staticmethod
     def can_user_access_workflow(user, workflow_id):
         """"
-
-        @param user
-        @type user
-        @param workflow_id
-        @type workflow_id int
-        @return:
+        Checks wether the user has access to a workflow
+        @param user the user
+        @type user django.contrib.auth.models.User
+        @param workflow_id the id of the workflow
+        @type workflow_id int int
+        @return: if the user can access the workflow
         @rtype: bool
         """
         if not user.is_authenticated:
@@ -81,13 +80,13 @@ class WorkflowView(View):
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
         """
-
-        @param args:
-        @type args:
-        @param kwargs:
-        @type kwargs:
-        @return:
-        @rtype:
+        Sends a workflow response to the client
+        @param args: non-keyworded arguments passed to models.Model.dispatch() method
+        @type args: list
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs: list
+        @return: 
+        @rtype: django.http.response.HttpResponse
         """
         return super(WorkflowView, self).dispatch(*args, **kwargs)
 
@@ -96,11 +95,11 @@ class WorkflowView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param kwargs:
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         if 'workflow_id' in kwargs:
             if not WorkflowView.can_user_access_workflow(request.user, kwargs['workflow_id']):
@@ -219,9 +218,9 @@ class WorkflowView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         if not request.user.is_authenticated:
             return JsonResponse({'error': 'no access'})
@@ -277,11 +276,11 @@ class WorkflowView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param kwargs:
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         if not WorkflowView.can_user_access_workflow(request.user, kwargs['workflow_id']):
             return JsonResponse({'error': 'no access'})
@@ -397,11 +396,11 @@ class WorkflowView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param kwargs:
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         if not WorkflowView.can_user_access_workflow(request.user, kwargs['workflow_id']):
             return JsonResponse({'error': 'no access'})
@@ -418,11 +417,11 @@ class WorkflowView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param workflow_id:
         @type workflow_id:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         if not WorkflowView.can_user_access_workflow(request.user, workflow_id):
             return JsonResponse({'error': 'no access'})
@@ -438,11 +437,11 @@ class WorkflowView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param workflow_id:
         @type workflow_id:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         if not WorkflowView.can_user_access_workflow(request.user, workflow_id):
             return JsonResponse({'error': 'no access'})
@@ -470,11 +469,11 @@ class WorkflowView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param workflow_id:
         @type workflow_id:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
 
         # TODO: This needs some kind of throttling
@@ -495,12 +494,12 @@ class ProcessView(View):
     def dispatch(self, *args, **kwargs):
         """
 
-        @param args:
+        @param args: non-keyworded arguments passed to models.Model.dispatch() method
         @type args:
-        @param kwargs:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.response.HttpResponse
         """
         return super(ProcessView, self).dispatch(*args, **kwargs)
 
@@ -509,11 +508,11 @@ class ProcessView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param kwargs:
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         if 'process_id' in kwargs:
             process = Process.objects.get(pk=kwargs['process_id'])
@@ -566,9 +565,9 @@ class ProcessView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         return JsonResponse({'error': 'this REST interface is not supported'})
 
@@ -577,11 +576,11 @@ class ProcessView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param kwargs:
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         return JsonResponse({'error': 'this REST interface is not supported'})
 
@@ -590,11 +589,11 @@ class ProcessView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param kwargs:
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         return JsonResponse({'error': 'this REST interface is not supported'})
 
@@ -610,12 +609,12 @@ class WPSView(View):
     def dispatch(self, *args, **kwargs):
         """
 
-        @param args:
+        @param args: non-keyworded arguments passed to models.Model.dispatch() method
         @type args:
-        @param kwargs:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.response.HttpResponse
         """
         return super(WPSView, self).dispatch(*args, **kwargs)
 
@@ -624,11 +623,11 @@ class WPSView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param kwargs:
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         if 'wps_id' in kwargs:
             wps = WPS.objects.get(pk=kwargs['wps_id'])
@@ -653,9 +652,9 @@ class WPSView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
 
         utils.add_wps_server(request.body.decode('utf-8'))
@@ -666,11 +665,11 @@ class WPSView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param kwargs:
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         new_data = json.loads(request.body)
         wps = get_object_or_404(WPS, pk=kwargs['wps_id'])
@@ -706,11 +705,11 @@ class WPSView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @param kwargs:
         @type kwargs:
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         wps = get_object_or_404(WPS, pk=kwargs['wps_id'])
         (deletedWPSCount, countOfDeletionsPerType) = wps.delete()
@@ -724,13 +723,29 @@ class WPSView(View):
         """
 
         @param request:
-        @type request:
+        @type request: django.http.request.HttpRequest
         @return:
-        @rtype:
+        @rtype: django.http.JsonResponse
         """
         cron.update_wps_processes()
 
         return JsonResponse({})
+
+
+class OurLoginView(LoginView):
+    """
+
+    """
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        login_data = json.loads(request.body)
+        user = authenticate(request, username=login_data['username'], passwort=login_data['password'])
+
+        if user is not None:
+            return UserView.get(request)
+        else:
+            return JsonResponse({'error': 'no access'})
 
 
 # TODO: tests, documentation
