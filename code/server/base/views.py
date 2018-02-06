@@ -1,6 +1,7 @@
 import calendar
 import json
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
@@ -733,24 +734,30 @@ class WPSView(View):
 
 
 # TODO: tests, documentation
-class WorkflowsView(TemplateView):
+class WorkflowsView(LoginRequiredMixin, TemplateView):
     """
 
     """
+    login_url = '/login/'
+
     template_name = "index.html"
 
 
 # TODO: tests, documentation
-class EditorView(TemplateView):
+class EditorView(LoginRequiredMixin, TemplateView):
     """
 
     """
+    login_url = '/login/'
+
     template_name = "index.html"
 
 
 # TODO: tests, documentation
-class SettingsView(TemplateView):
+class SettingsView(LoginRequiredMixin, TemplateView):
     """
 
     """
+    login_url = '/login/'
+
     template_name = "index.html"
