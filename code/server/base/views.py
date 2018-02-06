@@ -38,7 +38,7 @@ class UserView(View):
     def get(request):
         """
         Sends the requested User information to the server.
-        @param request: the request sent from the server
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
         @return: a json response containing the user information
         @rtype: django.http.JsonResponse
@@ -80,12 +80,12 @@ class WorkflowView(View):
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
         """
-        Sends a workflow response to the client
+        Sends a http response to the client
         @param args: non-keyworded arguments passed to models.Model.dispatch() method
         @type args: list
         @param kwargs: keyworded arguments passed to models.Model.dispatch() method
         @type kwargs: list
-        @return: 
+        @return: the response
         @rtype: django.http.response.HttpResponse
         """
         return super(WorkflowView, self).dispatch(*args, **kwargs)
@@ -93,12 +93,12 @@ class WorkflowView(View):
     @staticmethod
     def get(request, **kwargs):
         """
-
-        @param request:
+        Sends the requested workflow information to the server.
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs:
-        @type kwargs:
-        @return:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs: list
+        @return: a JsonResponse containing the requested workflow data
         @rtype: django.http.JsonResponse
         """
         if 'workflow_id' in kwargs:
@@ -216,10 +216,10 @@ class WorkflowView(View):
     @staticmethod
     def post(request):
         """
-
-        @param request:
+        Sends requested data to the client
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @return:
+        @return: a JsonResponse containing the requested workflow data
         @rtype: django.http.JsonResponse
         """
         if not request.user.is_authenticated:
@@ -274,12 +274,12 @@ class WorkflowView(View):
     @staticmethod
     def patch(request, **kwargs):
         """
-
-        @param request:
+        Updates a workflow if it exists
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs:
-        @type kwargs:
-        @return:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs: list
+        @return: a JsonResponse which contains either the workflow or an error message
         @rtype: django.http.JsonResponse
         """
         if not WorkflowView.can_user_access_workflow(request.user, kwargs['workflow_id']):
@@ -394,12 +394,12 @@ class WorkflowView(View):
     @staticmethod
     def delete(request, **kwargs):
         """
-
-        @param request:
+        Deletes the a workflow if it exists
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs:
-        @type kwargs:
-        @return:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs: list
+        @return: a JsonResponse with either a success or an error message
         @rtype: django.http.JsonResponse
         """
         if not WorkflowView.can_user_access_workflow(request.user, kwargs['workflow_id']):
@@ -415,12 +415,12 @@ class WorkflowView(View):
     @require_GET
     def start(request, workflow_id):
         """
-
-        @param request:
+        Starts the workflow with the passed id if it exists
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param workflow_id:
-        @type workflow_id:
-        @return:
+        @param workflow_id: the id of the workflow that is started
+        @type workflow_id: int
+        @return: an empty JsonResponse wich is either empty on success or contains an error message on failure
         @rtype: django.http.JsonResponse
         """
         if not WorkflowView.can_user_access_workflow(request.user, workflow_id):
@@ -435,12 +435,12 @@ class WorkflowView(View):
     @require_GET
     def stop(request, workflow_id):
         """
-
-        @param request:
+        Stops the workflow with the passed id if it exists
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param workflow_id:
-        @type workflow_id:
-        @return:
+        @param workflow_id: the id of the workflow
+        @type workflow_id: int
+        @return: a JsonResponse with either no content or an error message
         @rtype: django.http.JsonResponse
         """
         if not WorkflowView.can_user_access_workflow(request.user, workflow_id):
@@ -467,12 +467,12 @@ class WorkflowView(View):
     @require_GET
     def refresh(request, workflow_id):
         """
-
-        @param request:
+        Refresh method called by the client
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param workflow_id:
-        @type workflow_id:
-        @return:
+        @param workflow_id: the id of the users current workflow
+        @type workflow_id: int
+        @return: an empty JsonResponse
         @rtype: django.http.JsonResponse
         """
 
@@ -486,19 +486,19 @@ class WorkflowView(View):
 # TODO: tests, documentation
 class ProcessView(View):
     """
-
+    Exchanges process data with the client
     """
 
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
         """
-
+        Sends a http response to the client
         @param args: non-keyworded arguments passed to models.Model.dispatch() method
-        @type args:
+        @type args: list
         @param kwargs: keyworded arguments passed to models.Model.dispatch() method
-        @type kwargs:
-        @return:
+        @type kwargs: list
+        @return: the response
         @rtype: django.http.response.HttpResponse
         """
         return super(ProcessView, self).dispatch(*args, **kwargs)
@@ -506,12 +506,12 @@ class ProcessView(View):
     @staticmethod
     def get(request, **kwargs):
         """
-
-        @param request:
+        Sends the requested process information to the server.
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs:
-        @type kwargs:
-        @return:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs: list
+        @return: a JsonResponse containing the requested process data
         @rtype: django.http.JsonResponse
         """
         if 'process_id' in kwargs:
@@ -563,10 +563,10 @@ class ProcessView(View):
     @staticmethod
     def post(request):
         """
-
-        @param request:
+        Sends requested data to the client
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @return:
+        @return: a JsonResponse containing the requested process data
         @rtype: django.http.JsonResponse
         """
         return JsonResponse({'error': 'this REST interface is not supported'})
@@ -574,12 +574,12 @@ class ProcessView(View):
     @staticmethod
     def patch(request, **kwargs):
         """
-
-        @param request:
+        Updates a process if it exists
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs:
-        @type kwargs:
-        @return:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs: list
+        @return: a JsonResponse which contains either the process or an error message
         @rtype: django.http.JsonResponse
         """
         return JsonResponse({'error': 'this REST interface is not supported'})
@@ -587,12 +587,12 @@ class ProcessView(View):
     @staticmethod
     def delete(request, **kwargs):
         """
-
-        @param request:
+        Deletes a process if it exists
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs:
-        @type kwargs:
-        @return:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs: list
+        @return: a JsonResponse containing an error message because this is not supported
         @rtype: django.http.JsonResponse
         """
         return JsonResponse({'error': 'this REST interface is not supported'})
@@ -601,19 +601,19 @@ class ProcessView(View):
 # TODO: tests, documentation
 class WPSView(View):
     """
-
+    Exchanges wps data with the client
     """
 
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
         """
-
+        Sends a http response to the client
         @param args: non-keyworded arguments passed to models.Model.dispatch() method
-        @type args:
+        @type args: list
         @param kwargs: keyworded arguments passed to models.Model.dispatch() method
-        @type kwargs:
-        @return:
+        @type kwargs: list
+        @return: the response
         @rtype: django.http.response.HttpResponse
         """
         return super(WPSView, self).dispatch(*args, **kwargs)
@@ -621,12 +621,12 @@ class WPSView(View):
     @staticmethod
     def get(request, **kwargs):
         """
-
-        @param request:
+        Sends the requested wps information to the server.
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs:
-        @type kwargs:
-        @return:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs: list
+        @return: a JsonResponse containing the requested wps data
         @rtype: django.http.JsonResponse
         """
         if 'wps_id' in kwargs:
@@ -650,10 +650,10 @@ class WPSView(View):
     @staticmethod
     def post(request):
         """
-
-        @param request:
+        Sends requested data to the client
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @return:
+        @return: a JsonResponse containing the requested wps data
         @rtype: django.http.JsonResponse
         """
 
@@ -663,12 +663,12 @@ class WPSView(View):
     @staticmethod
     def patch(request, **kwargs):
         """
-
-        @param request:
+        Updates a wps if it exists
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs:
-        @type kwargs:
-        @return:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs: list
+        @return: a JsonResponse which contains either the wps or an error message
         @rtype: django.http.JsonResponse
         """
         new_data = json.loads(request.body)
@@ -703,12 +703,12 @@ class WPSView(View):
     @staticmethod
     def delete(request, **kwargs):
         """
-
-        @param request:
+        Deletes a wps if it exists
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs:
-        @type kwargs:
-        @return:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs: list
+        @return: a JsonResponse with either a success or an error message
         @rtype: django.http.JsonResponse
         """
         wps = get_object_or_404(WPS, pk=kwargs['wps_id'])
@@ -721,10 +721,10 @@ class WPSView(View):
     @require_GET
     def refresh(request):
         """
-
-        @param request:
+        Is called by an admin from the client, refreshes all wps servers checking for processes
+        @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @return:
+        @return: an empty JsonResponse
         @rtype: django.http.JsonResponse
         """
         cron.update_wps_processes()
@@ -741,12 +741,12 @@ class OurLoginView(LoginView):
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
         """
-
+        Sends a http response to the client
         @param args: non-keyworded arguments passed to models.Model.dispatch() method
-        @type args:
+        @type args: list
         @param kwargs: keyworded arguments passed to models.Model.dispatch() method
-        @type kwargs:
-        @return:
+        @type kwargs: list
+        @return: the response
         @rtype: django.http.response.HttpResponse
         """
         return super(OurLoginView, self).dispatch(*args, **kwargs)
