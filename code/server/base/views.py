@@ -1,7 +1,9 @@
 import calendar
 import json
 
+from django.contrib.auth import authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
@@ -37,8 +39,7 @@ class UserView(View):
     """
 
     @staticmethod
-    @require_GET
-    def index(request):
+    def get(request):
         """
 
         @param request:
@@ -46,8 +47,10 @@ class UserView(View):
         @return:
         @rtype:
         """
-        # TODO: Was not tested yet because of absence of user management in our project now
-        return as_json_response(model_to_dict(request.user))
+        user = model_to_dict(request.user)
+        del user['password']
+
+        return as_json_response(user)
 
 
 # TODO: tests, documentation
@@ -731,6 +734,22 @@ class WPSView(View):
         cron.update_wps_processes()
 
         return JsonResponse({})
+
+
+class OurLoginView(LoginView):
+    """
+
+    """
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        login_data = json.loads(request.body)
+        user = authenticate(request, username=login_data['username'], passwort=login_data['password'])
+
+        if user is not None:
+            return UserView.get(request)
+        else:
+            return JsonResponse({'error': 'no access'})
 
 
 # TODO: tests, documentation
