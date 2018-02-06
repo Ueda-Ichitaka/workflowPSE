@@ -501,36 +501,38 @@ class DatabaseTestCase(TestCase):
         input_from_database = utils.search_input_output_in_database(self.wps_process_input)
         self.assertIsNone(input_from_database)
 
-    @unittest.skip('fails')
     def test_overwrite_server(self):
         """
-
+        Tests, if information about a WPS server will be overwritten.
         @return: None
         @rtype: NoneType
         """
-        provider = base.utils.parse_service_provider_info(self.capabilities_root, self.xml_namespaces)
-        provider.save()
-        old_database_entry = WPS(service_provider=provider,
-                                 title='Title',
-                                 abstract='Description',
-                                 capabilities_url='http://pywps.org/capab',
-                                 describe_url='http://pywps.org/desc',
-                                 execute_url='http://pywps.org/exec')
-        old_database_entry.save()
-        new_entry = WPS(service_provider=provider,
-                        title='Title',
-                        abstract='new_Description',
-                        capabilities_url='http://new_pywps.org/capab',
-                        describe_url='http://new_pywps.org/desc',
-                        execute_url='http://new_pywps.org/exec')
+        old_database_entry = WPS.objects.get(title='PyWPS Processing Service')
+        new_wps_server = WPS(service_provider=self.wps_provider,
+                             title='PyWPS Processing Service',
+                             abstract='new_PyWPS is an implementation of the Web Processing '
+                                      'Service standard from the Open Geospatial Consortium. '
+                                      'PyWPS is written in Python.',
+                             capabilities_url='new_http://localhost/wps?request=GetCapabilities&service=WPS',
+                             describe_url='new_http://localhost/wps?request=DescribeProcess'
+                                          '&service=WPS&identifier=all&version=1.0.0',
+                             execute_url='new_http://localhost/wps?request=Execute&service=WPS')
 
-        base.utils.overwrite_server(old_database_entry, new_entry)
-        new_database_entry = WPS.objects.get(title='Title')
+        base.utils.overwrite_server(self.wps_server, new_wps_server)
+        new_database_entry = WPS.objects.get(title='PyWPS Processing Service')
+
         self.assertEqual(old_database_entry.pk, new_database_entry.pk)
-        self.assertEqual(new_database_entry.abstract, new_entry.abstract)
-        self.assertEqual(new_database_entry.capabilities_url, new_entry.capabilities_url)
-        self.assertEqual(new_database_entry.describe_url, new_entry.describe_url)
-        self.assertEqual(new_database_entry.execute_url, new_entry.execute_url)
+
+        self.assertEqual(new_database_entry.abstract, new_wps_server.abstract)
+        self.assertEqual(new_database_entry.capabilities_url, new_wps_server.capabilities_url)
+        self.assertEqual(new_database_entry.describe_url, new_wps_server.describe_url)
+        self.assertEqual(new_database_entry.execute_url, new_wps_server.execute_url)
+
+    def test_overwrite_process(self):
+        pass
+
+    def test_overwrite_input_output(self):
+        pass
 
 
 class CronTestCase(TestCase):
