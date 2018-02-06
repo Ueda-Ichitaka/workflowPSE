@@ -11,7 +11,7 @@ import base.utils as utils
 from base.models import WPSProvider, WPS, Process, Workflow, Task, InputOutput, Artefact
 
 
-class SchedulerTestCase(TestCase):
+class CronTestCase(TestCase):
     """
     Test Class for scheduler and execution tests
     """
@@ -52,6 +52,22 @@ class SchedulerTestCase(TestCase):
         self.a = Artefact.objects.create(task_id='1', parameter_id='1', role='0', format="string", data="Ueda")
         self.a.save()
 
+    def tearDown(self):
+        """
+        Destroys the test datasets in database after test method was executed. Gets called after every test method
+        @return: None
+        @rtype: NoneType
+        """
+        self.u.delete()
+        self.w.delete()
+        self.wp.delete()
+        self.wps.delete()
+        self.p.delete()
+        self.t.delete()
+        self.io1.delete()
+        self.io2.delete()
+        self.a.delete()
+
     def test_send_task(self):
         """
         Schedules the test Task and asserts it gets a response from server and status url is written to DB
@@ -74,21 +90,13 @@ class SchedulerTestCase(TestCase):
         output = Artefact.objects.get(role='1', task='1', parameter='2')
         self.assertEqual(output.data, 'Hello Ueda')
 
-    def tearDown(self):
-        """
-        Destroys the test datasets in database after test method was executed. Gets called after every test method
-        @return: None
-        @rtype: NoneType
-        """
-        self.u.delete()
-        self.w.delete()
-        self.wp.delete()
-        self.wps.delete()
-        self.p.delete()
-        self.t.delete()
-        self.io1.delete()
-        self.io2.delete()
-        self.a.delete()
+    def test_update_wps_processes_with_empty_database(self):
+        base.cron.update_wps_processes()
+        self.assertEqual(Process.objects.all().__len__(), 0)
+
+    def test_update_wps_processes(self):
+        base.utils.add_wps_server('http://milbaier.com:5000')
+        self.assertEqual(Process.objects.all().__len__(), 14)
 
 
 # Create your tests here.
@@ -376,8 +384,6 @@ class ParserTestCase(TestCase):
         self.assertEqual(wps_process_output.min_occurs, self.bbox_bounding_box_output.min_occurs)
         self.assertEqual(wps_process_output.max_occurs, self.bbox_bounding_box_output.max_occurs)
 
-
-
     def test_parse_process_input_fail(self):
         """
         Test of exception throw
@@ -433,8 +439,8 @@ class DatabaseTestCase(TestCase):
                                                             abstract='No description for input available',
                                                             datatype='0',  # Literal
                                                             format='string',
-                                                            min_occurs='1',
-                                                            max_occurs='1')
+                                                            min_occurs=1,
+                                                            max_occurs=1)
         self.wps_process_output = InputOutput.objects.create(process=self.wps_process,
                                                              role='1',  # Output
                                                              identifier='response',
@@ -442,8 +448,8 @@ class DatabaseTestCase(TestCase):
                                                              abstract='No description for output available',
                                                              datatype='0',  # Literal
                                                              format='string',
-                                                             min_occurs='1',
-                                                             max_occurs='1')
+                                                             min_occurs=1,
+                                                             max_occurs=1)
 
     def test_search_provider_in_database(self):
         """
@@ -518,7 +524,7 @@ class DatabaseTestCase(TestCase):
                                           '&service=WPS&identifier=all&version=1.0.0',
                              execute_url='new_http://localhost/wps?request=Execute&service=WPS')
 
-        base.utils.overwrite_server(self.wps_server, new_wps_server)
+        base.utils.overwrite_server(old_database_entry, new_wps_server)
         new_database_entry = WPS.objects.get(title='PyWPS Processing Service')
 
         self.assertEqual(old_database_entry.pk, new_database_entry.pk)
@@ -529,17 +535,43 @@ class DatabaseTestCase(TestCase):
         self.assertEqual(new_database_entry.execute_url, new_wps_server.execute_url)
 
     def test_overwrite_process(self):
-        pass
+        old_database_entry = Process.objects.get(identifier='say_hello')
+        new_wps_process = Process(wps=self.wps_server,
+                                  identifier='say_hello',
+                                  title='new_Process Say Hello',
+                                  abstract='new_Returns a literal string output with Hello plus '
+                                  'the inputed name')
+
+        base.utils.overwrite_process(old_database_entry, new_wps_process)
+        new_database_entry = Process.objects.get(identifier='say_hello')
+
+        self.assertEqual(old_database_entry.pk, new_database_entry.pk)
+
+        self.assertEqual(new_database_entry.title, new_wps_process.title)
+        self.assertEqual(new_database_entry.abstract, new_wps_process.abstract)
 
     def test_overwrite_input_output(self):
-        pass
+        old_database_entry = InputOutput.objects.get(identifier='name')
+        new_literal_input = InputOutput(process=self.wps_process,
+                                          role='0',  # Input
+                                          identifier='name',
+                                          title='new_Input name',
+                                          abstract='I have description now',
+                                          datatype='1',  # Complex
+                                          format='application/gml',
+                                          min_occurs=1,
+                                          max_occurs=1)
+
+        base.utils.overwrite_input_output(old_database_entry, new_literal_input)
+        new_database_entry = InputOutput.objects.get(identifier='name')
+
+        self.assertEqual(old_database_entry.pk, new_database_entry.pk)
+
+        self.assertEqual(new_database_entry.title, new_literal_input.title)
+        self.assertEqual(new_database_entry.abstract, new_literal_input.abstract)
+        self.assertEqual(new_database_entry.datatype, new_literal_input.datatype)
+        self.assertEqual(new_database_entry.format, new_literal_input.format)
+        self.assertEqual(new_database_entry.min_occurs, new_literal_input.min_occurs)
+        self.assertEqual(new_database_entry.max_occurs, new_literal_input.max_occurs)
 
 
-class CronTestCase(TestCase):
-    def test_update_wps_processes_with_empty_database(self):
-        base.cron.update_wps_processes()
-        self.assertEqual(Process.objects.all().__len__(), 0)
-
-    def test_update_wps_processes(self):
-        base.utils.add_wps_server('http://milbaier.com:5000')
-        self.assertEqual(Process.objects.all().__len__(), 14)
