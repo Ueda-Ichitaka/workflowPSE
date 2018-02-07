@@ -11,7 +11,8 @@
             </mat-form-field>
 
         </div>
-        <button mat-raised-button color="primary" (click)="login(usernameInput.value, passwordInput.value)">LOGIN</button>
+        <button mat-raised-button color="primary" (click)="login(usernameInput.value, passwordInput.value)"
+                                                (keyup.enter)="login(usernameInput.value, passwordInput.value)">LOGIN</button>
     </mat-card>
 </div>
 
