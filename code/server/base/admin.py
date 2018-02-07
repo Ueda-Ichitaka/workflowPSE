@@ -6,7 +6,8 @@ from base.models import *
 # Register your models here.
 class TaskInline(admin.StackedInline):
     """
-
+    Inline class for Tasks.
+    Tasks are on the workflow admin page available.
     """
     model = Task
     extra = 0
@@ -16,7 +17,10 @@ class TaskInline(admin.StackedInline):
 
 class WorkflowAdmin(admin.ModelAdmin):
     """
-
+    Admin class for Workflow.
+    Specifies which fields of the model "Workflow" should be
+    displayed on the admin page.
+    should be displayed
     """
     list_display = ['name', 'percent_done', 'creator']
     inlines = [TaskInline]
@@ -27,7 +31,9 @@ class WorkflowAdmin(admin.ModelAdmin):
 
 class TaskAdmin(admin.ModelAdmin):
     """
-
+    Admin class for Workflow.
+    Specifies which fields of the model "Task" should be
+    displayed on the admin page.
     """
     list_display = ['title', 'workflow', 'status', 'status_url']
     list_filter = ['workflow']
@@ -38,12 +44,17 @@ class TaskAdmin(admin.ModelAdmin):
 
 class EdgeAdmin(admin.ModelAdmin):
     """
-
+    Admin class for Workflow.
+    Specifies which fields of the model "Edge" should be
+    displayed on the admin page.
     """
     list_filter = ['workflow']
 
     class Meta:
         model = Edge
+
+
+# Register all models
 
 
 admin.site.register(Workflow, WorkflowAdmin)
