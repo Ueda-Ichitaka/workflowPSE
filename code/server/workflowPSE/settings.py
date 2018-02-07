@@ -17,8 +17,10 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d;%(funcName)s()] - %(message)s')  #
-filehandler = logging.handlers.RotatingFileHandler(BASE_DIR + '/wps.log', mode='a', maxBytes=128 * 1024, backupCount=1, encoding=None, delay=0)
+formatter = logging.Formatter(
+    '%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d;%(funcName)s()] - %(message)s')  #
+filehandler = logging.handlers.RotatingFileHandler(
+    BASE_DIR + '/wps.log', mode='a', maxBytes=128 * 1024, backupCount=1, encoding=None, delay=0)
 filehandler.setFormatter(formatter)
 wps_log = logging.getLogger('wps')
 
@@ -122,10 +124,13 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 if (DEBUG):
-    MIDDLEWARE += 'corsheaders.middleware.CorsMiddleware',
-    INSTALLED_APPS += 'corsheaders',
-    CORS_ORIGIN_ALLOW_ALL = True
-
+    MIDDLEWARE += ['corsheaders.middleware.CorsMiddleware', ]
+    INSTALLED_APPS += ['corsheaders', ]
+    CORS_ALLOW_CREDENTIALS = True
+    CORS_ORIGIN_WHITELIST = (
+        '127.0.0.1:4200',
+        'localhost:4200'
+    )
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
