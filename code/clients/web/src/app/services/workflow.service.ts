@@ -82,7 +82,7 @@ export class WorkflowService {
    * @returns {Observable<Workflow[]>}
    */
   public all(): Observable<Workflow[]> {
-    return this.http.get<Workflow[]>(`http://127.0.0.1:8000/workflow/`);
+    return this.http.get<Workflow[]>(`http://127.0.0.1:8000/workflow/`, { withCredentials: true });
   }
 
   /**
@@ -91,7 +91,7 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public get(id: number): Observable<Workflow> {
-    return this.http.get<Workflow>(`http://127.0.0.1:8000/workflow/${id}`);
+    return this.http.get<Workflow>(`http://127.0.0.1:8000/workflow/${id}`, { withCredentials: true });
   }
 
   /**
@@ -100,7 +100,7 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public create(workflow: Partial<Workflow>): Observable<Workflow> {
-    return this.http.post<Workflow>(`http://127.0.0.1:8000/workflow/`, workflow);
+    return this.http.post<Workflow>(`http://127.0.0.1:8000/workflow/`, workflow, { withCredentials: true });
   }
 
   /**
@@ -111,7 +111,7 @@ export class WorkflowService {
    */
   public update(id: number, workflow: Partial<Workflow>): Observable<Workflow> {
     this.bar.open(`Updated Workflow`, 'CLOSE', { duration: 2500 });
-    return this.http.patch<Workflow>(`http://127.0.0.1:8000/workflow/${id}`, workflow);
+    return this.http.patch<Workflow>(`http://127.0.0.1:8000/workflow/${id}`, workflow, { withCredentials: true });
   }
 
   /**
@@ -121,7 +121,7 @@ export class WorkflowService {
    */
   public async remove(id: number): Promise<boolean> {
     this.bar.open(`Deleted Workflow`, 'CLOSE', { duration: 2500 });
-    return this.http.delete<boolean>(`http://127.0.0.1:8000/workflow/${id}`).toPromise();
+    return this.http.delete<boolean>(`http://127.0.0.1:8000/workflow/${id}`, { withCredentials: true }).toPromise();
 
   }
 

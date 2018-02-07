@@ -1,7 +1,7 @@
 import calendar
 import json
 
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.db.models import Q
@@ -66,6 +66,7 @@ class WorkflowView(View):
         @return: if the user can access the workflow
         @rtype: bool
         """
+
         if not user.is_authenticated:
             return False
 
@@ -73,7 +74,6 @@ class WorkflowView(View):
             return True
 
         workflow = get_object_or_404(Workflow, pk=workflow_id)
-
         return workflow.shared or workflow.creator_id == user.id
 
     # needed because Django needs CSRF token in cookie unless you put this
@@ -249,7 +249,7 @@ class WorkflowView(View):
             temporary_to_new_task_ids[new_task_data['id']] = new_task.id
 
             artefacts_data = new_task_data['input_artefacts'] + \
-                             new_task_data['output_artefacts']
+                new_task_data['output_artefacts']
 
             for artefact_data in artefacts_data:
                 Artefact.objects.create(
@@ -298,7 +298,8 @@ class WorkflowView(View):
         temporary_to_new_task_ids = {}
 
         for task_data in new_data['tasks']:
-            artefacts_data = task_data['input_artefacts'] + task_data['output_artefacts']
+            artefacts_data = task_data['input_artefacts'] + \
+                task_data['output_artefacts']
 
             if task_data['id'] > 0:
                 task = get_object_or_404(Task, pk=task_data['id'])
@@ -423,12 +424,11 @@ class WorkflowView(View):
         @return:
         @rtype: django.http.JsonResponse
         """
-        if not WorkflowView.can_user_access_workflow(request.user, workflow_id):
-            return JsonResponse({'error': 'no access'})
+
+        # if not WorkflowView.can_user_access_workflow(request.user, workflow_id):
+        #    return JsonResponse({'error': 'no access'})
 
         Task.objects.filter(workflow=workflow_id).update(status=1)
-
-        # TODO: return {"error": "..."} for some errors
         return JsonResponse({})
 
     @staticmethod
@@ -443,8 +443,8 @@ class WorkflowView(View):
         @return:
         @rtype: django.http.JsonResponse
         """
-        if not WorkflowView.can_user_access_workflow(request.user, workflow_id):
-            return JsonResponse({'error': 'no access'})
+        # if not WorkflowView.can_user_access_workflow(request.user, workflow_id):
+        #    return JsonResponse({'error': 'no access'})
 
         workflow = get_object_or_404(Workflow, pk=workflow_id)
         tasks = workflow.task_set.all()
@@ -454,9 +454,11 @@ class WorkflowView(View):
         for task in tasks:
             task.artefact_set.filter(role=1).delete()
 
-        artefacts = Artefact.objects.filter(task__workflow_id=workflow_id).filter(role=0)
+        artefacts = Artefact.objects.filter(
+            task__workflow_id=workflow_id).filter(role=0)
         for artefact in artefacts:
-            edge = Edge.objects.filter(workflow_id=workflow_id).filter(to_task_id=artefact.task_id).filter(input_id=artefact.parameter_id).values()
+            edge = Edge.objects.filter(workflow_id=workflow_id).filter(
+                to_task_id=artefact.task_id).filter(input_id=artefact.parameter_id).values()
 
             if edge.count() > 0:
                 artefact.delete()
@@ -732,10 +734,37 @@ class WPSView(View):
         return JsonResponse({})
 
 
-class OurLoginView(LoginView):
+class OurLogoutView(TemplateView):
     """
 
     """
+    template_name = "index.html"
+
+    # needed because Django needs CSRF token in cookie unless you put this
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        """
+
+        @param args: non-keyworded arguments passed to models.Model.dispatch() method
+        @type args:
+        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
+        @type kwargs:
+        @return:
+        @rtype: django.http.response.HttpResponse
+        """
+        return super(OurLogoutView, self).dispatch(*args, **kwargs)
+
+    @staticmethod
+    def delete(request, *args, **kwargs):
+        logout(request)
+        return JsonResponse({'logged': 'out'})
+
+
+class OurLoginView(TemplateView):
+    """
+
+    """
+    template_name = "index.html"
 
     # needed because Django needs CSRF token in cookie unless you put this
     @csrf_exempt
@@ -754,10 +783,14 @@ class OurLoginView(LoginView):
     @staticmethod
     def post(request, *args, **kwargs):
         login_data = json.loads(request.body)
-        user = authenticate(request, username=login_data['username'], passwort=login_data['password'])
+        user = authenticate(
+            username=login_data['username'], password=login_data['password'])
 
         if user is not None:
-            return UserView.get(request)
+            login(request, user)
+            user = model_to_dict(user)
+            del user['password']
+            return as_json_response(user)
         else:
             return JsonResponse({'error': 'no access'})
 

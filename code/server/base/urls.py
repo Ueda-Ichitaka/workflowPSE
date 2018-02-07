@@ -27,6 +27,6 @@ urlpatterns = [
     url(r'^editor/', views.EditorView.as_view(), name='editor'),
     url(r'^settings/', views.SettingsView.as_view(), name='settings'),
 
-    url(r'^login/', views.OurLoginView.as_view(template_name='base/login.html'), name='login'),
-    url(r'^logout/', LogoutView.as_view())
+    url(r'^login/', views.OurLoginView.as_view(), name='login'),
+    url(r'^logout/', views.OurLogoutView.as_view(), name='logout')
 ]

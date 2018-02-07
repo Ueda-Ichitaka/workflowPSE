@@ -25,6 +25,7 @@ import { ArtefactDialogComponent } from 'app/components/artefact-dialog/artefact
 import { FormsModule } from '@angular/forms';
 import { ResultDialogComponent } from 'app/components/result-dialog/result-dialog.component';
 import { LoginPageComponent } from 'app/pages/login-page/login-page.component';
+import { UserService } from 'app/services/user.service';
 
 
 
@@ -35,6 +36,7 @@ const routes = [
   { path: 'workflows', component: WorkflowsPageComponent },
   { path: 'settings', component: SettingsPageComponent },
   { path: 'login', component: LoginPageComponent },
+  { path: 'logout', component: LoginPageComponent },
 ];
 
 @NgModule({
@@ -87,7 +89,7 @@ const routes = [
     ProcessService,
     WorkflowService,
     WpsService,
-    WpsService,
+    UserService,
     { provide: LOCALE_ID, useValue: 'en' }
   ],
   bootstrap: [AppComponent]
