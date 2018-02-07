@@ -47,7 +47,7 @@ export class ProcessService {
    * @returns {Observable<Process[]>}
    */
   public all(): Observable<Process[]> {
-    return this.http.get<Process[]>(`http://127.0.0.1:8000/process/`);
+    return this.http.get<Process[]>(`http://127.0.0.1:8000/process/`, { withCredentials: true });
   }
 
   /**
@@ -56,6 +56,6 @@ export class ProcessService {
    * @returns {Observable<Process>}
    */
   public get(id: number): Observable<Process> {
-    return this.http.get<Process>(`http://127.0.0.1:8000/process/${id}`);
+    return this.http.get<Process>(`http://127.0.0.1:8000/process/${id}`, { withCredentials: true });
   }
 }
