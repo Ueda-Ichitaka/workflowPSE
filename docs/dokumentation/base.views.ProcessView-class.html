@@ -61,6 +61,8 @@ django.views.generic.View --+
 </pre>
 
 <hr />
+<p>Exchanges process data with the client</p>
+
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -80,14 +82,14 @@ django.views.generic.View --+
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">django.http.response.HttpResponse</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.views.ProcessView-class.html#dispatch" class="summary-sig-name">dispatch</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">*args</span>,
         <span class="summary-sig-arg">**kwargs</span>)</span><br />
-      Returns:</td>
+      Sends a http response to the client</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.views-pysrc.html#ProcessView.dispatch">source&nbsp;code</a></span>
             
@@ -117,13 +119,13 @@ django.views.generic.View --+
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">django.http.JsonResponse</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.views.ProcessView-class.html#get" class="summary-sig-name">get</a>(<span class="summary-sig-arg">request</span>,
         <span class="summary-sig-arg">**kwargs</span>)</span><br />
-      Returns:</td>
+      Sends the requested process information to the server.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.views-pysrc.html#ProcessView.get">source&nbsp;code</a></span>
             
@@ -135,12 +137,12 @@ django.views.generic.View --+
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">django.http.JsonResponse</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.views.ProcessView-class.html#post" class="summary-sig-name">post</a>(<span class="summary-sig-arg">request</span>)</span><br />
-      Returns:</td>
+      Sends requested data to the client</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.views-pysrc.html#ProcessView.post">source&nbsp;code</a></span>
             
@@ -152,13 +154,13 @@ django.views.generic.View --+
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">django.http.JsonResponse</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.views.ProcessView-class.html#patch" class="summary-sig-name">patch</a>(<span class="summary-sig-arg">request</span>,
         <span class="summary-sig-arg">**kwargs</span>)</span><br />
-      Returns:</td>
+      Updates a process if it exists</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.views-pysrc.html#ProcessView.patch">source&nbsp;code</a></span>
             
@@ -170,13 +172,13 @@ django.views.generic.View --+
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">django.http.JsonResponse</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.views.ProcessView-class.html#delete" class="summary-sig-name">delete</a>(<span class="summary-sig-arg">request</span>,
         <span class="summary-sig-arg">**kwargs</span>)</span><br />
-      Returns:</td>
+      Deletes a process if it exists</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.views-pysrc.html#ProcessView.delete">source&nbsp;code</a></span>
             
@@ -221,13 +223,15 @@ django.views.generic.View --+
     </td>
   </tr></table>
   
-  
+  <p>Sends a http response to the client</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>args</code></strong> ()</li>
-        <li><strong class="pname"><code>kwargs</code></strong> ()</li>
+        <li><strong class="pname"><code>args</code></strong> (list) - non-keyworded arguments passed to models.Model.dispatch() method</li>
+        <li><strong class="pname"><code>kwargs</code></strong> (list) - keyworded arguments passed to models.Model.dispatch() method</li>
     </ul></dd>
+    <dt>Returns: django.http.response.HttpResponse</dt>
+        <dd>the response</dd>
     <dt>Decorators:</dt>
     <dd><ul class="nomargin-top">
         <li><code>@csrf_exempt</code></li>
@@ -251,13 +255,15 @@ django.views.generic.View --+
     </td>
   </tr></table>
   
-  
+  <p>Sends the requested process information to the server.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>request</code></strong> ()</li>
-        <li><strong class="pname"><code>kwargs</code></strong> ()</li>
+        <li><strong class="pname"><code>request</code></strong> (django.http.request.HttpRequest) - the request sent from the client</li>
+        <li><strong class="pname"><code>kwargs</code></strong> (list) - keyworded arguments passed to models.Model.dispatch() method</li>
     </ul></dd>
+    <dt>Returns: django.http.JsonResponse</dt>
+        <dd>a JsonResponse containing the requested process data</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -276,12 +282,14 @@ django.views.generic.View --+
     </td>
   </tr></table>
   
-  
+  <p>Sends requested data to the client</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>request</code></strong> ()</li>
+        <li><strong class="pname"><code>request</code></strong> (django.http.request.HttpRequest) - the request sent from the client</li>
     </ul></dd>
+    <dt>Returns: django.http.JsonResponse</dt>
+        <dd>a JsonResponse containing the requested process data</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -301,13 +309,16 @@ django.views.generic.View --+
     </td>
   </tr></table>
   
-  
+  <p>Updates a process if it exists</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>request</code></strong> ()</li>
-        <li><strong class="pname"><code>kwargs</code></strong> ()</li>
+        <li><strong class="pname"><code>request</code></strong> (django.http.request.HttpRequest) - the request sent from the client</li>
+        <li><strong class="pname"><code>kwargs</code></strong> (list) - keyworded arguments passed to models.Model.dispatch() method</li>
     </ul></dd>
+    <dt>Returns: django.http.JsonResponse</dt>
+        <dd>a JsonResponse which contains either the process or an error 
+          message</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -327,13 +338,16 @@ django.views.generic.View --+
     </td>
   </tr></table>
   
-  
+  <p>Deletes a process if it exists</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>request</code></strong> ()</li>
-        <li><strong class="pname"><code>kwargs</code></strong> ()</li>
+        <li><strong class="pname"><code>request</code></strong> (django.http.request.HttpRequest) - the request sent from the client</li>
+        <li><strong class="pname"><code>kwargs</code></strong> (list) - keyworded arguments passed to models.Model.dispatch() method</li>
     </ul></dd>
+    <dt>Returns: django.http.JsonResponse</dt>
+        <dd>a JsonResponse containing an error message because this is not 
+          supported</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -361,7 +375,7 @@ django.views.generic.View --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Feb  5 16:07:30 2018
+    Generated by Epydoc 3.0.1 on Wed Feb  7 13:16:45 2018
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

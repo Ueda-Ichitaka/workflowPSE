@@ -112,7 +112,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#create_data_doc" class="summary-sig-name">create_data_doc</a>(<span class="summary-sig-arg">task</span>)</span><br />
-      creates subtree for execute request for model.Task task</td>
+      Creates subtree for execute request for model.Task task.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#create_data_doc">source&nbsp;code</a></span>
             
@@ -164,8 +164,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#receiver" class="summary-sig-name">receiver</a>()</span><br />
-      loops all running tasks parses xml on server and checks for status 
-      overwrites status if changed if task is finished, write data to db</td>
+      Loops all running tasks, then parses xml on server and checks for 
+      status.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#receiver">source&nbsp;code</a></span>
             
@@ -182,8 +182,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#parse_execute_response" class="summary-sig-name">parse_execute_response</a>(<span class="summary-sig-arg">task</span>)</span><br />
-      checks parameter tasks status by checking xml file found at 
-      status_url for change if task has finished write data to db if there 
+      Checks parameter tasks status by checking xml file found at 
+      status_url for change If task has finished write data to db if there 
       is any data</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#parse_execute_response">source&nbsp;code</a></span>
@@ -202,9 +202,9 @@
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#parse_output" class="summary-sig-name">parse_output</a>(<span class="summary-sig-arg">output</span>,
         <span class="summary-sig-arg">task</span>)</span><br />
-      parses output node of xml and inserts respective data if found also 
-      updates status of task if there are any changes @param output the 
-      output that has to be parsed @type output lxmls.etree._Element</td>
+      Parses output node of xml and inserts respective data if found and 
+      also updates status of task if there are any changes @param output 
+      the output that has to be parsed @type output lxmls.etree._Element</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#parse_output">source&nbsp;code</a></span>
             
@@ -222,7 +222,7 @@
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#parse_response_literaldata" class="summary-sig-name">parse_response_literaldata</a>(<span class="summary-sig-arg">artefact</span>,
         <span class="summary-sig-arg">data_elem</span>)</span><br />
-      parses the xmls literaldata subtree and inserts data into artefact</td>
+      Parses the xmls literaldata subtree and inserts data into artefact</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#parse_response_literaldata">source&nbsp;code</a></span>
             
@@ -240,7 +240,7 @@
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#parse_response_bbox" class="summary-sig-name">parse_response_bbox</a>(<span class="summary-sig-arg">artefact</span>,
         <span class="summary-sig-arg">data_elem</span>)</span><br />
-      parses the xmls boundingboxdata subtree and inserts data into 
+      Parses the xmls boundingboxdata subtree and inserts data into 
       artefact</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#parse_response_bbox">source&nbsp;code</a></span>
@@ -259,7 +259,7 @@
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#parse_response_complexdata" class="summary-sig-name">parse_response_complexdata</a>(<span class="summary-sig-arg">artefact</span>,
         <span class="summary-sig-arg">data_elem</span>)</span><br />
-      parses the xmls complexdata subtree and inserts data into artefact</td>
+      Parses the xmls complexdata subtree and inserts data into artefact</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#parse_response_complexdata">source&nbsp;code</a></span>
             
@@ -276,7 +276,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#calculate_percent_done" class="summary-sig-name">calculate_percent_done</a>(<span class="summary-sig-arg">workflow</span>)</span><br />
-      calculates the percentage of finished tasks in the workflow of task</td>
+      Calculates the percentage of finished tasks in the workflow of task</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#calculate_percent_done">source&nbsp;code</a></span>
             
@@ -294,8 +294,8 @@
         <tr>
           <td><span class="summary-sig"><a href="base.cron-module.html#task_failed_handling" class="summary-sig-name">task_failed_handling</a>(<span class="summary-sig-arg">task</span>,
         <span class="summary-sig-arg">err_msg</span>)</span><br />
-      is called if a task failed to create error artefacts which signal the
-      client that the task has failed</td>
+      Is called if a task failed to create error Artefacts which signals 
+      the client that the task has failed</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="base.cron-pysrc.html#task_failed_handling">source&nbsp;code</a></span>
             
@@ -405,7 +405,7 @@
     </td>
   </tr></table>
   
-  <p>creates subtree for execute request for model.Task task</p>
+  <p>Creates subtree for execute request for model.Task task.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -483,8 +483,9 @@
     </td>
   </tr></table>
   
-  <p>loops all running tasks parses xml on server and checks for status 
-  overwrites status if changed if task is finished, write data to db</p>
+  <p>Loops all running tasks, then parses xml on server and checks for 
+  status. Overwrites status if changed and if task is finished, writes data
+  to db</p>
   <dl class="fields">
     <dt>Returns: NoneType</dt>
         <dd>None</dd>
@@ -505,8 +506,8 @@
     </td>
   </tr></table>
   
-  <p>checks parameter tasks status by checking xml file found at status_url
-  for change if task has finished write data to db if there is any data</p>
+  <p>Checks parameter tasks status by checking xml file found at status_url
+  for change If task has finished write data to db if there is any data</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -532,9 +533,9 @@
     </td>
   </tr></table>
   
-  <p>parses output node of xml and inserts respective data if found also 
-  updates status of task if there are any changes @param output the output 
-  that has to be parsed @type output lxmls.etree._Element</p>
+  <p>Parses output node of xml and inserts respective data if found and 
+  also updates status of task if there are any changes @param output the 
+  output that has to be parsed @type output lxmls.etree._Element</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -560,7 +561,7 @@
     </td>
   </tr></table>
   
-  <p>parses the xmls literaldata subtree and inserts data into artefact</p>
+  <p>Parses the xmls literaldata subtree and inserts data into artefact</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -587,7 +588,7 @@
     </td>
   </tr></table>
   
-  <p>parses the xmls boundingboxdata subtree and inserts data into 
+  <p>Parses the xmls boundingboxdata subtree and inserts data into 
   artefact</p>
   <dl class="fields">
     <dt>Parameters:</dt>
@@ -615,7 +616,7 @@
     </td>
   </tr></table>
   
-  <p>parses the xmls complexdata subtree and inserts data into artefact</p>
+  <p>Parses the xmls complexdata subtree and inserts data into artefact</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -641,7 +642,7 @@
     </td>
   </tr></table>
   
-  <p>calculates the percentage of finished tasks in the workflow of 
+  <p>Calculates the percentage of finished tasks in the workflow of 
   task</p>
   <dl class="fields">
     <dt>Parameters:</dt>
@@ -668,7 +669,7 @@
     </td>
   </tr></table>
   
-  <p>is called if a task failed to create error artefacts which signal the 
+  <p>Is called if a task failed to create error Artefacts which signals the
   client that the task has failed</p>
   <dl class="fields">
     <dt>Parameters:</dt>
@@ -732,7 +733,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Feb  5 16:07:30 2018
+    Generated by Epydoc 3.0.1 on Wed Feb  7 13:16:45 2018
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

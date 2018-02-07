@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>base.models.Process</title>
+  <title>base.views.OurLogoutView</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -35,8 +35,8 @@
     <td width="100%">
       <span class="breadcrumbs">
         <a href="base-module.html">Package&nbsp;base</a> ::
-        <a href="base.models-module.html">Module&nbsp;models</a> ::
-        Class&nbsp;Process
+        <a href="base.views-module.html">Module&nbsp;views</a> ::
+        Class&nbsp;OurLogoutView
       </span>
     </td>
     <td>
@@ -46,48 +46,21 @@
     onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="base.models.Process-class.html"
+            >]&nbsp;|&nbsp;<a href="base.views.OurLogoutView-class.html"
             target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class Process</h1><p class="nomargin-top"><span class="codelink"><a href="base.models-pysrc.html#Process">source&nbsp;code</a></span></p>
+<h1 class="epydoc">Class OurLogoutView</h1><p class="nomargin-top"><span class="codelink"><a href="base.views-pysrc.html#OurLogoutView">source&nbsp;code</a></span></p>
 <pre class="base-tree">
-django.db.models.Model --+
-                         |
-                        <strong class="uidshort">Process</strong>
+django.views.generic.TemplateView --+
+                                    |
+                                   <strong class="uidshort">OurLogoutView</strong>
 </pre>
 
 <hr />
-<p>PyWPS Process available on given PyWPS Server</p>
-
-<!-- ==================== NESTED CLASSES ==================== -->
-<a name="section-NestedClasses"></a>
-<table class="summary" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Nested Classes</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-NestedClasses"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="base.models.Process.Meta-class.html" class="summary-name">Meta</a>
-    </td>
-  </tr>
-</table>
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -107,13 +80,52 @@ django.db.models.Model --+
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">django.http.response.HttpResponse</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="base.views.OurLogoutView-class.html#dispatch" class="summary-sig-name">dispatch</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">*args</span>,
+        <span class="summary-sig-arg">**kwargs</span>)</span><br />
+      Returns:</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="base.views-pysrc.html#OurLogoutView.dispatch">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="__str__"></a><span class="summary-sig-name">__str__</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a name="delete"></a><span class="summary-sig-name">delete</span>(<span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">*args</span>,
+        <span class="summary-sig-arg">**kwargs</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="base.models-pysrc.html#Process.__str__">source&nbsp;code</a></span>
+            <span class="codelink"><a href="base.views-pysrc.html#OurLogoutView.delete">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -143,43 +155,21 @@ django.db.models.Model --+
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="wps"></a><span class="summary-name">wps</span> = <code title="models.ForeignKey(WPS, on_delete= models.CASCADE)">models.ForeignKey(WPS, on_delete= models.CASCADE)</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="identifier"></a><span class="summary-name">identifier</span> = <code title="models.CharField(max_length= 200)">models.CharField(max_length= 200)</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="title"></a><span class="summary-name">title</span> = <code title="models.CharField(max_length= 200)">models.CharField(max_length= 200)</code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="base.models.Process-class.html#abstract" class="summary-name">abstract</a> = <code title="models.TextField('Descriptive text', default= 'Add your super descript\
-ive text here...')">models.TextField('Descriptive text', default= 'Add <code class="variable-ellipsis">...</code></code>
+        <a name="template_name"></a><span class="summary-name">template_name</span> = <code title="&quot;index.html&quot;">&quot;index.html&quot;</code>
     </td>
   </tr>
 </table>
-<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
-<a name="section-ClassVariableDetails"></a>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr bgcolor="#70b0f0" class="table-header">
   <td colspan="2" class="table-header">
     <table border="0" cellpadding="0" cellspacing="0" width="100%">
       <tr valign="top">
-        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="left"><span class="table-header">Method Details</span></td>
         <td align="right" valign="top"
-         ><span class="options">[<a href="#section-ClassVariableDetails"
+         ><span class="options">[<a href="#section-MethodDetails"
          class="privatelink" onclick="toggle_private();"
          >hide private</a>]</span></td>
       </tr>
@@ -187,22 +177,34 @@ ive text here...')">models.TextField('Descriptive text', default= 'Add <code cla
   </td>
 </tr>
 </table>
-<a name="abstract"></a>
+<a name="dispatch"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
-  <h3 class="epydoc">abstract</h3>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">dispatch</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">*args</span>,
+        <span class="sig-arg">**kwargs</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="base.views-pysrc.html#OurLogoutView.dispatch">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
   
   <dl class="fields">
-  </dl>
-  <dl class="fields">
-    <dt>Value:</dt>
-      <dd><table><tr><td><pre class="variable">
-models.TextField('Descriptive text', default= 'Add your super descript<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-ive text here...')
-</pre></td></tr></table>
-</dd>
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>args</code></strong> () - non-keyworded arguments passed to models.Model.dispatch() method</li>
+        <li><strong class="pname"><code>kwargs</code></strong> () - keyworded arguments passed to models.Model.dispatch() method</li>
+    </ul></dd>
+    <dt>Returns: django.http.response.HttpResponse</dt>
+    <dt>Decorators:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code>@csrf_exempt</code></li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
