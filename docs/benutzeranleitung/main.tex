@@ -1,0 +1,133 @@
+ \documentclass[oneside]{scrbook}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx, subfiles, hyperref, csquotes, enumitem, grffile, longtable, wrapfig, rotating}
+
+\usepackage[T1]{fontenc}    % avoid garbled Unicode text in pdf
+\usepackage[german]{babel}  % german hyphenation, quotes, etc
+\usepackage[nonumberlist]{glossaries}     % provides glossary commands
+\usepackage[normalem]{ulem}
+\usepackage{amsmath, textcomp, amssymb, capt-of, glossaries, titling, eso-pic, lipsum, lastpage, titleps, calc}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+\usepackage{pdfpages}
+\usepackage{tabularx}
+\usepackage{ltablex}
+\usepackage{svg}
+\usepackage{float}
+
+% makes refs to images jump to top of image instead of jumping to caption below
+\usepackage[all]{hypcap}
+
+\usepackage[none]{hyphenat}
+
+\newcommand*\getlength[1]{\number#1}
+
+\usepackage{pgfgantt}
+
+\graphicspath{{images/}{../images/}}
+
+\definecolor{dblue}{RGB}{20, 0, 100}
+\definecolor{brown}{RGB}{110, 50, 30}
+
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=dblue,
+    filecolor=magenta,      
+    urlcolor=brown,
+    pdflang={de}
+}
+
+% setup for header with logo
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+% Inhaltsverzeichnis und jede Chapter Seite hat keinen Header - wollen wir das so, oder soll der Header überall sein?
+\rhead{\includegraphics[height=1cm]{logo.png}}
+\lfoot{}
+\cfoot{}
+\rfoot{\thepage}
+
+
+\fancypagestyle{plain}{% chapter pages use style plain
+  \renewcommand{\headrulewidth}{0pt} % no top rule
+  \fancyhf{}%                    clear all fields
+  %\fancyfoot[L]{Department cdo}% left footer
+  \fancyfoot[R]{\thepage}%       right footer
+}
+
+
+
+% change height of header to be able to make logo bigger :)
+\setlength{\headheight}{25pt}
+
+
+% reduce space between header and chapter title
+\renewcommand*{\chapterheadstartvskip}{\vspace*{0cm}}
+
+% make glossary entrys within text appear bold
+\renewcommand*{\glstextformat}[1]{\textbf{#1}}
+
+% setup for titlepicture
+
+% set up \maketitle to accept a new item
+\predate{ \centering \placetitlepicture\large  }  
+\postdate{ \centering \par }
+
+
+% commands for including the picture
+\newcommand{\titlepicture}[2][]{%
+  \renewcommand\placetitlepicture{%
+    \includegraphics[#1]{#2}\par\medskip
+  }%
+}
+
+\newcommand{\placetitlepicture}{} % initialization
+
+\titlepicture[width=16cm]{images/workflow2-tp3.png}
+
+\title{
+    \vspace{-3.5cm}
+    \Huge {\textbf{Benutzeranleitung}}\\
+    \vspace{2cm}
+    \Large{\textbf{Workflow System für eine virtuelle Forschungsumgebung für Geodaten}}\\
+    \vspace{1cm}
+}
+\author{
+    Denis Gensh, Marcel Herm, David Krah,\\
+    Eduard Kukuy, Daniel Milbaier, Richard Rudolph\\
+} % sorted autors alphabetically with last name
+
+\date{
+    \today \\
+    %\vspace{1cm}
+    Karlsruher Institut für Technologie, SCC\\
+}
+
+% change font
+\renewcommand{\familydefault}{qhv}
+
+% to be able to have multiple lines in one cell (explicit line break) -> use \thead{}
+\usepackage{fourier} 
+\usepackage{array}
+\usepackage{makecell}
+
+\renewcommand\theadalign{bc}
+\renewcommand\theadgape{\Gape[4pt]}
+\renewcommand\cellgape{\Gape[4pt]}
+\renewcommand\theadfont{\normalsize}
+
+
+\makeglossaries
+
+\begin{document}
+
+    \subfile{sections/Titel}
+    \subfile{sections/tech-doku}
+    
+    \printglossaries
+
+\end{document}
+
+

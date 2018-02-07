@@ -1,0 +1,275 @@
+\documentclass[11pt, usepdftitle=false,...]{beamer}
+\usetheme{default}
+
+\usepackage[utf8]{inputenc}
+\usepackage[german]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{pgf} 
+\usepackage{caption}
+\hypersetup{pdftitle=Implementierungsbericht}
+\usepackage{subcaption}
+\captionsetup{compatibility=false}
+\setbeamertemplate{caption}[numbered]
+
+\author{Denis Gensh, Marcel Herm, David Krah,\\
+	Eduard Kukuy, Daniel Milbaier, Richard Rudolph}
+\title{
+	\textbf{Implementierungsbericht}
+}
+\subtitle{Workflow System für eine virtuelle Forschungsumgebung für
+	Geodaten
+	\vspace{-0.7cm}
+	}
+\logo{\pgfputat{\pgfxy(-1.7,8.0)}{\pgfbox[center,base]{\includegraphics[scale=0.125]{images/logo.png}}}}
+\institute{\includegraphics[height=3.5cm]{images/workflow2-tp3.png}}
+\date{\today}
+\subject{x}
+%\setbeamercovered{transparent}
+%\setbeamertemplate{navigation symbols}{}
+\addtobeamertemplate{navigation symbols}{}{%
+	\usebeamerfont{footline}%
+	\usebeamercolor[fg]{footline}%
+	\hspace{1em}%
+	\insertframenumber/\inserttotalframenumber
+}
+
+\makeatletter
+\setbeamertemplate{frametitle}{
+	\ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+	\@tempdima=\textwidth%
+	\advance\@tempdima by\beamer@leftmargin%
+	\advance\@tempdima by\beamer@rightmargin%
+%	\hspace*{0} %%%%%%%%%%%%% For example insert shift to right
+	\begin{beamercolorbox}[sep=0.5cm,left,wd=\the\@tempdima]{frametitle}
+		\usebeamerfont{frametitle}%
+		\vbox{}\vskip-1ex%
+		\if@tempswa\else\csname beamer@ftecenter\endcsname\fi%
+		\strut\insertframetitle\strut\par%
+		{%
+			\ifx\insertframesubtitle\@empty%
+			\else%
+			{\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
+			\fi
+		}%
+		\vskip-3ex%
+		\if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+	\end{beamercolorbox}%
+}
+\makeatother
+
+\begin{document}
+	{
+		% no page #, no logo on title page
+		\setbeamertemplate{footline}{}
+		\setbeamertemplate{logo}{}
+		\setbeamertemplate{navigation symbols}{}
+		\begin{frame}
+			\titlepage
+		\end{frame}
+	}
+	
+	%\maketitle
+	
+	
+	\begin{frame}
+		\frametitle{Inhaltsverzeichnis}
+		\tableofcontents
+	\end{frame}
+	
+	\section{Features}
+	\frame{\sectionpage}
+	
+%		\subsection{Implementierte Kriterien}
+%		\frame{\subsectionpage}
+		
+%			\begin{frame}
+%				\frametitle{Musskriterien}
+%				\begin{itemize}
+%					\item Verwalten von Web Processing Service Workflows
+%					\begin{itemize}
+%						\item Erstellen, Bearbeiten, Speichern, Laden, Anzeigen von Workflows
+%						\item Auflistung von Workflows mit Ausführungsstatus
+%						\item Wiederherstellung der letzten Sitzung
+%						\item Fehlermanagement
+%						\begin{itemize}
+%							\item Editorprüfung auf Kompatibilität von Tasks innerhalb eines Workflows
+%						\end{itemize}
+%						\item Workflows und Tasks auf Syntax und Kompatibilität prüfen
+%						\item Erstellen und Bearbeiten in grafischem Drag and Drop Editor
+%						\item Dynamisches einbinden von neuen Web Processing Service Tasks in den Editor
+%					\end{itemize}
+%				\end{itemize}
+%			\end{frame}
+			
+%			\begin{frame}
+%				\frametitle{Musskriterien}	
+%				\begin{itemize}
+%					\item Der Login-Status des Nutzers wird erfasst
+%					\item Nutzerfreundlichkeit
+%					\begin{itemize}
+%						\item Einfache, intuitive Benutzung des Editors
+%					\end{itemize}
+%					\item Open-Source
+%					\item Hilfesektion für Benutzerfragen
+%				\end{itemize}
+%			\end{frame}
+			
+%			\begin{frame}
+%				\frametitle{Wunschkriterien}
+%				\begin{itemize}
+%					\item Logging aller Aktivitäten
+%					\item Detailansicht einzelner Workflows
+%					\item Erweiterte Konfigurationseinstellungen
+%					\item Installations-/Einrichtungsassistent
+%				\end{itemize}
+%			\end{frame}
+			
+%			\begin{frame}
+%				\frametitle{Zusätzlich}
+%				\begin{itemize}
+%					\item Auflistung der Resultate
+%					\item Ausgabe von Fehlern
+%					\item Sortieren der Prozesse nach Server
+%				\end{itemize}						
+%			\end{frame}				
+			
+	
+%		\subsection{Gestrichene Kriterien}
+%		\frame{\subsectionpage}
+		
+			\begin{frame}
+				\frametitle{Was gestrichen wurde}
+				\begin{itemize}
+				   	\item<2-> Öffentliche und Benutzergebundene Workflows
+				   	% \begin{itemize}
+				   	% 	\item<2-> Workflows mit anderen Benutzern Teilen und öffentlich zugänglich machen
+				    % 	\item<3-> Zugriff und Sichtbarkeit von Workflows auf eigenen oder einzelne Benutzer beschränken
+				    % \end{itemize}
+				    \item<3-> Der Nutzer hat die Möglichkeit WPS konforme Dateien als Workflows hochzuladen
+				    \item<4-> Import und Export von Workflows
+				    \item<5-> Integrierte Ausführung der Workflows auf dem gleichen Server nur nach erfolgter Prüfung von bestimmten Kriterien, z.B. Serverlast
+				    
+				    \item<6-> Hilfesektion für Benutzerfragen	
+				\end{itemize}	
+			\end{frame}
+			
+	\section{Änderungen am Entwurf}	
+	\frame{\sectionpage}
+	
+    	\begin{frame}
+    		\frametitle{Änderungen am Client}
+    		\begin{itemize}
+    		    \item<2-> Keine Änderung der Architektur
+    		    \item<3-> Keine neuen Pages
+    		   	\item<4-> Zwei neue Komponenten
+    		   	\begin{itemize}
+    		   		\item<5-> Process-Dialog
+    		    	\item<6-> Result-Dialog
+    		    \end{itemize}
+    		    \item<7-> Viele zusätzliche Methoden
+    		\end{itemize}	
+    	\end{frame}
+    	
+    	\begin{frame}
+    		\frametitle{Beispiel EditorComponent}
+    		
+    		\begin{figure}[h]
+                \begin{subfigure}{0.3\textwidth}
+                    \includegraphics[width=0.9\linewidth]{images/editor-1.png} 
+                \end{subfigure}
+                \begin{subfigure}{0.3\textwidth}
+                    \includegraphics[width=0.9\linewidth]{images/editor-2.png}
+                \end{subfigure}
+                \caption{Vergleich der Editor-Klasse im Entwurf und nach der Implementierung}
+                \label{fig:compateEditor}
+            \end{figure}
+            
+    	\end{frame}
+    	
+	    \begin{frame}
+	        \frametitle{Änderungen am Server}
+	        \begin{itemize}
+	            \item<2-> Kleinere Änderungen der Datenbank
+	            \item<3-> Kleinere Änderungen der REST API
+	            \item<4-> Anderes Paket für Cron
+	        \end{itemize}
+	    \end{frame}    	
+
+	\section{Zeit und Planung}
+	\frame{\sectionpage}
+	
+	\section{Zahlen und Statistiken}
+	\frame{\sectionpage}
+	
+%		\subsection{Zahlen}
+%		\frame{\subsectionpage}
+			\begin{frame}
+				\frametitle{Ein paar Zahlen}
+				\begin{itemize}
+					\item<2-> Lines of Code: ca 15000
+					\item<3-> Commits: ca 370 Commits
+				\end{itemize}	
+			\end{frame}
+			
+	%	\subsection{Statistiken}
+%		\frame{\subsectionpage}
+		
+			\begin{frame}
+				\frametitle{GitHub Insights - Pulse}
+				\begin{figure}[ht] 
+					\centering
+					\includegraphics[scale=0.50, trim= 1cm 0 0 0]{images/pulse.png}
+					\label{fig1}
+				\end{figure}
+			\end{frame}	
+		
+				
+	
+			\begin{frame}
+				\frametitle{Gitstats - List of authors}
+				\begin{figure}[ht] 
+					\centering
+					\includegraphics[scale=0.45, trim= 1cm 0 0 0]{images/authors.png}
+					\label{fig3}
+				\end{figure}
+			\end{frame}
+			
+			
+			
+			\begin{frame}
+				\frametitle{Gitstats - Commits per Author}
+				\begin{figure}[ht] 
+					\centering
+					\includegraphics[scale=0.50, trim= 1cm 0 0 0]{images/commits_by_author.png}
+					\label{fig5}
+				\end{figure}
+			\end{frame}
+			
+			\begin{frame}
+				\frametitle{}
+				\centering
+				\Huge Fragen?
+			\end{frame}
+			
+            \begin{frame}
+                \frametitle{GitHub Insights - Contributors}
+        		\begin{figure}[ht] 
+        			\centering
+        			\includegraphics[scale=0.30, trim= 1cm 0 0 0]{images/contributors.png}
+        			\label{fig2}
+        		\end{figure}
+        	\end{frame}
+        			
+        	\begin{frame}
+				\frametitle{Gitstats - Lines of Code per Author}
+				\begin{figure}[ht] 
+					\centering
+					\includegraphics[scale=0.50, trim= 1cm 0 0 0]{images/lines_of_code_by_author.png}
+					\label{fig4}
+				\end{figure}
+			\end{frame}		
+        			
+\end{document}
