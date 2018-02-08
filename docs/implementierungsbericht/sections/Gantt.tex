@@ -1,0 +1,157 @@
+\chapter{Gantt}
+
+\section{Einleitung}
+ Im Folgenden wird die erste Planung der Implementierung umschrieben. Dabei wird lediglich auf die große Struktur eingegangen, genauere Beschreibungen und feinere Aufteilung in kleinere Teilaufgaben erfolgt über Redmine.
+
+\section{Beschreibung}
+Die gesammte Implementierung kann in einzelnen Blöcken gesehen werden, die den Ablauf grob beschreiben. Bevor mit der eigentlichen Implementierung begonnen werden kann, müssen Vorbereitungen getroffen werden wie zum Beispiel das generelle Setup der Django Projektstruktur.
+
+\underline{Vorbereitung:} Generelles Setup des Projekts, Erstellen des Projekts mit Grundbasis und einpflege in das GitHub Repository und weitere Vorbereitungen. (Woche 0)
+
+\underline{Grundfunktionen:} Grundstruktur des Produkts, alle Anlagen und Seiten des Produkts werden erstellt, für alle Funktionen werden leere Stubs gebaut, die Datenbank angelegt und erste Benutzerschnittstellen ohne direktes UI-Layout oder -Design erstellt. (Woche 1)
+
+\underline{Hauptfunktionen:} Alle vorgesehenen Funktionalitäten sollen in diesem Block fertig\\ implementiert werden, erst jetzt wird ein ansprechendes Front-End aus den bisher rein funktionalen Komponenten gebaut. Am Ende des Blocks soll eine erste Version 1.0 zum Testen bereit sein. Was noch nicht beachtet werden soll sind Bugfixes, es soll zuerst das Grundgerüst stehen, bevor feinere Fehler behoben werden. (Woche 2)
+
+\underline{Bughunting:} Die erste V1.0 wird auf Herz und Nieren geprüft, Fehler direkt behoben und die Benutzbarkeit und Nutzerfreundlichkeit evaluiert. Kleinere Fehler werden direkt behoben, gröbere Strukturänderungen werden erst im Punkt Optimierung behoben. Derartige Eingriffe sollen aber vermieden werden, um Architektur und Stabilität nicht zu gefährden. Getestet wird erst unter Debug-Einstellungen und zuletzt in einem Produktionsumfeld, Vorraussetzung hierfür sind korrekt aufgesetzte Virtuelle Umgebungen und Testserver aus der Vorbereitungsphase. (Woche 3)
+
+\underline{Erweiterte Features:} Zunächst werden die Ergebnisse der Testphase ausgewertet und das Produkt dementsprechend angepasst und Optimiert. Danach werden weitere Wunschfunktionen implementiert ausgiebig getestet und gegebenenfalls angepasst. Ist dies geschehen, kann mit dem letzten Testbericht die Abnahme der gewünschten Produktversion und der Übergang in die Qualitätssicherung erfolgen. (Woche 4)
+
+
+
+\section{Diagramm}
+
+\newpage
+
+\paperwidth=\pdfpageheight
+\paperheight=2\pdfpagewidth
+\pdfpageheight=\paperheight
+\pdfpagewidth=\paperwidth
+\headwidth=1.05\textheight
+
+\begingroup 
+\vsize=\textwidth
+\hsize=1.05\textheight
+
+\textwidth=\hsize
+\textheight=\vsize
+
+\rfoot{}
+
+
+\begin{ganttchart}[hgrid, vgrid, x unit = .3cm, y unit title = .6cm, y unit chart = .5cm]{1}{35}
+	\gantttitle{workflowPSE Implementierung}{35} \\ 
+	\gantttitlelist{0,...,4}{7} \\
+	
+	\ganttgroup{Vorbereitung}{2}{6} \\
+	\ganttbar{Django Grundstruktur}{2}{3} \\
+	\ganttbar{VMs aufsetzen}{3}{5} \\
+	\ganttbar{PyWPS Server aufsetzen}{5}{6} \\
+	\ganttmilestone{Bereit zur Implementierung}{7}{7} \\
+	
+	\ganttlink{elem1}{elem4}
+	%\ganttlink{elem2}{elem4}	
+	%\ganttlink{elem3}{elem4}
+	
+	\ganttgroup{Grundfunktionen}{9}{13} \\
+	\ganttbar{HTML Templates}{9}{10} \\
+	\ganttbar{Django Template Views}{10}{12} \\
+	\ganttbar{Database Models}{9}{11} \\
+	\ganttbar{Basis Editor}{9}{12} \\
+	\ganttbar{Basis Übersicht}{11}{13} \\
+	\ganttbar{Django Cron Basis}{9}{13} \\
+	\ganttmilestone{Basisgerüst fertig}{14}{14} \\
+	
+	\ganttlink{elem4}{elem6}	
+	\ganttlink{elem4}{elem7}
+	\ganttlink{elem4}{elem8}
+	\ganttlink{elem4}{elem9}
+	\ganttlink{elem4}{elem10}
+	\ganttlink{elem4}{elem11}
+	
+	\ganttlink{elem6}{elem12}
+	\ganttlink{elem7}{elem12}
+	\ganttlink{elem8}{elem12}
+	\ganttlink{elem9}{elem12}
+	\ganttlink{elem10}{elem12}
+	\ganttlink{elem11}{elem12}
+	
+	\ganttgroup{Hauptfunktionen}{16}{20} \\
+	\ganttbar{CronJob Scheduler}{16}{20} \\
+	\ganttbar{CronJob Receiver}{16}{20} \\
+	\ganttbar{CronJob Utilities}{17}{20} \\
+	\ganttbar{Client volle Funktionalität}{16}{20} \\
+	\ganttbar{Einstellungen User und Admin}{16}{18} \\
+	\ganttbar{UI Feindesign}{17}{20} \\
+	\ganttmilestone{V1.0 vollständig implementiert}{21}{21} \\
+	
+	\ganttlink{elem12}{elem14}
+	\ganttlink{elem12}{elem15}
+	\ganttlink{elem12}{elem16}
+	\ganttlink{elem12}{elem17}
+	\ganttlink{elem12}{elem18}
+	\ganttlink{elem12}{elem19}
+	
+	\ganttlink{elem14}{elem20}
+	\ganttlink{elem15}{elem20}
+	\ganttlink{elem16}{elem20}
+	\ganttlink{elem17}{elem20}
+	\ganttlink{elem18}{elem20}
+	\ganttlink{elem19}{elem20}
+	
+	
+	\ganttgroup{Bughunting}{23}{27} \\
+	\ganttbar{Testen}{23}{27} \\
+	\ganttbar{Bugfixing}{23}{27} \\
+	\ganttmilestone{Abnahme Version 1.0}{28}{28} \\
+	
+	\ganttlink{elem20}{elem22}
+	\ganttlink{elem20}{elem23}
+	\ganttlink{elem2}{elem22}
+	\ganttlink{elem2}{elem23}
+	\ganttlink{elem3}{elem22}
+	\ganttlink{elem3}{elem23}
+	
+	\ganttlink{elem22}{elem24}
+	\ganttlink{elem23}{elem24}
+	
+	\ganttgroup{Erweiterte Features}{30}{34} \\
+	\ganttbar{Optimierung}{30}{32} \\
+	\ganttbar{Weitere Wunschfunktionen}{32}{33} \\
+	\ganttbar{Setup Script}{32}{32} \\
+	\ganttbar{Testen}{33}{34} \\
+	\ganttbar{Bugfixen}{33}{34} \\
+	\ganttmilestone{Gewünschte Version}{35}{35} \\
+	
+	\ganttlink{elem24}{elem26}
+	
+	\ganttlink{elem26}{elem27}
+	\ganttlink{elem26}{elem28}
+	\ganttlink{elem26}{elem29}
+	\ganttlink{elem26}{elem30}
+	\ganttlink{elem27}{elem29}
+	\ganttlink{elem28}{elem29}
+	\ganttlink{elem27}{elem30}
+	\ganttlink{elem28}{elem30}
+	
+	
+	\ganttlink{elem29}{elem31}
+	\ganttlink{elem30}{elem31}
+	
+	
+	
+	
+
+\end{ganttchart}  
+
+
+
+	\endgroup
+	\newpage
+	\paperwidth=\pdfpageheight
+	\paperheight=\pdfpagewidth
+	\pdfpageheight=\paperheight
+	\pdfpagewidth=\paperwidth
+	\headwidth=\textwidth
+	
+	
+	

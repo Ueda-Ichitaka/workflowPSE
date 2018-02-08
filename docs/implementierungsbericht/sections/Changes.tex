@@ -1,0 +1,292 @@
+\chapter{Änderungen zum Entwurf}
+    
+    \section{Änderungen am Client}
+        Die Architektur des Clients nach der Implementierung entspricht der geplanten Architektur aus dem Entwurfsdokument. Auch die Anzahl der Klassen weicht nur leicht vom Entwurfsdokument ab. Die größte Abweichung liegt in der Komplexität der Klassen. Einige Methoden und Attribute sind neu dazugekommen, die nur schwer im Voraus zu planen waren.
+        
+        \subsection{Neue Komponenten}
+            \subsubsection{ProcessDialogComponent}
+                Eine Detailansicht des ausgewählten Prozesses. \\
+                
+    			Attribute:
+    			\begin{center}
+    				\renewcommand{\arraystretch}{1.5}
+    				\setlength\tabcolsep{5pt}
+    				\begin{tabularx}{\textwidth}{|l|l|X|}
+    					\hline
+    					\rowcolor[gray]{0.90}[4.85pt]	
+    					Name & Datentyp & Beschreibung \\ \hline
+    					process & Process & Der angezeigte Prozess \\ \hline
+    				\end{tabularx}
+    			\end{center}
+    			
+    	    \subsubsection{ResultDialogComponent}
+                Eine Auflistung der Resultate der aktuellen Ausführung. \\
+                
+    			Attribute:
+    			\begin{center}
+    				\renewcommand{\arraystretch}{1.5}
+    				\setlength\tabcolsep{5pt}
+    				\begin{tabularx}{\textwidth}{|l|l|X|}
+    					\hline
+    					\rowcolor[gray]{0.90}[4.85pt]		
+    					Name & Datentyp & Beschreibung \\ \hline
+    					workflow & Workflow & Ausgeführter Workflow \\ \hline
+    					results & Artefact<'output'>[] & Liste aller Resultate \\ \hline
+    				\end{tabularx}
+    			\end{center}
+    			
+    	 \subsection{Erweiterte Komponenten}
+    	 
+    	 % EditorComponent %
+    	 \subsubsection{EditorComponent}
+			Hinzugefügte Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.90}[4.85pt]
+					Name & Datentyp & Beschreibung \\ \hline 
+					movement & MovementData & Metadaten zur Mausbewegung \\ \hline
+					snapshots & Workflow[] & Änderungsverlauf des Workflows \\ \hline
+                    taskComponents & QueryList<TaskComponent> & Liste der Tasks im aktuellen Workflow \\ \hline
+					workflowChanged & EventEmitter<Workflow>() & Wird bei jeder Änderung des Workflows ausgeführt \\ \hline
+					running & boolean & Gibt an, ob sich der aktuelle Workflow in der Ausführung befindet \\ \hline
+				\end{tabularx}
+			\end{center}
+			Hinzugefügte Methoden:
+			\begin{center}
+    			\setlength\tabcolsep{5pt}
+    			\renewcommand{\arraystretch}{1.5}
+    			
+    			\begin{tabularx}{\textwidth}{|l|l|l|X|}
+    				\hline
+    				\rowcolor[gray]{0.90}[4.85pt]
+    				Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+
+    				clickEdge & void & edge: Edge & Wird bei klick auf eine Edge aufgerufen \\ \hline
+    				scrollToMiddle & void & - & Zentriert das Sichtfeld des Editors \\ \hline
+    				changeArtefact & void & - & Wird aufgerufen, wenn ein Artefact geändert wurde \\ \hline
+    				snapshot & void & - & Erstellt ein Snapshot \\ \hline
+    				undo & void & - & Ziegt den letzten Snapshot an \\ \hline
+    			 \hline
+    			\end{tabularx}
+		    \end{center}
+		    
+    % ProcessComponent %
+    	 \subsubsection{ProcessComponent}
+			Hinzugefügte Methoden:
+			\begin{center}
+    			\setlength\tabcolsep{5pt}
+    			\renewcommand{\arraystretch}{1.5}
+    			\begin{tabularx}{\textwidth}{|l|l|l|X|}
+    				\hline
+    				\rowcolor[gray]{0.90}[4.85pt]
+    				Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+    				openDialog & void & - & Öffnet die Detailansicht \\ \hline
+    			 %\hline
+    			\end{tabularx}
+		    \end{center}
+		    
+
+    % ProcessListComponent %
+    	 \subsubsection{ProcessListComponent}
+			Hinzugefügte Methoden:
+			\begin{center}
+    			\setlength\tabcolsep{5pt}
+    			\renewcommand{\arraystretch}{1.5}
+    			\begin{tabularx}{\textwidth}{|l|l|l|X|}
+    				\hline
+    				\rowcolor[gray]{0.90}[4.85pt]
+    				Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+    				processByWPS & void & id & Gibt alle Prozesse eines bestimmten WPS Servers zurück \\ \hline
+    			 \hline
+    			\end{tabularx}
+		    \end{center}
+		    
+    % TaskComponent %
+    	 \subsubsection{TaskComponent}
+			Hinzugefügte Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.90}[4.85pt]
+					Name & Datentyp & Beschreibung \\ \hline 
+					parameterDrag & EventEmitter & Hilfsfunktion für Drag and Drop \\ \hline
+					parameterDrop & EventEmitter & Hilfsfunktion für Drag and Drop \\ \hline
+                    taskRemove & EventEmitter & Wird beim Löschen des Tasks aufgerufen \\ \hline
+					changeArtefact & EventEmitter & Wird beim Ändern eines Artefacts aufgerufen \\ \hline
+					running & boolean & Gibt an, ob sich der Task in der Ausführung befindet \\ \hline
+				\end{tabularx}
+			\end{center}
+			Hinzugefügte Methoden:
+			\begin{center}
+    			\setlength\tabcolsep{5pt}
+    			\renewcommand{\arraystretch}{1.5}
+    			\begin{tabularx}{\textwidth}{|l|l|l|X|}
+    				\hline
+    				\rowcolor[gray]{0.90}[4.85pt]
+    				Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+
+    				hostContextmenu & void & - & Öffnet das Infomenü \\ \hline
+    				openDetail & void & - & Öffnet die Detailansicht \\ \hline
+    				addArtefact & void & ProcessParameter & Fügt ein Artefact dem Task hinzu \\ \hline
+    				removeArtefact & void & ProcessParameter & Löscht das Artefact \\ \hline
+    				hasArtefact & boolean & ProcessParameter & Gibt an, ob ein Artefact definiert ist \\ \hline
+    			 \hline
+    			\end{tabularx}
+		    \end{center}
+		    
+    \newpage
+    
+    \section{Änderungen am Server}
+        Serverseitig wurde das System um das Modul utils.py erweitert, das grundsätzlich Funktionen für die Arbeit mit WPS Responses und der Datenbank gedacht ist. Funktionen sind leicht erweiterbar und können an anderen Stellen des Systems benutzt werden. \newline
+        
+        
+        
+        \subsection{Änderungen an REST API}
+        
+		\begin{center}
+			\setlength\tabcolsep{5pt}
+			\renewcommand{\arraystretch}{1.5}
+
+            \begin{tabularx}{\textwidth}{|l|l|X|}
+    			\hline
+    			\rowcolor[gray]{0.90}[4.85pt]
+    			Method & Änderung & Beschreibung \\ \hline
+    			GET /user & Hinzugefügt & Gibt den aktuellen Benutzer zurück \\ \hline
+    			POST /process & Entfernt & Prozesse werden jetzt ausschließlich über das Hinzufügen von WPS Servern erstellt \\ \hline
+    			PATCH /process/:id & Entfernt & Prozesse können aus Inkonsistenzgründen nicht mehr direkt geändert werden \\ \hline
+    			DELETE /process/:id & Entfernt & Prozesse können nicht direkt entfernt werden \\ \hline
+    			POST /login & Hinzugefügt & Loggt den Benutzer ein  \\ \hline
+    		\end{tabularx}
+		\end{center}
+	
+	
+%%% KLASSE CRON	
+	\newpage
+    	\subsection{edu.kit.scc.pseworkflow.cron}
+    	Hier wird nicht django-cron sondern django-crontab verwendet, da dies wesentlich bequemer zu implementieren war und unseren Ansprüchen besser  entsprochen hat. \\
+    	
+    			Methoden:
+		\begin{center}
+			\setlength\tabcolsep{5pt}
+			\renewcommand{\arraystretch}{1.5}
+			
+			\begin{tabularx}{\textwidth}{|l|l|l|X|}
+				\hline
+				\rowcolor[gray]{0.90}[4.85pt]
+				Name & Rückgabetyp & Parameter & Beschreibung \\ \hline
+				schedule & void & - & Hauptmethode der schedule Funktion. Hier wird der Workflow entsprechend der Reihenfolge der Tasks ausgeführt. Die XML Dateien werden erstellt und dem Servern zur Ausführung geschickt \\ \hline
+				xml\_generator & void & string & Generiert die XML Datei für die auszuführede Tasks in dem übergebenen Pfad \\ \hline
+				create\_data\_doc & \makecell{lxml.etree.\\\_Element/int} & task & Hilfsmethode für xml\_generator \\ \hline
+				send\_task & void & \makecell{task\_id, \\xml\_dir} & Hilfsmethode für schedule. Sended Task an den WPS Server\\ \hline
+				get\_execute\_url & string & task & Hilfsmethode für send\_task. Holt die Ausführungs URL aus der Datenbank. \\ \hline
+				receiver & void & - & Hauptmethode der receiver Funktion. Hier werden die Ausführungsstatus der laufende Tasks überprüft, und eventuelle Ergebnisse in die Datenbank geschrieben. \\ \hline 
+				parse\_execute\_response & task & int & Hilfsmethode für receiver. Prüft die Antwort XML vom WPS Server des Tasks \\ \hline
+				parse\_output & void & \makecell{output, \\ task} & Hilfsmethode für parse\_execute\_response \\ \hline
+				parse\_response\_literaldata & void & \makecell{artefact, \\data\_elem} & Hilfsmethode für parse\_output \\ \hline
+				parse\_response\_bbox & void & \makecell{artefact, \\data\_elem} & Hilfsmethode für parse\_output \\ \hline
+				parse\_response\_complexdata & void & \makecell{artefact, \\data\_elem} & Hilfsmethode für parse\_output \\ \hline
+				calculate\_percent\_done & int & workflow & Berechnet den Prozentsatz fertig des Workflows \\ \hline
+				task\_failed\_handling & void & \makecell{task, \\ err\_msg} & Erzeugt ein ERROR Artefact, falls der Task fehlgeschlagen ist um den Client zu informieren \\ \hline
+				update\_wps\_processes & void & - & Hauptmethode um WPS Prozesse der vorhandenen WPS Server zu aktualisieren \\ \hline
+			\end{tabularx}
+		\end{center}
+%%% ENDE DER KLASSE CRON
+
+	
+%%% MODELS
+	\newpage
+
+%%% KLASSE WORKFLOW
+		\subsection{edu.kit.scc.pseworkflow.models}
+			\subsubsection{Workflow}
+					
+			Attribute:
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.9}[4.85pt]					
+					Name & Änderung & Datentyp & Beschreibung \\ \hline
+					shared & Hinzugefügt & boolean & Zeigt an ob der Workflow öffentlich ist oder privat ist\\ \hline
+				\end{tabularx}
+			\end{center}
+
+%%% ENDE DER KLASSE WORKFLOW
+
+%%% ENUMERATION EXECUTION STATUS
+		\subsubsection{Status (Enum)}	
+			\begin{center}
+				\renewcommand{\arraystretch}{1.5}
+				\setlength\tabcolsep{5pt}
+				\begin{tabularx}{\textwidth}{|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.9}[4.85pt]
+					Name & Änderung & Beschreibung \\ \hline
+					NONE & Hinzugefügt & Der Task ist idle, bzw der Workflow wird vom Nutzer bearbeitet \\ \hline
+					READY & Geändert & In diesem Zustand wartet ein Task auf den Input eines noch nicht beendeten Tasks  \\ \hline
+					WAITING & Geändert & Der Task ist bereit ausgeführt zu werden \\ \hline
+				\end{tabularx}
+			\end{center}
+%%% ENDE DER ENUMERATION EXECUTION STATUS
+
+%%% KLASSE WPS
+		\subsubsection{WPS}
+			
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.9}[4.85pt]
+					Name & Änderung & Ersetzt & Rückgabetyp & Beschreibung \\ \hline 
+					service\_provider & umbenannt & wps\_provider & WPSProvider & Der Besitzer des WPS Servers \\ \hline
+					
+				\end{tabularx}
+			\end{center}
+%%% ENDE DER KLASSE WPS
+
+%%% KLASSE INPUTOUTPUT
+		\subsubsection{InputOutput} 
+		Die Klasse InputOutput ist nicht mehr abstakt und übernimmt die Rolle der Klassen Input und Output, welche ursprünglich von InputOutput erben sollten. Die Klassen Input und Output wurden gestrichen. \\
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.9}[4.85pt]
+					Name & Änderung & Rückgabetyp & Beschreibung \\ \hline 
+					format & Hinzugefügt & string & Das Format eines Inputs oder Outputs \\ \hline
+				\end{tabularx}
+			\end{center}
+			
+%%% ENDE DER KLASSE INPUTOUTPUT
+
+
+%%% KLASSE ARTEFACT
+		\subsubsection{Artefact} Die Klasse Artefact ist nicht mehr abstakt und übernimmt die Rolle der Klassen InputArtefact und OutputArtefact, welche ursprünglich von der abstrakten Klassse Artefact erben sollten. Die Klassen InputArtefact und OutputArtefact wurden gestrichen. \\
+
+			Attribute:
+			\begin{center}
+				\setlength\tabcolsep{5pt}
+				\renewcommand{\arraystretch}{1.5}
+				
+				\begin{tabularx}{\textwidth}{|l|l|l|X|}
+					\hline
+					\rowcolor[gray]{0.9}[4.85pt]
+					Name & Änderung  & Rückgabetyp & Beschreibung \\ \hline 
+					parameter & Hinzugefügt & InputOutput & InputOutput Parameter des Tasks \\ \hline
+				\end{tabularx}
+			\end{center}
+%%% ENDE DER KLASSE ARTEFACT

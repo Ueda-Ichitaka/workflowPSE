@@ -1,0 +1,99 @@
+\chapter{\gls{Unittest}s}
+    In diesem Abschnitt werden alle Unittests des Systems aufgelistet und kurz beschrieben. \newline
+    Das Django Framework verlangt, dass die Bezeichnungen aller Testmethoden mit dem Präfix \glqq test\grqq \ anfangen. \newline 
+    Da alle im Weiteren beschriebene Methoden Testmethoden sind, haben die alle den Rückgabetyp void und erwarten keine Eingabeparameter.  
+    \section{ParserTestCase}
+    
+    Innherhalb dieser Testklasse werden Methoden getestet, die für die Analyse der WPS Server Responses verantwortlich sind. Dabei werden zwei statische xml Testdateien verwendet, die mittels WPS getCapabilities und WPS describeProcesses Requests als Response von einem test Server zurückgegenen werden. \newline
+    In der Methoden Beschreibungen wird der Einfachheit halber oft das Wort \glqq Information\grqq \space benutzt. Genau Liste der Attributen die für das Erzeugen eines Objekts notwendig sind, finden Sie im Entwurfsdokument (Abschnitt 3.1.3 Models).
+	
+	\begin{center}
+		\renewcommand{\arraystretch}{1.5}
+		\setlength\tabcolsep{5pt}
+		\begin{tabularx}{\textwidth}{|l|X|}
+			\hline
+			\rowcolor[gray]{0.75}[4.85pt]
+			Name & Beschreibung \\ \hline
+			test\_parse\_service\_provider\_info & Testet, ob die Information über einen WPS Provider richtig aus einer xml Datei ausgelesen wird. \\ \hline
+			test\_parse\_service\_provider\_info\_fail &  Prüft die Ausnahmebehandlung beim Parsen der Information über einen service provider. \\ \hline
+			test\_parse\_wps\_server\_info & Testet, ob die Information über einen WPS Server richtig aus einer xml Datei ausgelesen wird. \\ \hline
+			test\_parse\_wps\_server\_info\_fail & Prüft die Ausnahmebehandlung beim Parsen der Information über einen Server. \\ \hline
+			test\_parse\_wps\_process & Es wird getestet, ob die Information über einen WPS Prozess richtig aus einer xml Datei ausgelesen wird. \\ \hline
+			test\_parse\_wps\_process\_fail & Prüft die Ausnahmebehandlung beim Parsen der Information über einen WPS Prozess. \\ \hline
+			test\_parse\_process\_input\_literal & Testet, ob die Information über einen Input mit Datentyp \glqq LiteralData\grqq \ korrekt ausgelesen wird.\\ \hline
+			test\_parse\_process\_output\_literal & Es wird überprüft, ob die Information über einen Output mit Datentyp \glqq LiteralOutput\grqq \ korrekt ausgelesen wird. \\ \hline
+	\end{tabularx}
+	\end{center}	
+	
+	
+	\begin{center}
+		\renewcommand{\arraystretch}{1.5}
+		\setlength\tabcolsep{5pt}
+		\begin{tabularx}{\textwidth}{|l|X|}
+			\hline
+			\rowcolor[gray]{0.75}[4.85pt]
+			Name & Beschreibung \\ \hline
+			test\_parse\_process\_input\_complex & Es wird überprüft, ob die Information über einen Input mit Datentyp \glqq ComplexData\grqq \ korrekt ausgelesen wird. \\ \hline
+			test\_parse\_process\_output\_complex & Es wird überprüft, ob die Information über einen Output mit Datentyp \glqq ComplexOutput\grqq \ korrekt ausgelesen wird. \\ \hline
+			test\_parse\_process\_input\_bounding\_box & Es wird überprüft, ob die Information über einen Input mit Datentyp \glqq BoundingBoxData\grqq \ korrekt ausgelesen wird. \\ \hline
+			test\_parse\_process\_output\_bounding\_box & Es wird überprüft, ob die Information über einen Output mit Datentyp \glqq BoundingBoxOutput\grqq \ korrekt ausgelesen wird. \\ \hline
+			test\_parse\_process\_input\_fail & Prüft die Ausnahmebehandlung beim Parsen der Information über einen  Input. \\ \hline
+			test\_parse\_process\_output\_fail & Prüft die Ausnahmebehandlung beim Parsen der Information über einen Output.\\ \hline
+		\end{tabularx}
+	\end{center}	
+	
+%%%%%%%%%%%
+% NEWPAGE %
+%%%%%%%%%%%
+
+    \newpage
+
+	\section{DatabaseTestCase}
+	In dieser Testklasse werden Methoden getestet, die für die Arbeit mit einer relationalen Datenbank verantwortlich sind. Methoden mit dem Präfix \glqq search\grqq \ werden verwendet, um Duplikate in der Datenbank zu eliminieren.
+	
+	\begin{center}
+		\renewcommand{\arraystretch}{1.5}
+		\setlength\tabcolsep{5pt}
+		\begin{tabularx}{\textwidth}{|l|X|}
+			\hline
+			\rowcolor[gray]{0.75}[4.85pt]
+			Name & Beschreibung \\ \hline
+			setUp & (Überschrieben) \newline Es werden die Testdaten in die Datenbank geschrieben. \\ \hline
+			test\_searc\_provider\_in\_database & Sucht einen Service Provider in der Datenbank nach den Namen und der Webseite. \\ \hline
+			test\_search\_provider\_in\_empty\_database & Prüft, ob im Falle der Abwesenheit des Providers in der Datenbank, eine Ausnahme geworfen wird. \\ \hline
+			test\_search\_server\_in\_database & Sucht einen Server in der Datenbank nach den Titel. \\ \hline
+			test\_search\_server\_in\_empty\_database & Prüft, ob im Falle der Abwesenheit des Servers in der Datenbank, eine Ausnahme geworfen wird. \\ \hline
+			test\_search\_process\_in\_database & Sucht einen WPS Prozess in der Datenbank nach den Titel und Titel des dazugehörigen Servers.  \\ \hline
+			test\_search\_process\_in\_empty\_database & Prüft, ob im Falle der Abwesenheit des WPS Prozesses in der Datenbank, eine Ausnahme geworfen wird. \\ \hline
+			test\_search\_input\_output\_in\_database & Sucht einen Input/Output in der Datenbank nach seinen Identifikator (String) und den dazugehörigen WPS Prozess. \\ \hline
+			test\_search\_input\_output\_in\_empty\_database & Prüft, ob im Falle der Abwesenheit des Inputs/Outputs in der Datenbank, eine Ausnahme geworfen wird. \\ \hline
+			test\_overwrite\_server & Testet, ob die Information über Server korrekt überschrieben wird.\\ \hline
+			test\_overwrite\_process & Testet, ob die Information über WPS Prozess korrekt überschrieben wird.\\ \hline
+			test\_overwrite\_input\_output & Testet, ob die Information über Input/Output korrekt überschrieben wird.\\ \hline
+		\end{tabularx}
+	\end{center}
+	
+	
+	
+	\section{CronTestCase}
+	Innerhalb dieser Testklasse werden Methoden des Moduls cron.py getestet, durch einen Cron daemon in regelmäßigen Abständen ausgeführt werden.
+	
+	\begin{center}
+		\renewcommand{\arraystretch}{1.5}
+		\setlength\tabcolsep{5pt}
+		\begin{tabularx}{\textwidth}{|l|X|}
+			\hline
+			\rowcolor[gray]{0.75}[4.85pt]
+			Name & Beschreibung \\ \hline
+			setUp & (Überschrieben) \newline Es werden die Testdaten in die Datenbank geschrieben. \\ \hline
+			tearDown & (Überschrieben) \newline Es werden alle Datensätze aus der Datenbank gelöscht\\ \hline
+			test\_send\_task & Es wird ein Test Task ausgewählt und überprüft, dass man einen Response von Server bekommt und die status URL in die Datenbank geschrieben wird. \\ \hline
+			test\_execution & Führt einen Task aus und überprüft, ob in der Datenbank ein richtiges Ergebnis steht. \\ \hline
+			test\_update\_wps\_processes & Testet, ob die WPS Prozesse von einem im voraus gespeicherten WPS Server korrekt gesammelt und in der Datenbank gespeichert werden.\\ \hline
+			test\_update\_wps\_processes\_with\_empty\_database & Testet, ob bei einer leeren Datenbank (also, wenn es kein Server gespeichert ist) nichts gemacht wird. \\ \hline
+			
+		\end{tabularx}
+	\end{center}
+	
+	
+%%% Mache nach dem Essen weiter

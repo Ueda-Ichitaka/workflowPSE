@@ -1,0 +1,207 @@
+\chapter{Planung}
+    
+    \section{Einleitung}
+    
+    \section{Aufgabenverteilung}
+    Grob wurde das Projekt in zwei große Blöcke je 3 Leute aufgeteilt, in Client und Server. Innerhalb dieser Blöcke wurde wieder etwas unterteilt, beim Server waren dies die Unterblöcke Datenbank, Cron Utils, Cron Receiver, Cron Scheduler und REST API. Clientseitig wurden die Aufgaben in Editor, Einstellungen, Fehlermanagement und Workflowmanagement unterteilt. Die zugewiesenen Aufgaben wurden in kleinen Schritten erledigt und bei Abschluss wurde ein weiterer kleiner Abschnitt zugewiesen, um eine dynamische Zuweisung zu ermöglichen. So konnten im späteren Verlauf Leute vom Client zum Server wechseln, nachdem der Client eher als geplant fertiggestellt wurde. Als Client und Server hinreichend fertig waren, um verbunden zu werden, wurde dies von je einem aus dem Client Bereich und einem aus dem Server Bereich vollzogen. Am Ende hat das gesammte Team sich ums Testen und um kleinere Bugfixes etc. gekümmert. 
+    
+    \section{Zeitplan}
+    Zeitlich war ein Ablauf innerhalb von 4 Wochen in den Blöcken Grundfunktionen, Hauptfunktionen, Bughunting und Erweiterte Features geplant. Nach einem schnellen Start mit dem Abschluss der Grundfunktionen vor der geplanten Zeit, stellte sich der Plan jedoch als sehr ambitioniert heraus. Für die eigentliche Implementierung wurden 3 Wochen anstatt von einer Woche benötigt und somit musste der Block Erweiterte Features herausgenommen werden. Das Testen wurde instinktiv in die Implementierung eingebunden, sodass hier kein klarer eigenständiger Block zu erkennen war. 
+    
+    \section{Verzögerungen}
+    Da jeder der Teammitglieder die Entwicklung zeitgleich mit dem normalen Arbeitsaufwand der Uni vereinbaren musste, zögerte sich die Implementierung länger als zunächst gedacht heraus.
+    
+    \section{Gantt wie geplant}
+    
+        \begin{ganttchart}[hgrid, vgrid, x unit = .3cm, y unit title = .6cm, y unit chart = .5cm]{1}{35}
+        	\gantttitle{workflowPSE Implementierung}{35} \\ 
+        	\gantttitlelist{0,...,4}{7} \\
+        	
+        	\ganttgroup{Vorbereitung}{2}{6} \\
+        	\ganttbar{Django Grundstruktur}{2}{3} \\
+        	\ganttbar{VMs aufsetzen}{3}{5} \\
+        	\ganttbar{PyWPS Server aufsetzen}{5}{6} \\
+        	\ganttmilestone{Bereit zur Implementierung}{7}{7} \\
+        	
+        	\ganttlink{elem1}{elem4}
+        	%\ganttlink{elem2}{elem4}	
+        	%\ganttlink{elem3}{elem4}
+        	
+        	\ganttgroup{Grundfunktionen}{9}{13} \\
+        	\ganttbar{HTML Templates}{9}{10} \\
+        	\ganttbar{Django Template Views}{10}{12} \\
+        	\ganttbar{Database Models}{9}{11} \\
+        	\ganttbar{Basis Editor}{9}{12} \\
+        	\ganttbar{Basis Übersicht}{11}{13} \\
+        	\ganttbar{Django Cron Basis}{9}{13} \\
+        	\ganttmilestone{Basisgerüst fertig}{14}{14} \\
+        	
+        	\ganttlink{elem4}{elem6}	
+        	\ganttlink{elem4}{elem7}
+        	\ganttlink{elem4}{elem8}
+        	\ganttlink{elem4}{elem9}
+        	\ganttlink{elem4}{elem10}
+        	\ganttlink{elem4}{elem11}
+        	
+        	\ganttlink{elem6}{elem12}
+        	\ganttlink{elem7}{elem12}
+        	\ganttlink{elem8}{elem12}
+        	\ganttlink{elem9}{elem12}
+        	\ganttlink{elem10}{elem12}
+        	\ganttlink{elem11}{elem12}
+        	
+        	\ganttgroup{Hauptfunktionen}{16}{20} \\
+        	\ganttbar{CronJob Scheduler}{16}{20} \\
+        	\ganttbar{CronJob Receiver}{16}{20} \\
+        	\ganttbar{CronJob Utilities}{17}{20} \\
+        	\ganttbar{Client volle Funktionalität}{16}{20} \\
+        	\ganttbar{Einstellungen User und Admin}{16}{18} \\
+        	\ganttbar{UI Feindesign}{17}{20} \\
+        	\ganttmilestone{V1.0 vollständig implementiert}{21}{21} \\
+        	
+        	\ganttlink{elem12}{elem14}
+        	\ganttlink{elem12}{elem15}
+        	\ganttlink{elem12}{elem16}
+        	\ganttlink{elem12}{elem17}
+        	\ganttlink{elem12}{elem18}
+        	\ganttlink{elem12}{elem19}
+        	
+        	\ganttlink{elem14}{elem20}
+        	\ganttlink{elem15}{elem20}
+        	\ganttlink{elem16}{elem20}
+        	\ganttlink{elem17}{elem20}
+        	\ganttlink{elem18}{elem20}
+        	\ganttlink{elem19}{elem20}
+        	
+        	\ganttgroup{Bughunting}{23}{27} \\
+        	\ganttbar{Testen}{23}{27} \\
+        	\ganttbar{Bugfixing}{23}{27} \\
+        	\ganttmilestone{Abnahme Version 1.0}{28}{28} \\
+        	
+        	\ganttlink{elem20}{elem22}
+        	\ganttlink{elem20}{elem23}
+        	\ganttlink{elem2}{elem22}
+        	\ganttlink{elem2}{elem23}
+        	\ganttlink{elem3}{elem22}
+        	\ganttlink{elem3}{elem23}
+        	
+        	\ganttlink{elem22}{elem24}
+        	\ganttlink{elem23}{elem24}
+        	
+        	\ganttgroup{Erweiterte Features}{30}{34} \\
+        	\ganttbar{Optimierung}{30}{32} \\
+        	\ganttbar{Weitere Wunschfunktionen}{32}{33} \\
+        	\ganttbar{Setup Script}{32}{32} \\
+        	\ganttbar{Testen}{33}{34} \\
+        	\ganttbar{Bugfixen}{33}{34} \\
+        	\ganttmilestone{Gewünschte Version}{35}{35} \\
+        	
+        	\ganttlink{elem24}{elem26}
+        	
+        	\ganttlink{elem26}{elem27}
+        	\ganttlink{elem26}{elem28}
+        	\ganttlink{elem26}{elem29}
+        	\ganttlink{elem26}{elem30}
+        	\ganttlink{elem27}{elem29}
+        	\ganttlink{elem28}{elem29}
+        	\ganttlink{elem27}{elem30}
+        	\ganttlink{elem28}{elem30}
+        	
+        	\ganttlink{elem29}{elem31}
+        	\ganttlink{elem30}{elem31}
+        
+        \end{ganttchart}
+        
+        
+        
+    \section{Gantt wie erfolgt}    
+    
+        \begin{ganttchart}[hgrid, vgrid, x unit = .3cm, y unit title = .6cm, y unit chart = .5cm]{1}{35}
+        	\gantttitle{workflowPSE Implementierung}{35} \\ 
+        	\gantttitlelist{0,...,4}{7} \\
+        	
+        	\ganttgroup{Vorbereitung}{2}{6} \\
+        	\ganttbar{GitHub Repo vorbereiten}{2}{2} \\
+        	\ganttbar{Django Grundstruktur}{2}{2} \\
+        	\ganttbar{VMs aufsetzen}{3}{5} \\
+        	\ganttbar{PyWPS Server aufsetzen}{4}{6} \\
+        	\ganttmilestone{Bereit zur Implementierung}{7}{7} \\
+        	
+        	\ganttlink[link bulge=4]{elem1}{elem5}
+        	\ganttlink[link bulge=4]{elem2}{elem5}
+        	\ganttlink[link bulge=4]{elem3}{elem5}
+        	\ganttlink[link bulge=4]{elem4}{elem5}
+        	
+       
+        	
+        	\ganttgroup{Grundfunktionen}{9}{12} \\
+        	\ganttbar{HTML Templates}{9}{10} \\
+        	\ganttbar{Django Template Views}{10}{11} \\
+        	\ganttbar{Database Models}{9}{9} \\
+        	\ganttbar{Basis Editor}{9}{9} \\
+        	\ganttbar{Basis Übersicht}{9}{9} \\
+        	\ganttbar{Django Cron Basis}{11}{12} \\
+        	\ganttbar{UI Feindesign}{9}{11} \\
+        	\ganttmilestone{Basisgerüst fertig}{13}{13} \\
+        	
+    	 	\ganttlink[link bulge=4]{elem5}{elem7}
+        	\ganttlink[link bulge=4]{elem5}{elem8}
+        	\ganttlink[link bulge=4]{elem5}{elem9}
+        	\ganttlink[link bulge=4]{elem5}{elem10}
+        	\ganttlink[link bulge=4]{elem5}{elem11}
+        	\ganttlink[link bulge=2]{elem5}{elem12}
+        	\ganttlink[link bulge=2]{elem5}{elem13}
+        	
+        	\ganttlink[link bulge=4]{elem7}{elem14}
+        	\ganttlink[link bulge=4]{elem8}{elem14}
+        	\ganttlink[link bulge=4]{elem9}{elem14}
+        	\ganttlink[link bulge=4]{elem10}{elem14}
+        	\ganttlink[link bulge=4]{elem11}{elem14}
+        	\ganttlink[link bulge=4]{elem12}{elem14}
+        	\ganttlink[link bulge=4]{elem13}{elem14}
+        	
+        	
+        	
+        	\ganttgroup{Hauptfunktionen}{15}{34} \\
+        	\ganttbar{CronJob Scheduler}{15}{30} \\
+        	\ganttbar{CronJob Receiver}{18}{30} \\
+        	\ganttbar{CronJob Utilities}{15}{30} \\
+        	\ganttbar{REST API}{15}{20} \\
+        	\ganttbar{Client Editor}{16}{25} \\
+        	\ganttbar{Client Übersicht}{16}{23} \\
+        	\ganttbar{Einstellungen Client}{25}{27} \\
+        	\ganttbar{Verbindung Client Server}{20}{25} \\
+        	\ganttbar{Code Dokumentation}{20}{23} \\
+        	\ganttbar{Testen}{27}{34} \\
+        	\ganttbar{Bugfixing}{27}{34} \\
+        	\ganttmilestone{V1.0 vollständig implementiert}{35}{35} \\
+        	
+        	\ganttlink{elem14}{elem16}
+        	\ganttlink{elem14}{elem17}
+        	\ganttlink{elem14}{elem18}
+        	\ganttlink{elem14}{elem19}
+        	\ganttlink{elem14}{elem20}
+        	\ganttlink{elem14}{elem21}
+        	\ganttlink{elem14}{elem22}
+%        	\ganttlink{elem14}{elem23}
+        	\ganttlink{elem14}{elem24}
+        	\ganttlink{elem14}{elem25}
+        	\ganttlink{elem14}{elem26}
+        	
+        	\ganttlink{elem16}{elem27}
+        	\ganttlink{elem17}{elem27}
+        	\ganttlink{elem18}{elem27}
+        	\ganttlink{elem19}{elem23}
+        	\ganttlink{elem20}{elem27}
+        	\ganttlink{elem21}{elem27}
+        	\ganttlink{elem22}{elem27}
+        	\ganttlink{elem23}{elem27}
+        	\ganttlink{elem24}{elem27}
+        	\ganttlink{elem25}{elem27}
+        	\ganttlink{elem26}{elem27}
+        	
+        
+        \end{ganttchart}
+        \\ \\
+    Aus den beiden Gantt-Diagrammen kann man leicht den oben beschriebenen Zeitplan und die Änderungen, die sich innerhalb der Implementierung ergeben haben, herauslesen.
+        
