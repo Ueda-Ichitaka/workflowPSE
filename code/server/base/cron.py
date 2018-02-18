@@ -35,6 +35,7 @@ def scheduler():
         wps_log.debug(
             f"found {len(all_tasks)} tasks in workflow{current_workflow.id}")
         for current_task in all_tasks:
+            previous_tasks_failed = False
             previous_tasks_finished = True
             edges_to_current_task = Edge.objects.filter(to_task=current_task)
             wps_log.debug(
@@ -61,8 +62,14 @@ def scheduler():
                     wps_log.debug(
                         f"task{current_task.id}s prior task{current_edge.from_task.id} is not finished")
                     previous_tasks_finished = False
+                    if current_edge.from_task.status == '5':
+                        wps_log.debug(f"task{current_task.id}'s prior task{current_edge.from_task.id} has failed")
+                        previous_tasks_failed = True
                     break
-            if previous_tasks_finished:
+            if previous_tasks_failed:
+                current_task.status = '5'
+                current_task.save()
+            elif previous_tasks_finished:
                 wps_log.debug(
                     f"previous task is finished, scheduling now following task{current_task.id}")
                 current_task.status = '2'
@@ -727,7 +734,6 @@ def calculate_percent_done(workflow):
                         f"failure of tasks: {[task.id for task in err_tasks]}")
         percent_done = -1
         workflow.save()
-        Task.objects.filter(workflow=workflow).update(status='5')
     else:
         finished = list(Task.objects.filter(workflow=workflow, status='4'))
         all_wf_tasks = list(Task.objects.filter(workflow=workflow))
