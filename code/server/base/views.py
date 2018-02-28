@@ -16,7 +16,6 @@ from base import cron, utils
 from base.models import InputOutput, WPSProvider, Process, Artefact, Edge, Task, Workflow, WPS
 
 
-# TODO: tests, documentation
 def as_json_response(list):
     """
     method stub to return a JsonResponse
@@ -28,7 +27,6 @@ def as_json_response(list):
     return JsonResponse(list, safe=False)
 
 
-# TODO: tests, documentation
 class UserView(View):
     """
     Sends user data to the client
@@ -49,7 +47,6 @@ class UserView(View):
         return as_json_response(user)
 
 
-# TODO: tests, documentation
 class WorkflowView(View):
     """
     Exchanges workflow data with the client
@@ -485,7 +482,6 @@ class WorkflowView(View):
         return JsonResponse({})
 
 
-# TODO: tests, documentation
 class ProcessView(View):
     """
     Exchanges process data with the client
@@ -574,33 +570,28 @@ class ProcessView(View):
         return JsonResponse({'error': 'this REST interface is not supported'})
 
     @staticmethod
-    def patch(request, **kwargs):
+    def patch(request):
         """
         Updates a process if it exists
         @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
-        @type kwargs: list
         @return: a JsonResponse which contains either the process or an error message
         @rtype: django.http.JsonResponse
         """
         return JsonResponse({'error': 'this REST interface is not supported'})
 
     @staticmethod
-    def delete(request, **kwargs):
+    def delete(request):
         """
         Deletes a process if it exists
         @param request: the request sent from the client
         @type request: django.http.request.HttpRequest
-        @param kwargs: keyworded arguments passed to models.Model.dispatch() method
-        @type kwargs: list
         @return: a JsonResponse containing an error message because this is not supported
         @rtype: django.http.JsonResponse
         """
         return JsonResponse({'error': 'this REST interface is not supported'})
 
 
-# TODO: tests, documentation
 class WPSView(View):
     """
     Exchanges wps data with the client
@@ -795,7 +786,6 @@ class OurLoginView(TemplateView):
             return JsonResponse({'error': 'no access'})
 
 
-# TODO: tests, documentation
 class WorkflowsView(LoginRequiredMixin, TemplateView):
     """
 
@@ -805,7 +795,6 @@ class WorkflowsView(LoginRequiredMixin, TemplateView):
     template_name = "index.html"
 
 
-# TODO: tests, documentation
 class EditorView(LoginRequiredMixin, TemplateView):
     """
 
@@ -815,7 +804,6 @@ class EditorView(LoginRequiredMixin, TemplateView):
     template_name = "index.html"
 
 
-# TODO: tests, documentation
 class SettingsView(LoginRequiredMixin, TemplateView):
     """
 

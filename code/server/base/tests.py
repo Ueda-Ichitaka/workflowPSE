@@ -1,3 +1,4 @@
+import json
 import os
 import unittest
 import xml.etree.ElementTree as ET
@@ -575,3 +576,108 @@ class DatabaseTestCase(TestCase):
         self.assertEqual(new_database_entry.max_occurs, new_literal_input.max_occurs)
 
 
+class ProcessViewCase(TestCase):
+    def setUp(self):
+        WPSProvider.objects.create(
+            provider_name="Test Provider",
+            provider_site="pse.rudolphrichard.de",
+            individual_name="Rudolph, Richard",
+            position_name="Software Engineer"
+        )
+        WPS.objects.create(
+            service_provider_id='1',
+            title="PyWPS Testserver",
+            abstract="tl;dr",
+            capabilities_url="http://pse.rudolphrichard.de:5000/wps",
+            describe_url="http://pse.rudolphrichard.de:5000/wps",
+            execute_url="http://pse.rudolphrichard.de:5000/wps")
+        Process.objects.create(
+            wps_id='1',
+            identifier="say_hello",
+            title="Process Say Hello",
+            abstract="tl;dr"
+        )
+        InputOutput.objects.create(
+            process_id='1',
+            role='0',
+            identifier="name",
+            title="Input name",
+            abstract="tl;dr",
+            datatype='0',
+            format="string",
+            min_occurs='1',
+            max_occurs='1')
+        InputOutput.objects.create(
+            process_id='1',
+            role='1',
+            identifier="response",
+            title="Output name response",
+            abstract="tl;dr",
+            datatype='0',
+            format="string",
+            min_occurs='1',
+            max_occurs='1')
+
+    def assert_process_equal_to_expected(self, process):
+        self.assertEqual(process['id'], 1)
+        self.assertEqual(process['identifier'], 'say_hello')
+        self.assertEqual(process['title'], 'Process Say Hello')
+        self.assertEqual(process['abstract'], 'tl;dr')
+
+        self.assertEqual(process['inputs'][0]['id'], 1)
+        self.assertEqual(process['inputs'][0]['process_id'], 1)
+        self.assertEqual(process['inputs'][0]['identifier'], 'name')
+        self.assertEqual(process['inputs'][0]['title'], 'Input name')
+        self.assertEqual(process['inputs'][0]['abstract'], 'tl;dr')
+        self.assertEqual(process['inputs'][0]['role'], 'input')
+        self.assertEqual(process['inputs'][0]['type'], 0)
+        self.assertEqual(process['inputs'][0]['format'], 'string')
+        self.assertEqual(process['inputs'][0]['max_occurs'], 1)
+        self.assertEqual(process['inputs'][0]['min_occurs'], 1)
+
+        self.assertEqual(process['inputs'][0]['id'], 1)
+        self.assertEqual(process['inputs'][0]['process_id'], 1)
+        self.assertEqual(process['inputs'][0]['identifier'], 'name')
+        self.assertEqual(process['inputs'][0]['title'], 'Input name')
+        self.assertEqual(process['inputs'][0]['abstract'], 'tl;dr')
+        self.assertEqual(process['inputs'][0]['role'], 'input')
+        self.assertEqual(process['inputs'][0]['type'], 0)
+        self.assertEqual(process['inputs'][0]['format'], 'string')
+        self.assertEqual(process['inputs'][0]['max_occurs'], 1)
+        self.assertEqual(process['inputs'][0]['min_occurs'], 1)
+
+        self.assertEqual(process['outputs'][0]['id'], 2)
+        self.assertEqual(process['outputs'][0]['process_id'], 1)
+        self.assertEqual(process['outputs'][0]['identifier'], 'response')
+        self.assertEqual(process['outputs'][0]['title'], 'Output name response')
+        self.assertEqual(process['outputs'][0]['abstract'], 'tl;dr')
+        self.assertEqual(process['outputs'][0]['role'], 'output')
+        self.assertEqual(process['outputs'][0]['type'], 0)
+        self.assertEqual(process['outputs'][0]['format'], 'string')
+        self.assertEqual(process['outputs'][0]['max_occurs'], 1)
+        self.assertEqual(process['outputs'][0]['min_occurs'], 1)
+
+    def test_process_get_single(self):
+        response = json.loads(self.client.get('/process/1').content)
+
+        self.assert_process_equal_to_expected(response)
+
+    def test_process_get_all(self):
+        response = json.loads(self.client.get('/process/').content)
+
+        self.assert_process_equal_to_expected(response[0])
+
+    def test_process_post(self):
+        response = json.loads(self.client.post('/process/').content)
+
+        self.assertTrue('error' in response)
+
+    def test_process_path(self):
+        response = json.loads(self.client.patch('/process/').content)
+
+        self.assertTrue('error' in response)
+
+    def test_process_delete(self):
+        response = json.loads(self.client.delete('/process/').content)
+
+        self.assertTrue('error' in response)
