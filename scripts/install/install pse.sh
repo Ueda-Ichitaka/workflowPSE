@@ -12,7 +12,7 @@ cd /home/$user/Downloads
 wget https://www.python.org/downloads/release/python-363/
 tar -xvf Python-3.6.3.tar.xz
 cd Python-3.6.3/
-sudo apt-get install -f zlib1g-dev libffi-dev libssl-dev openssl-dev openssl libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdm-dev libc6-dev libbz2-dev python-pip python-dev libpq-dev postgresql postgresql-contrib
+sudo apt-get install -f apache2 zlib1g-dev libffi-dev libssl-dev openssl-dev openssl libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdm-dev libc6-dev libbz2-dev python-pip python-dev libpq-dev postgresql postgresql-contrib libapache2-mod-wsgi-py3
 ./configure --enable-optimizations
 sudo make
 sudo make test
@@ -24,7 +24,8 @@ sudo pip3.6 install Django==2.0.1 psycopg2 django_crontab docutils pywps django-
 ## install pywps
 sudo pip3.6 install -e git+https://github.com/geopython/pywps.git@master#egg=pywps-dev
 
-
+## postgresql
+## pip install requirements.txt
 
 
 
