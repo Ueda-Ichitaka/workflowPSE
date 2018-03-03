@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Process } from '../models/Process';
 import { ProcessParameterType } from '../models/ProcessParameter';
 import { map } from 'rxjs/operators';
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class ProcessService {
@@ -47,7 +48,7 @@ export class ProcessService {
    * @returns {Observable<Process[]>}
    */
   public all(): Observable<Process[]> {
-    return this.http.get<Process[]>(`http://127.0.0.1:8000/process/`, { withCredentials: true });
+    return this.http.get<Process[]>(`${environment.ip}/process/`, { withCredentials: true });
   }
 
   /**
@@ -56,6 +57,6 @@ export class ProcessService {
    * @returns {Observable<Process>}
    */
   public get(id: number): Observable<Process> {
-    return this.http.get<Process>(`http://127.0.0.1:8000/process/${id}`, { withCredentials: true });
+    return this.http.get<Process>(`${environment.ip}/process/${id}`, { withCredentials: true });
   }
 }

@@ -8,6 +8,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { Process } from 'app/models/Process';
 import { ProcessService } from 'app/services/process.service';
+import { environment } from 'environments/environment';
 
 /**
  * Different workflow validation results
@@ -82,7 +83,7 @@ export class WorkflowService {
    * @returns {Observable<Workflow[]>}
    */
   public all(): Observable<Workflow[]> {
-    return this.http.get<Workflow[]>(`http://127.0.0.1:8000/workflow/`, { withCredentials: true });
+    return this.http.get<Workflow[]>(`${environment.ip}/workflow/`, { withCredentials: true });
   }
 
   /**
@@ -91,7 +92,7 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public get(id: number): Observable<Workflow> {
-    return this.http.get<Workflow>(`http://127.0.0.1:8000/workflow/${id}`, { withCredentials: true });
+    return this.http.get<Workflow>(`${environment.ip}/workflow/${id}`, { withCredentials: true });
   }
 
   /**
@@ -100,7 +101,7 @@ export class WorkflowService {
    * @returns {Observable<Workflow>}
    */
   public create(workflow: Partial<Workflow>): Observable<Workflow> {
-    return this.http.post<Workflow>(`http://127.0.0.1:8000/workflow/`, workflow, { withCredentials: true });
+    return this.http.post<Workflow>(`${environment.ip}/workflow/`, workflow, { withCredentials: true });
   }
 
   /**
@@ -111,7 +112,7 @@ export class WorkflowService {
    */
   public update(id: number, workflow: Partial<Workflow>): Observable<Workflow> {
     this.bar.open(`Updated Workflow`, 'CLOSE', { duration: 2500 });
-    return this.http.patch<Workflow>(`http://127.0.0.1:8000/workflow/${id}`, workflow, { withCredentials: true });
+    return this.http.patch<Workflow>(`${environment.ip}/workflow/${id}`, workflow, { withCredentials: true });
   }
 
   /**
@@ -121,7 +122,7 @@ export class WorkflowService {
    */
   public async remove(id: number): Promise<boolean> {
     this.bar.open(`Deleted Workflow`, 'CLOSE', { duration: 2500 });
-    return this.http.delete<boolean>(`http://127.0.0.1:8000/workflow/${id}`, { withCredentials: true }).toPromise();
+    return this.http.delete<boolean>(`${environment.ip}/workflow/${id}`, { withCredentials: true }).toPromise();
 
   }
 
@@ -320,7 +321,7 @@ export class WorkflowService {
    * @returns {Promise<boolean>}
    */
   public async start(id: number): Promise<boolean> {
-    const result = await this.http.get<any>(`http://127.0.0.1:8000/workflow_start/${id}`).toPromise();
+    const result = await this.http.get<any>(`${environment.ip}/workflow_start/${id}`).toPromise();
 
     if (result['error']) {
       this.bar.open(result['error'], 'CLOSE', { duration: 5000 });
@@ -331,7 +332,7 @@ export class WorkflowService {
   }
 
   public async refresh(id: number): Promise<boolean> {
-    const result = await this.http.get<any>(`http://127.0.0.1:8000/workflow_refresh/${id}`).toPromise();
+    const result = await this.http.get<any>(`${environment.ip}/workflow_refresh/${id}`).toPromise();
     if (result['error']) {
       this.bar.open(result['error'], 'CLOSE', { duration: 5000 });
       return false;
@@ -341,7 +342,7 @@ export class WorkflowService {
   }
 
   public async stop(id: number): Promise<boolean> {
-    const result = await this.http.get<any>(`http://127.0.0.1:8000/workflow_stop/${id}`).toPromise();
+    const result = await this.http.get<any>(`${environment.ip}/workflow_stop/${id}`).toPromise();
     if (result['error']) {
       this.bar.open(result['error'], 'CLOSE', { duration: 5000 });
       return false;
