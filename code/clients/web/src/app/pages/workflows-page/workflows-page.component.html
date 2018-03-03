@@ -7,7 +7,7 @@
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         <span>{{ workflow.title }}</span>
-                        <span class="running" *ngIf="runs(workflow) && !finished(workflow)">(Running)</span>
+                        <span class="running" *ngIf="runs(workflow) && !finished(workflow)">(Running {{ workflow.percent_done }}%)</span>
                         <span class="finished" *ngIf="finished(workflow)">(Finished)</span>
                     </mat-panel-title>
                     <div class="last-update">{{ (workflow.updated_at * 1000) | date }}</div>
