@@ -93,6 +93,7 @@ def add_wps_server(server_url):
     """
     if server_url[-1] != '/':
         server_url = server_url + '/'
+    passed_url = server_url
 
     server_url = server_url + 'wps?request=GetCapabilities&service=WPS'
     temp_xml, headers = urllib.request.urlretrieve(server_url)
@@ -119,7 +120,7 @@ def add_wps_server(server_url):
         service_provider = service_provider_from_database
 
     # Parse and save information about wps server
-    wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider)
+    wps_server = parse_wps_server_info(get_capabilities_root, xml_namespaces, service_provider, passed_url)
     wps_server_from_database = search_server_in_database(wps_server)
     if wps_server_from_database is None:
         wps_server.save()
@@ -317,7 +318,7 @@ def parse_service_provider_info(root, namespaces):
     return service_provider
 
 
-def parse_wps_server_info(root, namespaces, provider):
+def parse_wps_server_info(root, namespaces, provider, passed_url):
     """
     Parses the xml file provided by the wps server.
     Searches for the information about the WPS server.
@@ -332,9 +333,9 @@ def parse_wps_server_info(root, namespaces, provider):
     @return: wps server
     @rtype: WPS
     """
-    get_capabilities_annex = '?request=GetCapabilities&service=WPS'
-    describe_processes_annex = '?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
-    execute_annex = '?request=Execute&service=WPS'
+    get_capabilities_annex = 'wps?request=GetCapabilities&service=WPS'
+    describe_processes_annex = 'wps?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0'
+    execute_annex = 'wps?request=Execute&service=WPS'
 
     try:
         service_identification_element = root.find('ows:ServiceIdentification', namespaces)
@@ -343,16 +344,16 @@ def parse_wps_server_info(root, namespaces, provider):
         server_abstract = service_identification_element.find('ows:Abstract', namespaces).text
         server_abstract = ' '.join(server_abstract.split())
 
-        operations_metadata_element = root.find('ows:OperationsMetadata', namespaces)
-
-        urls_elements = operations_metadata_element.findall('ows:Operation/ows:DCP/ows:HTTP/ows:Get', namespaces)
-        urls = []
-        for item in urls_elements:
-            urls.append(item.attrib.get('{' + namespaces.get('xlink') + '}href'))
-
-        urls[0] = urls[0] + get_capabilities_annex
-        urls[1] = urls[1] + describe_processes_annex
-        urls[2] = urls[2] + execute_annex
+        # operations_metadata_element = root.find('ows:OperationsMetadata', namespaces)
+        #
+        # urls_elements = operations_metadata_element.findall('ows:Operation/ows:DCP/ows:HTTP/ows:Get', namespaces)
+        # urls = []
+        # for item in urls_elements:
+        #     urls.append(item.attrib.get('{' + namespaces.get('xlink') + '}href'))
+        #
+        # urls[0] = urls[0] + get_capabilities_annex
+        # urls[1] = urls[1] + describe_processes_annex
+        # urls[2] = urls[2] + execute_annex
 
     except AttributeError:
         wps_log.error('Unable to parse information about wps server')
@@ -361,9 +362,9 @@ def parse_wps_server_info(root, namespaces, provider):
     wps_server = WPS(service_provider=provider,
                      title=server_title,
                      abstract=server_abstract,
-                     capabilities_url=urls[0],
-                     describe_url=urls[1],
-                     execute_url=urls[2])
+                     capabilities_url=passed_url + get_capabilities_annex,
+                     describe_url=passed_url + describe_processes_annex,
+                     execute_url=passed_url + execute_annex)
     return wps_server
 
 
