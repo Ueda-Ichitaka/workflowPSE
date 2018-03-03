@@ -9,6 +9,12 @@
       "outDir": "dist",
       "assets": [
         "assets",
+        {
+          "glob": "**/*",
+          "input": "./static/",
+          "output": "./"
+        },
+        "static",
         "favicon.ico"
       ],
       "index": "index.html",
