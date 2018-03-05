@@ -187,32 +187,6 @@ export class EditorPageComponent implements OnInit {
   }
 
   /**
-   * changes the name of the workflow
-   * @param name new name of the workflow
-   */
-  public editTitle(name: string) {
-    if (name.length === 0) {
-      name = 'My Workflow';
-    } else if (name.length > 24) {
-      name = name.slice(0, 24);
-    }
-
-
-    this.workflow.title = name;
-
-    if (this.fresh) {
-      this.workflowService.create(this.editorComponent.workflow).subscribe(obj => {
-        this.router.navigate([`/editor/${obj.id}`]);
-      });
-    } else {
-      this.workflowService.update(this.workflow.id, this.workflow).toPromise();
-    }
-
-    this.workflowChanged(this.workflow);
-    this.editTitleMode = false;
-  }
-
-  /**
    * enables clicking the title in order to change it
    */
   public clickTitleEdit() {
@@ -228,17 +202,26 @@ export class EditorPageComponent implements OnInit {
    * yet, a new workflow is created
    */
   public async save() {
+    var name = (<HTMLInputElement>document.getElementById('titleInput')).value;
+    if (name.length === 0) {
+      name = 'My Workflow';
+    } else if (name.length > 24) {
+      name = name.slice(0,24);
+    }
+
+    this.workflow.title = name;
+
     if (this.fresh) {
       this.workflowService.create(this.editorComponent.workflow).subscribe(obj => {
         this.router.navigate([`/editor/${obj.id}`]);
       });
     } else {
-      const result = await this.workflowService.update(this.workflow.id, this.workflow).toPromise();
-      setTimeout(() => { this.cd.detectChanges(); }, 10);
-      return result;
+      this.workflowService.update(this.workflow.id, this.workflow).toPromise();
     }
-  }
 
+    this.workflowChanged(this.workflow);
+    this.editTitleMode = false;
+  }
 
   /**
    * tells wether the current workflow is running
