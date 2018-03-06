@@ -241,14 +241,20 @@ export class WorkflowService {
     }
     // cycle check
     if (workflow.tasks && workflow.edges) {
-      let checkedTasks: number[] = [];
-      for (let i = 0; i < workflow.edges.length; i++) {
-        const visitedTasks: number[] = [];
-        if (!this.contains(checkedTasks, workflow.edges[i].from_task_id)) {
-          if (this.checkCycle(workflow.edges[i], workflow, visitedTasks)) {
-            return WorkflowValidationResult.CYCLE_IN_WORKFLOW;
+      for (let i = 0; i < workflow.tasks.length; i++) {
+        for (let j = 0; j < workflow.edges.length; j++) {
+          let checkedTasks: number[] = [];
+          if (workflow.tasks[i].id === workflow.edges[j].to_task_id) {
+
+
+            const visitedTasks: number[] = [];
+            if (!this.contains(checkedTasks, workflow.edges[j].from_task_id)) {
+              if (this.checkCycle(workflow.edges[j], workflow, visitedTasks)) {
+                return WorkflowValidationResult.CYCLE_IN_WORKFLOW;
+              }
+              checkedTasks = visitedTasks;
+            }
           }
-          checkedTasks = visitedTasks;
         }
       }
     }
@@ -291,21 +297,29 @@ export class WorkflowService {
    * @returns {boolean}
    */
   private checkCycle(currentWorkflowEdge: Edge, workflow: Partial<Workflow>, visitedTasks: number[]): boolean {
-    visitedTasks.push(currentWorkflowEdge.from_task_id);
+    visitedTasks.push(currentWorkflowEdge.to_task_id);
     // check task at end of edge
     for (let i = 0; i < workflow.tasks.length; i++) {
-      if (this.contains(visitedTasks, currentWorkflowEdge.to_task_id)) {
+      if (this.contains(visitedTasks, currentWorkflowEdge.from_task_id)) {
         return true;
       }
       if (workflow.tasks[i].id === currentWorkflowEdge.to_task_id) {
         // check for new edges at task
         let cycle = false;
         for (let j = 0; j < workflow.edges.length; j++) {
-          if (workflow.edges[j].from_task_id === workflow.tasks[i].id) {
-            if (this.contains(visitedTasks, workflow.edges[j].to_task_id)) {
+          if (workflow.edges[j].to_task_id === currentWorkflowEdge.to_task_id) {
+            if (this.contains(visitedTasks, workflow.edges[j].from_task_id)) {
               return true;
             }
-            cycle = cycle || this.checkCycle(workflow.edges[j], workflow, visitedTasks);
+            for (let l = 0; l < workflow.edges.length; l++) {
+              if (workflow.edges[j].from_task_id === workflow.edges[l].to_task_id) {
+                const newVisitedTasks: number[] = [];
+                for (let k = 0; k < visitedTasks.length; k++) {
+                  newVisitedTasks.push(visitedTasks[k]);
+                }
+                cycle = cycle || this.checkCycle(workflow.edges[l], workflow, newVisitedTasks);
+              }
+            }
           }
         }
         return cycle;
