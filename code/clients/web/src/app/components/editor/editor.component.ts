@@ -14,7 +14,9 @@ import { window } from 'rxjs/operators/window';
 import { AfterContentChecked } from '@angular/core/src/metadata/lifecycle_hooks';
 
 /**
- * is used to undo/redo movements of elements
+ * Metadata for mouse movement inside the editor.
+ *
+ * @interface MovementData
  */
 interface MovementData {
   parameter?: ProcessParameter<'input' | 'output'>;
@@ -26,6 +28,14 @@ interface MovementData {
   before?: string;
 }
 
+/**
+ * Editor Component.
+ *
+ * @export
+ * @class EditorComponent
+ * @implements {OnInit}
+ * @implements {AfterContentInit}
+ */
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
@@ -62,24 +72,21 @@ export class EditorComponent implements OnInit, AfterContentInit {
   public running = false;
 
   /**
-   * creates an editor object
-   * @param el element reference
-   * @param zone used to optimize performance
-   * @param cd detects changes
+   * Creates an instance of EditorComponent.
+   *
+   * @param {ElementRef} el
+   * @param {NgZone} zone
+   * @param {ChangeDetectorRef} cd
+   * @memberof EditorComponent
    */
   public constructor(private el: ElementRef, private zone: NgZone, private cd: ChangeDetectorRef) {
   }
 
-  /**
-   * empties editors deltas
-   */
-  public empty() {
-    this.snapshots = [];
-    this.movement = {};
-  }
 
   /**
-   * is called after an appropriate amount of time after object creation
+   * Component setup.
+   *
+   * @memberof EditorComponent
    */
   ngOnInit() {
     // Create initial workflow if no workflow is provided
@@ -88,14 +95,32 @@ export class EditorComponent implements OnInit, AfterContentInit {
     }
   }
 
+  /**
+   * Is Called after all child components are ready.
+   *
+   * @memberof EditorComponent
+   */
   ngAfterContentInit(): void {
     this.workflowChanged.emit(this.workflow);
     this.scrollToMiddle();
     setTimeout(() => { this.cd.detectChanges(); }, 100);
     setTimeout(() => { this.cd.detectChanges(); }, 1000);
   }
+
+
   /**
-   * is called when an edge is clicked
+   * Empties snapshots
+   *
+   * @memberof EditorComponent
+   */
+  public empty() {
+    this.snapshots = [];
+    this.movement = {};
+  }
+
+  /**
+   * Is called when an edge is clicked.
+   *
    * @param edges the workflows edges
    */
   public clickEdge(edges) {
@@ -113,7 +138,9 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * moves the view to the middle
+   * Move canvas to the middle.
+   *
+   * @memberof EditorComponent
    */
   public scrollToMiddle() {
     const native: HTMLElement = this.el.nativeElement;
@@ -121,7 +148,8 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * changes an artefact
+   * Changes an artefact.
+   *
    * @param event the event that triggers the call
    */
   public changeArtefact(event) {
@@ -164,7 +192,8 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * returns edge as svg data
+   * Returns edge as svg string.
+   *
    * @param edge the edge
    * @param mouse the mouse
    */
@@ -178,7 +207,11 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * returns edges if there are any
+   * Returns edge coordinates for use in SVG.
+   *
+   * @readonly
+   * @type {[number, number, number, number, number][]}
+   * @memberof EditorComponent
    */
   public get edges(): [number, number, number, number, number][] {
     if (!this.taskComponents) {
@@ -224,7 +257,8 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * adds the process at the given coordinates
+   * Adds the process at the given coordinates.
+   *
    * @param process the process to add
    * @param x x coordinate in the editor
    * @param y y coordinate in the editor
@@ -253,7 +287,8 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * removes a task from the editor
+   * Removes a task from the editor.
+   *
    * @param task_id the id of the task
    */
   public remove(task_id: number) {
@@ -271,7 +306,8 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * finds the process with the given id
+   * Finds the process with the given id.
+   *
    * @param id the id of the process
    */
   public findProcess(id: number): Process {
@@ -279,8 +315,9 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * triggered when the user starts to drag an edge from
-   * a parameter to somewhere else
+   * Triggered when the user starts to drag an edge from
+   * a parameter to somewhere else.
+   *
    * @param index the parameter index
    * @param event the user clicks on a parameter node
    */
@@ -303,6 +340,12 @@ export class EditorComponent implements OnInit, AfterContentInit {
     }
   }
 
+  /**
+   * Triggerd when the user moves his mouse.
+   *
+   * @param {MouseEvent} event Mouse event
+   * @memberof EditorComponent
+   */
   @HostListener('mousedown', ['$event'])
   public mouseDown(event: MouseEvent) {
     this.zone.runOutsideAngular(() => {
@@ -312,8 +355,9 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * triggered when the user moves the cursor to
-   * from a parameter node to somewhere creating an edge
+   * Triggered when the user moves the cursor to
+   * from a parameter node to somewhere creating an edge.
+   *
    * @param event the user moves the mouse
    */
   public mouseMove(event: MouseEvent) {
@@ -345,9 +389,10 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * triggered when the user releases the mouse button
+   * Triggered when the user releases the mouse button
    * when he drags an edge from one parameter node to
-   * another
+   * another.
+   *
    * @param event the user releases the mouse button
    */
   @HostListener('mouseup')
@@ -366,7 +411,9 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * TODO
+   * Returns allways false.
+   * An indicator for browsers.
+   *
    * @param event drag over event
    */
   public dragOver(event: DragEvent): boolean {
@@ -375,7 +422,8 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * process is dropped
+   * Process is dropped.
+   *
    * @param event user drops element
    */
   public drop(event: DragEvent) {
@@ -388,7 +436,8 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * drags a parameter
+   * Drags a parameter.
+   *
    * @param parameter the parameter
    * @param task the task
    */
@@ -412,7 +461,8 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * drops a parameter
+   * Drops a parameter.
+   *
    * @param parameter the parameter
    * @param task the task
    */
@@ -439,7 +489,8 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * creates a new snapshot
+   * Creates a new snapshot.
+   *
    * @param workflow the workflow
    */
   private snapshot(workflow?: Workflow) {
@@ -451,9 +502,12 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * loads last workflow and thus reverts change
+   * Loads last workflow and thus reverts change.
+   *
+   * @returns {void}
+   * @memberof EditorComponent
    */
-  public undo() {
+  public undo(): void {
     if (this.running) {
       return;
     }
@@ -466,10 +520,12 @@ export class EditorComponent implements OnInit, AfterContentInit {
   }
 
   /**
-   * is supposed to return true if there is the
+   * Is supposed to return true if there is the
    * last snapshot and the workflow is not running
-   * else returns false
-   * @returns if a snapshot can be undone
+   * else returns false.
+   *
+   * @returns {boolean} Can undo
+   * @memberof EditorComponent
    */
   public canUndo(): boolean {
     return this.snapshots.length > 0 && !this.running;

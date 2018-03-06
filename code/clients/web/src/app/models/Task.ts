@@ -1,7 +1,10 @@
 import { Artefact } from 'app/models/Artefact';
 
 /**
- * describes the current state of a task
+ * Describes the current state of a task.
+ *
+ * @export
+ * @enum {number}
  */
 export enum TaskState {
     NONE,
@@ -14,10 +17,13 @@ export enum TaskState {
 }
 
 /**
- * tasks describe the actual task elements which are
+ * Tasks describe the actual task elements which are
  * displayed in the editor
  * with process_id, every task links to a process
- * which is executed if this task is run
+ * which is executed if this task is run.
+ *
+ * @export
+ * @interface Task
  */
 export interface Task {
     id: number;

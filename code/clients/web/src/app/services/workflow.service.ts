@@ -64,12 +64,19 @@ export enum WorkflowValidationResult {
   MULIPLE_INPUTS,
 }
 
+/**
+ * Fetches workflow data from server.
+ *
+ * @export
+ * @class WorkflowService
+ */
 @Injectable()
 export class WorkflowService {
   private processes?: Process[];
 
   /**
-   * Constructs workflowService
+   * Constructs workflowService.
+   *
    * @param {HttpClient} http
    * @param {MatSnackBar} bar
    * @param {ProcessService} processService
@@ -79,7 +86,8 @@ export class WorkflowService {
   }
 
   /**
-   * Returns Observable of all Workflows
+   * Returns Observable of all Workflows.
+   *
    * @returns {Observable<Workflow[]>}
    */
   public all(): Observable<Workflow[]> {
@@ -87,7 +95,8 @@ export class WorkflowService {
   }
 
   /**
-   * Returns Observable of the Workflow with the given id
+   * Returns Observable of the Workflow with the given id.
+   *
    * @param {number} id
    * @returns {Observable<Workflow>}
    */
@@ -96,7 +105,8 @@ export class WorkflowService {
   }
 
   /**
-   * Create an Observable to a given partial workflow
+   * Create an Observable to a given partial workflow.
+   *
    * @param {Partial<Workflow>} workflow
    * @returns {Observable<Workflow>}
    */
@@ -105,7 +115,8 @@ export class WorkflowService {
   }
 
   /**
-   * Refreshes the observable of the given workflow
+   * Refreshes the observable of the given workflow.
+   *
    * @param {number} id
    * @param {Partial<Workflow>} workflow
    * @returns {Observable<Workflow>}
@@ -116,7 +127,8 @@ export class WorkflowService {
   }
 
   /**
-   * Removes the workflow with the given id
+   * Removes the workflow with the given id.
+   *
    * @param {number} id
    * @returns {Promise<boolean>}
    */
@@ -127,7 +139,8 @@ export class WorkflowService {
   }
 
   /**
-   * returns if the workflow is running (workflow can't be running if not runnable)
+   * Returns if the workflow is running (workflow can't be running if not runnable).
+   *
    * @param {Partial<Workflow>} workflow
    * @returns {boolean}
    */
@@ -143,6 +156,13 @@ export class WorkflowService {
     return false;
   }
 
+  /**
+   * Checks whether a workflow is finished.
+   *
+   * @param {Partial<Workflow>} workflow Workflow to check
+   * @returns {boolean} Finished
+   * @memberof WorkflowService
+   */
   public finished(workflow: Partial<Workflow>): boolean {
     if (!workflow || !workflow.tasks || workflow.tasks.length === 0) {
       return false;
@@ -160,7 +180,8 @@ export class WorkflowService {
   }
 
   /**
-   * Returns if the workflow is a valid workflow for execution
+   * Returns if the workflow is a valid workflow for execution.
+   *
    * @param {Workflow} workflow
    * @returns {WorkflowValidationResult}
    */
@@ -270,7 +291,8 @@ export class WorkflowService {
   }
 
   /**
-   * Checks if an array contains a variable
+   * Checks if an array contains a variable.
+   *
    * @param {Array<T>} array
    * @param {T} variable
    * @returns {boolean}
@@ -285,7 +307,8 @@ export class WorkflowService {
   }
 
   /**
-   * Recursive method to check for cycle in workflow
+   * Recursive method to check for cycle in workflow.
+   *
    * @param {Edge} currentWorkflowEdge starting edge
    * @param {Partial<Workflow>} workflow entire workflow
    * @param {number[]} visitedTasks list of visited Tasks (empty for 1st run)
@@ -316,7 +339,8 @@ export class WorkflowService {
   }
 
   /**
-   * Execute given workflow
+   * Execute given workflow.
+   *
    * @param {number} id
    * @returns {Promise<boolean>}
    */
@@ -331,6 +355,13 @@ export class WorkflowService {
     }
   }
 
+  /**
+   * Refreshes workflow by a given workflow ID.
+   *
+   * @param {number} id Workflow ID
+   * @returns {Promise<boolean>} Refresh successful
+   * @memberof WorkflowService
+   */
   public async refresh(id: number): Promise<boolean> {
     const result = await this.http.get<any>(`${environment.ip}/workflow_refresh/${id}`).toPromise();
     if (result['error']) {
@@ -341,6 +372,13 @@ export class WorkflowService {
     }
   }
 
+  /**
+   * Stops workflow by a given workflow id.
+   *
+   * @param {number} id Workflow ID
+   * @returns {Promise<boolean>} Stop successful
+   * @memberof WorkflowService
+   */
   public async stop(id: number): Promise<boolean> {
     const result = await this.http.get<any>(`${environment.ip}/workflow_stop/${id}`).toPromise();
     if (result['error']) {

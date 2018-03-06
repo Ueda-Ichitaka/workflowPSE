@@ -5,7 +5,13 @@ import { WpsService } from 'app/services/wps.service';
 import { WPS } from '../../models/WPS';
 import { trigger, transition, style, animate } from '@angular/animations';
 
-
+/**
+ * Settings page.
+ *
+ * @export
+ * @class SettingsPageComponent
+ * @implements {OnInit}
+ */
 @Component({
   selector: 'app-settings-page',
   templateUrl: './settings-page.component.html',
@@ -30,10 +36,11 @@ export class SettingsPageComponent implements OnInit {
   public urlComponent: ElementRef;
 
   /**
-   * TODO check if processService is needed
-   * creates a new settings page object
-   * @param processService fetches process data
-   * @param wpsService fetches wps data
+   * Creates an instance of SettingsPageComponent.
+   *
+   * @param {ProcessService} processService
+   * @param {WpsService} wpsService
+   * @memberof SettingsPageComponent
    */
   constructor(
     private processService: ProcessService,
@@ -43,23 +50,30 @@ export class SettingsPageComponent implements OnInit {
   }
 
   /**
-   * is called an appropriate time after the
-   * object is created, fetches wps servers
-   * to display to user
+   * Component setup.
+   *
+   * @memberof SettingsPageComponent
    */
   public ngOnInit() {
     this.wpsList = this.wpsService.all();
   }
 
   /**
-   * refreshes wps servers to check for
-   * new processes
+   * Refreshes wps servers to check for new processes.
+   *
+   * @memberof SettingsPageComponent
    */
   public async refresh() {
     await this.wpsService.refresh();
     this.wpsList = this.wpsService.all();
   }
 
+  /**
+   * Adds wps server by a given wps server url.
+   *
+   * @param {string} url WPS server url
+   * @memberof SettingsPageComponent
+   */
   public async add(url: string) {
     await this.wpsService.create(url).toPromise();
     this.wpsList = this.wpsService.all();
@@ -67,7 +81,8 @@ export class SettingsPageComponent implements OnInit {
   }
 
   /**
-   * removes the wps server with the given id
+   * removes the wps server with the given id.
+   *
    * @param id the id of the wps
    */
   public async remove(id: number) {

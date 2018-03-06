@@ -8,6 +8,13 @@ import { Process } from 'app/models/Process';
 import { take } from 'rxjs/operators/take';
 import { delay } from 'rxjs/operators/delay';
 
+/**
+ * Workflow list page.
+ *
+ * @export
+ * @class WorkflowsPageComponent
+ * @implements {OnInit}
+ */
 @Component({
   selector: 'app-workflows-page',
   templateUrl: './workflows-page.component.html',
@@ -22,10 +29,12 @@ export class WorkflowsPageComponent implements OnInit {
   private running = [];
 
   /**
-   * creates the workflow page object
-   * @param processService fetches process data
-   * @param workflowService fetches workflow data
-   * @param router enables routing
+   * Creates an instance of WorkflowsPageComponent.
+   *
+   * @param {ProcessService} processService
+   * @param {WorkflowService} workflowService
+   * @param {Router} router
+   * @memberof WorkflowsPageComponent
    */
   constructor(
     private processService: ProcessService,
@@ -36,8 +45,9 @@ export class WorkflowsPageComponent implements OnInit {
   }
 
   /**
-   * is called after an appropriate time to get
-   * all workflows and processes
+   * Component setup.
+   *
+   * @memberof WorkflowsPageComponent
    */
   public ngOnInit() {
     this.workflowService.all().subscribe(workflows => this.workflows = workflows);
@@ -45,7 +55,8 @@ export class WorkflowsPageComponent implements OnInit {
   }
 
   /**
-   * checks wether a workflow is opened
+   * Checks whether a workflow is opened.
+   *
    * @param workflow the workflow which is checked
    */
   public opened(workflow: Workflow) {
@@ -53,7 +64,8 @@ export class WorkflowsPageComponent implements OnInit {
   }
 
   /**
-   * checks wether a workflow is closed
+   * Checks whether a workflow is closed.
+   *
    * @param workflow the workflow which is checked
    */
   public closed(workflow: Workflow) {
@@ -63,8 +75,9 @@ export class WorkflowsPageComponent implements OnInit {
   }
 
   /**
-   * removes a workflow
-   * @param id the id of the workflow which is removed
+   * Removes a workflow.
+   *
+   * @param id Workflow id
    */
   public remove(id: number) {
     const index = this.workflows.findIndex(workflow => workflow.id === id);
@@ -75,24 +88,27 @@ export class WorkflowsPageComponent implements OnInit {
   }
 
   /**
-   * routes to the editor opening a workflow
-   * @param id the id of the workflow which is opened
+   * Routes to the editor opening a workflow.
+   *
+   * @param id Workflow id
    */
   public edit(id: number) {
     this.router.navigate([`/editor/${id}`]);
   }
 
   /**
-   * gets a workflow from the database
-   * @param id the id of the workflow which is returned
+   * Gets a workflow from the database.
+   *
+   * @param id Workflow id
    */
   public getWorkflow(id: number): Observable<Workflow> {
     return this.workflowService.get(id);
   }
 
   /**
-   * executes a workflow
-   * @param id the id of the workflow which is executed
+   * Executes a workflow.
+   *
+   * @param id Workflow id
    */
   public run(id: number) {
     this.workflowService.start(id);
@@ -100,21 +116,28 @@ export class WorkflowsPageComponent implements OnInit {
   }
 
   /**
-   * validates a workflow
-   * @param workflow the id of the workflow which is validated
+   * Validates a given workflow.
+   *
+   * @param workflow Workflow object
    */
   public validate(workflow): boolean {
     return this.workflowService.validate(workflow) === WorkflowValidationResult.SUCCESSFUL;
   }
 
   /**
-   * checks if a workflow is running
-   * @param worflow the workflow which is checked
+   * Checks if a workflow is running.
+   *
+   * @param worflow Workflow to check
    */
   public runs(workflow: Workflow): boolean {
     return this.workflowService.isRunning(workflow) || this.running.includes(workflow.id);
   }
 
+  /**
+   * Checks if a workflow is finished.
+   *
+   * @param worflow Workflow to check
+   */
   public finished(workflow: Workflow): boolean {
     return this.workflowService.finished(workflow);
   }

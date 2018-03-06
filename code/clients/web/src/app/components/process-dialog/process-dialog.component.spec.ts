@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProcessDialogComponent } from './process-dialog.component';
 
-describe('ProcessDialogComponent', () => {
+xdescribe('ProcessDialogComponent', () => {
   let component: ProcessDialogComponent;
   let fixture: ComponentFixture<ProcessDialogComponent>;
 

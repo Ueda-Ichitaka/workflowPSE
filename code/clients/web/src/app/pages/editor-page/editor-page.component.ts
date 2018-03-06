@@ -13,6 +13,13 @@ import { MatDialog } from '@angular/material';
 import { ResultDialogComponent } from 'app/components/result-dialog/result-dialog.component';
 import { take } from 'rxjs/operators';
 
+/**
+ * Editor page.
+ *
+ * @export
+ * @class EditorPageComponent
+ * @implements {OnInit}
+ */
 @Component({
   selector: 'app-editor-page',
   templateUrl: './editor-page.component.html',
@@ -58,12 +65,17 @@ export class EditorPageComponent implements OnInit {
   private canRefreshWorkflow = true;
 
   /**
-   * creates the editor page
-   * @param processService which gets process data
-   * @param workflowService which gets workflow data
-   * @param wpsService which gets wps data
-   * @param route to get route information
-   * @param router manages routing
+   * Creates an instance of EditorPageComponent.
+   *
+   * @param {ProcessService} processService
+   * @param {WorkflowService} workflowService
+   * @param {WpsService} wpsService
+   * @param {ActivatedRoute} route
+   * @param {Router} router
+   * @param {MatDialog} dialog
+   * @param {ChangeDetectorRef} cd
+   * @param {NgZone} zone
+   * @memberof EditorPageComponent
    */
   constructor(
     private processService: ProcessService,
@@ -79,8 +91,9 @@ export class EditorPageComponent implements OnInit {
   }
 
   /**
-   * is executed an appropriate time after
-   * creating the object to initiate the editor
+   * Sets up this component.
+   *
+   * @memberof EditorPageComponent
    */
   ngOnInit() {
     this.processes = this.processService.all();
@@ -119,13 +132,24 @@ export class EditorPageComponent implements OnInit {
     }, 500);
   }
 
+  /**
+   * Shows result dialog.
+   *
+   * @memberof EditorPageComponent
+   */
   public showResults() {
     this.dialog.open(ResultDialogComponent, {
       data: this.workflow
     });
   }
 
-  public async updateWorkflowStatus() {
+  /**
+   * Updates workflow status.
+   *
+   * @returns {Promise<void>} Updated
+   * @memberof EditorPageComponent
+   */
+  public async updateWorkflowStatus(): Promise<void> {
     if (!this.canRefreshWorkflow || !this.runs()) { return; }
     this.canRefreshWorkflow = false;
     this.workflow = await this.workflowService.get(this.workflow.id).toPromise();
@@ -136,30 +160,37 @@ export class EditorPageComponent implements OnInit {
   }
 
   /**
-   * toggles wether the process list
+   * Toggles whether the process list
    * is shown
+   *
+   * @memberof EditorPageComponent
    */
   public toggleProcessList() {
     this.showProcessList = !this.showProcessList;
   }
 
   /**
-   * reverts the last delta by
-   * redrawing the last workflow
+   * Reverts the last workflow.
+   *
+   * @memberof EditorPageComponent
    */
   public undo() {
     this.editorComponent.undo();
   }
 
   /**
-   * tells if delta exists
+   * Tells whether there is something to undo.
+   *
+   * @returns {boolean} Can Undo
+   * @memberof EditorPageComponent
    */
   public canUndo(): boolean {
     return this.editorComponent ? this.editorComponent.canUndo() : false;
   }
 
   /**
-   * executes workflow if not empty
+   * Executes workflow if not empty.
+   *
    * @param id the id of the workflow
    */
   public async run() {
@@ -177,6 +208,11 @@ export class EditorPageComponent implements OnInit {
     this.updateWorkflowStatus();
   }
 
+  /**
+   * Stops running workflow.
+   *
+   * @memberof EditorPageComponent
+   */
   public async stop() {
     await this.workflowService.stop(this.workflow.id);
     this.workflowService.get(this.workflow.id).pipe(take(1)).subscribe(workflow => {
@@ -187,7 +223,8 @@ export class EditorPageComponent implements OnInit {
   }
 
   /**
-   * changes the name of the workflow
+   * Changes the name of the workflow.
+   *
    * @param name new name of the workflow
    */
   public editTitle(name: string) {
@@ -213,7 +250,9 @@ export class EditorPageComponent implements OnInit {
   }
 
   /**
-   * enables clicking the title in order to change it
+   * Enables clicking the title in order to change it.
+   *
+   * @memberof EditorPageComponent
    */
   public clickTitleEdit() {
     this.editTitleMode = true;
@@ -224,10 +263,12 @@ export class EditorPageComponent implements OnInit {
   }
 
   /**
-   * saves the workflow, if not existing
-   * yet, a new workflow is created
+   * Saves the workflow.
+   *
+   * @returns {Promise<Workflow>} Saved workflow
+   * @memberof EditorPageComponent
    */
-  public async save() {
+  public async save(): Promise<Workflow> {
     if (this.fresh) {
       this.workflowService.create(this.editorComponent.workflow).subscribe(obj => {
         this.router.navigate([`/editor/${obj.id}`]);
@@ -241,7 +282,10 @@ export class EditorPageComponent implements OnInit {
 
 
   /**
-   * tells wether the current workflow is running
+   * Tells whether the current workflow is running.
+   *
+   * @returns {boolean} Is Running
+   * @memberof EditorPageComponent
    */
   public runs(): boolean {
     if (!this.workflow) {
@@ -252,12 +296,19 @@ export class EditorPageComponent implements OnInit {
     return running;
   }
 
+  /**
+   * Tells whether the current workflow is finished.
+   *
+   * @returns {boolean} Is Finished
+   * @memberof EditorPageComponent
+   */
   public finished(): boolean {
     return this.workflowService.finished(this.workflow);
   }
 
   /**
-   * tells if the workflow has changed
+   * Tells if the workflow has changed.
+   *
    * @param workflow the workflow which is checked
    */
   public workflowChanged(workflow: Workflow) {

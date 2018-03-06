@@ -13,7 +13,14 @@ interface ArtefactDialogData {
   parameter: ProcessParameter<'input' | 'output'>;
 }
 
-declare var hljs: any;
+
+/**
+ * Artefact Dialog Component.
+ *
+ * @export
+ * @class ArtefactDialogComponent
+ * @implements {OnInit}
+ */
 @Component({
   selector: 'app-artefact-dialog',
   templateUrl: './artefact-dialog.component.html',
@@ -31,14 +38,25 @@ export class ArtefactDialogComponent implements OnInit {
 
   public deletable = false;
 
+  @ViewChild('code')
+  public codeComponent: ElementRef;
+
+
   /**
-   * creates an artefact object
-   * @param data the artefact data
-   * @param dialog the artefact dialog
+   * Creates an instance of ArtefactDialogComponent.
+   *
+   * @param {ArtefactDialogData} data
+   * @param {MatDialogRef<ArtefactDialogComponent>} dialog
+   * @memberof ArtefactDialogComponent
    */
-  constructor( @Inject(MAT_DIALOG_DATA) data: ArtefactDialogData, public dialog: MatDialogRef<ArtefactDialogComponent>) {
+  constructor(@Inject(MAT_DIALOG_DATA) data: ArtefactDialogData, public dialog: MatDialogRef<ArtefactDialogComponent>) {
     this.task = data.task;
     this.parameter = data.parameter;
+
+    if (!this.parameter || !this.task) {
+      return;
+    }
+
     // Get all artefacts of this tasks
     const artefacts: Artefact<'input' | 'output'>[] = this.parameter.role === 'input'
       ? this.task.task.input_artefacts
@@ -77,12 +95,21 @@ export class ArtefactDialogComponent implements OnInit {
     }
   }
 
-  @ViewChild('code')
-  public codeComponent: ElementRef;
-
+  /**
+   * Component setup.
+   *
+   * @memberof ArtefactDialogComponent
+   */
   public ngOnInit() {
   }
 
+  /**
+   * Checks whether the user artefact data input is valid.
+   *
+   * @readonly
+   * @type {boolean}
+   * @memberof ArtefactDialogComponent
+   */
   public get valid(): boolean {
 
     if (this.parameter.type === ProcessParameterType.LITERAL) {
@@ -119,17 +146,22 @@ export class ArtefactDialogComponent implements OnInit {
   }
 
   /**
-   * @param type the type of the parameter
-   * @returns the type as a string and the color of the artefact
+   * Returns name and color of artefact type.
+   *
+   * @param {number} type Type id
+   * @returns {[string, string]} Name, Color pair
+   * @memberof ArtefactDialogComponent
    */
   public getTypeInfo(type: number): [string, string] {
     return [ProcessService.getTypeName(type), ProcessService.getTypeColor(type)];
   }
 
   /**
-   * is used to change input of the different input types
+   * Is used to change input of the different input types
    * as every input type requires different fields,
    * we have to differ between them
+   *
+   * @memberof ArtefactDialogComponent
    */
   public clickEditButton() {
     const el: HTMLElement = this.codeComponent.nativeElement;
@@ -154,14 +186,16 @@ export class ArtefactDialogComponent implements OnInit {
 
     }
 
-    setTimeout(() => { hljs.highlightBlock(el); }, 20);
     this.editMode = !this.editMode;
   }
 
   /**
-   * saves the artefacts modified input
+   * Saves the artefacts modified input.
+   *
+   * @returns {void}
+   * @memberof ArtefactDialogComponent
    */
-  public save() {
+  public save(): void {
     if (!this.data) {
       return;
     }
@@ -181,6 +215,11 @@ export class ArtefactDialogComponent implements OnInit {
     this.dialog.close();
   }
 
+  /**
+   * Removes artefact from task.
+   *
+   * @memberof ArtefactDialogComponent
+   */
   public remove() {
     this.task.removeArtefact(this.parameter);
     this.dialog.close();

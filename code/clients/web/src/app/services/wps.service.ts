@@ -7,10 +7,17 @@ import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { MatSnackBar } from '@angular/material';
 import { environment } from 'environments/environment';
 
+/**
+ * Fetches wps data from server.
+ *
+ * @export
+ * @class WpsService
+ */
 @Injectable()
 export class WpsService {
   /**
-   * Constructs wps service
+   * Constructs wps service.
+   *
    * @param {HttpClient} http
    * @param {MatSnackBar} bar
    */
@@ -18,7 +25,8 @@ export class WpsService {
 
 
   /**
-   * Returns an observable to all WPS
+   * Returns an observable to all WPS.
+   *
    * @returns {Observable<WPS[]>}
    */
   public all(): Observable<WPS[]> {
@@ -27,8 +35,9 @@ export class WpsService {
 
 
   /**
-   * Create WPS and returns observable of WPS
+   * Create WPS and returns observable of WPS.
    * currently disabled
+   *
    * @param {string} url
    * @returns {Observable<WPS>}
    */
@@ -43,7 +52,8 @@ export class WpsService {
   }
 
   /**
-   * Removes WPS with given id
+   * Removes WPS with given id.
+   *
    * @param {number} id
    * @returns {Promise<boolean>}
    */
@@ -52,6 +62,12 @@ export class WpsService {
     return this.http.delete<boolean>(`${environment.ip}/wps/${id}`, { withCredentials: true }).toPromise();
   }
 
+  /**
+   * Refreshes all wps servers.
+   *
+   * @returns {Promise<boolean>} Refresh succsessful
+   * @memberof WpsService
+   */
   public async refresh(): Promise<boolean> {
     this.bar.open(`Refreshed WPS Processes`, 'CLOSE', { duration: 3000 });
     const result = this.http.get<boolean>(`${environment.ip}/wps_refresh/`, { withCredentials: true }).toPromise();

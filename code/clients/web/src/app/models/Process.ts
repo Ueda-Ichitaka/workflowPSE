@@ -1,8 +1,11 @@
 import { ProcessParameter } from 'app/models/ProcessParameter';
 
 /**
- * processes are the actual wps processes which are provided
- * by the wps servers
+ * Processes are the actual wps processes which are provided
+ * by the wps servers.
+ *
+ * @export
+ * @interface Process
  */
 export interface Process {
     id: number;

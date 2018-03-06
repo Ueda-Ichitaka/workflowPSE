@@ -1,11 +1,11 @@
 <h2 mat-dialog-title> {{ parameter.title }}</h2>
 
-<div class="badges">
+<div class="badges" *ngIf="parameter">
   <span class="badge">{{ parameter.role }}</span>
   <span *ngIf="getTypeInfo(parameter.type); let info" class="badge" [style.color]="info[1]" [style.borderColor]="info[1]">{{ info[0] }}</span>
 </div>
 
-<mat-dialog-content class="content">
+<mat-dialog-content *ngIf="parameter" class="content">
   <!-- INPUT -->
   <div *ngIf="parameter.role === 'input'" class="type-container" [ngSwitch]="parameter.type">
     <p class="abstract" *ngIf="parameter.abstract">{{ parameter.abstract }}</p>

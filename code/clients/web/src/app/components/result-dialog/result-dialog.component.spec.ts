@@ -1,20 +1,26 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ArtefactDialogComponent } from './artefact-dialog.component';
+import { ResultDialogComponent } from './result-dialog.component';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material';
 
-describe('ProcessDetailDialogComponent', () => {
-  let component: ArtefactDialogComponent;
-  let fixture: ComponentFixture<ArtefactDialogComponent>;
+xdescribe('ResultDialogComponent', () => {
+  let component: ResultDialogComponent;
+  let fixture: ComponentFixture<ResultDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ArtefactDialogComponent]
+      declarations: [
+        ResultDialogComponent,
+        FormsModule,
+        MatFormFieldModule,
+      ]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ArtefactDialogComponent);
+    fixture = TestBed.createComponent(ResultDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

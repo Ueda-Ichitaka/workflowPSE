@@ -2,7 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 
 import { WpsService } from './wps.service';
 
-describe('WpsService', () => {
+xdescribe('WpsService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [WpsService]

@@ -6,11 +6,18 @@ import { ProcessParameterType } from '../models/ProcessParameter';
 import { map } from 'rxjs/operators';
 import { environment } from 'environments/environment';
 
+/**
+ * Fetches process data from server.
+ *
+ * @export
+ * @class ProcessService
+ */
 @Injectable()
 export class ProcessService {
 
   /**
-   * return color for each process parameter type
+   * Return color for each process parameter type.
+   *
    * @param {ProcessParameterType} type
    * @returns {string} Hexadecimal color number as string
    */
@@ -24,7 +31,8 @@ export class ProcessService {
   }
 
   /**
-   * return the name of each process parameter type
+   * Return the name of each process parameter type.
+   *
    * @param {ProcessParameterType} type
    * @returns {string} name
    */
@@ -38,13 +46,15 @@ export class ProcessService {
   }
 
   /**
-   * Constructs process Service
+   * Constructs process Service.
+   *
    * @param {HttpClient} http
    */
   constructor(private http: HttpClient) { }
 
   /**
-   * Returns observable of all processes
+   * Returns observable of all processes.
+   *
    * @returns {Observable<Process[]>}
    */
   public all(): Observable<Process[]> {
@@ -52,7 +62,8 @@ export class ProcessService {
   }
 
   /**
-   * Returns process with given id
+   * Returns process with given id.
+   *
    * @param {number} id
    * @returns {Observable<Process>}
    */

@@ -2,15 +2,15 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditorPageComponent } from './editor-page.component';
 
-describe('EditorPageComponent', () => {
+xdescribe('EditorPageComponent', () => {
   let component: EditorPageComponent;
   let fixture: ComponentFixture<EditorPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditorPageComponent ]
+      declarations: [EditorPageComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

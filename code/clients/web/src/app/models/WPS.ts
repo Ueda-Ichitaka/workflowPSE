@@ -1,7 +1,10 @@
 import { WPSProvider } from 'app/models/WPSProvider';
 
 /**
- * wps contains data about a wps server
+ * Wps contains data about a wps server
+ *
+ * @export
+ * @interface WPS
  */
 export interface WPS {
     id: number;

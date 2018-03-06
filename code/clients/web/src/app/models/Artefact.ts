@@ -1,6 +1,10 @@
 /**
- * describes the structure of input/output which
- * is used for tasks and also contains the data
+ * Describes the structure of input/output which
+ * is used for tasks and also contains the data.
+ *
+ * @export
+ * @interface Artefact
+ * @template T
  */
 export interface Artefact<T> {
     parameter_id: number;

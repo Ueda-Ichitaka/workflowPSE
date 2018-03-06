@@ -9,7 +9,13 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
 import { map } from 'rxjs/operators/map';
 
-
+/**
+ * Simple login page.
+ *
+ * @export
+ * @class LoginPageComponent
+ * @implements {OnInit}
+ */
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
@@ -28,12 +34,24 @@ export class LoginPageComponent implements OnInit {
 
   }
 
+  /**
+   * Component setup.
+   *
+   * @memberof LoginPageComponent
+   */
   public ngOnInit(): void {
     this.loggedIn = this.userService.get().pipe(
       map(user => user !== undefined && user['error'] === undefined)
     );
   }
 
+  /**
+   * User login.
+   *
+   * @param {string} username Login name
+   * @param {string} password Login Password
+   * @memberof LoginPageComponent
+   */
   public login(username: string, password: string) {
     this.userService.login(username, password).subscribe(user => {
       if (!user || user['error']) {
@@ -44,6 +62,11 @@ export class LoginPageComponent implements OnInit {
     });
   }
 
+  /**
+   * User logout.
+   *
+   * @memberof LoginPageComponent
+   */
   public async logout() {
     await this.userService.logout();
     this.router.navigateByUrl('/');
