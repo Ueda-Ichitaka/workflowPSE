@@ -176,6 +176,7 @@ export class EditorPageComponent implements OnInit {
    */
   public undo() {
     this.editorComponent.undo();
+    this.save();
   }
 
   /**
@@ -223,40 +224,7 @@ export class EditorPageComponent implements OnInit {
   }
 
   /**
-<<<<<<< HEAD
-   * Changes the name of the workflow.
-   *
-   * @param name new name of the workflow
-   */
-  public editTitle(name: string) {
-    if (name.length === 0) {
-      name = 'My Workflow';
-    } else if (name.length > 24) {
-      name = name.slice(0, 24);
-    }
-
-
-    this.workflow.title = name;
-
-    if (this.fresh) {
-      this.workflowService.create(this.editorComponent.workflow).subscribe(obj => {
-        this.router.navigate([`/editor/${obj.id}`]);
-      });
-    } else {
-      this.workflowService.update(this.workflow.id, this.workflow).toPromise();
-    }
-
-    this.workflowChanged(this.workflow);
-    this.editTitleMode = false;
-  }
-
-  /**
-   * Enables clicking the title in order to change it.
-   *
-   * @memberof EditorPageComponent
-=======
    * enables clicking the title in order to change it
->>>>>>> 65bd832ee419dac97321818a6fb97148396a96da
    */
   public clickTitleEdit() {
     this.editTitleMode = true;
@@ -272,20 +240,16 @@ export class EditorPageComponent implements OnInit {
    * @returns {Promise<Workflow>} Saved workflow
    * @memberof EditorPageComponent
    */
-<<<<<<< HEAD
-  public async save(): Promise<Workflow> {
-=======
   public async save() {
-    var name = (<HTMLInputElement>document.getElementById('titleInput')).value;
+    let name = (<HTMLInputElement>document.getElementById('titleInput')).value;
     if (name.length === 0) {
       name = 'My Workflow';
     } else if (name.length > 24) {
-      name = name.slice(0,24);
+      name = name.slice(0, 24);
     }
 
     this.workflow.title = name;
 
->>>>>>> 65bd832ee419dac97321818a6fb97148396a96da
     if (this.fresh) {
       this.workflowService.create(this.editorComponent.workflow).subscribe(obj => {
         this.router.navigate([`/editor/${obj.id}`]);
