@@ -182,9 +182,6 @@ export class EditorComponent implements OnInit, AfterContentInit {
           updated_at: (new Date).getTime(),
         });
       }
-
-      // Delete edge
-      this.workflow.edges = this.workflow.edges.filter(e => e.to_task_id !== task.id);
     }
 
 
