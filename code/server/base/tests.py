@@ -780,7 +780,7 @@ class WorkflowViewCase(TestCase):
 
     def test_workflow_get_single(self):
         response = json.loads(self.client.get('/workflow/1').content)
-        print(response)
+
         self.assert_workflow_equal_to_expected(response)
 
     def test_workflow_get_all(self):
@@ -924,6 +924,14 @@ class WorkflowViewCase(TestCase):
                         'state': 0,
                         'input_artefacts': [
                             {
+                                'id': 2,
+                                'task_id': 2,
+                                'parameter_id': 2,
+                                'role': 'input',
+                                'format': 'string',
+                                'data': 'bla patch'
+                            },
+                            {
                                 'id': -1,
                                 'task_id': 4,
                                 'parameter_id': 2,
@@ -941,7 +949,16 @@ class WorkflowViewCase(TestCase):
                         'x': 9.0,
                         'y': 9.0,
                         'state': 0,
-                        'input_artefacts': [],
+                        'input_artefacts': [
+                            {
+                                'id': -2,
+                                'task_id': -1,
+                                'parameter_id': 2,
+                                'role': 'input',
+                                'format': 'string',
+                                'data': 'bla 4'
+                            }
+                        ],
                         'output_artefacts': []
                     }
                 ]
@@ -986,12 +1003,19 @@ class WorkflowViewCase(TestCase):
         self.assertEqual(workflow['tasks'][1]['y'], 8.0)
         self.assertEqual(workflow['tasks'][1]['status'], '0')
 
-        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['id'], 3)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['id'], 2)
         self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['task_id'], 2)
         self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['parameter_id'], 2)
         self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['role'], 'input')
         self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['format'], 'string')
-        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['data'], 'bla 3')
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['data'], 'bla patch')
+
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['id'], 3)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['task_id'], 2)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['parameter_id'], 2)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['role'], 'input')
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['format'], 'string')
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['data'], 'bla 3')
 
         self.assertEqual(workflow['tasks'][2]['id'], 3)
         self.assertEqual(workflow['tasks'][2]['workflow_id'], 1)
@@ -999,6 +1023,13 @@ class WorkflowViewCase(TestCase):
         self.assertEqual(workflow['tasks'][2]['x'], 9.0)
         self.assertEqual(workflow['tasks'][2]['y'], 9.0)
         self.assertEqual(workflow['tasks'][2]['status'], '0')
+
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['id'], 4)
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['task_id'], 3)
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['parameter_id'], 2)
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['role'], 'input')
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['format'], 'string')
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['data'], 'bla 4')
 
     def test_workflow_delete(self):
         response = self.client.delete('/workflow/1')
