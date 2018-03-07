@@ -87,7 +87,6 @@ export class EditorPageComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private zone: NgZone,
   ) {
-
   }
 
   /**

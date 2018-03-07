@@ -27,12 +27,14 @@ export class AppComponent {
    */
   public constructor(private router: Router, private userService: UserService) {
     userService.get()
-      .subscribe(user => {
-        if (user['error']) {
-          this.router.navigate(['/login']);
-        }
-      },
-        err => { });
+      .subscribe(
+        user => {
+          if (user['error']) {
+            this.router.navigate(['/login']);
+          }
+        },
+        err => this.router.navigate(['/login'])
+      );
 
     // Hide navigation bar when user is on /login
     this.router.events.subscribe(route => {
