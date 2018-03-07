@@ -6,10 +6,11 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.utils import timezone
 
 import base.cron
 import base.utils as utils
-from base.models import WPSProvider, WPS, Process, Workflow, Task, InputOutput, Artefact
+from base.models import WPSProvider, WPS, Process, Workflow, Task, InputOutput, Artefact, Edge
 
 
 class CronTestCase(TestCase):
@@ -576,47 +577,488 @@ class DatabaseTestCase(TestCase):
         self.assertEqual(new_database_entry.max_occurs, new_literal_input.max_occurs)
 
 
+def set_up_fixtures():
+    User.objects.create(
+        password='admin',
+        is_superuser=True,
+        username='admin',
+        first_name='Admin',
+        email='admin@admin.com',
+        is_staff=True,
+        is_active=True,
+        date_joined=timezone.now(),
+        last_name='Admin',
+    )
+    WPSProvider.objects.create(
+        provider_name='Test Provider',
+        provider_site='pse.rudolphrichard.de',
+        individual_name='Rudolph, Richard',
+        position_name='Software Engineer'
+    )
+    WPS.objects.create(
+        service_provider_id='1',
+        title='PyWPS Testserver',
+        abstract='tl;dr',
+        capabilities_url='http://pse.rudolphrichard.de:5000/wps',
+        describe_url='http://pse.rudolphrichard.de:5000/wps',
+        execute_url='http://pse.rudolphrichard.de:5000/wps'
+    )
+    Process.objects.create(
+        wps_id='1',
+        identifier='say_hello',
+        title='Process Say Hello',
+        abstract='tl;dr'
+    )
+    InputOutput.objects.create(
+        process_id='1',
+        role='0',
+        identifier='name',
+        title='Input name',
+        abstract='tl;dr',
+        datatype='0',
+        format='string',
+        min_occurs='1',
+        max_occurs='1'
+    )
+    InputOutput.objects.create(
+        process_id='1',
+        role='1',
+        identifier='response',
+        title='Output name response',
+        abstract='tl;dr',
+        datatype='0',
+        format='string',
+        min_occurs='1',
+        max_occurs='1'
+    )
+    Workflow.objects.create(
+        name='Workflow',
+        description='tl;dr',
+        percent_done=0,
+        created_at=timezone.now(),
+        creator_id=1,
+        last_modifier_id=1
+    )
+    Task.objects.create(
+        workflow_id=1,
+        process_id=1,
+        x=1,
+        y=1,
+        status='0',
+        title='Task 1',
+        abstract='tl;dr 1',
+        status_url='http://pse.rudolphrichard.de',
+        started_at=timezone.now()
+    )
+    Task.objects.create(
+        workflow_id=1,
+        process_id=1,
+        x=2,
+        y=2,
+        status='0',
+        title='Task 2',
+        abstract='tl;dr 2',
+        status_url='http://pse.rudolphrichard.de',
+        started_at=timezone.now()
+    )
+    Edge.objects.create(
+        workflow_id=1,
+        from_task_id=1,
+        to_task_id=2,
+        input_id=2,
+        output_id=1
+    )
+    Artefact.objects.create(
+        task_id=1,
+        parameter_id=1,
+        role=1,
+        format='string',
+        data='bla'
+    )
+    Artefact.objects.create(
+        task_id=2,
+        parameter_id=2,
+        role=0,
+        format='string',
+        data='bla'
+    )
+
+
+class WorkflowViewLoggedOutCase(TestCase):
+    def setUp(self):
+        set_up_fixtures()
+
+    def test_workflow_get_single(self):
+        response = self.client.get('/workflow/1')
+        parsed_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(parsed_response['error'], 'no access')
+
+    def test_workflow_get_all(self):
+        response = self.client.get('/workflow/')
+        parsed_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(parsed_response['error'], 'no access')
+
+    def test_workflow_post(self):
+        response = self.client.post('/workflow/')
+        parsed_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(parsed_response['error'], 'no access')
+
+    def test_workflow_patch(self):
+        response = self.client.patch('/workflow/1')
+        parsed_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(parsed_response['error'], 'no access')
+
+    def test_workflow_delete(self):
+        response = self.client.delete('/workflow/1')
+        parsed_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(parsed_response['error'], 'no access')
+
+
+class WorkflowViewCase(TestCase):
+    def setUp(self):
+        set_up_fixtures()
+        self.client.force_login(User.objects.get(pk=1))
+
+    def assert_workflow_equal_to_expected(self, workflow):
+        self.assertEqual(workflow['id'], 1)
+        self.assertEqual(workflow['name'], 'Workflow')
+        self.assertEqual(workflow['description'], 'tl;dr')
+        self.assertEqual(workflow['percent_done'], 0)
+        self.assertEqual(workflow['creator_id'], 1)
+        self.assertEqual(workflow['last_modifier_id'], 1)
+
+        self.assertEqual(workflow['edges'][0]['id'], 1)
+        self.assertEqual(workflow['edges'][0]['workflow_id'], 1)
+        self.assertEqual(workflow['edges'][0]['from_task_id'], 1)
+        self.assertEqual(workflow['edges'][0]['to_task_id'], 2)
+        self.assertEqual(workflow['edges'][0]['input_id'], 2)
+        self.assertEqual(workflow['edges'][0]['output_id'], 1)
+
+        self.assertEqual(workflow['tasks'][0]['id'], 1)
+        self.assertEqual(workflow['tasks'][0]['workflow_id'], 1)
+        self.assertEqual(workflow['tasks'][0]['process_id'], 1)
+        self.assertEqual(workflow['tasks'][0]['x'], 1)
+        self.assertEqual(workflow['tasks'][0]['y'], 1)
+        self.assertEqual(workflow['tasks'][0]['status'], '0')
+        self.assertEqual(workflow['tasks'][0]['title'], 'Task 1')
+        self.assertEqual(workflow['tasks'][0]['abstract'], 'tl;dr 1')
+        self.assertEqual(workflow['tasks'][0]['status_url'], 'http://pse.rudolphrichard.de')
+
+        self.assertEqual(workflow['tasks'][0]['output_artefacts'][0]['id'], 1)
+        self.assertEqual(workflow['tasks'][0]['output_artefacts'][0]['task_id'], 1)
+        self.assertEqual(workflow['tasks'][0]['output_artefacts'][0]['parameter_id'], 1)
+        self.assertEqual(workflow['tasks'][0]['output_artefacts'][0]['role'], 'output')
+        self.assertEqual(workflow['tasks'][0]['output_artefacts'][0]['format'], 'string')
+        self.assertEqual(workflow['tasks'][0]['output_artefacts'][0]['data'], 'bla')
+
+        self.assertEqual(workflow['tasks'][1]['id'], 2)
+        self.assertEqual(workflow['tasks'][1]['workflow_id'], 1)
+        self.assertEqual(workflow['tasks'][1]['process_id'], 1)
+        self.assertEqual(workflow['tasks'][1]['x'], 2)
+        self.assertEqual(workflow['tasks'][1]['y'], 2)
+        self.assertEqual(workflow['tasks'][1]['status'], '0')
+        self.assertEqual(workflow['tasks'][1]['title'], 'Task 2')
+        self.assertEqual(workflow['tasks'][1]['abstract'], 'tl;dr 2')
+        self.assertEqual(workflow['tasks'][1]['status_url'], 'http://pse.rudolphrichard.de')
+
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['id'], 2)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['task_id'], 2)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['parameter_id'], 2)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['role'], 'input')
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['format'], 'string')
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['data'], 'bla')
+
+    def test_workflow_get_single(self):
+        response = json.loads(self.client.get('/workflow/1').content)
+
+        self.assert_workflow_equal_to_expected(response)
+
+    def test_workflow_get_all(self):
+        response = json.loads(self.client.get('/workflow/').content)
+
+        self.assert_workflow_equal_to_expected(response[0])
+
+    def test_workflow_post(self):
+        response = self.client.generic(
+            'POST',
+            '/workflow/',
+            json.dumps({
+                'id': -1,
+                'title': 'Workflow 2',
+                'shared': False,
+                'edges': [
+                    {
+                        'id': -1,
+                        'workflow_id': -1,
+                        'from_task_id': -1,
+                        'to_task_id': -2,
+                        'input_id': 2,
+                        'output_id': 1
+                    }
+                ],
+                'tasks': [
+                    {
+                        'id': -1,
+                        'workflow_id': 1,
+                        'process_id': 1,
+                        'x': 3.0,
+                        'y': 4.0,
+                        'state': 0,
+                        'input_artefacts': [
+                            {
+                                'id': -1,
+                                'task_id': -1,
+                                'parameter_id': 2,
+                                'role': 'input',
+                                'format': 'string',
+                                'data': 'bla 2'
+                            }
+                        ],
+                        'output_artefacts': []
+                    },
+                    {
+                        'id': -2,
+                        'workflow_id': 1,
+                        'process_id': 1,
+                        'x': 5.0,
+                        'y': 6.0,
+                        'state': 0,
+                        'input_artefacts': [],
+                        'output_artefacts': []
+                    }
+                ]
+            })
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        workflow = json.loads(response.content)
+
+        self.assertEqual(workflow['id'], 2)
+        self.assertEqual(workflow['name'], 'Workflow 2')
+        self.assertEqual(workflow['percent_done'], 0)
+        self.assertEqual(workflow['creator_id'], 1)
+        self.assertEqual(workflow['last_modifier_id'], 1)
+
+        self.assertEqual(workflow['edges'][0]['id'], 2)
+        self.assertEqual(workflow['edges'][0]['workflow_id'], 2)
+        self.assertEqual(workflow['edges'][0]['from_task_id'], 3)
+        self.assertEqual(workflow['edges'][0]['to_task_id'], 4)
+        self.assertEqual(workflow['edges'][0]['input_id'], 2)
+        self.assertEqual(workflow['edges'][0]['output_id'], 1)
+
+        self.assertEqual(workflow['tasks'][0]['id'], 3)
+        self.assertEqual(workflow['tasks'][0]['workflow_id'], 2)
+        self.assertEqual(workflow['tasks'][0]['process_id'], 1)
+        self.assertEqual(workflow['tasks'][0]['x'], 3.0)
+        self.assertEqual(workflow['tasks'][0]['y'], 4.0)
+        self.assertEqual(workflow['tasks'][0]['status'], '0')
+
+        self.assertEqual(workflow['tasks'][0]['input_artefacts'][0]['id'], 3)
+        self.assertEqual(workflow['tasks'][0]['input_artefacts'][0]['task_id'], 3)
+        self.assertEqual(workflow['tasks'][0]['input_artefacts'][0]['parameter_id'], 2)
+        self.assertEqual(workflow['tasks'][0]['input_artefacts'][0]['role'], 'input')
+        self.assertEqual(workflow['tasks'][0]['input_artefacts'][0]['format'], 'string')
+        self.assertEqual(workflow['tasks'][0]['input_artefacts'][0]['data'], 'bla 2')
+
+        self.assertEqual(workflow['tasks'][1]['id'], 4)
+        self.assertEqual(workflow['tasks'][1]['workflow_id'], 2)
+        self.assertEqual(workflow['tasks'][1]['process_id'], 1)
+        self.assertEqual(workflow['tasks'][1]['x'], 5.0)
+        self.assertEqual(workflow['tasks'][1]['y'], 6.0)
+        self.assertEqual(workflow['tasks'][1]['status'], '0')
+
+    def test_workflow_patch(self):
+        response = self.client.generic(
+            'PATCH',
+            '/workflow/1',
+            json.dumps({
+                'id': 1,
+                'title': 'Workflow 1 patch',
+                'shared': True,
+                'edges': [
+                    {
+                        'id': 1,
+                        'workflow_id': 2,
+                        'from_task_id': 1,
+                        'to_task_id': 2,
+                        'input_id': 2,
+                        'output_id': 1
+                    },
+                    {
+                        'id': -1,
+                        'workflow_id': 2,
+                        'from_task_id': 2,
+                        'to_task_id': -1,
+                        'input_id': 2,
+                        'output_id': 1
+                    }
+                ],
+                'tasks': [
+                    {
+                        'id': 1,
+                        'workflow_id': 2,
+                        'process_id': 1,
+                        'x': 7.0,
+                        'y': 7.0,
+                        'state': 0,
+                        'input_artefacts': [],
+                        'output_artefacts': []
+                    },
+                    {
+                        'id': 2,
+                        'workflow_id': 2,
+                        'process_id': 1,
+                        'x': 8.0,
+                        'y': 8.0,
+                        'state': 0,
+                        'input_artefacts': [
+                            {
+                                'id': 2,
+                                'task_id': 2,
+                                'parameter_id': 2,
+                                'role': 'input',
+                                'format': 'string',
+                                'data': 'bla patch'
+                            },
+                            {
+                                'id': -1,
+                                'task_id': 4,
+                                'parameter_id': 2,
+                                'role': 'input',
+                                'format': 'string',
+                                'data': 'bla 3'
+                            }
+                        ],
+                        'output_artefacts': []
+                    },
+                    {
+                        'id': -1,
+                        'workflow_id': 2,
+                        'process_id': 1,
+                        'x': 9.0,
+                        'y': 9.0,
+                        'state': 0,
+                        'input_artefacts': [
+                            {
+                                'id': -2,
+                                'task_id': -1,
+                                'parameter_id': 2,
+                                'role': 'input',
+                                'format': 'string',
+                                'data': 'bla 4'
+                            }
+                        ],
+                        'output_artefacts': []
+                    }
+                ]
+            })
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        workflow = json.loads(response.content)
+
+        self.assertEqual(workflow['id'], 1)
+        self.assertEqual(workflow['name'], 'Workflow 1 patch')
+        self.assertEqual(workflow['percent_done'], 0)
+        self.assertEqual(workflow['creator_id'], 1)
+        self.assertEqual(workflow['last_modifier_id'], 1)
+
+        self.assertEqual(workflow['edges'][0]['id'], 1)
+        self.assertEqual(workflow['edges'][0]['workflow_id'], 1)
+        self.assertEqual(workflow['edges'][0]['from_task_id'], 1)
+        self.assertEqual(workflow['edges'][0]['to_task_id'], 2)
+        self.assertEqual(workflow['edges'][0]['input_id'], 2)
+        self.assertEqual(workflow['edges'][0]['output_id'], 1)
+
+        self.assertEqual(workflow['edges'][1]['id'], 2)
+        self.assertEqual(workflow['edges'][1]['workflow_id'], 1)
+        self.assertEqual(workflow['edges'][1]['from_task_id'], 2)
+        self.assertEqual(workflow['edges'][1]['to_task_id'], 3)
+        self.assertEqual(workflow['edges'][1]['input_id'], 2)
+        self.assertEqual(workflow['edges'][1]['output_id'], 1)
+
+        self.assertEqual(workflow['tasks'][0]['id'], 1)
+        self.assertEqual(workflow['tasks'][0]['workflow_id'], 1)
+        self.assertEqual(workflow['tasks'][0]['process_id'], 1)
+        self.assertEqual(workflow['tasks'][0]['x'], 7.0)
+        self.assertEqual(workflow['tasks'][0]['y'], 7.0)
+        self.assertEqual(workflow['tasks'][0]['status'], '0')
+
+        self.assertEqual(workflow['tasks'][1]['id'], 2)
+        self.assertEqual(workflow['tasks'][1]['workflow_id'], 1)
+        self.assertEqual(workflow['tasks'][1]['process_id'], 1)
+        self.assertEqual(workflow['tasks'][1]['x'], 8.0)
+        self.assertEqual(workflow['tasks'][1]['y'], 8.0)
+        self.assertEqual(workflow['tasks'][1]['status'], '0')
+
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['id'], 2)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['task_id'], 2)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['parameter_id'], 2)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['role'], 'input')
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['format'], 'string')
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][0]['data'], 'bla patch')
+
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['id'], 3)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['task_id'], 2)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['parameter_id'], 2)
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['role'], 'input')
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['format'], 'string')
+        self.assertEqual(workflow['tasks'][1]['input_artefacts'][1]['data'], 'bla 3')
+
+        self.assertEqual(workflow['tasks'][2]['id'], 3)
+        self.assertEqual(workflow['tasks'][2]['workflow_id'], 1)
+        self.assertEqual(workflow['tasks'][2]['process_id'], 1)
+        self.assertEqual(workflow['tasks'][2]['x'], 9.0)
+        self.assertEqual(workflow['tasks'][2]['y'], 9.0)
+        self.assertEqual(workflow['tasks'][2]['status'], '0')
+
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['id'], 4)
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['task_id'], 3)
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['parameter_id'], 2)
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['role'], 'input')
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['format'], 'string')
+        self.assertEqual(workflow['tasks'][2]['input_artefacts'][0]['data'], 'bla 4')
+
+    def test_workflow_delete(self):
+        response = self.client.delete('/workflow/1')
+        parsed_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(parsed_response['deleted'], True)
+
+    def test_workflow_start(self):
+        self.assertEqual(self.client.get('/workflow_start/1').status_code, 200)
+
+        self.assertEqual(Task.objects.get(pk=1).status, '1')
+        self.assertEqual(Task.objects.get(pk=2).status, '1')
+
+    def test_workflow_stop(self):
+        self.assertEqual(self.client.get('/workflow_stop/1').status_code, 200)
+
+        self.assertEqual(Task.objects.get(pk=1).status, '0')
+        self.assertEqual(Task.objects.get(pk=2).status, '0')
+
+        self.assertEqual(Artefact.objects.all().count(), 0)
+
+    def test_workflow_refresh(self):
+        self.assertEqual(self.client.get('/workflow_refresh/1').status_code, 200)
+
+
 class ProcessViewCase(TestCase):
     def setUp(self):
-        WPSProvider.objects.create(
-            provider_name="Test Provider",
-            provider_site="pse.rudolphrichard.de",
-            individual_name="Rudolph, Richard",
-            position_name="Software Engineer"
-        )
-        WPS.objects.create(
-            service_provider_id='1',
-            title="PyWPS Testserver",
-            abstract="tl;dr",
-            capabilities_url="http://pse.rudolphrichard.de:5000/wps",
-            describe_url="http://pse.rudolphrichard.de:5000/wps",
-            execute_url="http://pse.rudolphrichard.de:5000/wps")
-        Process.objects.create(
-            wps_id='1',
-            identifier="say_hello",
-            title="Process Say Hello",
-            abstract="tl;dr"
-        )
-        InputOutput.objects.create(
-            process_id='1',
-            role='0',
-            identifier="name",
-            title="Input name",
-            abstract="tl;dr",
-            datatype='0',
-            format="string",
-            min_occurs='1',
-            max_occurs='1')
-        InputOutput.objects.create(
-            process_id='1',
-            role='1',
-            identifier="response",
-            title="Output name response",
-            abstract="tl;dr",
-            datatype='0',
-            format="string",
-            min_occurs='1',
-            max_occurs='1')
+        set_up_fixtures()
 
     def assert_process_equal_to_expected(self, process):
         self.assertEqual(process['id'], 1)
@@ -681,3 +1123,46 @@ class ProcessViewCase(TestCase):
         response = json.loads(self.client.delete('/process/').content)
 
         self.assertTrue('error' in response)
+
+
+class WpsViewCase(TestCase):
+    def setUp(self):
+        set_up_fixtures()
+
+    def assert_wps_equal_to_expected(self, wps):
+        self.assertEqual(wps['id'], 1)
+        self.assertEqual(wps['title'], 'PyWPS Testserver')
+        self.assertEqual(wps['abstract'], 'tl;dr')
+        self.assertEqual(wps['capabilities_url'], 'http://pse.rudolphrichard.de:5000/wps')
+        self.assertEqual(wps['describe_url'], 'http://pse.rudolphrichard.de:5000/wps')
+        self.assertEqual(wps['execute_url'], 'http://pse.rudolphrichard.de:5000/wps')
+
+        self.assertEqual(wps['provider']['id'], 1)
+        self.assertEqual(wps['provider']['provider_name'], 'Test Provider')
+        self.assertEqual(wps['provider']['provider_site'], 'pse.rudolphrichard.de')
+        self.assertEqual(wps['provider']['individual_name'], 'Rudolph, Richard')
+        self.assertEqual(wps['provider']['position_name'], 'Software Engineer')
+
+    def test_wps_get_single(self):
+        response = json.loads(self.client.get('/wps/1').content)
+
+        self.assert_wps_equal_to_expected(response)
+
+    def test_wps_get_all(self):
+        response = json.loads(self.client.get('/wps/').content)
+
+        self.assert_wps_equal_to_expected(response[0])
+
+    def test_wps_post(self):
+        self.client.generic('POST', '/wps/', 'http://pse.rudolphrichard.de:5000')
+
+        self.assertEqual(Process.objects.count(), 14)
+
+
+class UserViewCase(TestCase):
+    def setUp(self):
+        set_up_fixtures()
+        self.client.force_login(User.objects.get(pk=1))
+
+    def test_user_get(self):
+        self.assertEqual(self.client.get('/user/').status_code, 200)
