@@ -157,7 +157,6 @@ export class EditorComponent implements OnInit, AfterContentInit {
     let task: Task = event[0].task;
     task = this.workflow.tasks.find(t => t.id === task.id);
     const parameter: ProcessParameter<'input' | 'output'> = event[0].parameter;
-
     if (event[1] === null) {
       // Remove Artefact
       const index = task.input_artefacts.findIndex(artefact => artefact.parameter_id === parameter.id);
@@ -166,21 +165,38 @@ export class EditorComponent implements OnInit, AfterContentInit {
       }
       task.input_artefacts.splice(index, 1);
     } else {
-      // Add artefact
-      const data: any = event[1];
 
-      if (parameter.role === 'input') {
-        task.input_artefacts = task.input_artefacts || [];
-        task.input_artefacts.push({
-          parameter_id: parameter.id,
-          task_id: task.id,
-          workflow_id: this.workflow.id,
-          role: parameter.role,
-          format: data.format,
-          data: data.value,
-          created_at: (new Date).getTime(),
-          updated_at: (new Date).getTime(),
-        });
+      let changed = false;
+      for (const entry of task.input_artefacts) {
+        if (entry.parameter_id === event[0].parameter.id) {
+          entry.data = event[1].value;
+          entry.updated_at = (new Date).getTime();
+          changed = true;
+        }
+      }
+      if (!changed) {
+        // Add artefact
+        const data: any = event[1];
+        if (parameter.role === 'input') {
+          task.input_artefacts = task.input_artefacts || [];
+          task.input_artefacts.push({
+            parameter_id: parameter.id,
+            task_id: task.id,
+            workflow_id: this.workflow.id,
+            role: parameter.role,
+            format: data.format,
+            data: data.value,
+            created_at: (new Date).getTime(),
+            updated_at: (new Date).getTime(),
+          });
+        }
+      }
+      for (const currentInputArtefact of task.input_artefacts) {
+        for (const currentEdge of this.workflow.edges) {
+          if (currentEdge.to_task_id === currentInputArtefact.task_id && currentInputArtefact.parameter_id === currentEdge.input_id) {
+            this.workflow.edges = this.workflow.edges.filter(e => e !== currentEdge);
+          }
+        }
       }
     }
 
