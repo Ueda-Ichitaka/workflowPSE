@@ -1166,3 +1166,31 @@ class UserViewCase(TestCase):
 
     def test_user_get(self):
         self.assertEqual(self.client.get('/user/').status_code, 200)
+
+
+class AuthenticationViewsCase(TestCase):
+    def setUp(self):
+        set_up_fixtures()
+
+    def test_login_attempt_with_wrong_credentials(self):
+        response = self.client.generic(
+                'POST',
+                '/login/',
+                json.dumps({
+                    'username': 'wrong',
+                    'password': 'wrong'
+                })
+            )
+        parsed_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(parsed_response['error'], 'no access')
+
+    def test_logout(self):
+        self.client.force_login(User.objects.get(pk=1))
+
+        response = self.client.delete('/logout/')
+        parsed_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(parsed_response['logged'], 'out')
