@@ -103,8 +103,8 @@ export class EditorComponent implements OnInit, AfterContentInit {
   ngAfterContentInit(): void {
     this.workflowChanged.emit(this.workflow);
     this.scrollToMiddle();
-    setTimeout(() => { this.cd.detectChanges(); }, 100);
-    setTimeout(() => { this.cd.detectChanges(); }, 1000);
+    setTimeout(() => this.detectChanges(), 100);
+    setTimeout(() => this.detectChanges(), 1000);
   }
 
 
@@ -296,7 +296,19 @@ export class EditorComponent implements OnInit, AfterContentInit {
     // add task to current workflow
     this.workflow.tasks.push(task);
     this.workflowChanged.emit(this.workflow);
-    this.cd.detectChanges();
+    this.detectChanges();
+  }
+
+  /**
+   * Called when changes detected
+   *
+   * @private
+   * @memberof EditorComponent
+   */
+  private detectChanges(): void {
+    if (!this.cd['destroyed']) {
+      this.cd.detectChanges();
+    }
   }
 
   /**
@@ -314,7 +326,7 @@ export class EditorComponent implements OnInit, AfterContentInit {
     this.workflow.tasks.splice(index, 1);
     this.workflow.edges = this.workflow.edges.filter(edge => edge.from_task_id !== task_id && edge.to_task_id !== task_id);
 
-    this.cd.detectChanges();
+    this.detectChanges();
     this.workflowChanged.emit(this.workflow);
   }
 
@@ -398,7 +410,7 @@ export class EditorComponent implements OnInit, AfterContentInit {
       this.movement.edge[2] = event.pageX + n.scrollLeft - r.left;
       this.movement.edge[3] = event.pageY + n.scrollTop - r.top;
     }
-    this.cd.detectChanges();
+    this.detectChanges();
   }
 
   /**
@@ -528,7 +540,7 @@ export class EditorComponent implements OnInit, AfterContentInit {
     if (snapshot !== undefined) {
       this.workflow = snapshot;
     }
-    this.cd.detectChanges();
+    this.detectChanges();
     this.workflowChanged.emit(this.workflow);
   }
 
