@@ -54,7 +54,7 @@ export class UserService {
      * @memberof UserService
      */
     public async logout(): Promise<any> {
-        return this.http.delete<any>(`${environment.ip}/logout/`).toPromise();
+        return this.http.delete<any>(`${environment.ip}/logout/`, { withCredentials: true }).toPromise();
     }
 
 }

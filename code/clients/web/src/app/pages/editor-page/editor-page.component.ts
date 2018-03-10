@@ -127,7 +127,7 @@ export class EditorPageComponent implements OnInit {
 
     setTimeout(() => {
       this.workflowChanged(this.workflow);
-      this.cd.detectChanges();
+      this.detectChanges();
     }, 500);
   }
 
@@ -155,7 +155,7 @@ export class EditorPageComponent implements OnInit {
     await this.workflowService.refresh(this.workflow.id);
     console.log('-- Refreshed Workflow Execution Status --');
     this.canRefreshWorkflow = true;
-    setTimeout(() => { this.cd.detectChanges(); }, 1);
+    setTimeout(() => { this.detectChanges(); }, 1);
   }
 
   /**
@@ -203,7 +203,7 @@ export class EditorPageComponent implements OnInit {
     await this.workflowService.start(this.workflow.id);
     this.workflowService.get(this.workflow.id).pipe(take(1)).subscribe(workflow => {
       this.workflow = workflow;
-      setTimeout(() => { this.cd.detectChanges(); }, 10);
+      setTimeout(() => { this.detectChanges(); }, 10);
     });
     this.updateWorkflowStatus();
   }
@@ -217,7 +217,7 @@ export class EditorPageComponent implements OnInit {
     await this.workflowService.stop(this.workflow.id);
     this.workflowService.get(this.workflow.id).pipe(take(1)).subscribe(workflow => {
       this.workflow = workflow;
-      setTimeout(() => { this.cd.detectChanges(); }, 10);
+      setTimeout(() => { this.detectChanges(); }, 10);
     });
     this.updateWorkflowStatus();
   }
@@ -259,6 +259,18 @@ export class EditorPageComponent implements OnInit {
 
     this.workflowChanged(this.workflow);
     this.editTitleMode = false;
+  }
+
+  /**
+ * Called when changes detected
+ *
+ * @private
+ * @memberof EditorComponent
+ */
+  private detectChanges(): void {
+    if (!this.cd['destroyed']) {
+      this.cd.detectChanges();
+    }
   }
 
   /**
