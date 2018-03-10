@@ -3,7 +3,6 @@ import json
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
@@ -16,15 +15,15 @@ from base import cron, utils
 from base.models import InputOutput, WPSProvider, Process, Artefact, Edge, Task, Workflow, WPS
 
 
-def as_json_response(list):
+def as_json_response(response):
     """
     method stub to return a JsonResponse
-    @param list: parameter list which is returned
-    @type list: dict
+    @param response: parameter list which is returned
+    @type response: dict|list
     @return: JsonResponse
     @rtype: django.http.JsonResponse
     """
-    return JsonResponse(list, safe=False)
+    return JsonResponse(response, safe=False)
 
 
 class UserView(View):
@@ -746,7 +745,7 @@ class OurLogoutView(TemplateView):
         return super(OurLogoutView, self).dispatch(*args, **kwargs)
 
     @staticmethod
-    def delete(request, *args, **kwargs):
+    def delete(request):
         logout(request)
         return JsonResponse({'logged': 'out'})
 
@@ -772,7 +771,7 @@ class OurLoginView(TemplateView):
         return super(OurLoginView, self).dispatch(*args, **kwargs)
 
     @staticmethod
-    def post(request, *args, **kwargs):
+    def post(request):
         login_data = json.loads(request.body)
         user = authenticate(
             username=login_data['username'], password=login_data['password'])
