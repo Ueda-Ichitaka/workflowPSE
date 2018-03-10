@@ -417,7 +417,7 @@ class WorkflowView(View):
         @type request: django.http.request.HttpRequest
         @param workflow_id: the id of the workflow that is started
         @type workflow_id: int
-        @return: an empty JsonResponse wich is either empty on success or contains an error message on failure
+        @return: a JsonResponse which is either empty on success or contains an error message on failure
         @rtype: django.http.JsonResponse
         """
 
