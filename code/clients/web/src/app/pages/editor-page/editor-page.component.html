@@ -8,8 +8,7 @@
     </div>
     <div [style.display]="editTitleMode ? 'block' : 'none'">
       <mat-form-field>
-        <input #tileInput id="titleInput" matInput [placeholder]="workflow?.title" (keyup.enter)="save()"
-          autofocus>
+        <input #tileInput id="titleInput" matInput [placeholder]="workflow?.title" (keyup.enter)="save()" autofocus>
       </mat-form-field>
     </div>
   </div>

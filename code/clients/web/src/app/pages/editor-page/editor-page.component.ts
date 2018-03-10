@@ -236,10 +236,10 @@ export class EditorPageComponent implements OnInit {
   /**
    * Saves the workflow.
    *
-   * @returns {Promise<Workflow>} Saved workflow
+   * @returns {Promise<void>} Promise
    * @memberof EditorPageComponent
    */
-  public async save() {
+  public async save(): Promise<void> {
     let name = (<HTMLInputElement>document.getElementById('titleInput')).value;
     if (name.length === 0) {
       name = 'My Workflow';
@@ -254,7 +254,7 @@ export class EditorPageComponent implements OnInit {
         this.router.navigate([`/editor/${obj.id}`]);
       });
     } else {
-      this.workflowService.update(this.workflow.id, this.workflow).toPromise();
+      await this.workflowService.update(this.workflow.id, this.workflow).toPromise();
     }
 
     this.workflowChanged(this.workflow);
