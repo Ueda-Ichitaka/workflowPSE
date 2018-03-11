@@ -474,7 +474,6 @@ class WorkflowView(View):
         @rtype: django.http.JsonResponse
         """
 
-        # TODO: This needs some kind of throttling
         cron.scheduler()
         cron.receiver()
 

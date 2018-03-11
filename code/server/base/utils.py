@@ -58,7 +58,6 @@ ns_map = {
 }
 
 
-# TODO: rework if path problem is solved
 def get_file_path(task):
     """
     returns path to file for artefact or None if there is no such file
@@ -98,7 +97,6 @@ def add_wps_server(server_url):
     server_url = server_url + 'wps?request=GetCapabilities&service=WPS'
     temp_xml, headers = urllib.request.urlretrieve(server_url)
 
-    # TODO: method, that parse xml namespaces
     xml_namespaces = {
         'gml': 'http://www.opengis.net/gml',
         'xlink': 'http://www.w3.org/1999/xlink',

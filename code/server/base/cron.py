@@ -17,13 +17,12 @@ from workflowPSE.settings import wps_log, BASE_DIR
 
 def scheduler():
     """
-    Main scheduling function. Schedules Tasks in Workflows according to their execution order, generates execution XML files and sends tasks to
-    their server for execution
+    Main scheduling function. Schedules Tasks in Workflows according to their execution order, generates execution XML
+    files and sends tasks to their server for execution
     @return: None
     @rtype: NoneType
     """
 
-    # TODO: set to changeable by settings & config file
     wps_log.debug("starting schedule")
     dir_path = os.path.dirname(os.path.abspath(__file__))
     xml_dir = os.path.join(dir_path, 'testfiles/')
@@ -117,7 +116,7 @@ def xml_generator(xml_dir):
         root.set('version', '1.0.0')
         inputs_tree = create_data_doc(task)
         if inputs_tree == 1:
-            # error code, something wrong with task TODO: check for better handling?
+            # error code, something wrong with task
             wps_log.warning(f"Error: missing input artefact for task{task.id}")
             continue
         root.append(inputs_tree)
@@ -141,10 +140,9 @@ def xml_generator(xml_dir):
         root.append(wps_em.ResponseForm(response_doc))
 
         wps_log.debug(f"successfully created xml for task{task.id}")
-                      #f":\n{etree.tostring(root, pretty_print=True).decode()}") # use to print xml to log
+        # f":\n{etree.tostring(root, pretty_print=True).decode()}") # use to print xml to log
 
         # write to file, for testing let pretty_print=True for better readability
-        # TODO: rework if file path problem is solved
         try:
             with open(f"{xml_dir}/task{task.id}.xml", 'w') as xml_file:
                 xml_file.write(etree.tostring(root, pretty_print=True).decode())
@@ -184,7 +182,6 @@ def create_data_doc(task):
 
         # first check if it is a file path, as data with length over 490 chars will be stored in a file
         # if so insert file path in Reference node
-        # TODO: must check if this equals correct url of own server matching to task
         if artefact.data == utils_module.get_file_path(task):
             wps_log.debug(
                 f"file path found in task{task.id}s artefact{artefact.id}s data, inserting as data")
@@ -212,7 +209,6 @@ def create_data_doc(task):
         elif input.datatype == '1':
             wps_log.debug(f"complex data found for task{task.id}")
             # append format data as attributes to complex data element
-            # TODO: delete if unneeded, uncommented complex data format handling - complicated stuff
             # check if there is cdata in format
             # if artefact.format.split(";")[0] == "CDATA":
             #     wps_log.debug(
@@ -254,7 +250,6 @@ def create_data_doc(task):
 
             # finally create subtree
             data_inputs.append(wps_em.Input(identifier, title, bbox_elem))
-    # TODO: check if something is missing
     wps_log.debug(f"finished input xml generation for task{task.id}")
     return data_inputs
 
@@ -280,7 +275,6 @@ def send_task(task_id, xml_dir):
         wps_log.warning("Error, execute url is empty, but is not allowed to. Aborting...")
         return
 
-    # TODO: validate execution url
     file = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' + \
            str(open(filepath, 'r').read())
 
@@ -340,7 +334,6 @@ def send_task(task_id, xml_dir):
         wps_log.warning(f"task{task_id} not found, aborting")
         return
 
-    # TODO refactor dirty fix
     status_url = xml.get('statusLocation')
     if status_url is None:
         status = '5'
@@ -387,7 +380,6 @@ def get_execute_url(task):
     return execute_url
 
 
-# TODO: tests
 def receiver():
     """
     Loops all running tasks, then
@@ -404,7 +396,6 @@ def receiver():
         parse_execute_response(task)
 
 
-# TODO: tests
 def parse_execute_response(task):
     """
     Checks parameter tasks status by checking xml file found at status_url for change
@@ -602,7 +593,6 @@ def parse_response_literaldata(artefact, data_elem):
 
     else:
         wps_log.debug("writing data to file")
-        # TODO: rework if file path problem is solved!
         file_name = f"outputs/task{task.id}.xml"
         with open(file_name, 'w') as tmpfile:
             tmpfile.write(db_data)
@@ -647,7 +637,6 @@ def parse_response_complexdata(artefact, data_elem):
     @rtype: NoneType
     """
     time_now = datetime.now()
-    # TODO: test!
     db_format = "plain" if data_elem.get(
         "dataType") is None else data_elem.get("dataType").split(':')[-1]
     db_data = data_elem.text
@@ -719,7 +708,6 @@ def parse_response_complexdata(artefact, data_elem):
             "no complex data found in complexdata tree element")
 
 
-# TODO: tests
 def calculate_percent_done(workflow):
     """
     Calculates the percentage of finished tasks in the workflow of task

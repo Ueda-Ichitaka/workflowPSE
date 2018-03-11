@@ -37,9 +37,11 @@ wps_log.addHandler(filehandler)
 SECRET_KEY = '&vuxg*g=w!!tw68ziv092p3ecc=*d68%8i10k--7^z*&50d#c0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'https://portal.vforwater.de'
+]
 
 # Application definition
 
@@ -97,11 +99,12 @@ WSGI_APPLICATION = 'workflowPSE.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'TEST': {
-            'NAME': 'testdatabase.sqlite3'
-        }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': '',# TODO: to be filled by SCC
+        'USER': 'name',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -123,14 +126,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-if (DEBUG):
-    MIDDLEWARE += ['corsheaders.middleware.CorsMiddleware', ]
-    INSTALLED_APPS += ['corsheaders', ]
-    CORS_ALLOW_CREDENTIALS = True
-    CORS_ORIGIN_WHITELIST = (
-        '127.0.0.1:4200',
-        'localhost:4200'
-    )
+MIDDLEWARE += ['corsheaders.middleware.CorsMiddleware', ]
+INSTALLED_APPS += ['corsheaders', ]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = (
+    '127.0.0.1:4200',
+    'localhost:4200'
+)
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
