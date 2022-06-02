@@ -18,7 +18,7 @@
     "@angular/cli": "^1.5.0",
     "@angular/common": "^5.2.11",
     "@angular/compiler": "^5.2.11",
-    "@angular/core": "^5.2.11",
+    "@angular/core": "^11.0.5",
     "@angular/flex-layout": "^2.0.0-beta.10-4905443",
     "@angular/forms": "^5.2.11",
     "@angular/http": "^5.2.11",
